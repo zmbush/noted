@@ -1,0 +1,13 @@
+[package]
+name = "noted"
+version = "0.1.0"
+authors = ["Zach Bush <zach@zmbush.com>"]
+
+[dependencies]
+serde = "^1.0"
+serde_derive = "^1.0"
+serde_json = "^1.0"
+ncurses = "5.85.0"
+diesel = { version = "^0.12", features = ["postgres"] }
+diesel_codegen = { version = "^0.12", features = ["postgres"] }
+dotenv = "^0.10"
