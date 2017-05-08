@@ -1,10 +1,7 @@
-use schema::{cards, users};
-use diesel;
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
+use schema::cards;
 use models::User;
 
-#[derive(Identifiable, Queryable, Associations, Debug)]
+#[derive(Identifiable, Queryable, Associations, Debug, Serialize)]
 #[belongs_to(User)]
 pub struct Card {
     pub id: i32,

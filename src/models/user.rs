@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use models::Card;
 
-#[derive(Identifiable, Queryable, Associations, Debug)]
+#[derive(Identifiable, Queryable, Associations, Debug, Serialize)]
 #[has_many(cards)]
 pub struct User {
     pub id: i32,
