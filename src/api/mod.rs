@@ -1,6 +1,7 @@
 use router::Router;
 
-#[macro_use] mod handler;
+#[macro_use]
+mod handler;
 mod users;
 mod cards;
 

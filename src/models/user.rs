@@ -8,7 +8,8 @@ use models::Card;
 #[has_many(cards)]
 pub struct User {
     pub id: i32,
-    pub name: String,
+    pub google_id: String,
+    pub email: String,
 }
 
 impl User {
@@ -16,13 +17,18 @@ impl User {
         Card::belonging_to(self).load::<Card>(conn)
     }
 
-    pub fn find_or_create(named: &str, conn: &PgConnection) -> QueryResult<User> {
-        use schema::users::dsl::*;
+    pub fn find_or_create(google_id: &str, email: &str, conn: &PgConnection) -> QueryResult<User> {
+        use schema::users::dsl;
 
-        match users.filter(name.eq(named)).first::<User>(conn) {
-            Err(_) => diesel::insert(&NewUser { name: named })
-                .into(users).get_result::<User>(conn),
-            ok => ok
+        match dsl::users
+                  .filter(dsl::google_id.eq(google_id))
+                  .first::<User>(conn) {
+            Err(_) => {
+                diesel::insert(&NewUser { google_id, email })
+                    .into(dsl::users)
+                    .get_result::<User>(conn)
+            }
+            ok => ok,
         }
     }
 }
@@ -30,5 +36,6 @@ impl User {
 #[derive(Insertable)]
 #[table_name="users"]
 pub struct NewUser<'a> {
-    pub name: &'a str,
+    pub google_id: &'a str,
+    pub email: &'a str,
 }

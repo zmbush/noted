@@ -10,19 +10,19 @@ pub type DbInstance = r2d2::PooledConnection<ConnectionManager<PgConnection>>;
 
 #[derive(Clone)]
 pub struct DieselConnection {
-    pub pool: r2d2::Pool<ConnectionManager<PgConnection>>
+    pub pool: r2d2::Pool<ConnectionManager<PgConnection>>,
 }
 
-impl typemap::Key for DieselConnection { type Value = r2d2::Pool<ConnectionManager<PgConnection>>; }
+impl typemap::Key for DieselConnection {
+    type Value = r2d2::Pool<ConnectionManager<PgConnection>>;
+}
 
 impl DieselConnection {
     pub fn new(database_url: &str) -> Result<DieselConnection, Box<Error>> {
         let config = r2d2::Config::default();
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         let pool = try!(r2d2::Pool::new(config, manager));
-        Ok(DieselConnection {
-            pool
-        })
+        Ok(DieselConnection { pool })
     }
 }
 
@@ -39,7 +39,9 @@ pub trait DieselConnectionExt {
 
 impl<'a, 'b> DieselConnectionExt for Request<'a, 'b> {
     fn db_conn(&self) -> IronResult<r2d2::PooledConnection<ConnectionManager<PgConnection>>> {
-        let pool = self.extensions.get::<DieselConnection>().expect("Ext not registered");
+        let pool = self.extensions
+            .get::<DieselConnection>()
+            .expect("Ext not registered");
         pool.get().map_err(|e| IronError::new(e, "Timeout"))
     }
 }
@@ -50,6 +52,8 @@ pub trait RouterExt {
 
 impl<'a, 'b> RouterExt for Request<'a, 'b> {
     fn params(&self) -> &router::Params {
-        self.extensions.get::<router::Router>().expect("No router middleware registered")
+        self.extensions
+            .get::<router::Router>()
+            .expect("No router middleware registered")
     }
 }

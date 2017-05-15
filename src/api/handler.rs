@@ -13,13 +13,19 @@ pub trait APIHandler {
     fn get_data(&self, req: &mut Request, conn: DbInstance) -> IronResult<Self::Data>;
     fn process(&self, req: &mut Request) -> IronResult<Response> {
         let conn = try!(req.db_conn());
-        Ok(Response::with((iron::status::Ok, try! {
+        Ok(Response::with((iron::status::Ok,
+                           try! {
             serde_json::to_string(&try!(self.get_data(req, conn)))
                 .map_err(|e| IronError::new(e, json_error("Serialization Failed")))
         })))
     }
 }
 
+macro_rules! resources {
+    ($name:ident: $data:ty) => (
+        handler!(concat_idents(Get, $name), $data, $body)
+    )
+}
 macro_rules! handler {
     ($name:ident: $data:ty, $body:expr) => (
         pub struct $name;

@@ -1,6 +1,7 @@
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name VARCHAR NOT NULL
+  google_id VARCHAR UNIQUE NOT NULL,
+  email VARCHAR NOT NULL
 );
 
 CREATE TABLE cards (

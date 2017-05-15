@@ -1,8 +1,11 @@
 #![deny(unused_imports)]
 
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate diesel_codegen;
-#[macro_use] extern crate diesel;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate diesel_codegen;
+#[macro_use]
+extern crate diesel;
 extern crate serde;
 extern crate r2d2;
 extern crate r2d2_diesel;
@@ -11,17 +14,24 @@ extern crate iron_sessionstorage;
 extern crate serde_json;
 extern crate dotenv;
 extern crate env_logger;
+extern crate curl;
 
+#[macro_use]
 extern crate iron;
-#[macro_use] extern crate router;
+#[macro_use]
+extern crate router;
 extern crate logger;
-extern crate mount;
+extern crate params;
+extern crate oauth2;
 
 mod schema;
 mod models;
 mod middleware;
 mod api;
 mod routes;
+mod session;
+mod google;
+mod error;
 
 use iron::prelude::*;
 use logger::Logger;
