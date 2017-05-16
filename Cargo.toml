@@ -23,3 +23,4 @@ handlebars-iron = "^0.24"
 params = "^0.6"
 oauth2 = { git = "https://github.com/alexcrichton/oauth2-rs.git" }
 curl = "*"
+staticfile = "*"

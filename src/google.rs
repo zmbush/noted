@@ -1,6 +1,6 @@
 use serde_json;
 use oauth2::{self, Config};
-use error::{NResult, NotedError};
+use error::{NResult, SafeError, NotedError};
 use iron;
 use curl::easy::Easy;
 
@@ -86,7 +86,8 @@ impl Oauth {
         let data: TokenInfo = serde_json::from_str(&data)?;
 
         if data.issued_to != self.secrets.web.client_id {
-            Err(NotedError::Generic("Client id does not match issued to id".to_owned()))
+            Err(NotedError::Safe(SafeError::Generic("Client id does not match issued to id"
+                                                        .to_owned())))
         } else {
             Ok(data)
         }

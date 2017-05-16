@@ -3,7 +3,7 @@ use serde_json;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginSession {
-    pub uid: i32,
+    pub uid: i64,
     pub email: String,
     pub access_token: String,
 }

@@ -7,7 +7,7 @@ use models::Card;
 #[derive(Identifiable, Queryable, Associations, Debug, Serialize)]
 #[has_many(cards)]
 pub struct User {
-    pub id: i32,
+    pub id: i64,
     pub google_id: String,
     pub email: String,
 }

@@ -33,7 +33,7 @@ macro_rules! handler {
         impl APIHandler for $name {
             type Data = $data;
             fn get_data(&self, req: &mut Request, conn: DbInstance) -> IronResult<Self::Data> {
-                $body(req, conn)
+               Ok($body(req, conn).map_err(|e| e.into())?)
             }
         }
 

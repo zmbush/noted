@@ -23,6 +23,8 @@ extern crate router;
 extern crate logger;
 extern crate params;
 extern crate oauth2;
+extern crate mount;
+extern crate staticfile;
 
 mod schema;
 mod models;
@@ -32,6 +34,7 @@ mod routes;
 mod session;
 mod google;
 mod error;
+mod auth;
 
 use iron::prelude::*;
 use logger::Logger;

@@ -1,7 +1,6 @@
 use api;
 use iron;
 use iron::prelude::*;
-use router::Router;
 use google;
 use iron::modifiers::Redirect;
 use params::{self, FromValue};
@@ -9,13 +8,20 @@ use iron_sessionstorage::SessionRequestExt;
 use session::LoginSession;
 use middleware::DieselConnectionExt;
 use models::User;
+use mount::Mount;
+use staticfile::Static;
 
-pub fn routes() -> Router {
-    router! {
-        index: get "/" => index,
+pub fn routes() -> Mount {
+    let mut mount = Mount::new();
+    let main_routes = router! {
         oauth: get "/oauth" => oauth,
-        api: any "/q/*" => api::routes()
-    }
+        api: any "/q/*" => api::routes(),
+        index: get "/" => index,
+        indox: any "/web/*" => index,
+    };
+    mount.mount("/", main_routes);
+    mount.mount("/assets/", Static::new("assets"));
+    mount
 }
 
 fn oauth(req: &mut Request) -> IronResult<Response> {
