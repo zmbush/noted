@@ -1,12 +1,13 @@
-use iron::prelude::*;
-use diesel::prelude::*;
+
 use diesel;
-use iron::BeforeMiddleware;
-use iron_sessionstorage::SessionRequestExt;
-use session::LoginSession;
+use diesel::prelude::*;
 use error::SafeError;
-use models::User;
+use iron::BeforeMiddleware;
+use iron::prelude::*;
+use iron_sessionstorage::SessionRequestExt;
 use middleware::DieselConnectionExt;
+use models::User;
+use session::LoginSession;
 
 pub struct HasUser;
 

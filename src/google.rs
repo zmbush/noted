@@ -1,8 +1,9 @@
-use serde_json;
-use oauth2::{self, Config};
-use error::{NResult, SafeError, NotedError};
-use iron;
+
 use curl::easy::Easy;
+use error::{NResult, NotedError, SafeError};
+use iron;
+use oauth2::{self, Config};
+use serde_json;
 
 #[derive(Debug, Deserialize)]
 pub struct Web {
@@ -47,16 +48,17 @@ impl Oauth {
                                     &secrets.web.auth_uri,
                                     &secrets.web.token_uri);
         oauth.redirect_url = format!("{}", url_for!(req, "oauth"));
-        oauth.scopes = vec!["openid email https://www.googleapis.com/auth/userinfo.profile"
-                                .to_owned()];
+        oauth.scopes = vec![
+            "openid email https://www.googleapis.com/auth/userinfo.profile"
+                .to_owned(),
+        ];
         Ok(Oauth { secrets, oauth })
     }
 
     pub fn authorize_url(&self) -> NResult<iron::Url> {
         let mut generic_url = self.oauth.authorize_url("auth".to_owned());
-        generic_url
-            .query_pairs_mut()
-            .append_pair("response_type", "code");
+        generic_url.query_pairs_mut()
+                   .append_pair("response_type", "code");
         Ok(iron::Url::from_generic_url(generic_url)?)
     }
 
@@ -73,12 +75,11 @@ impl Oauth {
         let mut data = Vec::new();
         {
             let mut transfer = easy.transfer();
-            transfer
-                .write_function(|new_data| {
-                                    data.extend_from_slice(new_data);
-                                    Ok(new_data.len())
-                                })
-                .unwrap();
+            transfer.write_function(|new_data| {
+                                        data.extend_from_slice(new_data);
+                                        Ok(new_data.len())
+                                    })
+                    .unwrap();
             transfer.perform().unwrap();
         }
         let data = String::from_utf8(data).unwrap();

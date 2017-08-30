@@ -1,8 +1,9 @@
-use schema::{cards, users};
+
 use diesel;
-use diesel::prelude::*;
 use diesel::pg::PgConnection;
+use diesel::prelude::*;
 use models::Card;
+use schema::{cards, users};
 
 #[derive(Identifiable, Queryable, Associations, Debug, Serialize)]
 #[has_many(cards)]
@@ -20,9 +21,8 @@ impl User {
     pub fn find_or_create(google_id: &str, email: &str, conn: &PgConnection) -> QueryResult<User> {
         use schema::users::dsl;
 
-        match dsl::users
-                  .filter(dsl::google_id.eq(google_id))
-                  .first::<User>(conn) {
+        match dsl::users.filter(dsl::google_id.eq(google_id))
+                          .first::<User>(conn) {
             Err(_) => {
                 diesel::insert(&NewUser { google_id, email })
                     .into(dsl::users)
@@ -34,7 +34,7 @@ impl User {
 }
 
 #[derive(Insertable)]
-#[table_name="users"]
+#[table_name = "users"]
 pub struct NewUser<'a> {
     pub google_id: &'a str,
     pub email: &'a str,

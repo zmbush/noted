@@ -1,20 +1,19 @@
-use serde;
-use iron;
-use serde_json;
-use iron::{IronResult, IronError, Request, Response};
-use middleware::{DbInstance, DieselConnectionExt};
 
-fn json_error(msg: &str) -> String {
-    format!("{{\"error\": \"{}\"}}", msg)
-}
+use iron;
+use iron::{IronError, IronResult, Request, Response};
+use middleware::{DbInstance, DieselConnectionExt};
+use serde;
+use serde_json;
+
+fn json_error(msg: &str) -> String { format!("{{\"error\": \"{}\"}}", msg) }
 
 pub trait APIHandler {
     type Data: serde::Serialize;
     fn get_data(&self, req: &mut Request, conn: DbInstance) -> IronResult<Self::Data>;
     fn process(&self, req: &mut Request) -> IronResult<Response> {
-        let conn = try!(req.db_conn());
+        let conn = req.db_conn()?;
         Ok(Response::with((iron::status::Ok,
-                           try! {
+         try! {
             serde_json::to_string(&try!(self.get_data(req, conn)))
                 .map_err(|e| IronError::new(e, json_error("Serialization Failed")))
         })))

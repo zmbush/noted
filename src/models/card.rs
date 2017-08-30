@@ -1,5 +1,6 @@
-use schema::cards;
+
 use models::User;
+use schema::cards;
 
 #[derive(Identifiable, Queryable, Associations, Debug, Serialize)]
 #[belongs_to(User)]
@@ -12,7 +13,7 @@ pub struct Card {
 }
 
 #[derive(Insertable)]
-#[table_name="cards"]
+#[table_name = "cards"]
 pub struct NewCard<'a> {
     pub user_id: i64,
     pub permalink: &'a str,

@@ -1,10 +1,11 @@
-use iron::Chain;
-use iron::AfterMiddleware;
-use iron::prelude::*;
+
 use auth;
+use iron::AfterMiddleware;
+use iron::Chain;
+use iron::headers::ContentLength;
+use iron::prelude::*;
 use iron::response::WriteBody;
 use std::io;
-use iron::headers::ContentLength;
 use std::ops::Deref;
 
 #[macro_use]
@@ -29,9 +30,7 @@ struct JsonErrorWriter {
     inner: Option<Box<WriteBody>>,
 }
 impl JsonErrorWriter {
-    fn new(inner: Option<Box<WriteBody>>) -> JsonErrorWriter {
-        JsonErrorWriter { inner }
-    }
+    fn new(inner: Option<Box<WriteBody>>) -> JsonErrorWriter { JsonErrorWriter { inner } }
 }
 
 impl WriteBody for JsonErrorWriter {
@@ -56,9 +55,9 @@ impl AfterMiddleware for JsonifyError {
         let mut resp = err.response;
 
         let cl = resp.headers
-            .get::<ContentLength>()
-            .map(|i| i.deref().clone())
-            .unwrap_or(13);
+                     .get::<ContentLength>()
+                     .map(|i| i.deref().clone())
+                     .unwrap_or(13);
         resp.headers.set(ContentLength(cl + 12));
         resp.body = Some(Box::new(JsonErrorWriter::new(resp.body)));
         Ok(resp)

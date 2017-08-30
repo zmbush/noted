@@ -1,0 +1,10 @@
+[package]
+name = "noted_linker"
+version = "0.1.0"
+authors = ["Zach Bush <zach@zmbush.com>"]
+
+[dependencies]
+pulldown-cmark = "*"
+
+[dev-dependencies]
+pretty_assertions = "*"

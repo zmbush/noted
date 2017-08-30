@@ -1,12 +1,13 @@
-use iron::prelude::*;
-use iron;
-use models;
+
 use api::handler::APIHandler;
-use middleware::DbInstance;
 use auth::CurrentUserExt;
 use error::{NotedError, SafeError};
+use iron;
+use iron::prelude::*;
+use middleware::DbInstance;
+use models;
 
 handler!(Profile: models::User, |req: &mut Request, _: DbInstance| {
     req.current_user()?
-        .ok_or(NotedError::Safe(SafeError::NotAuthorized))
+       .ok_or(NotedError::Safe(SafeError::NotAuthorized))
 });

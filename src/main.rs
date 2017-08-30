@@ -15,6 +15,7 @@ extern crate serde_json;
 extern crate dotenv;
 extern crate env_logger;
 extern crate curl;
+extern crate noted_linker;
 
 #[macro_use]
 extern crate iron;
@@ -36,28 +37,28 @@ mod google;
 mod error;
 mod auth;
 
-use iron::prelude::*;
-use logger::Logger;
 use dotenv::dotenv;
-use std::env;
-use middleware::DieselConnection;
-use std::error::Error;
+use iron::prelude::*;
 
 use iron_sessionstorage::SessionStorage;
 use iron_sessionstorage::backends::RedisBackend;
+use logger::Logger;
+use middleware::DieselConnection;
+use std::env;
+use std::error::Error;
 
 fn get_routes() -> Result<Chain, Box<Error>> {
-    try!(dotenv());
-    try!(env_logger::init());
+    dotenv()?;
+    env_logger::init()?;
     let mut chain = Chain::new(routes::routes());
-    chain.link_around(SessionStorage::new(try!(RedisBackend::new("redis://127.0.0.1"))));
+    chain.link_around(SessionStorage::new(RedisBackend::new("redis://127.0.0.1")?));
 
     let (logger_before, logger_after) = Logger::new(None);
     chain.link_before(logger_before);
     chain.link_after(logger_after);
 
-    let database_url = try!(env::var("DATABASE_URL"));
-    chain.link_before(try!(DieselConnection::new(&database_url)));
+    let database_url = env::var("DATABASE_URL")?;
+    chain.link_before(DieselConnection::new(&database_url)?);
 
     Ok(chain)
 }

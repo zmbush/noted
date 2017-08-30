@@ -1,10 +1,10 @@
 use diesel::pg::PgConnection;
-use iron::{typemap, BeforeMiddleware};
-use iron::{IronResult, IronError, Request};
-use r2d2_diesel::ConnectionManager;
+use iron::{BeforeMiddleware, typemap};
+use iron::{IronError, IronResult, Request};
 use r2d2;
-use std::error::Error;
+use r2d2_diesel::ConnectionManager;
 use router;
+use std::error::Error;
 
 pub type DbInstance = r2d2::PooledConnection<ConnectionManager<PgConnection>>;
 
@@ -21,7 +21,7 @@ impl DieselConnection {
     pub fn new(database_url: &str) -> Result<DieselConnection, Box<Error>> {
         let config = r2d2::Config::default();
         let manager = ConnectionManager::<PgConnection>::new(database_url);
-        let pool = try!(r2d2::Pool::new(config, manager));
+        let pool = r2d2::Pool::new(config, manager)?;
         Ok(DieselConnection { pool })
     }
 }
@@ -40,8 +40,8 @@ pub trait DieselConnectionExt {
 impl<'a, 'b> DieselConnectionExt for Request<'a, 'b> {
     fn db_conn(&self) -> IronResult<r2d2::PooledConnection<ConnectionManager<PgConnection>>> {
         let pool = self.extensions
-            .get::<DieselConnection>()
-            .expect("Ext not registered");
+                       .get::<DieselConnection>()
+                       .expect("Ext not registered");
         pool.get().map_err(|e| IronError::new(e, "Timeout"))
     }
 }

@@ -1,9 +1,10 @@
-use std::convert::From;
-use serde_json;
+
+use diesel;
 use iron;
+use serde_json;
+use std::convert::From;
 use std::error::Error;
 use std::fmt;
-use diesel;
 
 pub type NResult<T> = Result<T, NotedError>;
 
@@ -67,9 +68,7 @@ impl_from! {
 }
 
 impl From<iron::IronError> for NotedError {
-    fn from(e: iron::IronError) -> NotedError {
-        NotedError::Iron(e)
-    }
+    fn from(e: iron::IronError) -> NotedError { NotedError::Iron(e) }
 }
 
 impl Into<iron::IronError> for NotedError {
