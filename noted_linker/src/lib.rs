@@ -79,7 +79,7 @@ pub struct LinkedDocument {
 }
 
 impl LinkedDocument {
-    pub fn new<T: Borrow<str>>(text: T, page_names: HashMap<&str, &str>) -> LinkedDocument {
+    pub fn new<T: Borrow<str>>(text: T, page_names: HashMap<String, String>) -> LinkedDocument {
         let mut doc = LinkedDocument { parts: Vec::new() };
         let mut section = String::with_capacity(1000);
         let mut link: Vec<DocToken> = Vec::new();

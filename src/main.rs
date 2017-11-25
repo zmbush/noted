@@ -1,30 +1,30 @@
-#![deny(unused_imports)]
+#![deny(unused_imports, unused)]
 
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate diesel_codegen;
 #[macro_use]
 extern crate diesel;
-extern crate serde;
+#[macro_use]
+extern crate diesel_codegen;
+extern crate iron_sessionstorage;
 extern crate r2d2;
 extern crate r2d2_diesel;
-extern crate iron_sessionstorage;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
-extern crate serde_json;
+extern crate curl;
 extern crate dotenv;
 extern crate env_logger;
-extern crate curl;
 extern crate noted_linker;
+extern crate serde_json;
 
 #[macro_use]
 extern crate iron;
+extern crate logger;
+extern crate mount;
+extern crate oauth2;
+extern crate params;
 #[macro_use]
 extern crate router;
-extern crate logger;
-extern crate params;
-extern crate oauth2;
-extern crate mount;
 extern crate staticfile;
 
 mod schema;
@@ -36,6 +36,7 @@ mod session;
 mod google;
 mod error;
 mod auth;
+mod cache;
 
 use dotenv::dotenv;
 use iron::prelude::*;

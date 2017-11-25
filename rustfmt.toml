@@ -1,15 +1,2 @@
-array_horizontal_layout_threshold = 1000
-
-attributes_on_same_line_as_field = true
-attributes_on_same_line_as_variant = true
-
-chain_indent = "Visual"
-fn_call_style = "Visual"
-
-fn_single_line = true
-
-reorder_imports = true
-reorder_imported_names = true
-reorder_imports_in_groups = true
-
-use_try_shorthand = true
+match_block_trailing_comma = true
+struct_field_align_threshold = 20

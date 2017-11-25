@@ -1,6 +1,7 @@
 
 use diesel;
 use iron;
+use oauth2;
 use serde_json;
 use std::convert::From;
 use std::error::Error;
@@ -15,6 +16,7 @@ pub enum SafeError {
     ValueRequiredError(String),
     NotAuthorized,
     Diesel(diesel::result::Error),
+    OauthTokenError(oauth2::TokenError),
 }
 
 #[derive(Debug)]
@@ -33,6 +35,7 @@ impl fmt::Display for SafeError {
             NotAuthorized => write!(f, "not authorized"),
             ValueRequiredError(ref e) => write!(f, "Required value not specified: {}", e),
             Diesel(ref e) => write!(f, "Diesel error: {}", e),
+            OauthTokenError(ref e) => write!(f, "Oauth2 Token error: {}", e),
         }
     }
 }
@@ -47,6 +50,7 @@ impl Error for SafeError {
             NotAuthorized => "Not authorized to access asset",
             ValueRequiredError(_) => "A required value was not specified",
             Diesel(_) => "A database error",
+            OauthTokenError(_) => "A oauth2 token error",
         }
     }
 }
@@ -64,11 +68,14 @@ macro_rules! impl_from {
 impl_from! {
     serde_json::Error => SerdeJson,
     String => Generic,
-    diesel::result::Error => Diesel
+    diesel::result::Error => Diesel,
+    oauth2::TokenError => OauthTokenError
 }
 
 impl From<iron::IronError> for NotedError {
-    fn from(e: iron::IronError) -> NotedError { NotedError::Iron(e) }
+    fn from(e: iron::IronError) -> NotedError {
+        NotedError::Iron(e)
+    }
 }
 
 impl Into<iron::IronError> for NotedError {

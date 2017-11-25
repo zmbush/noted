@@ -1,7 +1,7 @@
-
 use auth;
 use iron::AfterMiddleware;
 use iron::Chain;
+use iron::Error;
 use iron::headers::ContentLength;
 use iron::prelude::*;
 use iron::response::WriteBody;
@@ -28,19 +28,24 @@ pub fn routes() -> Chain {
 
 struct JsonErrorWriter {
     inner: Option<Box<WriteBody>>,
+    error: Box<Error + Send>,
 }
 impl JsonErrorWriter {
-    fn new(inner: Option<Box<WriteBody>>) -> JsonErrorWriter { JsonErrorWriter { inner } }
+    fn new(inner: Option<Box<WriteBody>>, error: Box<Error + Send>) -> JsonErrorWriter {
+        JsonErrorWriter { inner, error }
+    }
 }
 
 impl WriteBody for JsonErrorWriter {
     fn write_body(&mut self, res: &mut io::Write) -> io::Result<()> {
-        write!(res, "{{\"error\":\"")?;
+        write!(res, "{{\"type\":\"")?;
         res.flush()?;
         match self.inner {
             Some(ref mut write) => write.write_body(res)?,
-            None => write!(res, "unknown error")?,
+            None => write!(res, "unknown")?,
         }
+        res.flush()?;
+        write!(res, "\",\"error\":\"{}", self.error)?;
         res.flush()?;
         write!(res, "\"}}")?;
         res.flush()?;
@@ -55,11 +60,13 @@ impl AfterMiddleware for JsonifyError {
         let mut resp = err.response;
 
         let cl = resp.headers
-                     .get::<ContentLength>()
-                     .map(|i| i.deref().clone())
-                     .unwrap_or(13);
-        resp.headers.set(ContentLength(cl + 12));
-        resp.body = Some(Box::new(JsonErrorWriter::new(resp.body)));
+            .get::<ContentLength>()
+            .map(|i| *i.deref())
+            .unwrap_or(7);
+        resp.headers.set(ContentLength(
+            cl + 22 + format!("{}", err.error).len() as u64,
+        ));
+        resp.body = Some(Box::new(JsonErrorWriter::new(resp.body, err.error)));
         Ok(resp)
     }
 }

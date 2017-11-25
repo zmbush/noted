@@ -1,4 +1,3 @@
-
 use api::handler::APIHandler;
 use auth::CurrentUserExt;
 use error::{NotedError, SafeError};
@@ -9,5 +8,5 @@ use models;
 
 handler!(Profile: models::User, |req: &mut Request, _: DbInstance| {
     req.current_user()?
-       .ok_or(NotedError::Safe(SafeError::NotAuthorized))
+        .ok_or(NotedError::Safe(SafeError::NotAuthorized))
 });

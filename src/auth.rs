@@ -14,6 +14,7 @@ pub struct HasUser;
 pub trait CurrentUserExt {
     fn current_user(&mut self) -> IronResult<Option<User>>;
 }
+
 impl<'a, 'b> CurrentUserExt for Request<'a, 'b> {
     fn current_user(&mut self) -> IronResult<Option<User>> {
         if let Some(user) = self.session().get::<LoginSession>()? {
@@ -33,7 +34,7 @@ impl<'a, 'b> CurrentUserExt for Request<'a, 'b> {
 
 impl BeforeMiddleware for HasUser {
     fn before(&self, req: &mut Request) -> IronResult<()> {
-        if let Some(_) = req.current_user()? {
+        if req.current_user()?.is_some() {
             Ok(())
         } else {
             Err(SafeError::NotAuthorized.into())

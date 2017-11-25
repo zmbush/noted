@@ -1,5 +1,5 @@
 use diesel::pg::PgConnection;
-use iron::{BeforeMiddleware, typemap};
+use iron::{typemap, BeforeMiddleware};
 use iron::{IronError, IronResult, Request};
 use r2d2;
 use r2d2_diesel::ConnectionManager;
@@ -19,7 +19,7 @@ impl typemap::Key for DieselConnection {
 
 impl DieselConnection {
     pub fn new(database_url: &str) -> Result<DieselConnection, Box<Error>> {
-        let config = r2d2::Config::default();
+        let config = r2d2::Config::builder().build();
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         let pool = r2d2::Pool::new(config, manager)?;
         Ok(DieselConnection { pool })
@@ -40,8 +40,8 @@ pub trait DieselConnectionExt {
 impl<'a, 'b> DieselConnectionExt for Request<'a, 'b> {
     fn db_conn(&self) -> IronResult<r2d2::PooledConnection<ConnectionManager<PgConnection>>> {
         let pool = self.extensions
-                       .get::<DieselConnection>()
-                       .expect("Ext not registered");
+            .get::<DieselConnection>()
+            .expect("Ext not registered");
         pool.get().map_err(|e| IronError::new(e, "Timeout"))
     }
 }
