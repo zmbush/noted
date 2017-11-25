@@ -1,3 +1,0 @@
-#!/bin/bash
-
-rustup override set 1.21.0

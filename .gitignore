@@ -20,3 +20,6 @@ client-secret.json
 assets
 
 .trigger
+node_modules
+dist
+yarn-error.log

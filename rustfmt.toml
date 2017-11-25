@@ -1,2 +1,0 @@
-match_block_trailing_comma = true
-struct_field_align_threshold = 20
