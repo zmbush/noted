@@ -3,5 +3,12 @@
   "plugins": [
     "syntax-async-functions",
     "root-import"
-  ]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        [ "minify", { "mangle": false } ]
+      ]
+    }
+  }
 }

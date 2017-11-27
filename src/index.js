@@ -1,5 +1,7 @@
 // @flow
 
+import 'babel-polyfill';
+
 import path from 'path';
 import dotenv from 'dotenv';
 

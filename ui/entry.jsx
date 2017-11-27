@@ -40,7 +40,7 @@ if (root) {
         } else if (props) {
           return <div>{props.me.user_name}: {props.me.id}</div>;
         }
-        return <div>LOading...</div>;
+        return <div>Loading...</div>;
       }}
     />,
     root,

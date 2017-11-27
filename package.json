@@ -8,7 +8,7 @@
     "relay": "relay-compiler --src ./ui --schema schema.graphql --extensions js jsx",
     "watch-schema": "nodemon -w tools/writeSchema.js -w src/graphql --exec yarn update-schema",
     "update-schema": "babel-node tools/writeSchema.js",
-    "build": "babel src -d dist",
+    "build": "tools/build",
     "serve": "node dist/index.js"
   },
   "repository": {
@@ -31,8 +31,10 @@
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
+    "babel-preset-minify": "^0.2.0",
     "babel-preset-react": "^6.24.1",
     "bluebird": "^3.5.1",
     "bookshelf": "^0.11.1",

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+yarn update-schema
+yarn relay
+yarn webpack
+yarn babel src -d dist

@@ -4,5 +4,8 @@ import path from 'path';
 
 import schema from '../src/graphql/schema';
 
+const schemaStr = printSchema(schema);
+const writePath = path.join(__dirname, '../schema.graphql');
+fs.writeFileSync(writePath, schemaStr);
 
-fs.writeFileSync(path.join(__dirname, '../schema.graphql'), printSchema(schema));
+process.exit();
