@@ -1,0 +1,9 @@
+extends: "airbnb"
+parser: "babel-eslint"
+plugins:
+  - react
+  - flowtype
+env:
+  browser: true
+settings:
+  import/resolver: "babel-plugin-root-import"

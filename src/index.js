@@ -1,132 +1,50 @@
 // @flow
 
+import path from 'path';
 import dotenv from 'dotenv';
-dotenv.config();
 
 import express from 'express';
 import authentication from 'express-authentication';
-import graphqlHTTP from 'express-graphql';
-import { buildSchema } from 'graphql';
-import session from 'express-session';
-import Grant from 'grant-express';
-import logger from 'morgan';
-import ConnectRedis from 'connect-redis';
+import morgan from 'morgan';
 
-import request from 'request';
-import Purest from 'purest';
-import config from '@purest/providers';
+import GraphQL from '~/src/graphql';
+import AuthMiddlewares from '~/src/auth';
+import logger from '~/src/logger';
 
-const purest = Purest({ request, promise: Promise });
-const google = purest({ provider: 'google', config });
-
-import Knex from 'knex';
-import Bookshelf from 'bookshelf';
-const knex = Knex({
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-});
-
-const bookshelf = Bookshelf(knex);
-
-var User = bookshelf.Model.extend({
-  tableName: 'users',
-});
-
-const schema = buildSchema(`
-  type Query {
-    hello: String!
-    bort: String!
-  }
-`);
-
-const root = {
-  hello: () => {
-    return 'Hello world!';
-  },
-};
-
-const grant = Grant({
-  'server': {
-    'protocol': 'http',
-    'host': 'localhost:4000',
-    'transport': 'session',
-    'state': true,
-    'callback': '/oauth',
-  },
-  'google': {
-    'key': process.env.GOOGLE_OAUTH_CLIENT_ID,
-    'secret': process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-    'scope': ['openid', 'email', 'profile'],
-  },
-});
-
-const RedisStore = ConnectRedis(session);
+dotenv.config();
 
 const app = express();
-app.use(logger('dev'));
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true,
-}));
-app.use(session({
-  store: new RedisStore(),
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-}));
-app.use(grant);
-app.use('/oauth', async (req, res, next) => {
-  const [,body] = await google
-    .query('plus')
-    .get('people/me')
-    .auth(req.session.grant.response.access_token)
-    .request();
 
-  let user;
-  try {
-    user = await User.where('provider_id', body.id).fetch({require: true});
-  } catch (e) {
-    user = new User({
-      email: body.emails[0].value,
-      provider_id: body.id,
-      image_url: body.image.url,
-      user_name: body.displayName,
-    });
-    user = await user.save();
-  }
+app.set('view engine', 'pug');
+app.set('views', './static');
 
-  req.session.provider_id = user.get('provider_id');
-  req.session.user_id = user.get('id');
-  res.end(JSON.stringify(req.session), null, 2);
+app.use(morgan('dev'));
+app.use(express.static(path.join(__dirname, '../static')));
 
-  next();
+AuthMiddlewares(app);
+
+app.use('/graphql', authentication.required(), GraphQL);
+
+app.get('/*', (req, res) => {
+  res.render('index', { user: JSON.stringify(req.authentication) });
 });
 
-app.use(async (req, res, next) => {
-  req.challenge = req.session.userid;
-  try {
-    const user = await User.where('id', req.session.user_id).fetch({required: true});
-    console.log("Got user");
-    req.authenticated = true;
-    req.authentication = user;
-  } catch (e) {
-    console.log("Got no user");
-    req.authenticated = false;
-    req.authentication = null;
-  }
-
-  next();
-});
-app.use('/', authentication.required(), (req, res) => {
-  console.log(req.authentication);
-  console.log("Cropping?", req);
-  res.end(JSON.stringify(req.authentication));
-});
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.end(JSON.stringify(err));
+  if (err instanceof Error) {
+    logger.error(err.toString());
+    logger.error(err.stack);
+  } else {
+    logger.error('Failed to authenticatio: ', err);
+  }
+  if (err instanceof Error) {
+    res.end(JSON.stringify({
+      error: err.toString(),
+      stack: err.stack,
+    }));
+  } else {
+    res.end(JSON.stringify(err));
+  }
+  next();
 });
-app.listen(4000);
 
-console.log('Running a GraphQL API Server at localhost:4000');
+app.listen(4000);

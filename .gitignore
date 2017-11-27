@@ -23,3 +23,7 @@ assets
 node_modules
 dist
 yarn-error.log
+combined.log
+error.log
+schema.graphql
+ui/__generated__
