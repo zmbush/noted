@@ -27,4 +27,4 @@ combined.log
 error.log
 schema.graphql
 ui/__generated__
-.static
+static
