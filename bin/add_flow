@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for i in src/**/*.js ui/**/*.js ui/**/*.jsx
+do
+  if ! grep -q @flow $i
+  then
+    (echo "// @flow" && echo) > flowificator
+    cat flowificator $i >$i.new && mv $i.new $i
+    rm flowificator
+  fi
+done

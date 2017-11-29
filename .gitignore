@@ -26,5 +26,5 @@ yarn-error.log
 combined.log
 error.log
 schema.graphql
-ui/__generated__
+__generated__
 static

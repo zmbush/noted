@@ -1,3 +1,5 @@
+// @flow
+
 import graphqlHTTP from 'express-graphql';
 import GraphQLBookshelf from 'graphql-bookshelfjs';
 

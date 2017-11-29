@@ -1,3 +1,5 @@
+// @flow
+
 import Knex from 'knex';
 import Bookshelf from 'bookshelf';
 import dotenv from 'dotenv';
@@ -13,5 +15,6 @@ const knex = Knex({
 });
 
 const bookshelf = Bookshelf(knex);
+bookshelf.plugin('registry');
 
 export default bookshelf;

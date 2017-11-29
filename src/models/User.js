@@ -1,8 +1,13 @@
-import bookshelf from '~/src/models/bookshelf';
+// @flow
 
-const User = bookshelf.Model.extend({
+import bookshelf from '~/src/models/bookshelf';
+import '~/src/models/Card';
+
+export default bookshelf.model('User', {
   tableName: 'users',
   hasTimestamps: true,
-});
 
-export default User;
+  cards() {
+    return this.hasMany('Card');
+  }
+});

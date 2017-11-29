@@ -4,6 +4,8 @@ import { QueryRenderer, graphql } from 'react-relay';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 import ReactDOM from 'react-dom';
 import React from 'react';
+import routes from '~/ui/routes';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const fetchQuery = (operation, variables = {}) => (
   fetch('/graphql', {
@@ -30,21 +32,11 @@ const environment = new Environment({
 const root = document.getElementById('root');
 
 if (root) {
+  const Router = routes(environment);
   ReactDOM.render(
-    <QueryRenderer
-      environment={environment}
-      query={graphql`query entryQuery { me { id user_name } }`}
-      render={({ error, props }) => {
-        if (error) {
-          return <div>{error.message}</div>;
-        } else if (props) {
-          return <div>{props.me.user_name}: {props.me.id}</div>;
-        }
-        return <div>Loading...</div>;
-      }}
-    />,
+    <MuiThemeProvider>
+      <Router />
+    </MuiThemeProvider>,
     root,
   );
-} else {
-  throw new Error('no root element');
 }

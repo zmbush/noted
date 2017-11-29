@@ -1,3 +1,5 @@
+// @flow
+
 import * as gql from 'graphql';
 
 export default {
