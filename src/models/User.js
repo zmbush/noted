@@ -1,7 +1,7 @@
 // @flow
 
-import bookshelf from '~/src/models/bookshelf';
-import '~/src/models/Card';
+import bookshelf from 'src/models/bookshelf';
+import 'src/models/Card';
 
 export default bookshelf.model('User', {
   tableName: 'users',
@@ -9,5 +9,5 @@ export default bookshelf.model('User', {
 
   cards() {
     return this.hasMany('Card');
-  }
+  },
 });

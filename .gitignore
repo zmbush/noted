@@ -28,3 +28,4 @@ error.log
 schema.graphql
 __generated__
 static
+.env

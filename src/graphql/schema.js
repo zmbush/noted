@@ -2,10 +2,10 @@
 
 import GraphQLBookshelf from 'graphql-bookshelfjs';
 
-import Q from '~/src/graphql/Q';
-import UserType from '~/src/graphql/UserType';
-import CardType from '~/src/graphql/CardType';
-import User from '~/src/models/User';
+import Q from 'src/graphql/Q';
+import UserType from 'src/graphql/UserType';
+import CardType from 'src/graphql/CardType';
+import User from 'src/models/User';
 
 export default new Q.Schema({
   query: new Q.ObjectType({
@@ -13,7 +13,12 @@ export default new Q.Schema({
     fields: {
       me: {
         type: UserType,
-        resolve: GraphQLBookshelf.resolverFactory(User),
+        resolve(user, ...rest) {
+          if (!user) {
+            return null;
+          }
+          return GraphQLBookshelf.resolverFactory(User)(user, ...rest);
+        },
       },
     },
   }),
@@ -28,11 +33,14 @@ export default new Q.Schema({
           contents: { type: new Q.NonNull(Q.String) },
         },
         resolve(user, { title, contents }) {
+          if (!user) {
+            return null;
+          }
           return user.related('cards').create({
             title,
             contents,
             permalink: title.toLowerCase().split(' ').join('-'),
-          }).then(c => c.attributes);
+          }).then(GraphQLBookshelf.exposeAttributes);
         },
       },
       modifyCard: {
@@ -47,7 +55,7 @@ export default new Q.Schema({
         args: {
           name: { type: Q.String },
         },
-        resolve(user, { name }, request) {
+        resolve(user, { name }) {
           if (user) {
             return user.set('user_name', name).save().then(m => m.attributes);
           }

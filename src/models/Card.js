@@ -1,7 +1,7 @@
 // @flow
 
-import bookshelf from '~/src/models/bookshelf';
-import '~/src/models/User';
+import bookshelf from 'src/models/bookshelf';
+import 'src/models/User';
 
 export default bookshelf.model('Card', {
   tableName: 'cards',
@@ -9,5 +9,5 @@ export default bookshelf.model('Card', {
 
   user() {
     return this.belongsTo('User');
-  }
+  },
 });

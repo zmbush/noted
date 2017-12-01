@@ -6,4 +6,8 @@ plugins:
 env:
   browser: true
 settings:
-  import/resolver: "babel-plugin-root-import"
+  import/resolver:
+    babel-module:
+      extensions:
+        - .js
+        - .jsx

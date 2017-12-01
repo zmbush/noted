@@ -2,7 +2,9 @@
   "presets": ["env", "react", "flow"],
   "plugins": [
     "syntax-async-functions",
-    "root-import"
+    "transform-class-properties",
+    "relay",
+    ["module-resolver", {"root": ["./"]}]
   ],
   "env": {
     "production": {

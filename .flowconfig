@@ -3,12 +3,13 @@
 [include]
 
 [libs]
-./lib
+./lib/
+./flow-typed/
 
 [lints]
 
 [options]
-module.name_mapper='^~/\(.*\)$' -> '<PROJECT_ROOT>/\1'
+module.name_mapper='^\(src\|ui\)/\(.*\)$' -> '<PROJECT_ROOT>/\1/\2'
 module.file_ext=.graphql.js
 module.file_ext=.js
 module.file_ext=.jsx

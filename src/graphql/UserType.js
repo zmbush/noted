@@ -1,9 +1,9 @@
 // @flow
 
 import GraphQLBookshelf from 'graphql-bookshelfjs';
-import Q from '~/src/graphql/Q';
-import CardType from '~/src/graphql/CardType';
-import bookshelf from '~/src/models/bookshelf';
+import Q from 'src/graphql/Q';
+import CardType from 'src/graphql/CardType';
+import bookshelf from 'src/models/bookshelf';
 
 export default new Q.ObjectType({
   name: 'User',
@@ -25,6 +25,6 @@ export default new Q.ObjectType({
         permalink: { type: new Q.NonNull(Q.String) },
       },
       resolve: GraphQLBookshelf.resolverFactory(bookshelf.model('Card')),
-    }
+    },
   }),
 });

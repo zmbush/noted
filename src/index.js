@@ -6,12 +6,12 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 import express from 'express';
-import authentication from 'express-authentication';
+import type { $Request, $Response, NextFunction } from 'express';
 import morgan from 'morgan';
 
-import GraphQL from '~/src/graphql';
-import AuthMiddlewares from '~/src/auth';
-import logger from '~/src/logger';
+import GraphQL from 'src/graphql';
+import AuthMiddlewares, { type AuthenticatedRequest } from 'src/auth';
+import logger from 'src/logger';
 
 dotenv.config();
 
@@ -25,13 +25,14 @@ app.use(express.static(path.join(__dirname, '../static')));
 
 AuthMiddlewares(app);
 
-app.use('/graphql', authentication.required(), GraphQL);
+app.use('/graphql', GraphQL);
 
-app.get('/*', (req, res) => {
-  res.render('index', { user: JSON.stringify(req.authentication) });
+app.get('/*', (req: AuthenticatedRequest, res: $Response, next: NextFunction) => {
+  res.render('index', { user: JSON.stringify(req.authentication || {}) });
+  next();
 });
 
-app.use((err, req, res, next) => {
+app.use((err: Error, req: $Request, res: $Response, next: NextFunction) => {
   if (err instanceof Error) {
     logger.error(err.toString());
     logger.error(err.stack);

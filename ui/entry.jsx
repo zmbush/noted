@@ -1,10 +1,9 @@
 // @flow
 
-import { QueryRenderer, graphql } from 'react-relay';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 import ReactDOM from 'react-dom';
 import React from 'react';
-import routes from '~/ui/routes';
+import routes from 'ui/routes';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const fetchQuery = (operation, variables = {}) => (

@@ -5,16 +5,24 @@ import Purest from 'purest';
 import config from '@purest/providers';
 import request from 'request';
 import dotenv from 'dotenv';
+import type { $Request } from 'express';
 
-import { asyncHandler } from '~/src/util';
-import User from '~/src/models/User';
-import logger from '~/src/logger';
+import { asyncHandler } from 'src/util';
+import User from 'src/models/User';
+import Logger from 'src/logger';
+
+const logger = Logger(module);
 
 dotenv.config();
 
 const RedisStore = ConnectRedis(session);
 const purest = Purest({ request, promise: Promise });
 const google = purest({ provider: 'google', config });
+
+export type AuthenticatedRequest = $Request & {
+  authenticated: bool,
+  authentication: {},
+};
 
 export default function AuthMiddlewares(app) {
   app.use(session({
@@ -89,24 +97,35 @@ export default function AuthMiddlewares(app) {
     next();
   }));
 
+  app.use('/logout', (req, res, next) => {
+    req.session.destroy();
+    res.redirect('/');
+
+    next();
+  });
+
   app.use(asyncHandler(async (req, res, next) => {
-    logger.info('fetching user', { uid: req.session.user_id });
-    req.challenge = req.session.user_id;
-    try {
-      const user = await User.where('id', req.session.user_id).fetch({ required: true });
-      logger.info('user fetched', user);
-      if (!user) {
-        throw new Error('no user');
+    if (req.session.user_id) {
+      logger.info('fetching user', { uid: req.session.user_id });
+      req.challenge = req.session.user_id;
+      try {
+        const user = await User.where('id', req.session.user_id).fetch({ required: true });
+        logger.info('user fetched', user);
+        if (!user) {
+          throw new Error('no user');
+        }
+        req.authenticated = true;
+        req.authentication = await user
+          .set('last_seen', new Date())
+          .save();
+        logger.info('Authentication successful!');
+      } catch (e) {
+        logger.info('Authentication failed...', { e: e.toString() });
+        req.authenticated = false;
+        req.authentication = { error: 'invalid user id' };
       }
-      req.authenticated = true;
-      req.authentication = await user
-        .set('last_seen', new Date())
-        .save();
-      logger.info('Authentication successful!');
-    } catch (e) {
-      logger.info('Authentication failed...', {e: e.toString()});
-      req.authenticated = false;
-      req.authentication = { error: 'invalid user id' };
+    } else {
+      logger.info('No user. Skipping auth');
     }
 
     next();

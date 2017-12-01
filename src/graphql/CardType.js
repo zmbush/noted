@@ -1,9 +1,9 @@
 // @flow
 
 import GraphQLBookshelf from 'graphql-bookshelfjs';
-import Q from '~/src/graphql/Q';
-import UserType from '~/src/graphql/UserType';
-import bookshelf from '~/src/models/bookshelf';
+import Q from 'src/graphql/Q';
+import UserType from 'src/graphql/UserType';
+import bookshelf from 'src/models/bookshelf';
 
 export default new Q.ObjectType({
   name: 'Card',

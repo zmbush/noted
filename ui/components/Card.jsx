@@ -1,26 +1,24 @@
 // @flow
 
-import { createFragmentContainer } from 'react-relay';
-import { graphql } from 'react-relay';
+import { createFragmentContainer, graphql } from 'react-relay';
 import React from 'react';
+// eslint-disable-next-line camelcase
 import type { Card_card } from './__generated__/Card_card.graphql';
 
 type Props = {
-  card: Card_card,
+  card: Card_card, // eslint-disable-line camelcase
 };
 
-class Card extends React.Component<Props> {
-  render() {
-    const { card } = this.props;
+const Card = (props: Props) => {
+  const { title, contents } = props.card;
 
-    return (
-      <div>
-        <h1>{ card.title }</h1>
-        { card.contents }
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <h1>{ title }</h1>
+      { contents }
+    </div>
+  );
+};
 
 export default createFragmentContainer(
   Card,

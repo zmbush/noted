@@ -3,13 +3,15 @@
 import graphqlHTTP from 'express-graphql';
 import GraphQLBookshelf from 'graphql-bookshelfjs';
 
-import schema from '~/src/graphql/schema';
+import { type AuthenticatedRequest } from 'src/auth';
+
+import schema from 'src/graphql/schema';
 
 const dev = process.env.NODE_ENV !== 'production';
 
-export default graphqlHTTP(request => ({
+export default graphqlHTTP((request: AuthenticatedRequest) => ({
   schema,
-  rootValue: request.authentication,
+  rootValue: request.authenticated ? request.authentication : null,
   graphiql: dev,
   pretty: dev,
   context: {

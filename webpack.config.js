@@ -52,17 +52,6 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: [{
           loader: 'babel-loader',
-          options: {
-            presets: [
-              'env', 'react', 'flow',
-            ],
-            plugins: [
-              'transform-object-rest-spread',
-              'transform-class-properties',
-              'flow-react-proptypes',
-              'relay',
-            ],
-          },
         }],
       }, {
         test: /\.s?css$/,
@@ -77,6 +66,33 @@ module.exports = {
         }, {
           loader: 'sass-loader',
         }],
+      }, {
+        test: /\.(jpe?g|png|gif)$/i,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            gifsicle: {
+              interlaced: false,
+            },
+            optipng: {
+              optimizationLevel: 7,
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4,
+            },
+            mozjpeg: {
+              progressive: true,
+              quality: 65,
+            },
+            webp: {
+              quality: 75,
+            },
+          },
+        }],
+      }, {
+        test: /\.svg$/,
+        loader: 'react-svg-loader',
       },
     ],
   },

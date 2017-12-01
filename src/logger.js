@@ -15,4 +15,15 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-export default logger;
+export default module => new Proxy({ logger }, {
+  get(obj, property) {
+    const l = obj.logger;
+    if (property in l) {
+      if (typeof l[property] === 'function') {
+        return (msg, ...rest) => l[property](`${module.id}: ${msg}`, ...rest);
+      }
+      return l[property];
+    }
+    return undefined;
+  },
+});
