@@ -25,7 +25,7 @@ dist
 yarn-error.log
 combined.log
 error.log
-schema.graphql
 __generated__
 static
 .env
+log

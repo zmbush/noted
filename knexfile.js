@@ -7,8 +7,8 @@ module.exports = {
     client: 'postgresql',
     connection: process.env.DATABASE_URL,
     migrations: {
-      tableName: 'noted'
-    }
+      tableName: 'noted',
+    },
   },
 
   production: {
@@ -16,11 +16,11 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'noted'
-    }
-  }
+      tableName: 'noted',
+    },
+  },
 
 };
