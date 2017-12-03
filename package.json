@@ -17,7 +17,7 @@
     "url": "git+https://github.com/zmbush/noted.git"
   },
   "author": "Zach Bush <zach@zmbush.com>",
-  "license": "MIT/Apache",
+  "license": "(MIT OR Apache-2.0)",
   "bugs": {
     "url": "https://github.com/zmbush/noted/issues"
   },
@@ -45,6 +45,7 @@
     "eslint": "^4.12.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-babel-module": "^4.0.0-beta.3",
+    "eslint-plugin-flow-header": "^0.2.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",

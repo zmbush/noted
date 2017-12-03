@@ -11,19 +11,26 @@
 import graphqlHTTP from 'express-graphql';
 import GraphQLBookshelf from 'graphql-bookshelfjs';
 
-import { type AuthenticatedRequest } from 'src/auth';
+import type { $Request } from 'express';
 
 import schema from 'src/graphql/schema';
 
-const dev = process.env.NODE_ENV !== 'production';
+const developmentOnly = process.env.NODE_ENV !== 'production';
 
-export default graphqlHTTP((request: AuthenticatedRequest) => ({
-  schema,
-  rootValue: request.authenticated ? request.authentication : null,
-  graphiql: dev,
-  pretty: dev,
-  context: {
-    request,
-    loaders: GraphQLBookshelf.getLoaders(),
-  },
-}));
+export default graphqlHTTP((request: $Request) => {
+  let rootValue = null;
+  if (request.authenticated && request.authentication) {
+    rootValue = request.authentication;
+  }
+
+  return {
+    schema,
+    rootValue,
+    graphiql: developmentOnly,
+    pretty: developmentOnly,
+    context: {
+      request,
+      loaders: GraphQLBookshelf.getLoaders(),
+    },
+  };
+});

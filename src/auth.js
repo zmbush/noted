@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+// @flow
+
 import session from 'express-session';
 import ConnectRedis from 'connect-redis';
 import Grant from 'grant-express';
@@ -13,7 +15,7 @@ import Purest from 'purest';
 import config from '@purest/providers';
 import request from 'request';
 import dotenv from 'dotenv';
-import type { $Request } from 'express';
+import type { $Request, $Application, $Response, NextFunction } from 'express';
 
 import { asyncHandler } from 'src/util';
 import User from 'src/models/User';
@@ -32,7 +34,13 @@ export type AuthenticatedRequest = $Request & {
   authentication: {},
 };
 
-export default function AuthMiddlewares(app) {
+type SessionRequest = $Request & {
+  session: {
+    destroy: () => void,
+  },
+};
+
+export default function AuthMiddlewares(app: $Application) {
   app.use(session({
     store: new RedisStore(),
     secret: process.env.SESSION_SECRET,
@@ -60,7 +68,7 @@ export default function AuthMiddlewares(app) {
     logger.info('oauth');
     if (!req.session.grant || !req.session.grant.response) {
       logger.error('No session found for oauth endpoint');
-      throw Object.create(null, { error: 'no session' });
+      throw new Error('no session');
     }
 
     const [, body] = await google
@@ -105,7 +113,7 @@ export default function AuthMiddlewares(app) {
     next();
   }));
 
-  app.use('/logout', (req, res, next) => {
+  app.use('/logout', (req: SessionRequest, res: $Response, next: NextFunction) => {
     req.session.destroy();
     res.redirect('/');
 

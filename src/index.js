@@ -19,7 +19,9 @@ import morgan from 'morgan';
 
 import GraphQL from 'src/graphql';
 import AuthMiddlewares, { type AuthenticatedRequest } from 'src/auth';
-import logger from 'src/logger';
+import Logger from 'src/logger';
+
+const logger = Logger(module);
 
 dotenv.config();
 

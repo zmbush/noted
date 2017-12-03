@@ -3,6 +3,7 @@ parser: "babel-eslint"
 plugins:
   - react
   - flowtype
+  - flow-header
 env:
   browser: true
 settings:
@@ -11,3 +12,5 @@ settings:
       extensions:
         - .js
         - .jsx
+rules:
+  flow-header/flow-header: 2

@@ -3,3 +3,4 @@ webpack: yarn webpack --color=true -w
 relay: yarn relay --watch
 schema: yarn nodemon -e js,jsx -w tools/writeSchema.js -w src/graphql --exec yarn update-schema
 lint: yarn nodemon -e js,jsx -w ui -w src --exec 'yarn lint; exit 0'
+flow: yarn nodemon -e js,jsx -w ui -w src --exec 'yarn flow --color always; exit 0'

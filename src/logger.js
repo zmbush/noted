@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+// @flow
+
 import winston from 'winston';
 
 const logger = winston.createLogger({
@@ -23,15 +25,37 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-export default module => new Proxy({ logger }, {
-  get(obj, property) {
-    const l = obj.logger;
-    if (property in l) {
-      if (typeof l[property] === 'function') {
-        return (msg, ...rest) => l[property](`${module.id}: ${msg}`, ...rest);
-      }
-      return l[property];
-    }
-    return undefined;
+export default (module: { id: string }) => ({
+  log(level: string, message: string, ...rest: any[]) {
+    const msg = `${module.id}: ${message}`;
+    logger.log(level, msg, ...rest);
+  },
+
+  error(...rest: any[]) {
+    this.log('error', ...rest);
+  },
+
+  warn(...rest: any[]) {
+    this.log('warn', ...rest);
+  },
+
+  info(...rest: any[]) {
+    this.log('info', ...rest);
+  },
+
+  http(...rest: any[]) {
+    this.log('http', ...rest);
+  },
+
+  verbose(...rest: any[]) {
+    this.log('verbose', ...rest);
+  },
+
+  debug(...rest: any[]) {
+    this.log('debug', ...rest);
+  },
+
+  silly(...rest: any[]) {
+    this.log('silly', ...rest);
   },
 });
