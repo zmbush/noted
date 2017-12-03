@@ -8,7 +8,8 @@
     "update-schema": "babel-node tools/writeSchema.js",
     "build": "tools/build",
     "serve": "node dist/index.js",
-    "lint": "eslint --color=true --ext .js --ext .jsx ui src"
+    "lint": "eslint --color=true --ext .js --ext .jsx ui src",
+    "commitmsg": "commitlint -e $GIT_PARAMS"
   },
   "repository": {
     "type": "git",
@@ -22,13 +23,11 @@
   "homepage": "https://github.com/zmbush/noted#readme",
   "dependencies": {
     "@purest/providers": "^1.0.1",
-    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-flow-react-proptypes": "^9.1.1",
     "babel-plugin-module-resolver": "^3.0.0",
     "babel-plugin-relay": "^1.4.1",
-    "babel-plugin-root-import": "^5.1.0",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -37,7 +36,6 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-minify": "^0.2.0",
     "babel-preset-react": "^6.24.1",
-    "bluebird": "^3.5.1",
     "bookshelf": "^0.11.1",
     "connect-redis": "^3.3.2",
     "copy-webpack-plugin": "^4.2.3",
@@ -46,7 +44,6 @@
     "eslint": "^4.12.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-babel-module": "^4.0.0-beta.3",
-    "eslint-import-resolver-babel-root-import": "^0.0.2",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
@@ -66,6 +63,7 @@
     "graphql": "^0.11.7",
     "graphql-bookshelfjs": "zmbush/graphql-bookshelfjs",
     "html-webpack-plugin": "^2.30.1",
+    "husky": "^0.14.3",
     "knex": "0.13",
     "material-ui": "^0.19.4",
     "morgan": "^1.9.0",
@@ -89,7 +87,15 @@
     "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^5.2.0",
+    "@commitlint/config-conventional": "^5.1.3",
     "babel-cli": "^6.26.0",
+    "cz-conventional-changelog": "^2.1.0",
     "relay-compiler": "^1.4.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
