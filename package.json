@@ -16,8 +16,8 @@
     "type": "git",
     "url": "git+https://github.com/zmbush/noted.git"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Zach Bush <zach@zmbush.com>",
+  "license": "MIT/Apache",
   "bugs": {
     "url": "https://github.com/zmbush/noted/issues"
   },
