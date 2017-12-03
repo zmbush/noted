@@ -9,7 +9,8 @@
     "build": "tools/build",
     "serve": "node dist/index.js",
     "lint": "eslint --color=true --ext .js --ext .jsx ui src",
-    "commitmsg": "commitlint -e $GIT_PARAMS"
+    "commitmsg": "commitlint -e $GIT_PARAMS",
+    "changelog": "conventional-changelog -p express -o CHANGELOG.md"
   },
   "repository": {
     "type": "git",
