@@ -18,6 +18,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import 'normalize.css';
 import LogInPlease from 'ui/components/LogInPlease';
+import NotificationCenter from 'ui/components/NotificationCenter';
 
 // eslint-disable-next-line camelcase
 import type { App_me } from './__generated__/App_me.graphql';
@@ -63,6 +64,7 @@ class App extends React.Component<Props, State> {
             <MenuItem onClick={() => { window.location.href = '/logout'; }}>Sign Out</MenuItem>
           </Drawer>
           { children }
+          <NotificationCenter />
         </div>
       );
     }
