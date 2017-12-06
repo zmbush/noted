@@ -79,7 +79,7 @@ export default function AuthMiddlewares(app: $Application) {
     logger.info('getting shit');
 
     if (body.error) {
-      logger.info('got error...');
+      logger.info('got error...', body.error);
       throw body.error;
     }
 

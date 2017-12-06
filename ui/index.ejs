@@ -15,7 +15,8 @@ html
     <% } %>
     meta(name="viewport" contents="width=device-width")
     script(type='text/javascript').
-      let user = !{user};
+      window.user = !{user};
+      window.error = !{error};
 
   body
     div#root

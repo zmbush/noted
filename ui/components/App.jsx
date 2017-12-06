@@ -26,6 +26,7 @@ import type { App_me } from './__generated__/App_me.graphql';
 type Props = {
   me: ?App_me, // eslint-disable-line camelcase
   children: ?React.Node,
+  router: { push: (string) => void },
 };
 
 type State = {
@@ -54,7 +55,8 @@ class App extends React.Component<Props, State> {
           <AppBar
             title="Noted"
             iconElementRight={<Avatar src={me.image_url} />}
-            onLeftIconButtonTouchTap={() => this.setMenuOpen(true)}
+            onTitleClick={() => this.props.router.push('/')}
+            onLeftIconButtonClick={() => this.setMenuOpen(true)}
           />
           <Drawer
             docked={false}
