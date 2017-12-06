@@ -38,24 +38,36 @@ AuthMiddlewares(app);
 app.use('/graphql', GraphQL);
 
 app.get('/*', (req: AuthenticatedRequest, res: $Response, next: NextFunction) => {
-  res.render('index', { user: JSON.stringify(req.authentication || {}) });
+  res.render('index', { user: JSON.stringify(req.authentication || {}), error: 'null' });
   next();
 });
 
 app.use((err: Error, req: $Request, res: $Response, next: NextFunction) => {
+  logger.info('entering error handler');
   if (err instanceof Error) {
     logger.error(err.toString());
     logger.error(err.stack);
   } else {
-    logger.error('Failed to authenticatio: ', err);
+    logger.error('Non error type error:', err);
   }
+  if (err.code && typeof err.code === 'number') {
+    res.status(err.code);
+  } else {
+    res.status(500);
+  }
+  let errStr = '';
   if (err instanceof Error) {
-    res.end(JSON.stringify({
+    errStr = JSON.stringify({
       error: err.toString(),
       stack: err.stack,
-    }));
+    });
   } else {
-    res.end(JSON.stringify(err));
+    errStr = JSON.stringify(err);
+  }
+  if (req.accepts('html')) {
+    res.render('index', { error: errStr, user: JSON.stringify(req.authentication || {}) });
+  } else if (req.accepts('json')) {
+    res.end(errStr);
   }
   next();
 });

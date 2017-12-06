@@ -8,7 +8,7 @@
 
 // @flow
 
-import { makeRouteConfig, Route, createRender } from 'found';
+import { makeRouteConfig, Route, createRender, RedirectException } from 'found';
 import BrowserProtocol from 'farce/lib/BrowserProtocol';
 import createFarceRouter from 'found/lib/createFarceRouter';
 
@@ -19,6 +19,7 @@ import { graphql } from 'react-relay';
 
 import CardList from 'ui/components/CardList';
 import App from 'ui/components/App';
+import ErrorView from 'ui/components/ErrorView';
 
 export default (environment: typeof Environment) => {
   const resolver = new Resolver(environment);
@@ -33,6 +34,10 @@ export default (environment: typeof Environment) => {
           Component={CardList}
           query={graphql`query routes_CardList_Query { me { ...CardList_me } }`}
         />
+        <Route
+          path="/error/:errorType"
+          Component={ErrorView}
+        />
       </Route>
     </Route>
   );
@@ -43,8 +48,11 @@ export default (environment: typeof Environment) => {
     routeConfig: makeRouteConfig(routes),
 
     render: createRender({
-      renderError({ error }: { error: string }) {
-        return <div>{ error }</div>;
+      renderError({ error }: { error: { status: number } }) {
+        if (window.error) {
+          throw new RedirectException('/error/server');
+        }
+        throw new RedirectException(`/error/${error.status}`);
       },
     }),
   });

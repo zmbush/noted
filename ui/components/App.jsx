@@ -18,6 +18,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import 'normalize.css';
 import LogInPlease from 'ui/components/LogInPlease';
+import NotificationCenter from 'ui/components/NotificationCenter';
 
 // eslint-disable-next-line camelcase
 import type { App_me } from './__generated__/App_me.graphql';
@@ -25,6 +26,7 @@ import type { App_me } from './__generated__/App_me.graphql';
 type Props = {
   me: ?App_me, // eslint-disable-line camelcase
   children: ?React.Node,
+  router: { push: (string) => void },
 };
 
 type State = {
@@ -53,7 +55,8 @@ class App extends React.Component<Props, State> {
           <AppBar
             title="Noted"
             iconElementRight={<Avatar src={me.image_url} />}
-            onLeftIconButtonTouchTap={() => this.setMenuOpen(true)}
+            onTitleClick={() => this.props.router.push('/')}
+            onLeftIconButtonClick={() => this.setMenuOpen(true)}
           />
           <Drawer
             docked={false}
@@ -63,6 +66,7 @@ class App extends React.Component<Props, State> {
             <MenuItem onClick={() => { window.location.href = '/logout'; }}>Sign Out</MenuItem>
           </Drawer>
           { children }
+          <NotificationCenter />
         </div>
       );
     }

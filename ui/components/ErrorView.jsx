@@ -8,11 +8,21 @@
 
 // @flow
 
-import type $Subtype from 'flow';
-import type { $Request, $Response, NextFunction } from 'express';
+import React from 'react';
 
-export const asyncHandler = (fn: ($Subtype<$Request>, $Response, NextFunction) => Promise<*>) => (
-  (req: $Subtype<$Request>, res: $Response, next: NextFunction) => fn(req, res, next).catch(next)
-);
+type Props = {
+  routeParams: {
+    errorType: string,
+  },
+};
 
-export const SHIT = 'shit';
+export default ({ routeParams: { errorType } }: Props) => {
+  if (errorType === 'server') {
+    return (
+      <div>
+        Server Error: { JSON.stringify(window.error) }
+      </div>
+    );
+  }
+  return <div>Error: { errorType }</div>;
+};
