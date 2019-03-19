@@ -15,7 +15,6 @@ pub mod schema;
 use {
     diesel::{
         pg::PgConnection,
-        prelude::*,
         r2d2::{ConnectionManager, Pool, PooledConnection},
     },
     dotenv::dotenv,

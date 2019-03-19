@@ -28,3 +28,4 @@ error.log
 __generated__
 static
 log
+.env
