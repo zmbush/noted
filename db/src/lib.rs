@@ -9,7 +9,6 @@
 #[macro_use]
 extern crate diesel;
 
-pub mod api;
 pub mod models;
 pub mod schema;
 
@@ -39,18 +38,4 @@ lazy_static! {
 
 pub fn db() -> IronResult<PooledConnection<ConnectionManager<PgConnection>>> {
     Ok(itry!(CONNECTION_POOL.get()))
-}
-
-pub fn create_note<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> models::Note {
-    use schema::notes;
-
-    let new_note = models::NewNote {
-        title: title.to_owned(),
-        body: body.to_owned(),
-    };
-
-    diesel::insert_into(notes::table)
-        .values(&new_note)
-        .get_result(conn)
-        .expect("Unable to save note")
 }

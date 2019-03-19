@@ -93,47 +93,47 @@ fn get_id(req: &mut Request) -> IronResult<i32> {
 }
 
 fn list_titles(_: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes::dsl::*;
+    use noted_db::schema::notes::dsl::*;
 
-    render_json::<Vec<(i32, String)>>(itry!(notes.select((id, title)).load(&crate::db()?)))
+    render_json::<Vec<(i32, String)>>(itry!(notes.select((id, title)).load(&noted_db::db()?)))
 }
 
 fn list_notes(_: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes::dsl::*;
+    use noted_db::schema::notes::dsl::*;
 
-    render_json::<Vec<crate::models::Note>>(itry!(notes.order_by(title).load(&crate::db()?)))
+    render_json::<Vec<noted_db::models::Note>>(itry!(notes.order_by(title).load(&noted_db::db()?)))
 }
 
 fn new_note(req: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes;
+    use noted_db::schema::notes;
 
-    let new_note: crate::models::NewNote = read_body(req)?;
+    let new_note: noted_db::models::NewNote = read_body(req)?;
 
-    render_json::<crate::models::Note>(itry!(diesel::insert_into(notes::table)
+    render_json::<noted_db::models::Note>(itry!(diesel::insert_into(notes::table)
         .values(&new_note)
-        .get_result(&crate::db()?)))
+        .get_result(&noted_db::db()?)))
 }
 
 fn read_note(req: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes::dsl::*;
+    use noted_db::schema::notes::dsl::*;
 
-    render_json::<crate::models::Note>(itry!(notes.find(get_id(req)?).first(&crate::db()?)))
+    render_json::<noted_db::models::Note>(itry!(notes.find(get_id(req)?).first(&noted_db::db()?)))
 }
 
 fn update_note(req: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes::dsl::*;
+    use noted_db::schema::notes::dsl::*;
 
-    let update_note: crate::models::UpdateNote = read_body(req)?;
+    let update_note: noted_db::models::UpdateNote = read_body(req)?;
 
-    render_json::<crate::models::Note>(itry!(diesel::update(notes.find(get_id(req)?))
+    render_json::<noted_db::models::Note>(itry!(diesel::update(notes.find(get_id(req)?))
         .set(&update_note)
-        .get_result(&crate::db()?)))
+        .get_result(&noted_db::db()?)))
 }
 
 fn delete_note(req: &mut Request) -> IronResult<Response> {
-    use crate::schema::notes::dsl::*;
+    use noted_db::schema::notes::dsl::*;
 
-    if itry!(diesel::delete(notes.find(get_id(req)?)).execute(&crate::db()?)) != 0 {
+    if itry!(diesel::delete(notes.find(get_id(req)?)).execute(&noted_db::db()?)) != 0 {
         Ok(Response::with((status::Ok, "{\"status\":\"ok\"}")))
     } else {
         Ok(Response::with((

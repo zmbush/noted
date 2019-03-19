@@ -1,4 +1,4 @@
-// Copyright 2017 Zachary Bush.
+// Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -6,16 +6,4 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// @flow
-
-import bookshelf from 'src/models/bookshelf';
-import 'src/models/Card';
-
-export default bookshelf.model('User', {
-  tableName: 'users',
-  hasTimestamps: true,
-
-  cards() {
-    return this.hasMany('Card');
-  },
-});
+pub mod api;

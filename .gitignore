@@ -27,5 +27,4 @@ combined.log
 error.log
 __generated__
 static
-.env
 log

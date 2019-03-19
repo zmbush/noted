@@ -1,18 +1,15 @@
 {
-  "presets": ["env", "react", "flow"],
-  "plugins": [
-    "syntax-async-functions",
-    "flow-react-proptypes",
-    "transform-class-properties",
-    "transform-object-rest-spread",
-    "relay",
-    ["module-resolver", {"root": ["./"]}]
+  "presets": [
+    [
+      "@babel/preset-env", {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ],
+    "@babel/preset-react"
   ],
-  "env": {
-    "production": {
-      "presets": [
-        [ "minify", { "mangle": false } ]
-      ]
-    }
-  }
+  "plugins": [
+    "@babel/plugin-proposal-class-properties"
+  ]
 }
