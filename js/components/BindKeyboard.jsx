@@ -10,51 +10,6 @@ import React from 'react';
 import Mousetrap from 'mousetrap';
 import PropTypes from 'prop-types';
 
-let _globalCallbacks = {};
-let _originalStopCallback = Mousetrap.prototype.stopCallback;
-
-Object.assign(Mousetrap.prototype, {
-  stopCallback(e, element, keys, sequence) {
-    if (this.paused) {
-      return true;
-    }
-
-    if (_globalCallbacks[keys] || _globalCallbacks[sequence]) {
-      return false;
-    }
-
-    return _originalStopCallback.call(this, e, element, keys);
-  },
-
-  bindGlobal(keys, callback, action) {
-    this.bind(keys, callback, action);
-
-    if (keys instanceof Array) {
-      for (var i = 0; i < keys.length; i++) {
-        _globalCallbacks[keys[i]] = true;
-      }
-      return;
-    }
-
-    _globalCallbacks[keys] = true;
-  },
-
-  unbindGlobal(keys, action) {
-    this.unbind(keys, action);
-
-    if (keys instanceof Array) {
-      for (var i = 0; i < keys.length; i++) {
-        delete _globalCallbacks[keys[i]];
-      }
-      return;
-    }
-
-    delete _globalCallbacks[keys];
-  },
-});
-
-Mousetrap.init();
-
 export default class BindKeyboard extends React.Component {
   static propTypes = {
     keys: PropTypes.string.isRequired,

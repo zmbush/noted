@@ -107,9 +107,12 @@ class App extends React.Component {
     this.state = {
       notes: [],
       search: '',
+      newNote: false,
     };
 
     this.searchInput = React.createRef();
+    this.firstNote = React.createRef();
+    this.newNote = React.createRef();
   }
 
   componentDidMount() {
@@ -128,21 +131,34 @@ class App extends React.Component {
   }
 
   updateNote = note => {
-    this.state.notes[note.id] = note;
-    this.setState({ notes: this.state.notes });
+    if (note) {
+      this.state.notes[note.id] = note;
+    }
+    this.setState({ notes: this.state.notes, newNote: false });
   };
 
   renderNotes(classes) {
     if (this.state.search != '') {
       let fuse = new Fuse(Object.values(this.state.notes), {
-        shouldSort: true,
-        includeMatches: true,
-        threshold: 0.6,
-        location: 0,
         distance: 100,
+        includeMatches: true,
+        keys: [
+          {
+            name: 'title',
+            weight: 1.0,
+          },
+          {
+            name: 'body',
+            weight: 0.5,
+          },
+        ],
+        location: 0,
+        matchAllTokens: true,
         maxPatternLength: 32,
         minMatchCharLength: 1,
-        keys: ['title', 'body'],
+        shouldSort: true,
+        threshold: 0.4,
+        tokenize: true,
       });
 
       let elements = [];
@@ -164,6 +180,7 @@ class App extends React.Component {
         );
       }
 
+      let i = 0;
       for (let n of results) {
         elements.push(
           <Grid item key={n.item.id} xs={12}>
@@ -171,9 +188,11 @@ class App extends React.Component {
               note={n.item}
               matches={n.matches}
               updateNote={this.updateNote}
+              innerRef={i == 0 ? this.firstNote : null}
             />
           </Grid>
         );
+        i++;
       }
       return elements;
     } else {
@@ -201,6 +220,24 @@ class App extends React.Component {
     this.searchInput.current.focus();
   };
 
+  startEdit = e => {
+    e.preventDefault();
+    if (this.firstNote.current) {
+      this.firstNote.current.startEdit();
+    } else {
+      this.createNew(e);
+    }
+  };
+
+  createNew = e => {
+    e.preventDefault();
+    this.setState({ newNote: true }, () => {
+      if (this.newNote.current) {
+        this.newNote.current.startEdit();
+      }
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -224,26 +261,40 @@ class App extends React.Component {
               Noted
             </Typography>
             <div className={classes.grow} />
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+            <BindKeyboard keys='ctrl+o' callback={this.createNew}>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <form onSubmit={this.startEdit}>
+                  <InputBase
+                    inputProps={{
+                      ref: this.searchInput,
+                    }}
+                    placeholder='Search...'
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                    value={this.state.search}
+                    onChange={e => this.setState({ search: e.target.value })}
+                  />
+                </form>
               </div>
-              <InputBase
-                inputProps={{
-                  ref: this.searchInput,
-                }}
-                placeholder='Search...'
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                value={this.state.search}
-                onChange={e => this.setState({ search: e.target.value })}
-              />
-            </div>
+            </BindKeyboard>
           </Toolbar>
         </AppBar>
         <Grid container spacing={16} className={classes.contentRoot}>
+          {this.state.newNote ? (
+            <Grid item xs={12}>
+              <Note
+                new
+                innerRef={this.newNote}
+                note={{ title: this.state.search }}
+                updateNote={this.updateNote}
+              />
+            </Grid>
+          ) : null}
           {this.renderNotes(classes)}
         </Grid>
 

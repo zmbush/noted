@@ -48,7 +48,15 @@ class Note extends React.Component {
     this.state = {
       edit: false,
     };
+
+    this.mainInput = React.createRef();
   }
+
+  cancelEdit = e => {
+    e.preventDefault();
+    this.setState({ edit: false });
+    this.props.updateNote(null);
+  };
 
   saveShortcut = e => {
     e.preventDefault();
@@ -69,69 +77,79 @@ class Note extends React.Component {
       });
     }
 
-    this.props.updateNote(result.data);
-
     this.setState({
       edit: false,
     });
+
+    this.props.updateNote(result.data);
   };
 
   startEdit = () => {
-    this.setState({
-      title: this.props.note.title,
-      body: this.props.note.body,
-      edit: true,
-    });
+    this.setState(
+      {
+        title: this.props.note.title,
+        body: this.props.note.body,
+        edit: true,
+      },
+      () => {
+        let e = this.mainInput.current;
+        e.focus();
+        e.setSelectionRange(e.value.length, e.value.length);
+      }
+    );
   };
 
   render() {
     const { classes } = this.props;
 
     return (
-      <BindKeyboard keys='ctrl+s' callback={this.saveShortcut} >
-        <Card>
-          <CardHeader
-            title={
-              this.state.edit ? (
+      <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
+        <BindKeyboard keys='esc' callback={this.cancelEdit}>
+          <Card>
+            <CardHeader
+              title={
+                this.state.edit ? (
+                  <InputBase
+                    value={this.state.title}
+                    onChange={e => {
+                      this.setState({ title: e.target.value });
+                    }}
+                    style={{ fontSize: 'inherit' }}
+                  />
+                ) : (
+                  this.props.note.title
+                )
+              }
+              action={
+                <IconButton
+                  onClick={this.state.edit ? this.save : this.startEdit}
+                >
+                  {this.state.edit ? <SaveIcon /> : <EditIcon />}
+                </IconButton>
+              }
+            />
+            <CardContent>
+              {this.state.edit ? (
                 <InputBase
-                  value={this.state.title}
+                  inputRef={this.mainInput}
+                  value={this.state.body}
                   onChange={e => {
-                    this.setState({ title: e.target.value });
+                    this.setState({ body: e.target.value });
                   }}
                   style={{ fontSize: 'inherit' }}
+                  classes={{
+                    root: classes.bodyRoot,
+                    multiline: classes.bodyEditor,
+                  }}
+                  multiline
+                  rows={15}
                 />
               ) : (
-                this.props.note.title
-              )
-            }
-            action={
-              <IconButton
-                onClick={this.state.edit ? this.save : this.startEdit}
-              >
-                {this.state.edit ? <SaveIcon /> : <EditIcon />}
-              </IconButton>
-            }
-          />
-          <CardContent>
-            {this.state.edit ? (
-              <InputBase
-                value={this.state.body}
-                onChange={e => {
-                  this.setState({ body: e.target.value });
-                }}
-                style={{ fontSize: 'inherit' }}
-                classes={{
-                  root: classes.bodyRoot,
-                  multiline: classes.bodyEditor,
-                }}
-                multiline
-                rows={15}
-              />
-            ) : (
-              <ReactMarkdown>{this.props.note.body}</ReactMarkdown>
-            )}
-          </CardContent>
-        </Card>
+                <ReactMarkdown>{this.props.note.body}</ReactMarkdown>
+              )}
+            </CardContent>
+          </Card>
+        </BindKeyboard>
       </BindKeyboard>
     );
   }
