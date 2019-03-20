@@ -9,6 +9,7 @@
 use {
     diesel::prelude::*,
     iron::{headers, itry, prelude::*, status, AfterMiddleware, Chain, Error, Handler},
+    noted_db::models::WithTags,
     router::{router, TrailingSlash},
     serde_json::json,
 };
@@ -99,9 +100,42 @@ fn list_titles(_: &mut Request) -> IronResult<Response> {
 }
 
 fn list_notes(_: &mut Request) -> IronResult<Response> {
-    use noted_db::schema::notes::dsl::*;
+    use {
+        diesel::pg::expression::dsl::any,
+        noted_db::{
+            db,
+            models::{Note, NoteToTag, NoteWithTags},
+            schema::{note_tags_id, notes, tags},
+        },
+    };
 
-    render_json::<Vec<noted_db::models::Note>>(itry!(notes.order_by(title).load(&noted_db::db()?)))
+    let conn = db()?;
+
+    let all_notes = itry!(notes::table.load::<Note>(&conn));
+    let tags_query = note_tags_id::table
+        .filter(note_tags_id::note_id.eq(any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>())))
+        .inner_join(tags::table)
+        .select((
+            note_tags_id::id,
+            note_tags_id::note_id,
+            note_tags_id::tag_id,
+            tags::tag,
+        ));
+
+    let note_tags = itry!(tags_query.load::<NoteToTag>(&conn)).grouped_by(&all_notes);
+
+    render_json(
+        all_notes
+            .into_iter()
+            .zip(note_tags)
+            .map(|(n, ts)| NoteWithTags {
+                id: n.id,
+                title: n.title,
+                body: n.body,
+                tags: ts.into_iter().map(|i| i.tag).collect(),
+            })
+            .collect::<Vec<_>>(),
+    )
 }
 
 fn new_note(req: &mut Request) -> IronResult<Response> {
@@ -109,15 +143,23 @@ fn new_note(req: &mut Request) -> IronResult<Response> {
 
     let new_note: noted_db::models::NewNote = read_body(req)?;
 
-    render_json::<noted_db::models::Note>(itry!(diesel::insert_into(notes::table)
-        .values(&new_note)
-        .get_result(&noted_db::db()?)))
+    render_json(
+        itry!(diesel::insert_into(notes::table)
+            .values(&new_note)
+            .get_result::<noted_db::models::Note>(&noted_db::db()?))
+        .with_tags(&noted_db::db()?),
+    )
 }
 
 fn read_note(req: &mut Request) -> IronResult<Response> {
     use noted_db::schema::notes::dsl::*;
 
-    render_json::<noted_db::models::Note>(itry!(notes.find(get_id(req)?).first(&noted_db::db()?)))
+    render_json(
+        itry!(notes
+            .find(get_id(req)?)
+            .first::<noted_db::models::Note>(&noted_db::db()?))
+        .with_tags(&noted_db::db()?),
+    )
 }
 
 fn update_note(req: &mut Request) -> IronResult<Response> {
@@ -125,9 +167,12 @@ fn update_note(req: &mut Request) -> IronResult<Response> {
 
     let update_note: noted_db::models::UpdateNote = read_body(req)?;
 
-    render_json::<noted_db::models::Note>(itry!(diesel::update(notes.find(get_id(req)?))
-        .set(&update_note)
-        .get_result(&noted_db::db()?)))
+    render_json(
+        itry!(diesel::update(notes.find(get_id(req)?))
+            .set(&update_note)
+            .get_result::<noted_db::models::Note>(&noted_db::db()?))
+        .with_tags(&noted_db::db()?),
+    )
 }
 
 fn delete_note(req: &mut Request) -> IronResult<Response> {
