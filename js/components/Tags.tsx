@@ -8,9 +8,13 @@
 
 import * as React from 'react';
 
+import { PropTypes } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+
+import GestureIcon from '@material-ui/icons/Gesture';
+import GradeIcon from '@material-ui/icons/Grade';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -24,9 +28,41 @@ interface TagProps extends WithStyles<typeof styles> {
 }
 
 const Tag = withStyles(styles)((props: TagProps) => {
-  const { classes } = props;
+  const { classes, tag } = props;
 
-  return <Chip label={props.tag} className={classes.chip} />;
+  const parts = tag.split(':');
+
+  if (parts.length == 1) {
+    return <Chip label={parts[0]} className={classes.chip} />;
+  } else {
+    const type = parts[0];
+    const label = parts.slice(1).join(':');
+    let Icon = null;
+    let color: PropTypes.Color = undefined;
+    switch (type) {
+      case 'arc':
+        Icon = GestureIcon;
+        color = 'secondary';
+        break;
+      case 'type':
+        Icon = GradeIcon;
+        color = 'primary';
+        break;
+    }
+    if (Icon) {
+      return (
+        <Chip
+          label={label}
+          color={color}
+          className={classes.chip}
+          icon={<Icon />}
+        />
+      );
+    } else {
+      console.log('No match found for ', type);
+      return <Chip label={label} color={color} className={classes.chip} />;
+    }
+  }
 });
 
 type TagsProps = {

@@ -178,6 +178,11 @@ class Note extends React.Component<Props, State> {
                     classes={{}}
                     placeholder='Tags'
                     fullWidth
+                    dataSource={[
+                      'arc:Delmirev',
+                      'type:Location',
+                      'type:Character',
+                    ]}
                     value={this.state.tags}
                     onAdd={this.addTag}
                     onDelete={this.deleteTag}
