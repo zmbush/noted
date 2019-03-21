@@ -9,7 +9,7 @@
 import * as React from 'react';
 
 import Chip from '@material-ui/core/Chip';
-import { withStyles, createStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
 const styles = (theme: Theme) =>
@@ -19,10 +19,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-type TagProps = {
-  classes: any;
+interface TagProps extends WithStyles<typeof styles> {
   tag: string;
-};
+}
 
 const Tag = withStyles(styles)((props: TagProps) => {
   const { classes } = props;

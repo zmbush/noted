@@ -23,7 +23,7 @@ import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ChipInput from 'material-ui-chip-input';
 import InputBase from '@material-ui/core/InputBase';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, WithStyles } from '@material-ui/core/styles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
@@ -37,30 +37,34 @@ const styles = {
   },
 };
 
-type Props = {
-  classes: any,
-  new?: boolean,
+interface Props extends WithStyles<typeof styles> {
+  new?: boolean;
   note: {
-    id?: number,
-    title: string,
-    body?: string,
-    tags: string[]
-  },
-  updateNote: (note?: {id:number}) => void,
-  matches?: any,
+    id?: number;
+    title: string;
+    body?: string;
+    tags: string[];
+  };
+  updateNote: (note?: { id: number }) => void;
+  matches?: {
+    indices: number[][];
+    value: string;
+    key: string;
+    arrayIndex: number;
+  }[];
 }
 
 const initialState = {
   edit: false,
-  title: "",
-  body:"",
+  title: '',
+  body: '',
   tags: new Array<String>(),
 };
 
 type State = Readonly<typeof initialState>;
 
 class Note extends React.Component<Props, State> {
-  mainInput: React.RefObject<any>
+  mainInput: React.RefObject<HTMLInputElement>;
 
   constructor(props: Props) {
     super(props);
@@ -68,13 +72,13 @@ class Note extends React.Component<Props, State> {
     this.mainInput = React.createRef();
   }
 
-  cancelEdit = (e: React.SyntheticEvent|Event) => {
+  cancelEdit = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
     this.setState({ edit: false });
     this.props.updateNote(null);
   };
 
-  saveShortcut = (e: React.SyntheticEvent|Event) => {
+  saveShortcut = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
     this.save();
   };
@@ -121,13 +125,13 @@ class Note extends React.Component<Props, State> {
     );
   };
 
-  addTag = (tag:string) => {
+  addTag = (tag: string) => {
     this.setState({
       tags: [...this.state.tags, tag],
     });
   };
 
-  deleteTag = (tag:string, index:number) => {
+  deleteTag = (tag: string, index: number) => {
     this.state.tags.splice(index, 1);
     this.setState({
       tags: this.state.tags,
@@ -206,5 +210,7 @@ class Note extends React.Component<Props, State> {
     );
   }
 }
+
+export type InnerNote = Note;
 
 export default withStyles(styles)(Note);

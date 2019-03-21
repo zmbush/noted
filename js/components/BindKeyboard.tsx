@@ -13,11 +13,11 @@ import * as Mousetrap from 'mousetrap';
 type Props = {
   keys: string;
   action?: string;
-  callback: (e: ExtendedKeyboardEvent, combo: string) => any;
+  callback: (e: ExtendedKeyboardEvent, combo: string) => void;
 };
 
 export default class BindKeyboard extends React.Component<Props> {
-  main: React.RefObject<any>;
+  main: React.RefObject<HTMLDivElement>;
   mousetrap: MousetrapInstance;
 
   constructor(props: Props) {

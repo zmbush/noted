@@ -28,7 +28,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
-import Note from 'components/Note';
+import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 
 const styles = (theme: Theme) =>
@@ -122,9 +122,9 @@ type State = Readonly<typeof initialState>;
 interface Props extends WithStyles<typeof styles> {}
 
 class App extends Component<Props, State> {
-  searchInput: React.RefObject<any>;
-  firstNote: React.RefObject<any>;
-  newNote: React.RefObject<any>;
+  searchInput: React.RefObject<HTMLInputElement>;
+  firstNote: React.RefObject<InnerNote>;
+  newNote: React.RefObject<InnerNote>;
 
   constructor(props: Props) {
     super(props);
@@ -157,7 +157,9 @@ class App extends Component<Props, State> {
     this.setState({ notes: this.state.notes, newNote: false });
   };
 
-  renderNotes(classes: any) {
+  renderNotes() {
+    const { classes } = this.props;
+
     if (this.state.search != '') {
       let fuse = new Fuse(Array.from(this.state.notes.values()), {
         distance: 100,
@@ -324,7 +326,7 @@ class App extends Component<Props, State> {
               />
             </Grid>
           ) : null}
-          {this.renderNotes(classes)}
+          {this.renderNotes()}
         </Grid>
 
         <BindKeyboard keys='/' callback={this.startSearch} />
