@@ -6,29 +6,34 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Fuse from 'fuse.js';
+import * as React from 'react';
+import {useState,useEffect,Component} from 'react';
+
+import Axios from 'axios';
+import * as Fuse from 'fuse.js';
 import classNames from 'classnames';
 
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles,createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
 import Note from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 
-const styles = theme => ({
+const axios = Axios.create({});
+
+const styles = (theme: Theme) => createStyles({
   root: {
     width: '100%',
   },
@@ -100,16 +105,34 @@ const styles = theme => ({
   },
 });
 
-class App extends React.Component {
-  constructor(props) {
+type NoteData = {
+  id: number,
+  title: string,
+  body: string,
+  tags: string[]
+}
+
+const initialState = {
+  notes: new Map<number, NoteData>(),
+  search: '',
+  newNote: false,
+}
+
+type State = Readonly<typeof initialState>;
+
+type Props = {
+  classes: any
+};
+
+class App extends Component<Props,State> {
+  searchInput: React.RefObject<any>;
+  firstNote: React.RefObject<any>;
+  newNote: React.RefObject<any>;
+
+  constructor(props:Props) {
     super(props);
 
-    this.state = {
-      notes: [],
-      search: '',
-      newNote: false,
-    };
-
+    this.state = initialState;
     this.searchInput = React.createRef();
     this.firstNote = React.createRef();
     this.newNote = React.createRef();
@@ -119,10 +142,10 @@ class App extends React.Component {
     document.title = `noted`;
 
     const fetchData = async () => {
-      const result = await axios('/api/notes');
-      let notes = {};
+      const result = await axios.get('/api/notes');
+      let notes = new Map<number, NoteData>();
       for (let note of result.data) {
-        notes[note.id] = note;
+        notes.set(note.id, note);
       }
       this.setState({ notes });
     };
@@ -130,16 +153,16 @@ class App extends React.Component {
     fetchData();
   }
 
-  updateNote = note => {
+  updateNote = (note?: NoteData) => {
     if (note) {
-      this.state.notes[note.id] = note;
+      this.state.notes.set(note.id, note);
     }
     this.setState({ notes: this.state.notes, newNote: false });
   };
 
-  renderNotes(classes) {
+  renderNotes(classes: any) {
     if (this.state.search != '') {
-      let fuse = new Fuse(Object.values(this.state.notes), {
+      let fuse = new Fuse(Array.from(this.state.notes.values()), {
         distance: 100,
         includeMatches: true,
         keys: [
@@ -196,7 +219,7 @@ class App extends React.Component {
       }
       return elements;
     } else {
-      let notes = Object.values(this.state.notes).sort((a, b) => {
+      let notes = Array.from(this.state.notes.values()).sort((a, b) => {
         var x = a.title;
         var y = b.title;
         if (x < y) {
@@ -215,12 +238,12 @@ class App extends React.Component {
     }
   }
 
-  startSearch = e => {
+  startSearch = (e:Event) => {
     e.preventDefault();
     this.searchInput.current.focus();
   };
 
-  startEdit = e => {
+  startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (this.firstNote.current) {
       this.firstNote.current.startEdit();
@@ -229,14 +252,23 @@ class App extends React.Component {
     }
   };
 
-  createNew = e => {
-    e.preventDefault();
+  create() {
     this.setState({ newNote: true }, () => {
       if (this.newNote.current) {
         this.newNote.current.startEdit();
       }
     });
+  }
+
+  createNew = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    this.create();
   };
+
+  createNewShortcut = (e: ExtendedKeyboardEvent, combo: string) => {
+    e.preventDefault();
+    this.create();
+  }
 
   render() {
     const { classes } = this.props;
@@ -261,7 +293,7 @@ class App extends React.Component {
               Noted
             </Typography>
             <div className={classes.grow} />
-            <BindKeyboard keys='ctrl+o' callback={this.createNew}>
+            <BindKeyboard keys='ctrl+o' callback={this.createNewShortcut}>
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
@@ -290,7 +322,7 @@ class App extends React.Component {
               <Note
                 new
                 innerRef={this.newNote}
-                note={{ title: this.state.search }}
+                note={{ title: this.state.search, tags: [] }}
                 updateNote={this.updateNote}
               />
             </Grid>
@@ -303,9 +335,5 @@ class App extends React.Component {
     );
   }
 }
-
-App.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles)(App);

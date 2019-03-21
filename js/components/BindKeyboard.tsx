@@ -6,19 +6,21 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import React from 'react';
-import Mousetrap from 'mousetrap';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import * as Mousetrap from 'mousetrap';
 
-export default class BindKeyboard extends React.Component {
-  static propTypes = {
-    keys: PropTypes.string.isRequired,
-    action: PropTypes.string,
-    callback: PropTypes.func.isRequired,
-    global: PropTypes.bool,
-  };
+type Props = {
+  keys: string,
+  action?: string,
+  callback: (e: ExtendedKeyboardEvent, combo: string) => any,
+};
 
-  constructor(props) {
+export default class BindKeyboard extends React.Component<Props> {
+  main: React.RefObject<any>;
+  mousetrap: MousetrapInstance;
+
+  constructor(props: Props) {
     super(props);
 
     this.main = React.createRef();

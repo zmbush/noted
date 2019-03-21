@@ -6,26 +6,34 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import React from 'react';
+import * as React from 'react';
 
 import Chip from '@material-ui/core/Chip';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
-const styles = theme => ({
+const styles = (theme: Theme) => createStyles({
   chip: {
     marginRight: theme.spacing.unit,
   },
 });
 
-const Tag = withStyles(styles)(props => {
+type TagProps = {
+  classes: any,
+  tag: string,
+}
+
+const Tag = withStyles(styles)((props: TagProps) => {
   const { classes } = props;
 
   return <Chip label={props.tag} className={classes.chip} />;
 });
 
-export default function Tags(props) {
-  const { classes } = props;
+type TagsProps = {
+  tags: string[]
+};
 
+export default function Tags(props: TagsProps) {
   if (props.tags.length == 0) {
     return null;
   }

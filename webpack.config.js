@@ -9,14 +9,14 @@
 const path = require('path');
 
 module.exports = {
-  entry: './js/index.js',
+  entry: './js/index.tsx',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist/js'),
   },
   resolve: {
     modules: ['node_modules', 'js'],
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
     rules: [
@@ -28,11 +28,16 @@ module.exports = {
         },
       },
       {
+        test: /\.tsx?$/,
+        use: 'awesome-typescript-loader',
+        exclude: /node_modules/,
+      },
+      {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
     ],
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   mode: 'development',
 };

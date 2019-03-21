@@ -6,11 +6,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import axios from 'axios';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
+import * as React from 'react';
+import * as ReactMarkdown from 'react-markdown';
 
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import axios from 'axios';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -37,34 +37,44 @@ const styles = {
   },
 };
 
-class Note extends React.Component {
-  static propTypes = {
-    new: PropTypes.bool,
-    note: PropTypes.exact({
-      id: PropTypes.number,
-      title: PropTypes.string.isRequired,
-      body: PropTypes.string,
-      tags: PropTypes.arrayOf(PropTypes.string),
-    }),
-    updateNote: PropTypes.func.isRequired,
-  };
+type Props = {
+  classes: any,
+  new?: boolean,
+  note: {
+    id?: number,
+    title: string,
+    body?: string,
+    tags: string[]
+  },
+  updateNote: (note?: {id:number}) => void,
+  matches?: any,
+}
 
-  constructor(props) {
+const initialState = {
+  edit: false,
+  title: "",
+  body:"",
+  tags: new Array<String>(),
+};
+
+type State = Readonly<typeof initialState>;
+
+class Note extends React.Component<Props, State> {
+  mainInput: React.RefObject<any>
+
+  constructor(props: Props) {
     super(props);
-    this.state = {
-      edit: false,
-    };
-
+    this.state = initialState;
     this.mainInput = React.createRef();
   }
 
-  cancelEdit = e => {
+  cancelEdit = (e: React.SyntheticEvent|Event) => {
     e.preventDefault();
     this.setState({ edit: false });
     this.props.updateNote(null);
   };
 
-  saveShortcut = e => {
+  saveShortcut = (e: React.SyntheticEvent|Event) => {
     e.preventDefault();
     this.save();
   };
@@ -111,13 +121,13 @@ class Note extends React.Component {
     );
   };
 
-  addTag = tag => {
+  addTag = (tag:string) => {
     this.setState({
       tags: [...this.state.tags, tag],
     });
   };
 
-  deleteTag = (tag, index) => {
+  deleteTag = (tag:string, index:number) => {
     this.state.tags.splice(index, 1);
     this.setState({
       tags: this.state.tags,
@@ -161,6 +171,7 @@ class Note extends React.Component {
               {this.state.edit ? (
                 <>
                   <ChipInput
+                    classes={{}}
                     placeholder='Tags'
                     fullWidth
                     value={this.state.tags}
