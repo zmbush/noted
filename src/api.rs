@@ -64,6 +64,7 @@ pub fn api() -> impl Handler {
         notes_read: get "notes/:id" => read_note,
         notes_update: patch "notes/:id" => update_note,
         notes_delete: delete "notes/:id" => delete_note,
+        set_tags: put "notes/:id/tags" => set_tags,
     };
 
     let mut api_chain = Chain::new(api_router);
@@ -100,20 +101,17 @@ fn list_titles(_: &mut Request) -> IronResult<Response> {
 }
 
 fn list_notes(_: &mut Request) -> IronResult<Response> {
-    use {
-        diesel::pg::expression::dsl::any,
-        noted_db::{
-            db,
-            models::{Note, NoteToTag, NoteWithTags},
-            schema::{note_tags_id, notes, tags},
-        },
+    use noted_db::{
+        db,
+        models::{Note, NoteToTag, NoteWithTags},
+        schema::{note_tags_id, notes, tags},
     };
 
     let conn = db()?;
 
     let all_notes = itry!(notes::table.load::<Note>(&conn));
     let tags_query = note_tags_id::table
-        .filter(note_tags_id::note_id.eq(any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>())))
+        .filter(note_tags_id::note_id.eq_any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>()))
         .inner_join(tags::table)
         .select((
             note_tags_id::id,
@@ -186,4 +184,44 @@ fn delete_note(req: &mut Request) -> IronResult<Response> {
             "{\"status\":\"no record deleted\"}",
         )))
     }
+}
+
+fn set_tags(req: &mut Request) -> IronResult<Response> {
+    use noted_db::schema::note_tags_id::dsl::*;
+    use noted_db::schema::tags::dsl::*;
+
+    let set_tags: Vec<String> = read_body(req)?;
+    let current_note_id = get_id(req)?;
+    let conn = noted_db::db()?;
+
+    itry!(conn.transaction::<(), diesel::result::Error, _>(|| {
+        diesel::insert_into(tags)
+            .values(&set_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
+            .on_conflict_do_nothing()
+            .execute(&conn)?;
+
+        let all_tags = tags
+            .filter(tag.eq_any(set_tags))
+            .load::<noted_db::models::Tag>(&conn)?;
+
+        diesel::delete(note_tags_id.filter(note_id.eq(current_note_id))).execute(&conn)?;
+
+        diesel::insert_into(note_tags_id)
+            .values(
+                all_tags
+                    .into_iter()
+                    .map(|t| (tag_id.eq(t.id), note_id.eq(current_note_id)))
+                    .collect::<Vec<_>>(),
+            )
+            .execute(&conn)?;
+
+        let tag_ids = note_tags_id.select(tag_id).get_results::<i32>(&conn)?;
+
+        diesel::delete(tags.filter(noted_db::schema::tags::dsl::id.ne_all(tag_ids)))
+            .execute(&conn)?;
+
+        Ok(())
+    }));
+
+    read_note(req)
 }

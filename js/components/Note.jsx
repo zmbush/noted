@@ -14,14 +14,19 @@ import ReactMarkdown from 'react-markdown';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ChipInput from 'material-ui-chip-input';
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from '@material-ui/core/styles';
 
 import BindKeyboard from 'components/BindKeyboard';
+import Tags from 'components/Tags';
 
 const styles = {
   bodyRoot: {
@@ -39,6 +44,7 @@ class Note extends React.Component {
       id: PropTypes.number,
       title: PropTypes.string.isRequired,
       body: PropTypes.string,
+      tags: PropTypes.arrayOf(PropTypes.string),
     }),
     updateNote: PropTypes.func.isRequired,
   };
@@ -77,6 +83,11 @@ class Note extends React.Component {
       });
     }
 
+    result = await axios.put(
+      `/api/notes/${result.data.id}/tags`,
+      this.state.tags
+    );
+
     this.setState({
       edit: false,
     });
@@ -89,6 +100,7 @@ class Note extends React.Component {
       {
         title: this.props.note.title,
         body: this.props.note.body,
+        tags: this.props.note.tags,
         edit: true,
       },
       () => {
@@ -97,6 +109,19 @@ class Note extends React.Component {
         e.setSelectionRange(e.value.length, e.value.length);
       }
     );
+  };
+
+  addTag = tag => {
+    this.setState({
+      tags: [...this.state.tags, tag],
+    });
+  };
+
+  deleteTag = (tag, index) => {
+    this.state.tags.splice(index, 1);
+    this.setState({
+      tags: this.state.tags,
+    });
   };
 
   render() {
@@ -121,31 +146,47 @@ class Note extends React.Component {
                 )
               }
               action={
-                <IconButton
-                  onClick={this.state.edit ? this.save : this.startEdit}
-                >
-                  {this.state.edit ? <SaveIcon /> : <EditIcon />}
-                </IconButton>
+                this.state.edit ? (
+                  <IconButton onClick={this.save}>
+                    <SaveIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton onClick={this.startEdit}>
+                    <EditIcon />
+                  </IconButton>
+                )
               }
             />
             <CardContent>
               {this.state.edit ? (
-                <InputBase
-                  inputRef={this.mainInput}
-                  value={this.state.body}
-                  onChange={e => {
-                    this.setState({ body: e.target.value });
-                  }}
-                  style={{ fontSize: 'inherit' }}
-                  classes={{
-                    root: classes.bodyRoot,
-                    multiline: classes.bodyEditor,
-                  }}
-                  multiline
-                  rows={15}
-                />
+                <>
+                  <ChipInput
+                    placeholder='Tags'
+                    fullWidth
+                    value={this.state.tags}
+                    onAdd={this.addTag}
+                    onDelete={this.deleteTag}
+                  />
+                  <InputBase
+                    inputRef={this.mainInput}
+                    value={this.state.body}
+                    onChange={e => {
+                      this.setState({ body: e.target.value });
+                    }}
+                    style={{ fontSize: 'inherit' }}
+                    classes={{
+                      root: classes.bodyRoot,
+                      multiline: classes.bodyEditor,
+                    }}
+                    multiline
+                    rows={15}
+                  />
+                </>
               ) : (
-                <ReactMarkdown>{this.props.note.body}</ReactMarkdown>
+                <>
+                  <Tags tags={this.props.note.tags} />
+                  <ReactMarkdown>{this.props.note.body}</ReactMarkdown>
+                </>
               )}
             </CardContent>
           </Card>
