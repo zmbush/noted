@@ -7,9 +7,9 @@
 // except according to those terms.
 
 import * as React from 'react';
-import {useState,useEffect,Component} from 'react';
+import { useState, useEffect, Component } from 'react';
 
-import Axios from 'axios';
+import axios from 'axios';
 import * as Fuse from 'fuse.js';
 import classNames from 'classnames';
 
@@ -19,7 +19,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
-import { withStyles,createStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
@@ -31,105 +31,102 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Note from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 
-const axios = Axios.create({});
-
-const styles = (theme: Theme) => createStyles({
-  root: {
-    width: '100%',
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  contentRoot: {
-    marginTop: 75,
-  },
-  title: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
     },
-  },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+    grow: {
+      flexGrow: 1,
     },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing.unit,
-      width: 'auto',
+    menuButton: {
+      marginLeft: -12,
+      marginRight: 20,
     },
-  },
-  searchIcon: {
-    width: theme.spacing.unit * 9,
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-    width: '100%',
-  },
-  inputInput: {
-    paddingTop: theme.spacing.unit,
-    paddingRight: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-    paddingLeft: theme.spacing.unit * 10,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: 120,
-      '&:focus': {
-        width: 200,
+    contentRoot: {
+      marginTop: 75,
+    },
+    title: {
+      display: 'none',
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
       },
     },
-  },
-  newButton: {
-    margin: theme.spacing.unit,
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit,
-  },
-  iconSmall: {
-    fontSize: 20,
-  },
-});
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      marginLeft: 0,
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing.unit,
+        width: 'auto',
+      },
+    },
+    searchIcon: {
+      width: theme.spacing.unit * 9,
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+      width: '100%',
+    },
+    inputInput: {
+      paddingTop: theme.spacing.unit,
+      paddingRight: theme.spacing.unit,
+      paddingBottom: theme.spacing.unit,
+      paddingLeft: theme.spacing.unit * 10,
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: 120,
+        '&:focus': {
+          width: 200,
+        },
+      },
+    },
+    newButton: {
+      margin: theme.spacing.unit,
+    },
+    leftIcon: {
+      marginRight: theme.spacing.unit,
+    },
+    iconSmall: {
+      fontSize: 20,
+    },
+  });
 
 type NoteData = {
-  id: number,
-  title: string,
-  body: string,
-  tags: string[]
-}
+  id: number;
+  title: string;
+  body: string;
+  tags: string[];
+};
 
 const initialState = {
   notes: new Map<number, NoteData>(),
   search: '',
   newNote: false,
-}
+};
 
 type State = Readonly<typeof initialState>;
 
-type Props = {
-  classes: any
-};
+interface Props extends WithStyles<typeof styles> {}
 
-class App extends Component<Props,State> {
+class App extends Component<Props, State> {
   searchInput: React.RefObject<any>;
   firstNote: React.RefObject<any>;
   newNote: React.RefObject<any>;
 
-  constructor(props:Props) {
+  constructor(props: Props) {
     super(props);
 
     this.state = initialState;
@@ -238,7 +235,7 @@ class App extends Component<Props,State> {
     }
   }
 
-  startSearch = (e:Event) => {
+  startSearch = (e: Event) => {
     e.preventDefault();
     this.searchInput.current.focus();
   };
@@ -268,7 +265,7 @@ class App extends Component<Props,State> {
   createNewShortcut = (e: ExtendedKeyboardEvent, combo: string) => {
     e.preventDefault();
     this.create();
-  }
+  };
 
   render() {
     const { classes } = this.props;

@@ -11,9 +11,9 @@ import * as PropTypes from 'prop-types';
 import * as Mousetrap from 'mousetrap';
 
 type Props = {
-  keys: string,
-  action?: string,
-  callback: (e: ExtendedKeyboardEvent, combo: string) => any,
+  keys: string;
+  action?: string;
+  callback: (e: ExtendedKeyboardEvent, combo: string) => any;
 };
 
 export default class BindKeyboard extends React.Component<Props> {

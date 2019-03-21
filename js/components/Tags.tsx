@@ -12,16 +12,17 @@ import Chip from '@material-ui/core/Chip';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
-const styles = (theme: Theme) => createStyles({
-  chip: {
-    marginRight: theme.spacing.unit,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    chip: {
+      marginRight: theme.spacing.unit,
+    },
+  });
 
 type TagProps = {
-  classes: any,
-  tag: string,
-}
+  classes: any;
+  tag: string;
+};
 
 const Tag = withStyles(styles)((props: TagProps) => {
   const { classes } = props;
@@ -30,7 +31,7 @@ const Tag = withStyles(styles)((props: TagProps) => {
 });
 
 type TagsProps = {
-  tags: string[]
+  tags: string[];
 };
 
 export default function Tags(props: TagsProps) {
