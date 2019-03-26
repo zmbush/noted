@@ -74,8 +74,10 @@ class Note extends React.Component<Props, State> {
 
   cancelEdit = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
-    this.setState({ edit: false });
-    this.props.updateNote(null);
+    if (this.state.body == this.props.note.body) {
+      this.setState({ edit: false });
+      this.props.updateNote(null);
+    }
   };
 
   saveShortcut = (e: React.SyntheticEvent | Event) => {
