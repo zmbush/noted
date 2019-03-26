@@ -154,6 +154,23 @@ class App extends Component<Props, State> {
   renderNotes() {
     const { classes } = this.props;
 
+    let titles = Array.from(this.props.notes.values()).reduce(
+      (titles, note: { title: string; id: number }) => {
+        titles.set(note.title, new Set([note.id]));
+        for (let titlePart of note.title.split(' ')) {
+          if (titlePart.length > 3) {
+            if (titles.has(titlePart)) {
+              titles.get(titlePart).add(note.id);
+            } else {
+              titles.set(titlePart, new Set([note.id]));
+            }
+          }
+        }
+        return titles;
+      },
+      new Map<string, Set<number>>()
+    );
+
     if (this.state.search != '') {
       let fuse = new Fuse(Array.from(this.props.notes.values()), {
         distance: 100,
@@ -205,6 +222,7 @@ class App extends Component<Props, State> {
               matches={n.matches}
               updateNote={this.updateNote}
               innerRef={i == 0 ? this.firstNote : null}
+              titles={titles}
             />
           </Grid>
         );
@@ -225,7 +243,7 @@ class App extends Component<Props, State> {
       });
       return notes.map(n => (
         <Grid item key={n.id} xs={12}>
-          <Note note={n} updateNote={this.updateNote} />
+          <Note note={n} updateNote={this.updateNote} titles={titles} />
         </Grid>
       ));
     }
@@ -317,6 +335,7 @@ class App extends Component<Props, State> {
                 innerRef={this.newNote}
                 note={{ title: this.state.search, tags: [] }}
                 updateNote={this.updateNote}
+                titles={new Map()}
               />
             </Grid>
           ) : null}
