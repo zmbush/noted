@@ -8,6 +8,8 @@
 
 import * as React from 'react';
 import { useState, useEffect, Component } from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import axios from 'axios';
 import * as Fuse from 'fuse.js';
@@ -30,6 +32,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
 import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
+import { updateNote } from 'data/actions';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -112,14 +115,16 @@ type NoteData = {
 };
 
 const initialState = {
-  notes: new Map<number, NoteData>(),
   search: '',
   newNote: false,
 };
 
 type State = Readonly<typeof initialState>;
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  notes: Map<number, NoteData>;
+  updateNote: (note: NoteData) => void;
+}
 
 class App extends Component<Props, State> {
   searchInput: React.RefObject<HTMLInputElement>;
@@ -137,31 +142,20 @@ class App extends Component<Props, State> {
 
   componentDidMount() {
     document.title = `noted`;
-
-    const fetchData = async () => {
-      const result = await axios.get('/api/notes');
-      let notes = new Map<number, NoteData>();
-      for (let note of result.data) {
-        notes.set(note.id, note);
-      }
-      this.setState({ notes });
-    };
-
-    fetchData();
   }
 
   updateNote = (note?: NoteData) => {
     if (note) {
-      this.state.notes.set(note.id, note);
+      this.props.updateNote(note);
     }
-    this.setState({ notes: this.state.notes, newNote: false });
+    this.setState({ newNote: false });
   };
 
   renderNotes() {
     const { classes } = this.props;
 
     if (this.state.search != '') {
-      let fuse = new Fuse(Array.from(this.state.notes.values()), {
+      let fuse = new Fuse(Array.from(this.props.notes.values()), {
         distance: 100,
         includeMatches: true,
         keys: [
@@ -218,7 +212,7 @@ class App extends Component<Props, State> {
       }
       return elements;
     } else {
-      let notes = Array.from(this.state.notes.values()).sort((a, b) => {
+      let notes = Array.from(this.props.notes.values()).sort((a, b) => {
         var x = a.title;
         var y = b.title;
         if (x < y) {
@@ -335,4 +329,17 @@ class App extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(App);
+const mapStateToProps = (state: any) => ({
+  notes: state.notes,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  updateNote(data: NoteData) {
+    dispatch(updateNote(data));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(App));

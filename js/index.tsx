@@ -6,9 +6,28 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as React from 'react';
+
+import axios from 'axios';
+import reducers from 'data/reducers';
+import { notesFetchStart, notesFetched } from 'data/actions';
+
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 
 import App from 'components/App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore(reducers);
+
+(async () => {
+  store.dispatch(notesFetchStart());
+  store.dispatch(notesFetched((await axios.get('/api/notes')).data));
+})();
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
