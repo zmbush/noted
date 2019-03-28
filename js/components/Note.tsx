@@ -27,38 +27,7 @@ import { withStyles, WithStyles } from '@material-ui/core/styles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
-
-const Autolinker = (titles: Map<string, Set<number>>) => (props: any) => {
-  let body: React.ElementType[] = [props.children];
-  titles.forEach((value, key) => {
-    let newBody: React.ElementType[] = [];
-    for (let part of body) {
-      if (typeof part == 'string' || part instanceof String) {
-        let split = part.split(key);
-        if (split.length > 1) {
-          let elements = split
-            .reduce((r: React.ElementType[], a: string) => {
-              r.push(a as React.ElementType);
-              r.push(((
-                <span style={{ color: 'red' }}>{key}</span>
-              ) as unknown) as React.ElementType);
-              return r;
-            }, [])
-            .slice(0, -1);
-          console.log(elements);
-          newBody = newBody.concat(elements);
-        } else {
-          newBody.push(part);
-        }
-      } else {
-        newBody.push(part);
-      }
-    }
-    body = newBody;
-  });
-  console.log(body);
-  return body;
-};
+import AutoLink from 'components/AutoLink';
 
 const styles = {
   bodyRoot: {
@@ -242,9 +211,9 @@ class Note extends React.Component<Props, State> {
                   <Tags tags={this.props.note.tags} />
                   <ReactMarkdown
                     renderers={{
-                      text: (Autolinker(
-                        this.props.titles
-                      ) as unknown) as React.ElementType,
+                      text: props => (
+                        <AutoLink titles={this.props.titles} {...props} />
+                      ),
                     }}
                   >
                     {this.props.note.body}
