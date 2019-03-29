@@ -8,11 +8,14 @@
 
 import { combineReducers } from 'redux';
 import { NotedEvent } from 'data/actions';
+import { NoteData } from 'data/types';
+
+type NoteState = Map<number, NoteData>;
 
 function notes(
-  state = new Map<number, any>(),
-  action: { type: NotedEvent; notes?: any[]; note?: any }
-) {
+  state = new Map<number, NoteData>(),
+  action: { type: NotedEvent; notes?: NoteData[]; note?: NoteData }
+): NoteState {
   switch (action.type) {
     case NotedEvent.NOTES_FETCHED: {
       let data = new Map();
@@ -31,4 +34,8 @@ function notes(
   }
 }
 
-export default combineReducers({ notes });
+const rootReducer = combineReducers({ notes });
+
+export type AppState = ReturnType<typeof rootReducer>;
+
+export default rootReducer;

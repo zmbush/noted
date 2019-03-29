@@ -4,7 +4,7 @@
 use {
     clap::clap_app,
     failure::Error,
-    iron::{prelude::*, status, AfterMiddleware, Chain},
+    iron::{headers::ContentType, mime, prelude::*, status, AfterMiddleware, Chain},
     mount::Mount,
     staticfile::Static,
     std::fs,
@@ -46,7 +46,20 @@ fn main() -> Result<(), Error> {
     mount
         .mount("/api/", noted::api::api())
         .mount("/dist/", Static::new("dist"))
-        .mount("/", Static::new("dist/index.html"));
+        .mount("/", |_: &mut Request| {
+            let mut response = Response::with((
+                status::Ok,
+                fs::read_to_string("dist/index.html").unwrap_or_else(|_| "".to_owned()),
+            ));
+
+            response.headers.set(ContentType(mime::Mime(
+                mime::TopLevel::Text,
+                mime::SubLevel::Html,
+                vec![],
+            )));
+
+            Ok(response)
+        });
 
     let mut chain = Chain::new(mount);
     chain.link_after(Custom404);

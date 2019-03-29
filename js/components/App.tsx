@@ -30,9 +30,19 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
+import {
+  withRouter,
+  Route,
+  Switch,
+  RouteComponentProps,
+} from 'react-router-dom';
+
 import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
+import NoteList from 'components/NoteList';
 import { updateNote } from 'data/actions';
+import { NoteData, AppState } from 'data/types';
+import SingleNote from 'components/SingleNote';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -107,13 +117,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-type NoteData = {
-  id: number;
-  title: string;
-  body: string;
-  tags: string[];
-};
-
 const initialState = {
   search: '',
   newNote: false,
@@ -121,7 +124,7 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
-interface Props extends WithStyles<typeof styles> {
+interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
   updateNote: (note: NoteData) => void;
 }
@@ -150,104 +153,6 @@ class App extends Component<Props, State> {
     }
     this.setState({ newNote: false });
   };
-
-  renderNotes() {
-    const { classes } = this.props;
-
-    let titles = Array.from(this.props.notes.values()).reduce(
-      (titles, note: { title: string; id: number }) => {
-        titles.set(note.title, new Set([note.id]));
-        for (let titlePart of note.title.split(' ')) {
-          if (titlePart.length > 3) {
-            if (titles.has(titlePart)) {
-              titles.get(titlePart).add(note.id);
-            } else {
-              titles.set(titlePart, new Set([note.id]));
-            }
-          }
-        }
-        return titles;
-      },
-      new Map<string, Set<number>>()
-    );
-
-    if (this.state.search != '') {
-      let fuse = new Fuse(Array.from(this.props.notes.values()), {
-        distance: 100,
-        includeMatches: true,
-        keys: [
-          {
-            name: 'title',
-            weight: 1.0,
-          },
-          {
-            name: 'body',
-            weight: 0.5,
-          },
-        ],
-        location: 0,
-        matchAllTokens: true,
-        maxPatternLength: 32,
-        minMatchCharLength: 1,
-        shouldSort: true,
-        threshold: 0.4,
-        tokenize: true,
-      });
-
-      let elements = [];
-      let results = fuse.search(this.state.search);
-      if (results.length == 0 || results[0].item.title != this.state.search) {
-        elements.push(
-          <Grid item key='new' xs={12}>
-            <Button
-              variant='contained'
-              color='primary'
-              className={classes.newButton}
-            >
-              <AddIcon
-                className={classNames(classes.leftIcon, classes.iconSmall)}
-              />
-              Add {this.state.search}
-            </Button>
-          </Grid>
-        );
-      }
-
-      let i = 0;
-      for (let n of results) {
-        elements.push(
-          <Grid item key={n.item.id} xs={12}>
-            <Note
-              note={n.item}
-              matches={n.matches}
-              updateNote={this.updateNote}
-              innerRef={i == 0 ? this.firstNote : null}
-              titles={titles}
-            />
-          </Grid>
-        );
-        i++;
-      }
-      return elements;
-    } else {
-      let notes = Array.from(this.props.notes.values()).sort((a, b) => {
-        var x = a.title;
-        var y = b.title;
-        if (x < y) {
-          return -1;
-        }
-        if (x > y) {
-          return 1;
-        }
-        return 0;
-      });
-      return notes.map(n => (
-        <Grid item key={n.id} xs={12}>
-          <Note note={n} updateNote={this.updateNote} titles={titles} />
-        </Grid>
-      ));
-    }
-  }
 
   startSearch = (e: Event) => {
     e.preventDefault();
@@ -339,7 +244,22 @@ class App extends Component<Props, State> {
               />
             </Grid>
           ) : null}
-          {this.renderNotes()}
+          <Switch>
+            <Route exact path='/'>
+              <NoteList
+                notes={this.props.notes}
+                search={this.state.search}
+                updateNote={this.props.updateNote}
+                firstNoteRef={this.firstNote}
+              />
+            </Route>
+            <Route path='/note/:id'>
+              <SingleNote
+                notes={this.props.notes}
+                updateNote={this.props.updateNote}
+              />
+            </Route>
+          </Switch>
         </Grid>
 
         <BindKeyboard keys='/' callback={this.startSearch} />
@@ -348,7 +268,7 @@ class App extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: AppState) => ({
   notes: state.notes,
 });
 
@@ -358,7 +278,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(App));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(withStyles(styles)(App))
+);

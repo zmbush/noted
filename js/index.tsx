@@ -15,6 +15,7 @@ import { notesFetchStart, notesFetched } from 'data/actions';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import App from 'components/App';
 
@@ -26,8 +27,10 @@ const store = createStore(reducers);
 })();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <Router>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </Router>,
   document.getElementById('root')
 );

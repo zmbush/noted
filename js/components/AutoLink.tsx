@@ -7,6 +7,7 @@
 // except according to those terms.
 
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 type LinkProps = {
   text: string;
@@ -15,7 +16,15 @@ type LinkProps = {
 
 class LinkedText extends React.Component<LinkProps> {
   render() {
-    return <span style={{ color: 'red' }}>{this.props.text}</span>;
+    if (this.props.ids.size == 1) {
+      const id = this.props.ids.values().next().value;
+      return <Link to={`/note/${id}`}>{this.props.text}</Link>;
+    } else if (this.props.ids.size > 1) {
+      const ids = Array.from(this.props.ids.values()).join(',');
+      return <Link to={`/disambiguation/${ids}`}>{this.props.text}</Link>;
+    } else {
+      return this.props.text;
+    }
   }
 }
 
@@ -33,19 +42,21 @@ export default class AutoLink extends React.Component<Props> {
       let newBody: any[] = [];
       for (let part of body) {
         if (typeof part == 'string' || part instanceof String) {
-          let elements = part.split(key).reduce((r, a, ix, arr) => {
-            r.push(a);
-            if (ix + 1 < arr.length) {
-              r.push(
-                <LinkedText
-                  key={`linked-text-${keyIx++}`}
-                  text={key}
-                  ids={value}
-                />
-              );
-            }
-            return r;
-          }, []);
+          let elements = part
+            .split(new RegExp(key, 'i'))
+            .reduce((r, a, ix, arr) => {
+              r.push(a);
+              if (ix + 1 < arr.length) {
+                r.push(
+                  <LinkedText
+                    key={`linked-text-${keyIx++}`}
+                    text={key}
+                    ids={value}
+                  />
+                );
+              }
+              return r;
+            }, []);
           newBody = newBody.concat(elements);
         } else {
           newBody.push(part);
