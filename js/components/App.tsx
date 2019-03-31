@@ -20,6 +20,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
 import Typography from '@material-ui/core/Typography';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -193,13 +194,29 @@ class App extends Component<Props, State> {
       <div className={classes.root}>
         <AppBar>
           <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              aria-label='Menu'
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
+            <Switch>
+              <Route exact path='/'>
+                <IconButton
+                  className={classes.menuButton}
+                  aria-label='Menu'
+                  color='inherit'
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Route>
+              <Route>
+                <IconButton
+                  className={classes.menuButton}
+                  aria-label='Menu'
+                  color='inherit'
+                  onClick={() => {
+                    this.props.history.push('/');
+                  }}
+                >
+                  <HomeIcon />
+                </IconButton>
+              </Route>
+            </Switch>
             <Typography
               className={classes.title}
               variant='h6'
