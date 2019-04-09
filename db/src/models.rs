@@ -21,6 +21,8 @@ pub struct Note {
     pub id: i32,
     pub title: String,
     pub body: String,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 pub trait WithTags {
@@ -48,6 +50,8 @@ impl WithTags for Note {
                 .select(tags::tag)
                 .load::<String>(c)
                 .ok()?,
+            created_at: self.created_at,
+            updated_at: self.updated_at,
         })
     }
 }
@@ -58,6 +62,8 @@ pub struct NoteWithTags {
     pub title: String,
     pub body: String,
     pub tags: Vec<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Identifiable, Queryable, Serialize, Associations)]
@@ -74,6 +80,8 @@ pub struct NoteToTag {
 pub struct Tag {
     pub id: i32,
     pub tag: String,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Identifiable, Queryable, Associations)]
