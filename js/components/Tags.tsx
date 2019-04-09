@@ -65,20 +65,32 @@ const Tag = withStyles(styles)((props: TagProps) => {
   }
 });
 
-type TagsProps = {
-  tags: string[];
-};
+const tagsStyles = (theme: Theme) =>
+  createStyles({
+    noPrint: {
+      '@media print': {
+        display: 'none',
+      },
+    },
+  });
 
-export default function Tags(props: TagsProps) {
+interface TagsProps extends WithStyles<typeof tagsStyles> {
+  tags: string[];
+}
+
+function Tags(props: TagsProps) {
+  const { classes } = props;
   if (props.tags.length == 0) {
     return null;
   }
 
   return (
-    <div>
+    <div className={classes.noPrint}>
       {props.tags.map(t => (
         <Tag key={t} tag={t} />
       ))}
     </div>
   );
 }
+
+export default withStyles(tagsStyles)(Tags);

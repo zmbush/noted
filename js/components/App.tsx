@@ -49,6 +49,12 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
+      '@media print': {
+        overflow: 'visible !important',
+        columnCount: 2,
+        columnWidth: 200,
+        //columnBreakInside: 'avoid',
+      },
     },
     grow: {
       flexGrow: 1,
@@ -58,6 +64,10 @@ const styles = (theme: Theme) =>
       marginRight: 20,
     },
     contentRoot: {
+      '@media print': {
+        marginTop: 0,
+        display: 'block',
+      },
       marginTop: 75,
     },
     title: {
@@ -115,6 +125,11 @@ const styles = (theme: Theme) =>
     },
     iconSmall: {
       fontSize: 20,
+    },
+    noPrint: {
+      '@media print': {
+        display: 'none',
+      },
     },
   });
 
@@ -192,7 +207,7 @@ class App extends Component<Props, State> {
 
     return (
       <div className={classes.root}>
-        <AppBar>
+        <AppBar className={classes.noPrint}>
           <Toolbar>
             <Switch>
               <Route exact path='/'>
