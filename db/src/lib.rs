@@ -18,7 +18,6 @@ use {
         r2d2::{ConnectionManager, Pool, PooledConnection},
     },
     dotenv::dotenv,
-    iron::{itry, IronResult},
     lazy_static::lazy_static,
     std::env,
 };
@@ -35,6 +34,6 @@ lazy_static! {
     };
 }
 
-pub fn db() -> IronResult<PooledConnection<ConnectionManager<PgConnection>>> {
-    Ok(itry!(CONNECTION_POOL.get()))
+pub fn db() -> Result<PooledConnection<ConnectionManager<PgConnection>>, r2d2::Error> {
+    CONNECTION_POOL.get()
 }
