@@ -13,7 +13,7 @@ use {
         handler::{HandlerError, HandlerFuture, IntoHandlerError},
         middleware::Middleware,
         pipeline::{new_pipeline, single::single_pipeline},
-        router::{builder::*, Router},
+        router::{builder::*, response::extender::ResponseExtender, Router},
         state::{FromState, State},
     },
     gotham_derive::{NewMiddleware, StateData, StaticResponseExtender},
@@ -69,9 +69,27 @@ impl Middleware for JsonifyErrors {
     }
 }
 
+struct NotFoundHandler;
+
+impl ResponseExtender<hyper::Body> for NotFoundHandler {
+    fn extend(&self, _state: &mut State, response: &mut Response<hyper::Body>) {
+        let response_body = json!({
+            "error": "api route not found",
+            "code": response.status().as_u16()
+        });
+
+        response.headers_mut().insert(
+            hyper::header::CONTENT_TYPE,
+            hyper::header::HeaderValue::from_static("application/json"),
+        );
+        *response.body_mut() = hyper::Body::from(serde_json::to_string(&response_body).unwrap());
+    }
+}
+
 pub fn api() -> Router {
     let (chain, pipelines) = single_pipeline(new_pipeline().add(JsonifyErrors).build());
     build_router(chain, pipelines, |route| {
+        route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
         route.get("titles").to(list_titles);
         route.put("/note").to(new_note);
         route.scope("/notes", |route| {

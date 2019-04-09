@@ -4,8 +4,39 @@
 use {
     clap::clap_app,
     failure::Error,
-    gotham::{self, router::builder::*},
+    gotham::{
+        self,
+        router::{builder::*, response::extender::ResponseExtender},
+        state::State,
+    },
+    http::response::Response,
+    lazy_static::lazy_static,
 };
+
+lazy_static! {
+    static ref BODY_404: String = {
+        use std::{fs::File, io::Read};
+
+        let mut contents = String::new();
+        let mut file = File::open("dist/404.html").expect("Could not open 404 file");
+        file.read_to_string(&mut contents)
+            .expect("Could not read 404 response to string");
+
+        contents
+    };
+}
+
+struct NotFoundHandler;
+
+impl ResponseExtender<hyper::Body> for NotFoundHandler {
+    fn extend(&self, _state: &mut State, response: &mut Response<hyper::Body>) {
+        response.headers_mut().insert(
+            hyper::header::CONTENT_TYPE,
+            hyper::header::HeaderValue::from_static("text/html"),
+        );
+        *response.body_mut() = hyper::Body::from(BODY_404.as_str());
+    }
+}
 
 fn main() -> Result<(), Error> {
     simple_logger::init().unwrap();
@@ -25,6 +56,7 @@ fn main() -> Result<(), Error> {
         .unwrap_or(8088);
 
     let router = build_simple_router(|route| {
+        route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
         route.delegate("/api").to_router(noted::api::api());
         route.get_or_head("/dist/*").to_dir("dist");
         route.get_or_head("/*").to_file("dist/index.html");
