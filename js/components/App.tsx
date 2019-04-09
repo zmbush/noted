@@ -30,6 +30,9 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from '@material-ui/core/Button';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import {
   withRouter,
@@ -41,9 +44,10 @@ import {
 import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 import NoteList from 'components/NoteList';
-import { updateNote } from 'data/actions';
+import { updateNote, logOut } from 'data/actions';
 import { NoteData, AppState } from 'data/types';
 import FilteredNoteList from 'components/FilteredNoteList';
+import LogIn from 'components/LogIn';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,6 +88,7 @@ const styles = (theme: Theme) =>
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
       marginLeft: 0,
+      marginRight: theme.spacing.unit,
       width: '100%',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing.unit,
@@ -136,13 +141,16 @@ const styles = (theme: Theme) =>
 const initialState = {
   search: '',
   newNote: false,
+  userMenuEl: null as HTMLElement,
 };
 
 type State = Readonly<typeof initialState>;
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
+  is_signed_in: boolean;
   updateNote: (note: NoteData) => void;
+  logOut: () => void;
 }
 
 class App extends Component<Props, State> {
@@ -202,8 +210,24 @@ class App extends Component<Props, State> {
     this.create();
   };
 
+  closeUserMenu = () => {
+    this.setState({ userMenuEl: null });
+  };
+
+  openUserMenu = (e: React.MouseEvent<HTMLElement>) => {
+    this.setState({ userMenuEl: e.currentTarget });
+  };
+
+  signOut = async (e: React.SyntheticEvent) => {
+    this.setState({ userMenuEl: null });
+    await axios.post('/api/sign_out');
+    this.props.logOut();
+  };
+
   render() {
+    const { userMenuEl } = this.state;
     const { classes } = this.props;
+    const isUserMenuOpen = Boolean(userMenuEl);
 
     return (
       <div className={classes.root}>
@@ -262,6 +286,13 @@ class App extends Component<Props, State> {
                 </form>
               </div>
             </BindKeyboard>
+            <IconButton
+              aria-haspopup='true'
+              onClick={this.openUserMenu}
+              color='inherit'
+            >
+              <AccountCircle />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Grid container spacing={16} className={classes.contentRoot}>
@@ -270,7 +301,15 @@ class App extends Component<Props, State> {
               <Note
                 new
                 innerRef={this.newNote}
-                note={{ title: this.state.search, tags: [] }}
+                note={{
+                  id: -1,
+                  title: this.state.search,
+                  tags: [],
+                  body: '',
+                  created_at: '',
+                  updated_at: '',
+                  user_id: 0,
+                }}
                 updateNote={this.updateNote}
                 titles={new Map()}
               />
@@ -297,6 +336,17 @@ class App extends Component<Props, State> {
         </Grid>
 
         <BindKeyboard keys='/' callback={this.startSearch} />
+        <LogIn open={!this.props.is_signed_in} />
+        <Menu
+          anchorEl={this.state.userMenuEl}
+          open={isUserMenuOpen}
+          onClose={this.closeUserMenu}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <MenuItem onClick={this.signOut}>
+            <p>Sign Out</p>
+          </MenuItem>
+        </Menu>
       </div>
     );
   }
@@ -304,11 +354,16 @@ class App extends Component<Props, State> {
 
 const mapStateToProps = (state: AppState) => ({
   notes: state.notes,
+  is_signed_in: state.user.is_signed_in,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   updateNote(data: NoteData) {
     dispatch(updateNote(data));
+  },
+
+  logOut() {
+    dispatch(logOut());
   },
 });
 

@@ -5,6 +5,7 @@ table! {
         body -> Text,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
+        user_id -> Int4,
     }
 }
 
@@ -25,11 +26,24 @@ table! {
     }
 }
 
+table! {
+    users (id) {
+        id -> Int4,
+        name -> Varchar,
+        email -> Varchar,
+        hashed_password -> Varchar,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
+    }
+}
+
 joinable!(note_tags_id -> notes (note_id));
 joinable!(note_tags_id -> tags (tag_id));
+joinable!(notes -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     notes,
     note_tags_id,
     tags,
+    users,
 );

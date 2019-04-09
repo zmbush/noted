@@ -9,6 +9,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
+import classNames from 'classnames';
 
 import axios from 'axios';
 import Card from '@material-ui/core/Card';
@@ -30,6 +31,7 @@ import {
   WithStyles,
 } from '@material-ui/core/styles';
 
+import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
@@ -45,6 +47,9 @@ const styles = (theme: Theme) =>
         boxShadow: 'none',
         //pageBreakInside: 'avoid',
       },
+    },
+    unlinked: {
+      border: '5px solid red',
     },
     bodyEditor: {
       fontFamily: 'Roboto Mono',
@@ -141,12 +146,7 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles> {
   new?: boolean;
-  note: {
-    id?: number;
-    title: string;
-    body?: string;
-    tags: string[];
-  };
+  note: NoteData;
   titles: Map<string, Set<number>>;
   updateNote: (note?: { id: number }) => void;
   matches?: {
@@ -191,19 +191,19 @@ class Note extends React.Component<Props, State> {
   save = async () => {
     let result;
     if (this.props.new) {
-      result = await axios.put('/api/note', {
+      result = await axios.put('/api/secure/note', {
         title: this.state.title,
         body: this.state.body,
       });
     } else {
-      result = await axios.patch(`/api/notes/${this.props.note.id}`, {
+      result = await axios.patch(`/api/secure/notes/${this.props.note.id}`, {
         title: this.state.title,
         body: this.state.body,
       });
     }
 
     result = await axios.put(
-      `/api/notes/${result.data.id}/tags`,
+      `/api/secure/notes/${result.data.id}/tags`,
       this.state.tags
     );
 
@@ -249,7 +249,11 @@ class Note extends React.Component<Props, State> {
     return (
       <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
         <BindKeyboard keys='esc' callback={this.cancelEdit}>
-          <Card className={classes.card}>
+          <Card
+            className={classNames(classes.card, {
+              [classes.unlinked]: this.props.note.user_id == 1,
+            })}
+          >
             <CardHeader
               className={classes.cardHeader}
               title={

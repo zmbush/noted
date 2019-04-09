@@ -11,7 +11,7 @@ import * as React from 'react';
 
 import axios from 'axios';
 import reducers from 'data/reducers';
-import { notesFetchStart, notesFetched } from 'data/actions';
+import { notesFetchStart, logIn, fetchData } from 'data/actions';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -22,8 +22,8 @@ import App from 'components/App';
 const store = createStore(reducers);
 
 (async () => {
-  store.dispatch(notesFetchStart());
-  store.dispatch(notesFetched((await axios.get('/api/notes')).data));
+  store.dispatch(logIn((await axios.get('/api/get_user')).data));
+  fetchData(store.dispatch);
 })();
 
 ReactDOM.render(

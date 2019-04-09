@@ -4,13 +4,19 @@
 use {
     clap::clap_app,
     failure::Error,
+    futures::{future, Future},
     gotham::{
         self,
+        middleware::session::{
+            Backend, NewBackend, NewSessionMiddleware, SessionError, SessionIdentifier,
+        },
+        pipeline::{new_pipeline, single::single_pipeline},
         router::{builder::*, response::extender::ResponseExtender},
         state::State,
     },
     http::response::Response,
     lazy_static::lazy_static,
+    redis::Commands,
 };
 
 lazy_static! {
@@ -24,6 +30,64 @@ lazy_static! {
 
         contents
     };
+}
+
+#[derive(Clone)]
+struct RedisBackendProvider(redis::Client);
+
+struct RedisBackend(redis::Connection);
+
+impl Backend for RedisBackend {
+    fn persist_session(
+        &self,
+        identifier: SessionIdentifier,
+        content: &[u8],
+    ) -> Result<(), SessionError> {
+        self.0
+            .set(&identifier.value, content)
+            .map_err(|e| SessionError::Backend(format!("{}", e)))?;
+
+        self.0
+            .expire(identifier.value, 60 * 60 * 24 * 30)
+            .map_err(|e| SessionError::Backend(format!("{}", e)))
+    }
+
+    fn read_session(
+        &self,
+        identifier: SessionIdentifier,
+    ) -> Box<dyn Future<Item = Option<Vec<u8>>, Error = SessionError> + Send> {
+        let _: Result<(), _> = self
+            .0
+            .expire(&identifier.value, 60 * 60 * 24 * 30)
+            .map_err(|e| SessionError::Backend(format!("{}", e)));
+
+        Box::new(match self.0.get(identifier.value) {
+            Ok(v) => future::ok(v),
+            Err(e) => future::err(SessionError::Backend(format!("{}", e))),
+        })
+    }
+
+    fn drop_session(&self, identifier: SessionIdentifier) -> Result<(), SessionError> {
+        self.0
+            .del(identifier.value)
+            .map_err(|e| SessionError::Backend(format!("{}", e)))
+    }
+}
+
+impl RedisBackendProvider {
+    fn new<T: redis::IntoConnectionInfo>(params: T) -> redis::RedisResult<Self> {
+        Ok(Self(redis::Client::open(params)?))
+    }
+}
+
+impl NewBackend for RedisBackendProvider {
+    type Instance = RedisBackend;
+
+    fn new_backend(&self) -> std::io::Result<RedisBackend> {
+        Ok(RedisBackend(self.0.get_connection().map_err(|e| {
+            std::io::Error::new(std::io::ErrorKind::ConnectionRefused, e)
+        })?))
+    }
 }
 
 struct NotFoundHandler;
@@ -47,6 +111,7 @@ fn main() -> Result<(), Error> {
             (author: env!("CARGO_PKG_AUTHORS"))
             (about: env!("CARGO_PKG_DESCRIPTION"))
             (@arg PORT: -p --port +takes_value "The port")
+            (@arg SECURE: -s --secure "If the session should be secure")
     }
     .get_matches();
 
@@ -60,7 +125,20 @@ fn main() -> Result<(), Error> {
         favicons.push(file?.path());
     }
 
-    let router = build_simple_router(|route| {
+    let middleware = {
+        let mid = NewSessionMiddleware::new(RedisBackendProvider::new("redis://127.0.0.1")?)
+            .with_session_type::<noted::AppData>();
+
+        if matches.is_present("SECURE") {
+            mid
+        } else {
+            mid.insecure()
+        }
+    };
+
+    let (chain, pipelines) = single_pipeline(new_pipeline().add(middleware).build());
+
+    let router = build_router(chain, pipelines, |route| {
         route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
         route.delegate("/api").to_router(noted::api::api());
         route.get_or_head("/dist/*").to_dir("dist");
