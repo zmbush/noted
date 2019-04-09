@@ -131,6 +131,8 @@ fn list_notes(_: &mut Request) -> IronResult<Response> {
                 title: n.title,
                 body: n.body,
                 tags: ts.into_iter().map(|i| i.tag).collect(),
+                created_at: n.created_at,
+                updated_at: n.updated_at,
             })
             .collect::<Vec<_>>(),
     )

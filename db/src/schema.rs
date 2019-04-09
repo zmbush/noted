@@ -3,6 +3,8 @@ table! {
         id -> Int4,
         title -> Varchar,
         body -> Text,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
     }
 }
 
@@ -18,6 +20,8 @@ table! {
     tags (id) {
         id -> Int4,
         tag -> Text,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
     }
 }
 
