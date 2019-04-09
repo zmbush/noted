@@ -15,6 +15,7 @@ import Note, { InnerNote } from 'components/Note';
 import classNames from 'classnames';
 import { NoteData } from 'data/types';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { parseTitles } from 'components/AutoLink';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 
@@ -22,6 +23,14 @@ const styles = (theme: Theme) =>
   createStyles({
     newButton: {
       margin: theme.spacing.unit,
+      '@media print': {
+        display: 'none',
+      },
+    },
+    item: {
+      '@media print': {
+        padding: '0 !important',
+      },
     },
     leftIcon: {
       marginRight: theme.spacing.unit,
@@ -42,31 +51,29 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 class NoteList extends React.Component<Props> {
   render() {
     const { classes } = this.props;
+    let { notes } = this.props;
 
-    let titles = Array.from(this.props.notes.values()).reduce(
-      (titles, note: { title: string; id: number }) => {
-        titles.set(note.title, new Set([note.id]));
-        for (let titlePart of note.title.split(' ')) {
-          if (titlePart.length > 3) {
-            if (titles.has(titlePart)) {
-              titles.get(titlePart).add(note.id);
-            } else {
-              titles.set(titlePart, new Set([note.id]));
-            }
-          }
-        }
-        return titles;
-      },
-      new Map<string, Set<number>>()
-    );
+    const titles = parseTitles(notes);
+
+    if (this.props.renderOnly) {
+      notes = new Map(
+        Array.from(notes.entries()).filter(([id, note]) =>
+          this.props.renderOnly.has(id)
+        )
+      );
+    }
 
     if (this.props.search != '') {
-      let fuse = new Fuse(Array.from(this.props.notes.values()), {
+      let fuse = new Fuse(Array.from(notes.values()), {
         distance: 100,
         includeMatches: true,
         keys: [
           {
             name: 'title',
+            weight: 1.0,
+          },
+          {
+            name: 'tags',
             weight: 1.0,
           },
           {
@@ -87,7 +94,7 @@ class NoteList extends React.Component<Props> {
       let results = fuse.search(this.props.search);
       if (results.length == 0 || results[0].item.title != this.props.search) {
         elements.push(
-          <Grid item key='new' xs={12}>
+          <Grid item key='new' xs={12} className={classes.item}>
             <Button
               variant='contained'
               color='primary'
@@ -105,7 +112,7 @@ class NoteList extends React.Component<Props> {
       let i = 0;
       for (let n of results) {
         elements.push(
-          <Grid item key={n.item.id} xs={12}>
+          <Grid item key={n.item.id} xs={12} className={classes.item}>
             <Note
               note={n.item}
               matches={n.matches}
@@ -119,7 +126,7 @@ class NoteList extends React.Component<Props> {
       }
       return elements;
     } else {
-      let notes = Array.from(this.props.notes.values()).sort((a, b) => {
+      let sorted_notes = Array.from(notes.values()).sort((a, b) => {
         var x = a.title;
         var y = b.title;
         if (x < y) {
@@ -130,8 +137,8 @@ class NoteList extends React.Component<Props> {
         }
         return 0;
       });
-      return notes.map(n => (
-        <Grid item key={n.id} xs={12}>
+      return sorted_notes.map(n => (
+        <Grid item key={n.id} xs={12} className={classes.item}>
           <Note note={n} updateNote={this.props.updateNote} titles={titles} />
         </Grid>
       ));

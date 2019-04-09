@@ -23,20 +23,121 @@ import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ChipInput from 'material-ui-chip-input';
 import InputBase from '@material-ui/core/InputBase';
-import { withStyles, WithStyles } from '@material-ui/core/styles';
+import {
+  createStyles,
+  withStyles,
+  Theme,
+  WithStyles,
+} from '@material-ui/core/styles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
 
-const styles = {
-  bodyRoot: {
-    width: '100%',
-  },
-  bodyEditor: {
-    fontFamily: 'Roboto Mono',
-  },
-};
+const styles = (theme: Theme) =>
+  createStyles({
+    bodyRoot: {
+      width: '100%',
+    },
+    card: {
+      '@media print': {
+        border: 'none',
+        boxShadow: 'none',
+        //pageBreakInside: 'avoid',
+      },
+    },
+    bodyEditor: {
+      fontFamily: 'Roboto Mono',
+    },
+    markdown: {
+      '& p': {
+        '@media print': {
+          //pageBreakInside: 'avoid',
+          //display: 'inline-block',
+          //margin: 0,
+          textIndent: theme.spacing.unit,
+        },
+      },
+      '& blockquote': {
+        borderLeftWidth: 3,
+        borderLeftStyle: 'solid',
+        borderLeftColor: theme.palette.secondary.dark,
+
+        paddingLeft: theme.spacing.unit,
+        '@media print': {
+          margin: 0,
+        },
+      },
+      '& a': {
+        '@media print': {
+          textDecoration: 'none',
+          color: 'black',
+        },
+      },
+      '& table': {
+        borderCollapse: 'collapse',
+        borderSpacing: 0,
+        width: '100%',
+
+        '& thead': {
+          fontWeight: 800,
+          display: 'table-row-group',
+
+          '& th': {
+            verticalAlign: 'bottom',
+            paddingBottom: '.3em',
+            paddingLeft: '.1em',
+            paddingRight: '.1em',
+          },
+        },
+        '& tbody': {
+          '& tr:nth-child(2n+1)': {
+            backgroundColor: '#E0E5C1',
+          },
+        },
+      },
+      '@media print': {
+        '& h1, & h2, & h3, & h4, & h5': {
+          color: '#58180D',
+        },
+        '& h1': {
+          fontSize: '.705cm',
+        },
+        '& h2': {
+          fontSize: '.529cm',
+          borderBottom: '2px solid #c9ad6a',
+        },
+        '& h3': {
+          fontSize: '.458cm',
+          marginBottom: 0,
+        },
+        '& h4': {
+          fontSize: '.423cm',
+          marginBottom: '.2em',
+        },
+      },
+    },
+    noPrint: {
+      '@media print': {
+        display: 'none',
+      },
+    },
+    cardHeader: {
+      '@media print': {
+        paddingBottom: 0,
+        paddingTop: 0,
+        '& span': {
+          color: '#58180D',
+          fontSize: '.987cm',
+        },
+      },
+    },
+    cardContent: {
+      '@media print': {
+        paddingTop: 0,
+      },
+    },
+  });
 
 interface Props extends WithStyles<typeof styles> {
   new?: boolean;
@@ -148,8 +249,9 @@ class Note extends React.Component<Props, State> {
     return (
       <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
         <BindKeyboard keys='esc' callback={this.cancelEdit}>
-          <Card>
+          <Card className={classes.card}>
             <CardHeader
+              className={classes.cardHeader}
               title={
                 this.state.edit ? (
                   <InputBase
@@ -169,13 +271,16 @@ class Note extends React.Component<Props, State> {
                     <SaveIcon />
                   </IconButton>
                 ) : (
-                  <IconButton onClick={this.startEdit}>
+                  <IconButton
+                    onClick={this.startEdit}
+                    className={classes.noPrint}
+                  >
                     <EditIcon />
                   </IconButton>
                 )
               }
             />
-            <CardContent>
+            <CardContent className={classes.cardContent}>
               {this.state.edit ? (
                 <>
                   <ChipInput
@@ -210,6 +315,7 @@ class Note extends React.Component<Props, State> {
                 <>
                   <Tags tags={this.props.note.tags} />
                   <ReactMarkdown
+                    className={classes.markdown}
                     renderers={{
                       text: props => (
                         <AutoLink titles={this.props.titles} {...props} />
