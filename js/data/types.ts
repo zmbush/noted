@@ -13,6 +13,22 @@ export type NoteData = {
   title: string;
   body: string;
   tags: string[];
+  created_at: string;
+  updated_at: string;
+  user_id: number;
+};
+
+export type ErrorData = {
+  code: number;
+  error: string;
+};
+
+export type UserData = {
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type AppState = AppState;
