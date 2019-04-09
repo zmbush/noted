@@ -8,6 +8,26 @@
 
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { NoteData } from 'data/types';
+
+export function parseTitles(notes: Map<number, NoteData>) {
+  return Array.from(notes.values()).reduce(
+    (titles, note: { title: string; id: number }) => {
+      titles.set(note.title, new Set([note.id]));
+      for (let titlePart of note.title.split(' ')) {
+        if (titlePart.length > 3) {
+          if (titles.has(titlePart)) {
+            titles.get(titlePart).add(note.id);
+          } else {
+            titles.set(titlePart, new Set([note.id]));
+          }
+        }
+      }
+      return titles;
+    },
+    new Map<string, Set<number>>()
+  );
+}
 
 type LinkProps = {
   text: string;

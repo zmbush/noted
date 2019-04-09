@@ -30,11 +30,13 @@ const styles = (theme: Theme) =>
       fontSize: 20,
     },
   });
+
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
   search: string;
   updateNote: (note: NoteData) => void;
   firstNoteRef: React.RefObject<InnerNote>;
+  renderOnly?: Set<number>;
 }
 
 class NoteList extends React.Component<Props> {
