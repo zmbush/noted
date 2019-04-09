@@ -43,7 +43,7 @@ import BindKeyboard from 'components/BindKeyboard';
 import NoteList from 'components/NoteList';
 import { updateNote } from 'data/actions';
 import { NoteData, AppState } from 'data/types';
-import SingleNote from 'components/SingleNote';
+import FilteredNoteList from 'components/FilteredNoteList';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -270,10 +270,12 @@ class App extends Component<Props, State> {
                 firstNoteRef={this.firstNote}
               />
             </Route>
-            <Route path='/note/:id'>
-              <SingleNote
+            <Route path={['/note/:ids', '/disambiguation/:ids']}>
+              <FilteredNoteList
                 notes={this.props.notes}
+                search={this.state.search}
                 updateNote={this.props.updateNote}
+                firstNoteRef={this.firstNote}
               />
             </Route>
           </Switch>
