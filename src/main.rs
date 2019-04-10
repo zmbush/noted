@@ -18,7 +18,7 @@ lazy_static! {
         use std::{fs::File, io::Read};
 
         let mut contents = String::new();
-        let mut file = File::open("dist/404.html").expect("Could not open 404 file");
+        let mut file = File::open("static/404.html").expect("Could not open 404 file");
         file.read_to_string(&mut contents)
             .expect("Could not read 404 response to string");
 
@@ -55,12 +55,24 @@ fn main() -> Result<(), Error> {
         .and_then(|p| p.parse().ok())
         .unwrap_or(8088);
 
+    let mut favicons = Vec::new();
+    for file in std::fs::read_dir("static/favicon")? {
+        favicons.push(file?.path());
+    }
+
     let router = build_simple_router(|route| {
         route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
         route.delegate("/api").to_router(noted::api::api());
         route.get_or_head("/dist/*").to_dir("dist");
-        route.get_or_head("/*").to_file("dist/index.html");
-        route.get_or_head("/").to_file("dist/index.html");
+
+        for favicon in favicons {
+            route
+                .get_or_head(format!("/{}", favicon.display()))
+                .to_file(format!("static/favicon/{}", favicon.display()));
+        }
+
+        route.get_or_head("/*").to_file("static/index.html");
+        route.get_or_head("/").to_file("static/index.html");
     });
 
     gotham::start(("0.0.0.0", port), router);

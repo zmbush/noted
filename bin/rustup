@@ -1,6 +1,6 @@
 #!/bin/bash
 
 rustup override set 1.33.0
-rustup component add clippy-preview
+rustup component add clippy
 rustup component add rust-src
-rustup component add rustfmt-preview
+rustup component add rustfmt

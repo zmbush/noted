@@ -26,6 +26,5 @@ yarn-error.log
 combined.log
 error.log
 __generated__
-static
 log
 .env
