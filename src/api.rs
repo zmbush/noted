@@ -10,7 +10,7 @@ use {
     diesel::prelude::*,
     futures::{future, stream::Stream, Future},
     gotham::{
-        handler::{HandlerError, HandlerFuture, IntoHandlerError},
+        handler::{HandlerFuture, IntoHandlerError, IntoResponse},
         middleware::Middleware,
         pipeline::{new_pipeline, single::single_pipeline},
         router::{builder::*, response::extender::ResponseExtender, Router},
@@ -23,24 +23,6 @@ use {
     serde_json::json,
 };
 
-macro_rules! gtry {
-    ($state:ident, $result:expr) => {
-        match $result {
-            Ok(v) => v,
-            Err(e) => return Box::new(future::err(($state, e.into_handler_error()))),
-        }
-    };
-}
-
-macro_rules! gt {
-    ($result:expr) => {
-        match $result {
-            Ok(v) => v,
-            Err(e) => return Err(e.into_handler_error()),
-        }
-    };
-}
-
 #[derive(Clone, NewMiddleware)]
 struct JsonifyErrors;
 
@@ -52,17 +34,17 @@ impl Middleware for JsonifyErrors {
         let result = chain(state);
 
         let f = result.or_else(move |(state, error)| {
-            let response = json!({
+            let response_body = json!({
                 "error": format!("{}", error),
+                "details": format!("{:?}", error),
             });
 
-            future::ok((
-                state,
-                Response::builder()
-                    .header("Content-Type", "application/json")
-                    .body(hyper::Body::from(serde_json::to_string(&response).unwrap()))
-                    .unwrap(),
-            ))
+            let mut response = error.into_response(&state);
+
+            *response.body_mut() =
+                hyper::Body::from(serde_json::to_string(&response_body).unwrap());
+
+            future::ok((state, response))
         });
 
         Box::new(f)
@@ -113,34 +95,26 @@ pub fn api() -> Router {
     })
 }
 
-fn json_response<S: serde::Serialize>(
-    s: S,
-) -> Result<hyper::http::Response<hyper::Body>, HandlerError> {
-    Ok(Response::builder()
-        .header("Content-Type", "application/json")
-        .body(hyper::Body::from(
-            serde_json::to_string(&s).map_err(|e| e.into_handler_error())?,
-        ))
-        .unwrap())
+fn parse_json<'a, D: serde::Deserialize<'a>>(s: &'a str) -> Result<D, crate::error::NotedError> {
+    Ok(serde_json::from_str(s)?)
 }
 
-fn render_json<S: serde::Serialize>(
-    state: State,
+fn json_response<S: serde::Serialize>(
     s: S,
-) -> impl Future<Item = (State, hyper::http::Response<hyper::Body>), Error = (State, HandlerError)>
-{
-    let r = gtry!(state, json_response(s));
-
-    Box::new(future::ok((state, r)))
+) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError> {
+    Ok(Response::builder()
+        .header("Content-Type", "application/json")
+        .body(hyper::Body::from(serde_json::to_string(&s)?))
+        .unwrap())
 }
 
 fn body_handler<F>(mut state: State, f: F) -> Box<HandlerFuture>
 where
     F: 'static
         + Send
-        + Fn(String, &State) -> Result<hyper::http::Response<hyper::Body>, HandlerError>,
+        + Fn(String, &State) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError>,
 {
-    let body =
+    Box::new(
         hyper::Body::take_from(&mut state)
             .concat2()
             .then(move |full_body| match full_body {
@@ -151,10 +125,24 @@ where
                         Err(e) => future::err((state, e.into_handler_error())),
                     }
                 }
-                Err(e) => future::err((state, e.into_handler_error())),
-            });
+                Err(e) => future::err((
+                    state,
+                    crate::error::NotedError::from(e).into_handler_error(),
+                )),
+            }),
+    )
+}
 
-    Box::new(body)
+fn handler<F>(mut state: State, f: F) -> Box<HandlerFuture>
+where
+    F: 'static
+        + Send
+        + Fn(&State) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError>,
+{
+    Box::new(match f(&mut state) {
+        Ok(res) => future::ok((state, res)),
+        Err(e) => future::err((state, e.into_handler_error())),
+    })
 }
 
 #[derive(Deserialize, StateData, StaticResponseExtender)]
@@ -165,14 +153,9 @@ struct IdParams {
 fn list_titles(state: State) -> Box<HandlerFuture> {
     use noted_db::schema::notes::dsl::*;
 
-    let r = gtry!(
-        state,
-        notes
-            .select((id, title))
-            .load(&gtry!(state, noted_db::db()))
-    );
-
-    Box::new(render_json::<Vec<(i32, String)>>(state, r))
+    handler(state, |_| {
+        json_response::<Vec<(i32, String)>>(notes.select((id, title)).load(&noted_db::db()?)?)
+    })
 }
 
 fn list_notes(state: State) -> Box<HandlerFuture> {
@@ -182,70 +165,76 @@ fn list_notes(state: State) -> Box<HandlerFuture> {
         schema::{note_tags_id, notes, tags},
     };
 
-    let conn = gtry!(state, db());
+    handler(state, |_| {
+        let conn = db()?;
 
-    let all_notes = gtry!(state, notes::table.load::<Note>(&conn));
-    let tags_query = note_tags_id::table
-        .filter(note_tags_id::note_id.eq_any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>()))
-        .inner_join(tags::table)
-        .select((
-            note_tags_id::id,
-            note_tags_id::note_id,
-            note_tags_id::tag_id,
-            tags::tag,
-        ));
+        let all_notes = notes::table.load::<Note>(&conn)?;
 
-    let note_tags = gtry!(state, tags_query.load::<NoteToTag>(&conn)).grouped_by(&all_notes);
+        let tags_query = note_tags_id::table
+            .filter(
+                note_tags_id::note_id.eq_any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>()),
+            )
+            .inner_join(tags::table)
+            .select((
+                note_tags_id::id,
+                note_tags_id::note_id,
+                note_tags_id::tag_id,
+                tags::tag,
+            ));
 
-    Box::new(render_json(
-        state,
-        all_notes
-            .into_iter()
-            .zip(note_tags)
-            .map(|(n, ts)| NoteWithTags {
-                id: n.id,
-                title: n.title,
-                body: n.body,
-                tags: ts.into_iter().map(|i| i.tag).collect(),
-                created_at: n.created_at,
-                updated_at: n.updated_at,
-            })
-            .collect::<Vec<_>>(),
-    ))
+        let note_tags = tags_query.load::<NoteToTag>(&conn)?.grouped_by(&all_notes);
+
+        json_response(
+            all_notes
+                .into_iter()
+                .zip(note_tags)
+                .map(|(n, ts)| NoteWithTags {
+                    id: n.id,
+                    title: n.title,
+                    body: n.body,
+                    tags: ts.into_iter().map(|i| i.tag).collect(),
+                    created_at: n.created_at,
+                    updated_at: n.updated_at,
+                })
+                .collect::<Vec<_>>(),
+        )
+    })
 }
 
 fn new_note(state: State) -> Box<HandlerFuture> {
     use noted_db::schema::notes;
 
     body_handler(state, move |s, _state| {
-        let new_note: noted_db::models::NewNote = gt!(serde_json::from_str(&s));
+        let new_note: noted_db::models::NewNote = parse_json(&s)?;
 
-        Ok(gt!(json_response(
-            gt!(diesel::insert_into(notes::table)
+        json_response(
+            diesel::insert_into(notes::table)
                 .values(&new_note)
-                .get_result::<noted_db::models::Note>(&gt!(noted_db::db())))
-            .with_tags(&gt!(noted_db::db())),
-        )))
+                .get_result::<noted_db::models::Note>(&noted_db::db()?)?
+                .with_tags(&noted_db::db()?),
+        )
     })
 }
 
-fn note_for_id(note_id: i32) -> Result<hyper::http::Response<hyper::Body>, HandlerError> {
+fn note_for_id(
+    note_id: i32,
+) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError> {
     use noted_db::schema::notes::dsl::*;
 
-    Ok(gt!(json_response(
-        gt!(notes
+    json_response(
+        notes
             .find(note_id)
-            .first::<noted_db::models::Note>(&gt!(noted_db::db())))
-        .with_tags(&gt!(noted_db::db())),
-    )))
+            .first::<noted_db::models::Note>(&noted_db::db()?)?
+            .with_tags(&noted_db::db()?),
+    )
 }
 
 fn read_note(state: State) -> Box<HandlerFuture> {
-    let note_id = IdParams::borrow_from(&state).id;
+    handler(state, |state| {
+        let note_id = IdParams::borrow_from(&state).id;
 
-    let r = gtry!(state, note_for_id(note_id));
-
-    Box::new(future::ok((state, r)))
+        note_for_id(note_id)
+    })
 }
 
 fn update_note(state: State) -> Box<HandlerFuture> {
@@ -254,45 +243,31 @@ fn update_note(state: State) -> Box<HandlerFuture> {
     body_handler(state, move |s, state| {
         let IdParams { id: note_id } = IdParams::borrow_from(&state);
 
-        let update_note: noted_db::models::UpdateNote = gt!(serde_json::from_str(&s));
-        Ok(gt!(json_response(
-            gt!(diesel::update(notes.find(note_id))
+        let update_note: noted_db::models::UpdateNote = serde_json::from_str(&s)?;
+
+        json_response(
+            diesel::update(notes.find(note_id))
                 .set(&update_note)
-                .get_result::<noted_db::models::Note>(&gt!(noted_db::db())))
-            .with_tags(&gt!(noted_db::db())),
-        )))
+                .get_result::<noted_db::models::Note>(&noted_db::db()?)?
+                .with_tags(&noted_db::db()?),
+        )
     })
 }
 
 fn delete_note(state: State) -> Box<HandlerFuture> {
     use noted_db::schema::notes::dsl::*;
 
-    let IdParams { id: note_id } = IdParams::borrow_from(&state);
+    handler(state, |state| {
+        let IdParams { id: note_id } = IdParams::borrow_from(&state);
 
-    Box::new(
-        if gtry!(
-            state,
-            diesel::delete(notes.find(note_id)).execute(&gtry!(state, noted_db::db()))
-        ) != 0
-        {
-            future::ok((
-                state,
-                Response::builder()
-                    .header("Content-Type", "application/json")
-                    .body(hyper::Body::from("{\"status\":\"ok\"}"))
-                    .unwrap(),
-            ))
+        if diesel::delete(notes.find(note_id)).execute(&noted_db::db()?)? != 0 {
+            json_response(json!({
+                "status": "ok"
+            }))
         } else {
-            future::ok((
-                state,
-                Response::builder()
-                    .header("Content-Type", "application/json")
-                    .status(404)
-                    .body(hyper::Body::from("{\"status\":\"no record deleted\"}"))
-                    .unwrap(),
-            ))
-        },
-    )
+            Err(crate::error::NotedError::NotFound("no record deleted"))
+        }
+    })
 }
 
 fn set_tags(state: State) -> Box<HandlerFuture> {
@@ -304,11 +279,11 @@ fn set_tags(state: State) -> Box<HandlerFuture> {
             id: current_note_id,
         } = IdParams::borrow_from(&state);
 
-        let set_tags: Vec<String> = gt!(serde_json::from_str(&s));
+        let set_tags: Vec<String> = serde_json::from_str(&s)?;
 
-        let conn = gt!(noted_db::db());
+        let conn = noted_db::db()?;
 
-        gt!(conn.transaction::<(), diesel::result::Error, _>(|| {
+        conn.transaction::<(), diesel::result::Error, _>(|| {
             diesel::insert_into(tags)
                 .values(&set_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
                 .on_conflict_do_nothing()
@@ -335,7 +310,7 @@ fn set_tags(state: State) -> Box<HandlerFuture> {
                 .execute(&conn)?;
 
             Ok(())
-        }));
+        })?;
 
         note_for_id(*current_note_id)
     })

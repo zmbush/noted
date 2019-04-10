@@ -7,3 +7,4 @@
 // except according to those terms.
 
 pub mod api;
+pub mod error;
