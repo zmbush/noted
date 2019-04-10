@@ -67,7 +67,7 @@ fn main() -> Result<(), Error> {
 
         for favicon in favicons {
             route
-                .get_or_head(format!("/{}", favicon.display()))
+                .get_or_head(&format!("/{}", favicon.display()))
                 .to_file(format!("static/favicon/{}", favicon.display()));
         }
 
