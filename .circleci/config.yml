@@ -3,7 +3,7 @@ version: 2
 jobs:
   node:
     docker:
-      - image: circleci/node:4.8.2
+      - image: circleci/node:latest
     steps:
       - checkout
       - run:
@@ -20,7 +20,7 @@ jobs:
             - ./node_modules
   rust:
     docker:
-      - image: rust:1
+      - image: circleci/rust:latest
     steps:
       - checkout
       - run:
