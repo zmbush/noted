@@ -1,7 +1,6 @@
 matrix:
   include:
     - language: rust
-      rust: stable
     - language: node_js
       node_js:
         - "7"
