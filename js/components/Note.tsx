@@ -31,6 +31,11 @@ import {
   WithStyles,
 } from '@material-ui/core/styles';
 
+import 'codemirror/lib/codemirror.css';
+import 'tui-editor/dist/tui-editor.min.css';
+//import 'tui-editor/dist/tui-editor-contents.min.css';
+import { Editor } from '@toast-ui/react-editor';
+
 import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
@@ -144,6 +149,35 @@ const styles = (theme: Theme) =>
     },
   });
 
+const editorToolbarConfig = {
+  options: ['inline', 'blockType', 'list', 'link', 'remove', 'history'],
+  inline: {
+    options: ['bold', 'italic', 'strikethrough'],
+  },
+};
+
+const draftMarkdownOptions = {
+  styleItems: {
+    'color-red': {
+      open: () => '<span class="style-red">',
+      close: () => '</span>',
+    },
+  },
+  remarkablePreset: 'full',
+  remarkableOptions: { html: true, linkify: true, typographer: true },
+};
+
+/*const toMarkdown = (editorState: EditorState) =>
+  draftToMarkdown(
+    convertToRaw(editorState.getCurrentContent()),
+    draftMarkdownOptions
+  );
+
+const toDraft = (markdown: string) =>
+  EditorState.createWithContent(
+    convertFromRaw(markdownToDraft(markdown, draftMarkdownOptions))
+    );*/
+
 interface Props extends WithStyles<typeof styles> {
   new?: boolean;
   note: NoteData;
@@ -168,11 +202,13 @@ type State = Readonly<typeof initialState>;
 
 class Note extends React.Component<Props, State> {
   mainInput: React.RefObject<HTMLInputElement>;
+  editor: React.RefObject<Editor>;
 
   constructor(props: Props) {
     super(props);
     this.state = initialState;
     this.mainInput = React.createRef();
+    this.editor = React.createRef();
   }
 
   cancelEdit = (e: React.SyntheticEvent | Event) => {
@@ -300,20 +336,38 @@ class Note extends React.Component<Props, State> {
                     onAdd={this.addTag}
                     onDelete={this.deleteTag}
                   />
-                  <InputBase
-                    inputRef={this.mainInput}
-                    value={this.state.body}
-                    onChange={e => {
-                      this.setState({ body: e.target.value });
+                  <Editor
+                    initialValue={this.state.body}
+                    initialEditType='wysiwyg'
+                    ref={this.editor}
+                    onChange={() => {
+                      if (this.editor.current) {
+                        this.setState({
+                          body: this.editor.current.editorInst.getMarkdown(),
+                        });
+                      }
                     }}
-                    style={{ fontSize: 'inherit' }}
-                    classes={{
-                      root: classes.bodyRoot,
-                      multiline: classes.bodyEditor,
-                    }}
-                    multiline
-                    rows={15}
+                    height='auto'
+                    usageStatistics={false}
                   />
+                  <div style={{ display: 'none' }}>
+                    <InputBase
+                      inputRef={this.mainInput}
+                      value={this.state.body}
+                      onChange={e => {
+                        this.setState({
+                          body: e.target.value,
+                        });
+                      }}
+                      style={{ fontSize: 'inherit' }}
+                      classes={{
+                        root: classes.bodyRoot,
+                        multiline: classes.bodyEditor,
+                      }}
+                      multiline
+                      rows={15}
+                    />
+                  </div>
                 </>
               ) : (
                 <>

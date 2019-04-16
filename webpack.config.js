@@ -16,7 +16,7 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules', 'js'],
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
   },
   module: {
     rules: [
@@ -35,6 +35,17 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: '/dist/js',
+            },
+          },
+        ],
       },
     ],
   },

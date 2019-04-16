@@ -18,7 +18,7 @@ type Props = {
 
 export default class BindKeyboard extends React.Component<Props> {
   main: React.RefObject<HTMLDivElement>;
-  mousetrap: MousetrapInstance;
+  mousetrap: MousetrapInstance | MousetrapStatic;
 
   constructor(props: Props) {
     super(props);
