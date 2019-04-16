@@ -18,6 +18,9 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+      - run:
+          name: Webpack
+          command: npx webpack --color=true
   rust:
     docker:
       - image: circleci/rust:latest
