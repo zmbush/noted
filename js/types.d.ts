@@ -42,3 +42,5 @@ declare module 'react-markdown/plugins/html-parser' {
 
   export = htmlParser;
 }
+
+declare module 'tui-editor/dist/tui-editor-extColorSyntax' {}

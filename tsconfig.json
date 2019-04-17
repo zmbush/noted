@@ -4,17 +4,14 @@
     "outDir": "./dist/js",
     "noImplicitAny": true,
     "sourceMap": true,
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
     "target": "es5",
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "js/*"
-      ]
+      "*": ["js/*"]
     }
   },
-  "include": [
-    "./js/**/*"
-  ]
+  "include": ["./js/**/*"]
 }
