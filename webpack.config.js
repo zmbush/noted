@@ -8,6 +8,8 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 
 module.exports = {
   entry: './js/index.tsx',
@@ -48,6 +50,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'js/index.ejs',
     }),
+    //new BundleAnalyzerPlugin(),
   ],
   optimization: {
     splitChunks: {

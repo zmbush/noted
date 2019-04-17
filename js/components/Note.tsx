@@ -37,10 +37,9 @@ import {
 
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
-import 'tui-editor/dist/tui-editor-extColorSyntax.js';
-//import 'tui-editor/dist/tui-editor-contents.min.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
-import { Editor } from '@toast-ui/react-editor';
+
+import loadable from '@loadable/component';
 
 import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
@@ -187,8 +186,17 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
+const Editor = loadable(() => {
+  import(
+    /* webpackChunkName: "editor" */ 'tui-editor/dist/tui-editor-extColorSyntax'
+  );
+  return import(/* webpackChunkName: "editor" */ '@toast-ui/react-editor').then(
+    module => module.Editor
+  );
+});
+
 class Note extends React.Component<Props, State> {
-  editor: React.RefObject<Editor>;
+  editor: React.RefObject<any>;
 
   constructor(props: Props) {
     super(props);
