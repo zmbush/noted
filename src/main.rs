@@ -149,8 +149,8 @@ fn main() -> Result<(), Error> {
                 .to_file(format!("static/favicon/{}", favicon.display()));
         }
 
-        route.get_or_head("/*").to_file("static/index.html");
-        route.get_or_head("/").to_file("static/index.html");
+        route.get_or_head("/*").to_file("dist/index.html");
+        route.get_or_head("/").to_file("dist/index.html");
     });
 
     gotham::start(("0.0.0.0", port), router);

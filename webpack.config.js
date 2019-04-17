@@ -7,12 +7,14 @@
 // except according to those terms.
 
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './js/index.tsx',
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist/js'),
+    filename: 'js/[name].bundle.js',
+    publicPath: '/dist/',
+    path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
     modules: ['node_modules', 'js'],
@@ -38,16 +40,35 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: '/dist/js',
-            },
-          },
-        ],
+        use: ['file-loader'],
       },
     ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'js/index.ejs',
+    }),
+  ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 30000,
+      maxSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      automaticNameDelimiter: '~',
+      name: true,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\=]/,
+          chunks: 'initial',
+          name: 'vendor',
+          enforce: true,
+        },
+      },
+    },
+    runtimeChunk: true,
   },
   devtool: 'source-map',
   mode: 'development',
