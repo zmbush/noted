@@ -21,5 +21,24 @@ declare module '@toast-ui/react-editor' {
 
   class Editor extends React.Component<Props> {
     editorInst: InnerEditor;
+
+    getInstance(): InnerEditor;
   }
+}
+
+declare module 'react-markdown/plugins/html-parser' {
+  type getHtmlParserPlugin = (
+    config: {
+      isValidNode: (node: { type: string }) => boolean;
+    },
+    props?: any
+  ) => (tree: any, props: any) => any;
+
+  type htmlParserExport = getHtmlParserPlugin & {
+    default: getHtmlParserPlugin;
+  };
+
+  const htmlParser: htmlParserExport;
+
+  export = htmlParser;
 }
