@@ -46,6 +46,7 @@ import BindKeyboard from 'components/BindKeyboard';
 import NoteList from 'components/NoteList';
 import { updateNote, logOut } from 'data/actions';
 import { NoteData, AppState } from 'data/types';
+import { getLinkIds, LinkIdMap } from 'data/selectors';
 import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
 
@@ -148,6 +149,7 @@ type State = Readonly<typeof initialState>;
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
+  titles: LinkIdMap;
   is_signed_in: boolean;
   updateNote: (note: NoteData) => void;
   logOut: () => void;
@@ -319,6 +321,7 @@ class App extends Component<Props, State> {
             <Route exact path='/'>
               <NoteList
                 notes={this.props.notes}
+                titles={this.props.titles}
                 search={this.state.search}
                 updateNote={this.updateNote}
                 firstNoteRef={this.firstNote}
@@ -327,6 +330,7 @@ class App extends Component<Props, State> {
             <Route path={['/note/:ids', '/disambiguation/:ids']}>
               <FilteredNoteList
                 notes={this.props.notes}
+                titles={this.props.titles}
                 search={this.state.search}
                 updateNote={this.updateNote}
                 firstNoteRef={this.firstNote}
@@ -354,6 +358,7 @@ class App extends Component<Props, State> {
 
 const mapStateToProps = (state: AppState) => ({
   notes: state.notes,
+  titles: getLinkIds(state.notes),
   is_signed_in: state.user.is_signed_in,
 });
 

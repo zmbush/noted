@@ -10,12 +10,13 @@ import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Note, { InnerNote } from 'components/Note';
 import { NoteData } from 'data/types';
-import { parseTitles } from 'components/AutoLink';
 import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom';
 import NoteList from 'components/NoteList';
+import { LinkIdMap } from 'data/selectors';
 
 interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
+  titles: LinkIdMap;
   search: string;
   updateNote: (note: NoteData) => void;
   firstNoteRef: React.RefObject<InnerNote>;

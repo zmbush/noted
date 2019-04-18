@@ -15,9 +15,9 @@ import Note, { InnerNote } from 'components/Note';
 import classNames from 'classnames';
 import { NoteData } from 'data/types';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { parseTitles } from 'components/AutoLink';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
+import { LinkIdMap } from 'data/selectors';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,6 +42,7 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
+  titles: LinkIdMap;
   search: string;
   updateNote: (note: NoteData) => void;
   firstNoteRef: React.RefObject<InnerNote>;
@@ -52,8 +53,6 @@ class NoteList extends React.Component<Props> {
   render() {
     const { classes } = this.props;
     let { notes } = this.props;
-
-    const titles = parseTitles(notes);
 
     if (this.props.renderOnly) {
       notes = new Map(
@@ -118,7 +117,7 @@ class NoteList extends React.Component<Props> {
               matches={n.matches}
               updateNote={this.props.updateNote}
               innerRef={i == 0 ? this.props.firstNoteRef : null}
-              titles={titles}
+              titles={this.props.titles}
             />
           </Grid>
         );
@@ -139,7 +138,11 @@ class NoteList extends React.Component<Props> {
       });
       return sorted_notes.map(n => (
         <Grid item key={n.id} xs={12} className={classes.item}>
-          <Note note={n} updateNote={this.props.updateNote} titles={titles} />
+          <Note
+            note={n}
+            updateNote={this.props.updateNote}
+            titles={this.props.titles}
+          />
         </Grid>
       ));
     }
