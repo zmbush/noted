@@ -8,6 +8,7 @@
 
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { Suspense } from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import * as htmlParser from 'react-markdown/plugins/html-parser';
 import classNames from 'classnames';
@@ -38,8 +39,6 @@ import {
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
-
-import loadable from '@loadable/component';
 
 import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
@@ -186,12 +185,12 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
-const Editor = loadable(() => {
+const Editor = React.lazy(() => {
   import(
     /* webpackChunkName: "editor" */ 'tui-editor/dist/tui-editor-extColorSyntax'
   );
   return import(/* webpackChunkName: "editor" */ '@toast-ui/react-editor').then(
-    module => module.Editor
+    module => ({ default: module.Editor })
   );
 });
 
@@ -304,53 +303,57 @@ class Note extends React.Component<Props, State> {
           >
             <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
               <Card classes={{ root: classes.editorRoot }}>
-                <CardHeader
-                  title={
-                    <InputBase
-                      value={this.state.title}
-                      onChange={e => {
-                        this.setState({ title: e.target.value });
-                      }}
-                      style={{ fontSize: 'inherit' }}
+                <Suspense fallback={<div>Loading...</div>}>
+                  <CardHeader
+                    title={
+                      <InputBase
+                        value={this.state.title}
+                        onChange={e => {
+                          this.setState({ title: e.target.value });
+                        }}
+                        style={{ fontSize: 'inherit' }}
+                      />
+                    }
+                    action={
+                      <IconButton onClick={this.save}>
+                        <SaveIcon />
+                      </IconButton>
+                    }
+                  />
+                  <CardContent classes={{ root: classes.editorContent }}>
+                    <ChipInput
+                      classes={{}}
+                      placeholder='Tags'
+                      fullWidth
+                      dataSource={[
+                        'arc:Delmirev',
+                        'type:Location',
+                        'type:Character',
+                      ]}
+                      value={this.state.tags}
+                      onAdd={this.addTag}
+                      onDelete={this.deleteTag}
                     />
-                  }
-                  action={
-                    <IconButton onClick={this.save}>
-                      <SaveIcon />
-                    </IconButton>
-                  }
-                />
-                <CardContent classes={{ root: classes.editorContent }}>
-                  <ChipInput
-                    classes={{}}
-                    placeholder='Tags'
-                    fullWidth
-                    dataSource={[
-                      'arc:Delmirev',
-                      'type:Location',
-                      'type:Character',
-                    ]}
-                    value={this.state.tags}
-                    onAdd={this.addTag}
-                    onDelete={this.deleteTag}
-                  />
-                  <Editor
-                    initialValue={this.state.body}
-                    initialEditType='wysiwyg'
-                    ref={this.editor}
-                    onChange={() => {
-                      if (this.editor.current) {
-                        this.setState({
-                          body: this.editor.current.getInstance().getMarkdown(),
-                        });
-                      }
-                    }}
-                    height='calc(100% - 40px)'
-                    usageStatistics={false}
-                    useCommandShortcut={false}
-                    exts={['colorSyntax']}
-                  />
-                </CardContent>
+                    <Editor
+                      initialValue={this.state.body}
+                      initialEditType='wysiwyg'
+                      ref={this.editor}
+                      onChange={() => {
+                        if (this.editor.current) {
+                          this.setState({
+                            body: this.editor.current
+                              .getInstance()
+                              .getMarkdown(),
+                          });
+                        }
+                      }}
+                      height='calc(100% - 40px)'
+                      usageStatistics={false}
+                      useCommandShortcut={false}
+                      exts={['colorSyntax']}
+                    />
+                  </CardContent>
+                </Suspense>
               </Card>
             </BindKeyboard>
           </Dialog>
