@@ -1,7 +1,0 @@
-matrix:
-  include:
-    - language: rust
-    - language: node_js
-      node_js:
-        - "7"
-      script: "echo 'yay'"
