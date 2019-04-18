@@ -15,6 +15,8 @@ module.exports = {
   entry: './js/index.tsx',
   output: {
     filename: 'js/[name].bundle.js',
+    chunkFilename: 'js/[name].[chunkhash].js',
+
     publicPath: '/dist/',
     path: path.resolve(__dirname, 'dist'),
   },
@@ -73,6 +75,4 @@ module.exports = {
     },
     runtimeChunk: true,
   },
-  devtool: 'source-map',
-  mode: 'development',
 };

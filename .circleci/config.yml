@@ -20,7 +20,7 @@ jobs:
             - ./node_modules
       - run:
           name: Webpack
-          command: npx webpack --color=true
+          command: npm run build
   rust:
     docker:
       - image: circleci/rust:latest
