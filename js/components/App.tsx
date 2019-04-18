@@ -320,7 +320,7 @@ class App extends Component<Props, State> {
               <NoteList
                 notes={this.props.notes}
                 search={this.state.search}
-                updateNote={this.props.updateNote}
+                updateNote={this.updateNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
@@ -328,7 +328,7 @@ class App extends Component<Props, State> {
               <FilteredNoteList
                 notes={this.props.notes}
                 search={this.state.search}
-                updateNote={this.props.updateNote}
+                updateNote={this.updateNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
