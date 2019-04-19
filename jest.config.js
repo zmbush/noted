@@ -13,19 +13,5 @@ module.exports = {
     '^core-js/.*': 'identity-obj-proxy',
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
-  /*verbose: true,
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest',
-  },
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx|js|jsx)$',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  snapshotSerializers: ['enzyme-to-json/serializer'],
-  moduleDirectories: ['node_modules', 'js'],
-  globals: {
-    'ts-jest': {
-      babelConfig: true,
-      diagnostics: { ignoreCodes: [151001] },
-    },
-  },*/
+  collectCoverageFrom: ['js/**/*.{ts,js}{,x}'],
 };
