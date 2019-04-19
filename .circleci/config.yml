@@ -45,6 +45,7 @@ jobs:
       - restore_cache:
           keys:
             - v4-cargo-cache-{{arch}}-{{checksum "Cargo.lock" }}
+            - kcov-cache-{{arch}}-33
       - run:
           name: Build all targets
           command: cargo build --all --all-targets
@@ -56,8 +57,22 @@ jobs:
             - target/debug/deps
           key: v4-cargo-cache-{{arch}}-{{checksum "Cargo.lock"}}
       - run:
+          name: Install Kcov
+          command: ./.circleci/scripts/install-kcov.sh
+      - save_cache:
+          paths:
+            - kcov-33
+          key: kcov-cache-{{arch}}-33
+      - run:
           name: Run all tests
           command: cargo test --all
+      - run:
+          name: Run kcov
+          command: cargo kcov --kcov kcov-33/build/src/kcov
+      - store_artifacts:
+          path: target/cov
+      - codecov/upload:
+          file: target/cov/kcov-merged/cobertura.xml
 
 workflows:
   version: 2
