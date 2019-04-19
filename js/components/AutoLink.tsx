@@ -16,7 +16,7 @@ type LinkProps = {
   ids: Set<number>;
 };
 
-class LinkedText extends React.Component<LinkProps> {
+export class LinkedText extends React.Component<LinkProps> {
   render() {
     if (this.props.ids.size == 1) {
       const id = this.props.ids.values().next().value;
