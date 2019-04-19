@@ -8,7 +8,8 @@
 
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as Mousetrap from 'mousetrap';
+
+import Mousetrap from 'mousetrap';
 
 type Props = {
   keys: string;

@@ -29,3 +29,8 @@ __generated__
 log
 .env
 .npm-debug.log
+
+coverage
+npm-debug.log
+npm-debug.log*
+db.bku
