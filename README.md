@@ -4,4 +4,4 @@ Noted is a tool to more easily write for D&D
 
 ## Coverage Report
 
-![coverage](https://codecov.io/gh/zmbush/noted/commit/091e78583dbb56208710c9141de108f3644c7b64/graphs/tree.svg?token=2W721TfhsQ)
+![coverage](https://codecov.io/gh/zmbush/noted/branch/master/graphs/tree.svg?token=2W721TfhsQ&width=1000)
