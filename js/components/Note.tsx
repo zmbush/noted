@@ -36,6 +36,8 @@ import {
   WithStyles,
 } from '@material-ui/core/styles';
 
+import ReactLoading from 'react-loading';
+
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
@@ -161,6 +163,14 @@ const styles = (theme: Theme) =>
       bottom: 0,
       top: '50px',
     },
+
+    loadingSpinner: {
+      position: 'relative',
+      left: '50%',
+      top: '50%',
+      marginTop: -32,
+      marginLeft: -32,
+    },
   });
 
 interface Props extends WithStyles<typeof styles> {
@@ -251,8 +261,14 @@ class Note extends React.Component<Props, State> {
         edit: true,
       },
       () => {
-        let e = this.editor.current;
-        //e.getInstance().focus();
+        setTimeout(() => {
+          const e = this.editor.current;
+          if (e) {
+            const inst = e.getInstance();
+            inst.focus();
+            inst.moveCursorToEnd();
+          }
+        }, 100);
       }
     );
   };
@@ -303,7 +319,15 @@ class Note extends React.Component<Props, State> {
           >
             <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
               <Card classes={{ root: classes.editorRoot }}>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense
+                  fallback={
+                    <ReactLoading
+                      type='spin'
+                      className={classes.loadingSpinner}
+                      color='#000000'
+                    />
+                  }
+                >
                   <CardHeader
                     title={
                       <InputBase
