@@ -9,9 +9,9 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Suspense } from 'react';
-import * as ReactMarkdown from 'react-markdown';
-import * as htmlParser from 'react-markdown/plugins/html-parser';
+import htmlParser from 'react-markdown/plugins/html-parser';
 import classNames from 'classnames';
+import ReactMarkdown from 'react-markdown';
 
 import axios from 'axios';
 import Card from '@material-ui/core/Card';

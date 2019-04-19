@@ -23,7 +23,7 @@ const listAllTitleParts = createSelector(
       let titles = [[title, id]];
       for (let titlePart of title.split(' ')) {
         if (titlePart.length > 3) {
-          titles.push([title, id]);
+          titles.push([titlePart, id]);
         }
       }
       return titles;
@@ -42,4 +42,5 @@ export const getLinkIds = createSelector(
       return titles;
     }, new Map<string, Set<number>>())
 );
+
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
