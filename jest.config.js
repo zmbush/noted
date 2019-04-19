@@ -14,4 +14,8 @@ module.exports = {
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}'],
+  reporters: [
+    'default',
+    ['jest-junit', { outputDirectory: 'test-results/jest' }],
+  ],
 };

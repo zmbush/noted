@@ -34,3 +34,4 @@ coverage
 npm-debug.log
 npm-debug.log*
 db.bku
+junit.xml
