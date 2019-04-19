@@ -47,6 +47,8 @@ jobs:
       - restore_cache:
           keys:
             - v4-cargo-cache-{{arch}}-{{checksum "Cargo.lock" }}
+      - restore_cache:
+          keys:
             - kcov-cache-{{arch}}-33
       - run:
           name: Build all targets
