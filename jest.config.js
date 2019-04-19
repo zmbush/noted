@@ -14,6 +14,7 @@ module.exports = {
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}'],
+  snapshotSerializers: ['enzyme-to-json/serializer'],
   reporters: [
     'default',
     ['jest-junit', { outputDirectory: 'test-results/jest' }],

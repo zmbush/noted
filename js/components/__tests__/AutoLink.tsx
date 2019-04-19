@@ -13,6 +13,19 @@ import AutoLink, { LinkedText } from '../AutoLink';
 import { Link } from 'react-router-dom';
 
 describe('<AutoLink />', () => {
+  test('matches snapshot', () => {
+    const titles = new Map();
+    titles.set('Goat', new Set([1]));
+    titles.set('Boat', new Set([1, 2]));
+
+    const wrapper = shallow(
+      <AutoLink titles={titles}>
+        This goat is here. It also has boats galore.
+      </AutoLink>
+    );
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('works with no titles', () => {
     const wrapper = shallow(<AutoLink titles={new Map()}>Test</AutoLink>);
     expect(wrapper.contains('Test')).toBeTruthy();
@@ -39,6 +52,18 @@ describe('<AutoLink />', () => {
 });
 
 describe('<LinkedText />', () => {
+  test('matches snapshot', () => {
+    expect(
+      shallow(<LinkedText ids={new Set()} text='Link' />)
+    ).toMatchSnapshot();
+    expect(
+      shallow(<LinkedText ids={new Set([1])} text='Link' />)
+    ).toMatchSnapshot();
+    expect(
+      shallow(<LinkedText ids={new Set([1, 2])} text='Link' />)
+    ).toMatchSnapshot();
+  });
+
   test('works with no ids', () => {
     const wrapper = shallow(<LinkedText ids={new Set()} text='Link' />);
     expect(wrapper.contains('Link')).toBeTruthy();
