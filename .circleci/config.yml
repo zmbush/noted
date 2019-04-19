@@ -31,6 +31,8 @@ jobs:
           path: coverage
       - codecov/upload:
           file: coverage/lcov.info
+      - store_test_results:
+          path: test-results
   rust:
     docker:
       - image: circleci/rust:latest
