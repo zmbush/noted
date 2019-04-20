@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<BindKeyboard /> matches snapshot 1`] = `""`;
+
+exports[`<BindKeyboard /> matches snapshot 2`] = `
+<div>
+  Contents
+</div>
+`;
