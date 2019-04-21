@@ -19,4 +19,5 @@ module.exports = {
     'default',
     ['jest-junit', { outputDirectory: 'test-results/jest' }],
   ],
+  moduleDirectories: ['node_modules', 'js'],
 };

@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NoteEditor /> matches snapshot 1`] = `
+<BindKeyboard
+  callback={[Function]}
+  keys="ctrl+s"
+>
+  <WithStyles(Card)
+    classes={
+      Object {
+        "root": "NoteEditor-editorRoot-2",
+      }
+    }
+  >
+    <React.Suspense
+      fallback={
+        <Loading
+          className="NoteEditor-loadingSpinner-4"
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
+        />
+      }
+    >
+      <WithStyles(CardHeader)
+        action={
+          <WithStyles(IconButton)
+            onClick={[Function]}
+          >
+            <pure(SaveIcon) />
+          </WithStyles(IconButton)>
+        }
+        title={
+          <WithStyles(WithFormControlContext(InputBase))
+            fullWidth={false}
+            inputComponent="input"
+            multiline={false}
+            onChange={[Function]}
+            style={
+              Object {
+                "fontSize": "inherit",
+              }
+            }
+            type="text"
+            value="note title"
+          />
+        }
+      />
+      <WithStyles(CardContent)
+        classes={
+          Object {
+            "root": "NoteEditor-editorContent-3",
+          }
+        }
+      >
+        <WithStyles(ChipInput)
+          classes={Object {}}
+          dataSource={
+            Array [
+              "arc:Delmirev",
+              "type:Location",
+              "type:Character",
+            ]
+          }
+          fullWidth={true}
+          onAdd={[Function]}
+          onDelete={[Function]}
+          placeholder="Tags"
+          value={
+            Array [
+              "tag1",
+            ]
+          }
+        />
+        <React.Lazy
+          exts={
+            Array [
+              "colorSyntax",
+            ]
+          }
+          height="calc(100% - 40px)"
+          initialEditType="wysiwyg"
+          initialValue="note body"
+          onChange={[Function]}
+          usageStatistics={false}
+          useCommandShortcut={false}
+        />
+      </WithStyles(CardContent)>
+    </React.Suspense>
+  </WithStyles(Card)>
+</BindKeyboard>
+`;
+
+exports[`<NoteEditor /> matches snapshot 2`] = `
+<BindKeyboard
+  callback={[Function]}
+  keys="ctrl+s"
+>
+  <WithStyles(Card)
+    classes={
+      Object {
+        "root": "NoteEditor-editorRoot-2",
+      }
+    }
+  >
+    <React.Suspense
+      fallback={
+        <Loading
+          className="NoteEditor-loadingSpinner-4"
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
+        />
+      }
+    >
+      <WithStyles(CardHeader)
+        action={
+          <WithStyles(IconButton)
+            onClick={[Function]}
+          >
+            <pure(SaveIcon) />
+          </WithStyles(IconButton)>
+        }
+        title={
+          <WithStyles(WithFormControlContext(InputBase))
+            fullWidth={false}
+            inputComponent="input"
+            multiline={false}
+            onChange={[Function]}
+            style={
+              Object {
+                "fontSize": "inherit",
+              }
+            }
+            type="text"
+            value="note title"
+          />
+        }
+      />
+      <WithStyles(CardContent)
+        classes={
+          Object {
+            "root": "NoteEditor-editorContent-3",
+          }
+        }
+      >
+        <WithStyles(ChipInput)
+          classes={Object {}}
+          dataSource={
+            Array [
+              "arc:Delmirev",
+              "type:Location",
+              "type:Character",
+            ]
+          }
+          fullWidth={true}
+          onAdd={[Function]}
+          onDelete={[Function]}
+          placeholder="Tags"
+          value={
+            Array [
+              "tag1",
+            ]
+          }
+        />
+        <React.Lazy
+          exts={
+            Array [
+              "colorSyntax",
+            ]
+          }
+          height="calc(100% - 40px)"
+          initialEditType="wysiwyg"
+          initialValue="note body"
+          onChange={[Function]}
+          usageStatistics={false}
+          useCommandShortcut={false}
+        />
+      </WithStyles(CardContent)>
+    </React.Suspense>
+  </WithStyles(Card)>
+</BindKeyboard>
+`;

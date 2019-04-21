@@ -17,26 +17,15 @@ import axios from 'axios';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardActions from '@material-ui/core/CardActions';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '@material-ui/icons/Edit';
-import SaveIcon from '@material-ui/icons/Save';
-import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ChipInput from 'material-ui-chip-input';
-import InputBase from '@material-ui/core/InputBase';
 import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import EditIcon from '@material-ui/icons/Edit';
 import {
   createStyles,
   withStyles,
   Theme,
   WithStyles,
 } from '@material-ui/core/styles';
-
-import ReactLoading from 'react-loading';
 
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
@@ -46,6 +35,7 @@ import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
+import NoteEditor from 'components/NoteEditor';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -153,24 +143,6 @@ const styles = (theme: Theme) =>
         paddingTop: 0,
       },
     },
-    editorRoot: {
-      height: '84vh',
-    },
-    editorContent: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      top: '50px',
-    },
-
-    loadingSpinner: {
-      position: 'relative',
-      left: '50%',
-      top: '50%',
-      marginTop: -32,
-      marginLeft: -32,
-    },
   });
 
 interface Props extends WithStyles<typeof styles> {
@@ -188,62 +160,34 @@ interface Props extends WithStyles<typeof styles> {
 
 const initialState = {
   edit: false,
-  title: '',
-  body: '',
-  tags: new Array<String>(),
 };
 
 type State = Readonly<typeof initialState>;
 
-const Editor = React.lazy(() => {
-  import(
-    /* webpackChunkName: "editor" */ 'tui-editor/dist/tui-editor-extColorSyntax'
-  );
-  return import(/* webpackChunkName: "editor" */ '@toast-ui/react-editor').then(
-    module => ({ default: module.Editor })
-  );
-});
-
 class Note extends React.Component<Props, State> {
-  editor: React.RefObject<any>;
-
   constructor(props: Props) {
     super(props);
     this.state = initialState;
-    this.editor = React.createRef();
   }
 
-  cancelEdit = (e: React.SyntheticEvent | Event | React.SyntheticEvent<{}>) => {
-    e.preventDefault();
-    if (this.state.body == this.props.note.body) {
-      this.setState({ edit: false });
-      this.props.updateNote(null);
-    }
+  cancelEdit = () => {
+    this.setState({ edit: false });
+    this.props.updateNote(null);
   };
 
-  saveShortcut = (e: React.SyntheticEvent | Event) => {
-    e.preventDefault();
-    this.save();
-  };
-
-  save = async () => {
+  save = async (note: { title: string; body: string; tags: string[] }) => {
+    const { title, body, tags } = note;
     let result;
     if (this.props.new) {
-      result = await axios.put('/api/secure/note', {
-        title: this.state.title,
-        body: this.state.body,
-      });
+      result = await axios.put('/api/secure/note', { title, body });
     } else {
       result = await axios.patch(`/api/secure/notes/${this.props.note.id}`, {
-        title: this.state.title,
-        body: this.state.body,
+        title,
+        body,
       });
     }
 
-    result = await axios.put(
-      `/api/secure/notes/${result.data.id}/tags`,
-      this.state.tags
-    );
+    result = await axios.put(`/api/secure/notes/${result.data.id}/tags`, tags);
 
     this.setState({
       edit: false,
@@ -253,36 +197,8 @@ class Note extends React.Component<Props, State> {
   };
 
   startEdit = () => {
-    this.setState(
-      {
-        title: this.props.note.title,
-        body: this.props.note.body,
-        tags: this.props.note.tags,
-        edit: true,
-      },
-      () => {
-        setTimeout(() => {
-          const e = this.editor.current;
-          if (e) {
-            const inst = e.getInstance();
-            inst.focus();
-            inst.moveCursorToEnd();
-          }
-        }, 100);
-      }
-    );
-  };
-
-  addTag = (tag: string) => {
     this.setState({
-      tags: [...this.state.tags, tag],
-    });
-  };
-
-  deleteTag = (tag: string, index: number) => {
-    this.state.tags.splice(index, 1);
-    this.setState({
-      tags: this.state.tags,
+      edit: true,
     });
   };
 
@@ -317,69 +233,11 @@ class Note extends React.Component<Props, State> {
             maxWidth='lg'
             onClose={this.cancelEdit}
           >
-            <BindKeyboard keys='ctrl+s' callback={this.saveShortcut}>
-              <Card classes={{ root: classes.editorRoot }}>
-                <Suspense
-                  fallback={
-                    <ReactLoading
-                      type='spin'
-                      className={classes.loadingSpinner}
-                      color='#000000'
-                    />
-                  }
-                >
-                  <CardHeader
-                    title={
-                      <InputBase
-                        value={this.state.title}
-                        onChange={e => {
-                          this.setState({ title: e.target.value });
-                        }}
-                        style={{ fontSize: 'inherit' }}
-                      />
-                    }
-                    action={
-                      <IconButton onClick={this.save}>
-                        <SaveIcon />
-                      </IconButton>
-                    }
-                  />
-                  <CardContent classes={{ root: classes.editorContent }}>
-                    <ChipInput
-                      classes={{}}
-                      placeholder='Tags'
-                      fullWidth
-                      dataSource={[
-                        'arc:Delmirev',
-                        'type:Location',
-                        'type:Character',
-                      ]}
-                      value={this.state.tags}
-                      onAdd={this.addTag}
-                      onDelete={this.deleteTag}
-                    />
-                    <Editor
-                      initialValue={this.state.body}
-                      initialEditType='wysiwyg'
-                      ref={this.editor}
-                      onChange={() => {
-                        if (this.editor.current) {
-                          this.setState({
-                            body: this.editor.current
-                              .getInstance()
-                              .getMarkdown(),
-                          });
-                        }
-                      }}
-                      height='calc(100% - 40px)'
-                      usageStatistics={false}
-                      useCommandShortcut={false}
-                      exts={['colorSyntax']}
-                    />
-                  </CardContent>
-                </Suspense>
-              </Card>
-            </BindKeyboard>
+            <NoteEditor
+              open={this.state.edit}
+              onSave={this.save}
+              note={this.props.note}
+            />
           </Dialog>
           <Tags tags={this.props.note.tags} />
           <ReactMarkdown
