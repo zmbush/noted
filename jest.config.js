@@ -11,6 +11,7 @@ module.exports = {
   roots: ['<rootDir>/js'],
   moduleNameMapper: {
     '^core-js/.*': 'identity-obj-proxy',
+    '\\.(css|less)$': 'identity-obj-proxy',
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}'],
