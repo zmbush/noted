@@ -20,6 +20,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import EditIcon from '@material-ui/icons/Edit';
+import ReactLoading from 'react-loading';
 import {
   createStyles,
   withStyles,
@@ -35,7 +36,10 @@ import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
-import NoteEditor from 'components/NoteEditor';
+
+const NoteEditor = React.lazy(() =>
+  import(/* webpackChunkName: "editor" */ 'components/NoteEditor')
+);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -143,6 +147,13 @@ const styles = (theme: Theme) =>
         paddingTop: 0,
       },
     },
+    loadingSpinner: {
+      position: 'relative',
+      left: '50%',
+      top: '50%',
+      marginTop: -32,
+      marginLeft: -32,
+    },
   });
 
 interface Props extends WithStyles<typeof styles> {
@@ -233,11 +244,21 @@ class Note extends React.Component<Props, State> {
             maxWidth='lg'
             onClose={this.cancelEdit}
           >
-            <NoteEditor
-              open={this.state.edit}
-              onSave={this.save}
-              note={this.props.note}
-            />
+            <Suspense
+              fallback={
+                <ReactLoading
+                  type='spin'
+                  className={classes.loadingSpinner}
+                  color='#000000'
+                />
+              }
+            >
+              <NoteEditor
+                open={this.state.edit}
+                onSave={this.save}
+                note={this.props.note}
+              />
+            </Suspense>
           </Dialog>
           <Tags tags={this.props.note.tags} />
           <ReactMarkdown
