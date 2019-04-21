@@ -23,18 +23,6 @@ interface Props extends RouteComponentProps {
 }
 
 class FilteredNoteList extends React.Component<Props> {
-  getNote() {
-    const params = this.props.match.params as { id: string };
-    const parsedId = parseInt(params.id, 10);
-    if (parsedId == NaN) {
-      return null;
-    }
-    if (!this.props.notes.has(parsedId)) {
-      return null;
-    }
-    return this.props.notes.get(parsedId);
-  }
-
   render() {
     const params = this.props.match.params as { ids: string };
     const parsedIds = new Set(params.ids.split(',').map(i => parseInt(i, 10)));
@@ -43,4 +31,5 @@ class FilteredNoteList extends React.Component<Props> {
   }
 }
 
+export const Inner = FilteredNoteList;
 export default withRouter(FilteredNoteList);
