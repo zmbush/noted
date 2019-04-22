@@ -36,6 +36,14 @@ jobs:
   rust:
     docker:
       - image: circleci/rust:latest
+        environment:
+          DATABASE_URL: postgres://noted@localhost:5432/test
+          MIGRATION_DIRECTORY: db/migrations
+          DIESEL_CONFIG_FILE: db/diesel.toml
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: noted
+          POSTGRES_DB: test
     steps:
       - checkout
       - run:
@@ -68,11 +76,17 @@ jobs:
             - kcov-33
           key: kcov-cache-{{arch}}-33
       - run:
+          name: Install diesel
+          command: cargo install diesel_cli --no-default-features --features postgres
+      - run:
+          name: Run Migrations
+          command: diesel migration run
+      - run:
           name: Run all tests
           command: cargo test --all
       - run:
           name: Run kcov
-          command: cargo kcov --kcov kcov-33/build/src/kcov
+          command: cargo kcov --all --kcov kcov-33/build/src/kcov
       - store_artifacts:
           path: target/cov
       - codecov/upload:
