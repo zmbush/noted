@@ -160,3 +160,69 @@ pub struct User {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::db;
+    use diesel::Connection;
+    use diesel::RunQueryDsl;
+
+    #[test]
+    fn test_with_tags() {
+        use crate::schema::{notes::dsl::*, users::dsl::*};
+        let db = db().unwrap();
+        db.test_transaction::<_, diesel::result::Error, _>(|| {
+            let new_user = NewUserRequest {
+                email: "b@c.d".to_owned(),
+                name: "person".to_owned(),
+                password: "password".to_owned(),
+            };
+            let user = diesel::insert_into(users)
+                .values(new_user.new_user().unwrap())
+                .get_result::<User>(&db)
+                .unwrap();
+
+            diesel::insert_into(notes)
+                .values((
+                    NewNote {
+                        title: "Title".to_string(),
+                        body: "bitle".to_string(),
+                    },
+                    user_id.eq(user.id),
+                ))
+                .get_result::<Note>(&db)
+                .unwrap();
+            let note = notes.first::<Note>(&db)?;
+            let note_with_tags = note.with_tags(&db).unwrap();
+            serde_json::to_string(&note_with_tags).unwrap();
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_user() {
+        use crate::schema::users::dsl::*;
+        let db = db().unwrap();
+        db.test_transaction::<_, diesel::result::Error, _>(|| {
+            let new_user = NewUserRequest {
+                email: "a@b.c".to_owned(),
+                name: "person".to_owned(),
+                password: "password".to_owned(),
+            };
+            let user = diesel::insert_into(users)
+                .values(new_user.new_user().unwrap())
+                .get_result::<User>(&db)
+                .unwrap();
+
+            let sign_in = SignIn {
+                email: "a@b.c".to_owned(),
+                password: "password".to_owned(),
+            };
+
+            assert!(sign_in.matches(&user));
+
+            Ok(())
+        });
+    }
+}
