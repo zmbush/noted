@@ -19,7 +19,15 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import App from 'components/App';
 
-const store = createStore(reducers);
+if (process.env.NODE_ENV !== 'production') {
+  import('map.prototype.tojson');
+}
+
+const w = window as any;
+const store = createStore(
+  reducers,
+  w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 (async () => {
   store.dispatch(logIn((await axios.get('/api/get_user')).data));

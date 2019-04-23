@@ -44,3 +44,4 @@ declare module 'react-markdown/plugins/html-parser' {
 }
 
 declare module 'tui-editor/dist/tui-editor-extColorSyntax' {}
+declare module 'map.prototype.tojson' {}
