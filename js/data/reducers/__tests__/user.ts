@@ -7,7 +7,7 @@
 // except according to those terms.
 
 import user from '../user';
-import { NotedEvent } from 'data/actions';
+import { logIn, logOut, apiError } from 'data/actions';
 import { NoteData } from 'data/types';
 
 describe('reducers::user()', () => {
@@ -27,15 +27,10 @@ describe('reducers::user()', () => {
       created_at: '',
       updated_at: '',
     };
-    state = user(state, { type: NotedEvent.UserSignedIn, user: u });
+    state = user(state, logIn(u));
 
     expect(state).toMatchSnapshot();
-    expect(user(state, { type: NotedEvent.UserSignedOut })).toMatchSnapshot();
-    expect(
-      user(state, {
-        type: NotedEvent.ApiError,
-        error: { code: 401, error: '' },
-      })
-    ).toMatchSnapshot();
+    expect(user(state, logOut())).toMatchSnapshot();
+    expect(user(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();
   });
 });
