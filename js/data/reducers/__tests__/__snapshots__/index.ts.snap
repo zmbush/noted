@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`data::reducers() matches snapshot 1`] = `
+Object {
+  "notes": Map {},
+  "ui": Object {
+    "loading_notes": false,
+  },
+  "user": Object {
+    "is_signed_in": false,
+    "user": null,
+  },
+}
+`;
