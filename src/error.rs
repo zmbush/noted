@@ -81,6 +81,6 @@ impl_noted_error! {
     NotFound => (failure::Compat<failure::Error>, StatusCode::NOT_FOUND),
     Hyper => (hyper::error::Error, StatusCode::INTERNAL_SERVER_ERROR),
     HTTP => (http::Error, StatusCode::INTERNAL_SERVER_ERROR),
-
     IO => (std::io::Error, StatusCode::SERVICE_UNAVAILABLE),
+    DbError => (noted_db::error::DbError, StatusCode::SERVICE_UNAVAILABLE),
 }
