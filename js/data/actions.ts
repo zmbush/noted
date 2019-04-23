@@ -11,38 +11,38 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 
 export enum NotedEvent {
-  NOTES_FETCH_START,
-  NOTES_FETCHED,
-  NOTES_UPDATE_NOTE,
+  NotesFetchStart = 'NOTES_FETCH_START',
+  NotesFetched = 'NOTES_FETCHED',
+  NotesUpdateNote = 'NOTES_UPDATE_NOTE',
 
-  API_ERROR,
+  ApiError = 'API_ERROR',
 
-  USER_SIGNED_IN,
-  USER_SIGNED_OUT,
+  UserSignedIn = 'USER_SIGNED_IN',
+  UserSignedOut = 'USER_SIGNED_OUT',
 }
 
 export function notesFetchStart() {
-  return { type: NotedEvent.NOTES_FETCH_START };
+  return { type: NotedEvent.NotesFetchStart };
 }
 
 export function notesFetched(notes: NoteData[]) {
-  return { type: NotedEvent.NOTES_FETCHED, notes };
+  return { type: NotedEvent.NotesFetched, notes };
 }
 
 export function updateNote(note: NoteData) {
-  return { type: NotedEvent.NOTES_UPDATE_NOTE, note };
+  return { type: NotedEvent.NotesUpdateNote, note };
 }
 
 export function apiError(error: ErrorData) {
-  return { type: NotedEvent.API_ERROR, error };
+  return { type: NotedEvent.ApiError, error };
 }
 
 export function logIn(user: UserData) {
-  return { type: NotedEvent.USER_SIGNED_IN, user };
+  return { type: NotedEvent.UserSignedIn, user };
 }
 
 export function logOut() {
-  return { type: NotedEvent.USER_SIGNED_OUT };
+  return { type: NotedEvent.UserSignedOut };
 }
 
 export async function fetchData(dispatch: Dispatch) {

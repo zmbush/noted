@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reducers::user() responds to events 1`] = `
+Object {
+  "is_signed_in": true,
+  "user": Object {
+    "created_at": "",
+    "email": "test@example.com",
+    "id": 1,
+    "name": "Test User",
+    "updated_at": "",
+  },
+}
+`;
+
+exports[`reducers::user() responds to events 2`] = `
+Object {
+  "is_signed_in": false,
+  "user": null,
+}
+`;
+
+exports[`reducers::user() responds to events 3`] = `
+Object {
+  "is_signed_in": false,
+  "user": null,
+}
+`;

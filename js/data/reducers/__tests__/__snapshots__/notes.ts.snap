@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reducers::notes() responds to events 1`] = `
+Map {
+  1 => Object {
+    "body": "body",
+    "created_at": "",
+    "id": 1,
+    "tags": Array [],
+    "title": "title",
+    "updated_at": "",
+    "user_id": 1,
+  },
+}
+`;
+
+exports[`reducers::notes() responds to events 2`] = `
+Map {
+  1 => Object {
+    "body": "body",
+    "created_at": "",
+    "id": 1,
+    "tags": Array [],
+    "title": "new_title",
+    "updated_at": "",
+    "user_id": 1,
+  },
+}
+`;
+
+exports[`reducers::notes() responds to events 3`] = `Map {}`;
+
+exports[`reducers::notes() responds to events 4`] = `Map {}`;
