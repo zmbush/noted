@@ -7,7 +7,10 @@
 // except according to those terms.
 
 use {
-    crate::schema::{note_tags_id, notes, tags, users},
+    crate::{
+        error::{DbError, Result},
+        schema::{note_tags_id, notes, tags, users},
+    },
     diesel::{
         pg::PgConnection,
         prelude::*,
@@ -25,6 +28,21 @@ pub struct Note {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
+}
+
+type Conn = PooledConnection<ConnectionManager<PgConnection>>;
+impl Note {
+    fn with(self, t: Vec<NoteToTag>) -> NoteWithTags {
+        NoteWithTags {
+            id: self.id,
+            title: self.title,
+            body: self.body,
+            tags: t.into_iter().map(|i| i.tag).collect(),
+            created_at: self.created_at,
+            updated_at: self.updated_at,
+            user_id: self.user_id,
+        }
+    }
 }
 
 pub trait WithTags {
@@ -161,66 +179,183 @@ pub struct User {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
+impl User {
+    pub fn new_note(&self, new_note: &NewNote, db: &Conn) -> Result<NoteWithTags> {
+        use crate::schema::notes::dsl::*;
+
+        diesel::insert_into(notes)
+            .values((new_note, user_id.eq(self.id)))
+            .get_result::<Note>(db)?
+            .with_tags(db)
+            .ok_or_else(|| DbError::NotFound)
+    }
+
+    pub fn list_notes(&self, db: &Conn) -> Result<Vec<NoteWithTags>> {
+        let all_notes = {
+            use crate::schema::notes::dsl::*;
+            notes
+                .filter(user_id.eq_any(&[self.id, 1]))
+                .load::<Note>(db)?
+        };
+
+        let tags_query = {
+            use crate::schema::{note_tags_id::dsl::*, tags};
+            note_tags_id
+                .filter(note_id.eq_any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>()))
+                .inner_join(tags::table)
+                .select((id, note_id, tag_id, tags::tag))
+        };
+
+        let note_tags = tags_query.load::<NoteToTag>(db)?.grouped_by(&all_notes);
+
+        Ok(all_notes
+            .into_iter()
+            .zip(note_tags)
+            .map(|(n, ts)| n.with(ts))
+            .collect::<Vec<_>>())
+    }
+
+    pub fn note(&self, id: i32, db: &Conn) -> Result<NoteWithTags> {
+        Ok(Note::belonging_to(self)
+            .find(id)
+            .first::<Note>(db)?
+            .with_tags(db)
+            .ok_or_else(|| DbError::NotFound)?)
+    }
+
+    pub fn update_note(&self, id: i32, note: &UpdateNote, db: &Conn) -> Result<NoteWithTags> {
+        diesel::update(Note::belonging_to(self).find(id))
+            .set(note)
+            .execute(db)?;
+
+        self.note(id, db)
+    }
+
+    pub fn delete_note(&self, id: i32, db: &Conn) -> bool {
+        diesel::delete(Note::belonging_to(self).find(id))
+            .execute(db)
+            .unwrap_or(0)
+            != 0
+    }
+
+    pub fn set_note_tags(
+        &self,
+        current_note_id: i32,
+        set_tags: &[String],
+        db: &Conn,
+    ) -> Result<NoteWithTags> {
+        db.transaction::<(), diesel::result::Error, _>(|| {
+            use crate::schema::{note_tags_id::dsl::*, tags::dsl::*};
+
+            diesel::insert_into(tags)
+                .values(&set_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
+                .on_conflict_do_nothing()
+                .execute(db)?;
+
+            let all_tags = tags.filter(tag.eq_any(set_tags)).load::<Tag>(db)?;
+
+            diesel::delete(note_tags_id.filter(note_id.eq(current_note_id))).execute(db)?;
+
+            diesel::insert_into(note_tags_id)
+                .values(
+                    all_tags
+                        .into_iter()
+                        .map(|t| (tag_id.eq(t.id), note_id.eq(current_note_id)))
+                        .collect::<Vec<_>>(),
+                )
+                .execute(db)?;
+
+            let tag_ids = note_tags_id.select(tag_id).get_results::<i32>(db)?;
+
+            diesel::delete(tags.filter(crate::schema::tags::dsl::id.ne_all(tag_ids)))
+                .execute(db)?;
+
+            Ok(())
+        })?;
+
+        self.note(current_note_id, db)
+    }
+
+    pub fn sign_up(new_user: NewUserRequest, db: &Conn) -> Result<User> {
+        Ok(diesel::insert_into(crate::schema::users::table)
+            .values(new_user.new_user()?)
+            .get_result(db)?)
+    }
+
+    pub fn sign_in(sign_in: &SignIn, db: &Conn) -> Result<User> {
+        use crate::schema::users::dsl::*;
+        let user = users.filter(email.eq(&sign_in.email)).get_result(db)?;
+
+        if sign_in.matches(&user) {
+            Ok(user)
+        } else {
+            Err(DbError::NotLoggedIn)
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
     use crate::db;
     use diesel::Connection;
-    use diesel::RunQueryDsl;
+
+    fn parse<'a, D: serde::Deserialize<'a>>(s: &'a str) -> D {
+        serde_json::from_str(s).unwrap()
+    }
+
+    fn test_user(db: &Conn) -> User {
+        User::sign_up(
+            parse(
+                r#"{
+                    "email": "test@example.com",
+                    "name": "Test User",
+                    "password": "password"
+                }"#,
+            ),
+            db,
+        )
+        .unwrap()
+    }
 
     #[test]
     fn test_with_tags() {
-        use crate::schema::{notes::dsl::*, users::dsl::*};
         let db = db().unwrap();
         db.test_transaction::<_, diesel::result::Error, _>(|| {
-            let new_user = NewUserRequest {
-                email: "b@c.d".to_owned(),
-                name: "person".to_owned(),
-                password: "password".to_owned(),
-            };
-            let user = diesel::insert_into(users)
-                .values(new_user.new_user().unwrap())
-                .get_result::<User>(&db)
+            let user = test_user(&db);
+            let note = user
+                .new_note(&parse(r#"{ "title": "Title", "body": "Body" }"#), &db)
                 .unwrap();
-
-            diesel::insert_into(notes)
-                .values((
-                    NewNote {
-                        title: "Title".to_string(),
-                        body: "bitle".to_string(),
-                    },
-                    user_id.eq(user.id),
-                ))
-                .get_result::<Note>(&db)
+            serde_json::to_string(&note).unwrap();
+            assert_eq!(note.title, "Title");
+            assert_eq!(user.list_notes(&db).unwrap().len(), 1);
+            let note = user
+                .update_note(note.id, &parse(r#"{ "title": "New Title" }"#), &db)
                 .unwrap();
-            let note = notes.first::<Note>(&db)?;
-            let note_with_tags = note.with_tags(&db).unwrap();
-            serde_json::to_string(&note_with_tags).unwrap();
+            assert_eq!(note.title, "New Title");
+            user.delete_note(note.id, &db);
+            assert_eq!(user.list_notes(&db).unwrap().len(), 0);
             Ok(())
         });
     }
 
     #[test]
-    fn test_user() {
-        use crate::schema::users::dsl::*;
+    fn test_creating_user() {
         let db = db().unwrap();
         db.test_transaction::<_, diesel::result::Error, _>(|| {
-            let new_user = NewUserRequest {
-                email: "a@b.c".to_owned(),
-                name: "person".to_owned(),
-                password: "password".to_owned(),
-            };
-            let user = diesel::insert_into(users)
-                .values(new_user.new_user().unwrap())
-                .get_result::<User>(&db)
-                .unwrap();
+            test_user(&db);
 
-            let sign_in = SignIn {
-                email: "a@b.c".to_owned(),
-                password: "password".to_owned(),
-            };
+            assert!(User::sign_in(
+                &parse(r#"{ "email": "test@example.com", "password": "bad password" }"#),
+                &db,
+            )
+            .is_err());
 
-            assert!(sign_in.matches(&user));
+            assert!(User::sign_in(
+                &parse(r#"{ "email": "test@example.com", "password": "password" }"#),
+                &db,
+            )
+            .is_ok());
 
             Ok(())
         });
