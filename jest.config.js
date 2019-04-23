@@ -14,7 +14,7 @@ module.exports = {
     '\\.(css|less)$': 'identity-obj-proxy',
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
-  collectCoverageFrom: ['js/**/*.{ts,js}{,x}'],
+  collectCoverageFrom: ['js/**/*.{ts,js}{,x}', '!js/index.tsx'],
   snapshotSerializers: ['enzyme-to-json/serializer'],
   reporters: [
     'default',

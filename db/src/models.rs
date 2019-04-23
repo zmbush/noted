@@ -193,9 +193,7 @@ impl User {
     pub fn list_notes(&self, db: &Conn) -> Result<Vec<NoteWithTags>> {
         let all_notes = {
             use crate::schema::notes::dsl::*;
-            notes
-                .filter(user_id.eq_any(&[self.id, 1]))
-                .load::<Note>(db)?
+            notes.filter(user_id.eq(self.id)).load::<Note>(db)?
         };
 
         let tags_query = {
