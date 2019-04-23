@@ -7,7 +7,7 @@
 // except according to those terms.
 
 import notes from '../notes';
-import { NotedEvent } from 'data/actions';
+import { notesFetched, updateNote, apiError, logOut } from 'data/actions';
 import { NoteData } from 'data/types';
 
 describe('reducers::notes()', () => {
@@ -33,24 +33,21 @@ describe('reducers::notes()', () => {
 
   test('responds to events', () => {
     let note_one = makeNote('title', 'body');
+    let note_two = makeNote('title 2', 'body');
     let state = getInitial();
-    state = notes(state, {
-      type: NotedEvent.NotesFetched,
-      notes: [note_one],
-    });
 
+    state = notes(state, notesFetched([note_one]));
     expect(state).toMatchSnapshot();
 
-    note_one.title = 'new_title';
-    state = notes(state, { type: NotedEvent.NotesUpdateNote, note: note_one });
+    note_one.title = 'title 3';
+    state = notes(state, updateNote(note_one));
     expect(state).toMatchSnapshot();
 
-    expect(
-      notes(state, {
-        type: NotedEvent.ApiError,
-        error: { code: 401, error: '' },
-      })
-    ).toMatchSnapshot();
-    expect(notes(state, { type: NotedEvent.UserSignedOut })).toMatchSnapshot();
+    note_two.title = 'title 4';
+    state = notes(state, updateNote(note_two));
+    expect(state).toMatchSnapshot();
+
+    expect(notes(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();
+    expect(notes(state, logOut())).toMatchSnapshot();
   });
 });

@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import { NotedEvent } from 'data/actions';
+import { notesFetchStart, notesFetched, apiError } from 'data/actions';
 import ui from '../ui';
 
 describe('reducers::ui()', () => {
@@ -20,13 +20,11 @@ describe('reducers::ui()', () => {
 
   test('responds to events', () => {
     let state = getInitial();
-    state = ui(state, { type: NotedEvent.NotesFetchStart });
+    state = ui(state, notesFetchStart());
     expect(state).toEqual({ loading_notes: true });
-    state = ui(state, { type: NotedEvent.NotesFetched });
-    expect(state).toEqual({ loading_notes: false });
-    state = ui(state, { type: NotedEvent.NotesFetchStart });
-    expect(state).toEqual({ loading_notes: true });
-    state = ui(state, { type: NotedEvent.ApiError });
-    expect(state).toEqual({ loading_notes: false });
+    expect(ui(state, notesFetched([]))).toEqual({ loading_notes: false });
+    expect(ui(state, apiError({ code: 401, error: '' }))).toEqual({
+      loading_notes: false,
+    });
   });
 });

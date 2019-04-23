@@ -21,13 +21,36 @@ Map {
     "created_at": "",
     "id": 1,
     "tags": Array [],
-    "title": "new_title",
+    "title": "title 3",
     "updated_at": "",
     "user_id": 1,
   },
 }
 `;
 
-exports[`reducers::notes() responds to events 3`] = `Map {}`;
+exports[`reducers::notes() responds to events 3`] = `
+Map {
+  1 => Object {
+    "body": "body",
+    "created_at": "",
+    "id": 1,
+    "tags": Array [],
+    "title": "title 3",
+    "updated_at": "",
+    "user_id": 1,
+  },
+  2 => Object {
+    "body": "body",
+    "created_at": "",
+    "id": 2,
+    "tags": Array [],
+    "title": "title 4",
+    "updated_at": "",
+    "user_id": 1,
+  },
+}
+`;
 
 exports[`reducers::notes() responds to events 4`] = `Map {}`;
+
+exports[`reducers::notes() responds to events 5`] = `Map {}`;
