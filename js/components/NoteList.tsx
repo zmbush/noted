@@ -42,14 +42,33 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
-  titles: LinkIdMap;
   search: string;
-  updateNote: (note: NoteData) => void;
-  firstNoteRef: React.RefObject<InnerNote>;
+  updateNote: (note?: NoteData) => void;
+  firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
+  width?:
+    | false
+    | 'auto'
+    | true
+    | 1
+    | 2
+    | 3
+    | 4
+    | 5
+    | 6
+    | 7
+    | 8
+    | 9
+    | 10
+    | 11
+    | 12;
 }
 
 class NoteList extends React.Component<Props> {
+  static defaultProps = {
+    width: 12 as 12,
+  };
+
   render() {
     const { classes } = this.props;
     let { notes } = this.props;
@@ -93,7 +112,7 @@ class NoteList extends React.Component<Props> {
       let results = fuse.search(this.props.search);
       if (results.length == 0 || results[0].item.title != this.props.search) {
         elements.push(
-          <Grid item key='new' xs={12} className={classes.item}>
+          <Grid item key='new' className={classes.item} xs={this.props.width}>
             <Button
               variant='contained'
               color='primary'
@@ -111,13 +130,18 @@ class NoteList extends React.Component<Props> {
       let i = 0;
       for (let n of results) {
         elements.push(
-          <Grid item key={n.item.id} xs={12} className={classes.item}>
+          <Grid
+            item
+            key={n.item.id}
+            className={classes.item}
+            xs={this.props.width}
+          >
             <Note
               note={n.item}
+              search={this.props.search}
               matches={n.matches}
               updateNote={this.props.updateNote}
               innerRef={i == 0 ? this.props.firstNoteRef : null}
-              titles={this.props.titles}
             />
           </Grid>
         );
@@ -137,11 +161,11 @@ class NoteList extends React.Component<Props> {
         return 0;
       });
       return sorted_notes.map(n => (
-        <Grid item key={n.id} xs={12} className={classes.item}>
+        <Grid item key={n.id} className={classes.item} xs={this.props.width}>
           <Note
             note={n}
             updateNote={this.props.updateNote}
-            titles={this.props.titles}
+            search={this.props.search}
           />
         </Grid>
       ));

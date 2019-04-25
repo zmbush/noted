@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import { getLinkIds } from '../selectors';
+import { getTopLevelNotes, getLinkIds, getSubnotes } from '../selectors';
 
 describe('getLinkIds()', () => {
   test('returns empty map for empty notes map', () => {
@@ -28,5 +28,45 @@ describe('getLinkIds()', () => {
     expected.set('Test', new Set([1, 2, 3, 4]));
 
     expect(getLinkIds(notes)).toEqual(expected);
+  });
+});
+
+describe('getTopLevelNotes()', () => {
+  test('returns an empty map for empty notes map', () => {
+    expect(getTopLevelNotes(new Map())).toEqual(new Map());
+  });
+
+  test('works with several notes', () => {
+    const notes = new Map();
+    notes.set(1, { id: 1, title: 'Test 1' });
+    notes.set(2, { id: 2, title: 'Test 2', parent_note_id: 3 });
+    notes.set(3, { id: 3, title: 'Test 3' });
+    notes.set(4, { id: 4, title: 'Test 4', parent_note_id: 3 });
+
+    const expected = new Map();
+    expected.set(1, { id: 1, title: 'Test 1' });
+    expected.set(3, { id: 3, title: 'Test 3' });
+
+    expect(getTopLevelNotes(notes)).toEqual(expected);
+  });
+});
+
+describe('getSubnotes()', () => {
+  test('returns an empty map for empty notes map', () => {
+    expect(getSubnotes(new Map(), 0)).toEqual(new Map());
+  });
+
+  test('works with several notes', () => {
+    const notes = new Map();
+    notes.set(1, { id: 1, title: 'Test 1' });
+    notes.set(2, { id: 2, title: 'Test 2', parent_note_id: 3 });
+    notes.set(3, { id: 3, title: 'Test 3' });
+    notes.set(4, { id: 4, title: 'Test 4', parent_note_id: 3 });
+
+    const expected = new Map();
+    expected.set(2, { id: 2, title: 'Test 2', parent_note_id: 3 });
+    expected.set(4, { id: 4, title: 'Test 4', parent_note_id: 3 });
+
+    expect(getSubnotes(notes, 3)).toEqual(expected);
   });
 });

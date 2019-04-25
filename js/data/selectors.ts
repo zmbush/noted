@@ -44,3 +44,31 @@ export const getLinkIds = createSelector(
 );
 
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
+
+export const getTopLevelNotes = (notes: Map<number, NoteData>) => {
+  const topLevel = new Map();
+  for (let note of notes.values()) {
+    if (!note.parent_note_id) {
+      topLevel.set(note.id, note);
+    }
+  }
+  return topLevel;
+};
+
+export const getSubnotes = createSelector(
+  listNotes,
+  (_: any, note_id: number) => note_id,
+  (notes, note_id) => {
+    const subnotes = new Map();
+
+    for (let note of notes.values()) {
+      if (note.parent_note_id == note_id) {
+        subnotes.set(note.id, note);
+      }
+    }
+
+    return subnotes;
+  }
+);
+
+export type SubnoteMap = ReturnType<typeof getSubnotes>;

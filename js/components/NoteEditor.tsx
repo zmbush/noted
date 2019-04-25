@@ -56,6 +56,7 @@ type State = {
   title: string;
   body: string;
   tags: string[];
+  parent_note_id?: number;
 };
 
 class NoteEditor extends React.Component<Props, State> {
@@ -63,8 +64,8 @@ class NoteEditor extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { title, body, tags } = this.props.note;
-    this.state = { title, body, tags };
+    const { title, body, tags, parent_note_id } = this.props.note;
+    this.state = { title, body, tags, parent_note_id };
     this.editor = React.createRef();
   }
 

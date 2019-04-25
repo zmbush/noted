@@ -19,7 +19,6 @@ describe('<FilteredNoteList />', () => {
       shallow(
         <FilteredNoteList
           notes={new Map()}
-          titles={new Map()}
           search=''
           updateNote={() => {}}
           firstNoteRef={undefined}

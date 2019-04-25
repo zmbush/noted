@@ -9,13 +9,14 @@
 import { AppState } from 'data/reducers';
 
 export type NoteData = {
-  id: number;
+  id?: number;
   title: string;
   body: string;
   tags: string[];
-  created_at: string;
-  updated_at: string;
-  user_id: number;
+  created_at?: string;
+  updated_at?: string;
+  user_id?: number;
+  parent_note_id?: number;
 };
 
 export type ErrorData = {
