@@ -6,6 +6,7 @@ table! {
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
         user_id -> Int4,
+        parent_note_id -> Nullable<Int4>,
     }
 }
 

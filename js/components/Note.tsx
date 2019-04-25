@@ -9,6 +9,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Suspense } from 'react';
+import { connect } from 'react-redux';
 import htmlParser from 'react-markdown/plugins/html-parser';
 import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
@@ -16,10 +17,12 @@ import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
 import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import EditIcon from '@material-ui/icons/Edit';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import ReactLoading from 'react-loading';
 import {
   createStyles,
@@ -36,6 +39,9 @@ import { NoteData } from 'data/types';
 import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
+import NoteList from 'components/NoteList';
+import { AppState } from 'data/types';
+import { getLinkIds, getSubnotes } from 'data/selectors';
 
 const NoteEditor = React.lazy(() =>
   import(/* webpackChunkName: "editor" */ 'components/NoteEditor')
@@ -159,8 +165,10 @@ const styles = (theme: Theme) =>
 interface Props extends WithStyles<typeof styles> {
   new?: boolean;
   note: NoteData;
+  search: string;
   titles: Map<string, Set<number>>;
-  updateNote: (note?: { id: number }) => void;
+  subnotes: Map<number, NoteData>;
+  updateNote: (note?: NoteData) => void;
   matches?: {
     indices: number[][];
     value: string;
@@ -171,6 +179,7 @@ interface Props extends WithStyles<typeof styles> {
 
 const initialState = {
   edit: false,
+  creating_subnote: false,
 };
 
 type State = Readonly<typeof initialState>;
@@ -186,15 +195,25 @@ class Note extends React.Component<Props, State> {
     this.props.updateNote(null);
   };
 
-  save = async (note: { title: string; body: string; tags: string[] }) => {
-    const { title, body, tags } = note;
+  save = async (note: {
+    title: string;
+    body: string;
+    tags: string[];
+    parent_note_id?: number;
+  }) => {
+    const { title, body, tags, parent_note_id } = note;
     let result;
-    if (this.props.new) {
-      result = await axios.put('/api/secure/note', { title, body });
+    if (this.props.new || this.state.creating_subnote) {
+      result = await axios.put('/api/secure/note', {
+        title,
+        body,
+        parent_note_id,
+      });
     } else {
       result = await axios.patch(`/api/secure/notes/${this.props.note.id}`, {
         title,
         body,
+        parent_note_id,
       });
     }
 
@@ -202,6 +221,7 @@ class Note extends React.Component<Props, State> {
 
     this.setState({
       edit: false,
+      creating_subnote: false,
     });
 
     this.props.updateNote(result.data);
@@ -210,6 +230,12 @@ class Note extends React.Component<Props, State> {
   startEdit = () => {
     this.setState({
       edit: true,
+    });
+  };
+
+  startSubnoteCreate = () => {
+    this.setState({
+      creating_subnote: true,
     });
   };
 
@@ -229,11 +255,24 @@ class Note extends React.Component<Props, State> {
           className={classes.cardHeader}
           title={this.props.note.title}
           action={
-            this.state.edit ? null : (
-              <IconButton onClick={this.startEdit} className={classes.noPrint}>
-                <EditIcon />
-              </IconButton>
-            )
+            this.state.edit
+              ? null
+              : [
+                  <IconButton
+                    onClick={this.startSubnoteCreate}
+                    className={classes.noPrint}
+                    aria-label='Add Subnote'
+                  >
+                    <LibraryAddIcon />
+                  </IconButton>,
+                  <IconButton
+                    onClick={this.startEdit}
+                    className={classes.noPrint}
+                    aria-label='Edit Note'
+                  >
+                    <EditIcon />
+                  </IconButton>,
+                ]
           }
         />
         <CardContent className={classes.cardContent}>
@@ -260,6 +299,34 @@ class Note extends React.Component<Props, State> {
               />
             </Suspense>
           </Dialog>
+          <Dialog
+            classes={{ root: classes.markdown }}
+            open={this.state.creating_subnote}
+            fullWidth
+            maxWidth='lg'
+            onClose={this.cancelEdit}
+          >
+            <Suspense
+              fallback={
+                <ReactLoading
+                  type='spin'
+                  className={classes.loadingSpinner}
+                  color='#000000'
+                />
+              }
+            >
+              <NoteEditor
+                open={this.state.edit}
+                onSave={this.save}
+                note={{
+                  title: '',
+                  body: '',
+                  tags: [],
+                  parent_note_id: this.props.note.id,
+                }}
+              />
+            </Suspense>
+          </Dialog>
           <Tags tags={this.props.note.tags} />
           <ReactMarkdown
             className={classes.markdown}
@@ -271,6 +338,14 @@ class Note extends React.Component<Props, State> {
           >
             {this.props.note.body}
           </ReactMarkdown>
+
+          <Grid container spacing={8}>
+            <NoteList
+              notes={this.props.subnotes}
+              search={this.props.search}
+              updateNote={this.props.updateNote}
+            />
+          </Grid>
         </CardContent>
       </Card>
     );
@@ -279,4 +354,9 @@ class Note extends React.Component<Props, State> {
 
 export type InnerNote = Note;
 
-export default withStyles(styles)(Note);
+const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
+  titles: getLinkIds(state.notes),
+  subnotes: getSubnotes(state.notes, props.note.id),
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Note));

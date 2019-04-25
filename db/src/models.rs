@@ -19,7 +19,7 @@ use {
     serde_derive::{Deserialize, Serialize},
 };
 
-#[derive(Identifiable, Queryable, Serialize, Associations)]
+#[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
 #[belongs_to(User)]
 pub struct Note {
     pub id: i32,
@@ -28,6 +28,7 @@ pub struct Note {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
+    pub parent_note_id: Option<i32>,
 }
 
 type Conn = PooledConnection<ConnectionManager<PgConnection>>;
@@ -41,6 +42,7 @@ impl Note {
             created_at: self.created_at,
             updated_at: self.updated_at,
             user_id: self.user_id,
+            parent_note_id: self.parent_note_id,
         }
     }
 }
@@ -73,6 +75,7 @@ impl WithTags for Note {
             created_at: self.created_at,
             updated_at: self.updated_at,
             user_id: self.user_id,
+            parent_note_id: self.parent_note_id,
         })
     }
 }
@@ -86,6 +89,7 @@ pub struct NoteWithTags {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
+    pub parent_note_id: Option<i32>,
 }
 
 #[derive(Identifiable, Queryable, Serialize, Associations)]
@@ -121,6 +125,7 @@ pub struct NoteTag {
 pub struct NewNote {
     pub title: String,
     pub body: String,
+    pub parent_note_id: Option<i32>,
 }
 
 #[derive(AsChangeset, Deserialize)]
@@ -128,6 +133,7 @@ pub struct NewNote {
 pub struct UpdateNote {
     pub title: Option<String>,
     pub body: Option<String>,
+    pub parent_note_id: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

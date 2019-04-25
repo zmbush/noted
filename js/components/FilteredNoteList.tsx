@@ -16,7 +16,6 @@ import { LinkIdMap } from 'data/selectors';
 
 interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
-  titles: LinkIdMap;
   search: string;
   updateNote: (note: NoteData) => void;
   firstNoteRef: React.RefObject<InnerNote>;
