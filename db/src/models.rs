@@ -17,6 +17,7 @@ use {
         r2d2::{ConnectionManager, PooledConnection},
     },
     serde_derive::{Deserialize, Serialize},
+    std::collections::HashSet,
 };
 
 #[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
@@ -62,20 +63,23 @@ impl WithTags for Note {
         self,
         c: &PooledConnection<ConnectionManager<PgConnection>>,
     ) -> Option<NoteWithTags> {
+        let mut tags = note_tags_id::table
+            .filter(note_tags_id::note_id.eq(self.id))
+            .inner_join(tags::table)
+            .select(tags::tag)
+            .load::<String>(c)
+            .ok()?;
+        tags.sort();
+
         Some(NoteWithTags {
             id: self.id,
             title: self.title,
             body: self.body,
-            tags: note_tags_id::table
-                .filter(note_tags_id::note_id.eq(self.id))
-                .inner_join(tags::table)
-                .select(tags::tag)
-                .load::<String>(c)
-                .ok()?,
             created_at: self.created_at,
             updated_at: self.updated_at,
             user_id: self.user_id,
             parent_note_id: self.parent_note_id,
+            tags,
         })
     }
 }
@@ -252,11 +256,24 @@ impl User {
             use crate::schema::{note_tags_id::dsl::*, tags::dsl::*};
 
             // TODO: Server needs Postgres 9.5 to support ON CONFLICT DO NOTHING
-            // BODY: In the meantime, we will just ignore the result from the following execute.
-            let _ = diesel::insert_into(tags)
-                .values(&set_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
-                // .on_conflict_do_nothing()
-                .execute(db);
+            // BODY: In the meantime, we need to calculate exactly which tags need to be added.
+            let tag_set = set_tags
+                .iter()
+                .map(|s| s.to_owned())
+                .collect::<HashSet<_>>();
+
+            let known_tags = tags
+                .filter(&tag.eq_any(set_tags))
+                .select(tag)
+                .get_results::<String>(db)?
+                .into_iter()
+                .collect::<HashSet<_>>();
+
+            let new_tags = tag_set.difference(&known_tags).collect::<Vec<_>>();
+
+            diesel::insert_into(tags)
+                .values(&new_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
+                .execute(db)?;
 
             let all_tags = tags.filter(tag.eq_any(set_tags)).load::<Tag>(db)?;
 
@@ -362,10 +379,16 @@ mod test {
                 .unwrap();
 
             let note = user
-                .set_note_tags(note.id, &["Tag1".to_owned(), "Tag2".to_owned()], &db)
+                .set_note_tags(note.id, &["Tag5".to_owned(), "Tag2".to_owned()], &db)
                 .unwrap();
 
-            assert_eq!(note.tags, vec!["Tag1".to_owned(), "Tag2".to_owned()]);
+            assert_eq!(note.tags, vec!["Tag2".to_owned(), "Tag5".to_owned()]);
+
+            let note = user
+                .set_note_tags(note.id, &["Tag1".to_owned(), "Tag3".to_owned()], &db)
+                .unwrap();
+
+            assert_eq!(note.tags, vec!["Tag1".to_owned(), "Tag3".to_owned()]);
 
             Ok(())
         });
