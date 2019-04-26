@@ -14,7 +14,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 module.exports = {
   entry: './js/index.tsx',
   output: {
-    filename: 'js/[name].bundle.js',
+    filename: 'js/[name].[chunkhash].js',
     chunkFilename: 'js/[name].[chunkhash].js',
 
     publicPath: '/dist/',
