@@ -251,10 +251,12 @@ impl User {
         db.transaction::<(), diesel::result::Error, _>(|| {
             use crate::schema::{note_tags_id::dsl::*, tags::dsl::*};
 
-            diesel::insert_into(tags)
+            // TODO: Server needs Postgres 9.5 to support ON CONFLICT DO NOTHING
+            // BODY: In the meantime, we will just ignore the result from the following execute.
+            let _ = diesel::insert_into(tags)
                 .values(&set_tags.iter().map(|t| tag.eq(t)).collect::<Vec<_>>())
-                .on_conflict_do_nothing()
-                .execute(db)?;
+                // .on_conflict_do_nothing()
+                .execute(db);
 
             let all_tags = tags.filter(tag.eq_any(set_tags)).load::<Tag>(db)?;
 
@@ -339,6 +341,32 @@ mod test {
             assert_eq!(note.title, "New Title");
             user.delete_note(note.id, &db);
             assert_eq!(user.list_notes(&db).unwrap().len(), 0);
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn test_modifying_tags() {
+        let db = db().unwrap();
+        db.test_transaction::<_, diesel::result::Error, _>(|| {
+            let user = test_user(&db);
+            let note = user
+                .new_note(
+                    &NewNote {
+                        title: "Title".to_owned(),
+                        body: "Body".to_owned(),
+                        parent_note_id: None,
+                    },
+                    &db,
+                )
+                .unwrap();
+
+            let note = user
+                .set_note_tags(note.id, &["Tag1".to_owned(), "Tag2".to_owned()], &db)
+                .unwrap();
+
+            assert_eq!(note.tags, vec!["Tag1".to_owned(), "Tag2".to_owned()]);
+
             Ok(())
         });
     }
