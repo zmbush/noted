@@ -7,9 +7,16 @@
 // except according to those terms.
 
 import { createSelector } from 'reselect';
-import { NoteData } from 'data/types';
+import createCachedSelector from 're-reselect';
+import { NoteData, AppState } from 'data/types';
 
-const listNotes = (notes: Map<number, NoteData>) => Array.from(notes.values());
+const getNotes = (state: AppState) => state.notes;
+const getNoteId = (_: any, props: { note_id: number }) => props.note_id;
+
+const listNotes = createSelector(
+  getNotes,
+  (notes: Map<number, NoteData>) => Array.from(notes.values())
+);
 
 const listAllTitles = createSelector(
   listNotes,
@@ -45,19 +52,22 @@ export const getLinkIds = createSelector(
 
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
 
-export const getTopLevelNotes = (notes: Map<number, NoteData>) => {
-  const topLevel = new Map();
-  for (let note of notes.values()) {
-    if (!note.parent_note_id) {
-      topLevel.set(note.id, note);
-    }
-  }
-  return topLevel;
-};
-
-export const getSubnotes = createSelector(
+export const getTopLevelNotes = createSelector(
   listNotes,
-  (_: any, note_id: number) => note_id,
+  notes => {
+    const topLevel = new Map();
+    for (let note of notes) {
+      if (!note.parent_note_id) {
+        topLevel.set(note.id, note);
+      }
+    }
+    return topLevel;
+  }
+);
+
+export const getSubnotes = createCachedSelector(
+  listNotes,
+  getNoteId,
   (notes, note_id) => {
     const subnotes = new Map();
 
@@ -69,6 +79,52 @@ export const getSubnotes = createSelector(
 
     return subnotes;
   }
-);
+)((state, props: { note_id: number }) => props.note_id);
 
 export type SubnoteMap = ReturnType<typeof getSubnotes>;
+
+const calculateMergedNote = (
+  note: NoteData,
+  notes: Map<number, NoteData>
+): NoteData => {
+  let newNote = Object.assign({}, note);
+  let subnotes = getSubnotes({ notes }, { note_id: note.id });
+
+  for (let subnote of subnotes.values()) {
+    let mergedNote = calculateMergedNote(subnote, notes);
+    newNote.title = `${newNote.title} ${mergedNote.title}`;
+    newNote.tags = Array.from(new Set([...newNote.tags, ...mergedNote.tags]));
+    newNote.body = `${newNote.body} ${mergedNote.body}`;
+  }
+
+  return newNote;
+};
+
+export const getSearchIndex = createSelector(
+  getNotes,
+  allNotes => {
+    let result = new Map();
+    for (let note of allNotes.values()) {
+      result.set(note.id, calculateMergedNote(note, allNotes));
+    }
+    return result;
+  }
+);
+
+export const getFilteredSearchIndex = createCachedSelector(
+  getSearchIndex,
+  getNoteId,
+  (notes, note_id) => {
+    const subnotes = new Map();
+
+    for (let note of notes.values()) {
+      if (note.parent_note_id == note_id) {
+        subnotes.set(note.id, note);
+      }
+    }
+
+    return subnotes;
+  }
+)((state, props: { note_id: number }) =>
+  props.note_id == null ? -1 : props.note_id
+);

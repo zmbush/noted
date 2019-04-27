@@ -10,6 +10,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
+var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   entry: './js/index.tsx',
@@ -35,8 +36,14 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: 'awesome-typescript-loader',
         exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            configFile: 'tsconfig.webpack.json',
+            transpileOnly: true,
+          },
+        },
       },
       {
         test: /\.css$/,
@@ -52,6 +59,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'js/index.ejs',
     }),
+    new ForkTsCheckerWebpackPlugin(),
     //new BundleAnalyzerPlugin(),
   ],
   optimization: {

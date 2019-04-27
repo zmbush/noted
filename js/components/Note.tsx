@@ -25,6 +25,7 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ArchiveIcon from '@material-ui/icons/Archive';
+import UnarchiveIcon from '@material-ui/icons/Unarchive';
 import ReactLoading from 'react-loading';
 import {
   createStyles,
@@ -35,6 +36,7 @@ import {
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
@@ -176,6 +178,8 @@ interface Props extends WithStyles<typeof styles> {
   subnotes: Map<number, NoteData>;
   updateNote: (note?: NoteData) => void;
   deleteNote: (id: number) => void;
+  width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  depth?: number;
   matches?: {
     indices: number[][];
     value: string;
@@ -196,12 +200,12 @@ type State = Readonly<typeof initialState>;
 class Note extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = initialState;
+    this.state = Object.assign({}, initialState, { edit: props.new });
   }
 
   cancelEdit = () => {
     this.setState({ edit: false, creatingSubnote: false });
-    // this.props.updateNote(null);
+    this.props.updateNote(null);
   };
 
   save = async (note: {
@@ -242,6 +246,22 @@ class Note extends React.Component<Props, State> {
     this.props.deleteNote(id);
   };
 
+  archiveNote = async () => {
+    this.setState({ moreMenuEl: null });
+
+    // What even does archiving a new note mean?
+    if (this.props.new) {
+      return;
+    }
+
+    const { id, archived } = this.props.note;
+    const result = await axios.patch(`/api/secure/notes/${id}`, {
+      archived: !archived,
+    });
+
+    this.props.updateNote(result.data);
+  };
+
   startEdit = () => {
     this.setState({
       edit: true,
@@ -269,39 +289,34 @@ class Note extends React.Component<Props, State> {
       >
         <CardHeader
           className={classes.cardHeader}
-          title={this.props.note.title}
+          title={(this.props.note.archived ? '*' : '') + this.props.note.title}
           action={
-            this.state.edit
-              ? null
-              : [
-                  <IconButton
-                    key='add-subnote'
-                    onClick={this.startSubnoteCreate}
-                    className={classes.noPrint}
-                    aria-label='Add Subnote'
-                  >
-                    <LibraryAddIcon />
-                  </IconButton>,
-                  <IconButton
-                    key='edit'
-                    onClick={this.startEdit}
-                    className={classes.noPrint}
-                    aria-label='Edit Note'
-                  >
-                    <EditIcon />
-                  </IconButton>,
-                  <IconButton
-                    key='more-button'
-                    onClick={e =>
-                      this.setState({ moreMenuEl: e.currentTarget })
-                    }
-                    className={classes.noPrint}
-                    aria-owns={moreMenuEl ? 'more-menu' : undefined}
-                    aria-label='More Options'
-                  >
-                    <MoreVertIcon />
-                  </IconButton>,
-                ]
+            this.state.edit ? null : (
+              <>
+                <IconButton
+                  onClick={this.startSubnoteCreate}
+                  className={classes.noPrint}
+                  aria-label='Add Subnote'
+                >
+                  <LibraryAddIcon />
+                </IconButton>
+                <IconButton
+                  onClick={this.startEdit}
+                  className={classes.noPrint}
+                  aria-label='Edit Note'
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  onClick={e => this.setState({ moreMenuEl: e.currentTarget })}
+                  className={classes.noPrint}
+                  aria-owns={moreMenuEl ? 'more-menu' : undefined}
+                  aria-label='More Options'
+                >
+                  <MoreVertIcon />
+                </IconButton>
+              </>
+            )
           }
         />
         <Menu
@@ -319,11 +334,11 @@ class Note extends React.Component<Props, State> {
             </ListItemIcon>
             Delete Note
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={this.archiveNote}>
             <ListItemIcon>
-              <ArchiveIcon />
+              {this.props.note.archived ? <UnarchiveIcon /> : <ArchiveIcon />}
             </ListItemIcon>
-            Archive Note
+            {this.props.note.archived ? 'Unarchive Note' : 'Archive Note'}
           </MenuItem>
         </Menu>
         <ConfirmationDialog
@@ -338,6 +353,7 @@ class Note extends React.Component<Props, State> {
             open={this.state.edit || this.state.creatingSubnote}
             fullWidth
             maxWidth='lg'
+            fullScreen={isWidthDown('xs', this.props.width)}
             onClose={this.cancelEdit}
           >
             <Suspense
@@ -379,6 +395,8 @@ class Note extends React.Component<Props, State> {
 
           <Grid container spacing={8}>
             <NoteList
+              parent_note_id={this.props.note.id}
+              depth={(this.props.depth || 0) + 1}
               notes={this.props.subnotes}
               search={this.props.search}
               updateNote={this.props.updateNote}
@@ -394,8 +412,8 @@ class Note extends React.Component<Props, State> {
 export type InnerNote = Note;
 
 const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
-  titles: getLinkIds(state.notes),
-  subnotes: getSubnotes(state.notes, props.note.id),
+  titles: getLinkIds(state),
+  subnotes: getSubnotes(state, { note_id: props.note.id }),
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(Note));
+export default connect(mapStateToProps)(withStyles(styles)(withWidth()(Note)));

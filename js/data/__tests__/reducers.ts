@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import reducers from '../index';
+import reducers from '../reducers';
 
 describe('data::reducers()', () => {
   test('matches snapshot', () => {

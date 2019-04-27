@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
-<withRouter(WithStyles(NoteList))
+<withRouter(Connect(WithStyles(NoteList)))
   deleteNote={[Function]}
+  depth={1}
   history={
     Object {
       "action": "POP",
@@ -52,6 +53,7 @@ exports[`<FilteredNoteList /> matches snapshot 1`] = `
     }
   }
   notes={Map {}}
+  parent_note_id={null}
   renderOnly={
     Set {
       1,

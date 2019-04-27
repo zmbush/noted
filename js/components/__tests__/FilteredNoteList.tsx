@@ -18,6 +18,7 @@ describe('<FilteredNoteList />', () => {
     expect(
       shallow(
         <FilteredNoteList
+          depth={1}
           notes={new Map()}
           search=''
           updateNote={() => {}}
