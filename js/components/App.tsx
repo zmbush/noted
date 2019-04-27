@@ -33,6 +33,7 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import debounce from 'debounce-promise';
 
 import {
   withRouter,
@@ -140,6 +141,7 @@ const styles = (theme: Theme) =>
   });
 
 const initialState = {
+  searchInputValue: '',
   search: '',
   newNote: false,
   userMenuEl: null as HTMLElement,
@@ -158,7 +160,6 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 class App extends Component<Props, State> {
   searchInput: React.RefObject<HTMLInputElement>;
   firstNote: React.RefObject<InnerNote>;
-  newNote: React.RefObject<InnerNote>;
 
   constructor(props: Props) {
     super(props);
@@ -166,7 +167,6 @@ class App extends Component<Props, State> {
     this.state = initialState;
     this.searchInput = React.createRef();
     this.firstNote = React.createRef();
-    this.newNote = React.createRef();
   }
 
   componentDidMount() {
@@ -195,11 +195,7 @@ class App extends Component<Props, State> {
   };
 
   create() {
-    this.setState({ newNote: true }, () => {
-      if (this.newNote.current) {
-        this.newNote.current.startEdit();
-      }
-    });
+    this.setState({ newNote: true });
   }
 
   createNew = (e: React.SyntheticEvent) => {
@@ -207,7 +203,15 @@ class App extends Component<Props, State> {
     this.create();
   };
 
-  createNewShortcut = (e: ExtendedKeyboardEvent, combo: string) => {
+  cancelSearch = (e: ExtendedKeyboardEvent, combo?: string) => {
+    e.preventDefault();
+    this.setState({ searchInputValue: '', search: '' });
+  };
+
+  createNewShortcut = (
+    e: ExtendedKeyboardEvent | React.SyntheticEvent,
+    combo?: string
+  ) => {
     e.preventDefault();
     this.create();
   };
@@ -224,6 +228,13 @@ class App extends Component<Props, State> {
     this.setState({ userMenuEl: null });
     await axios.post('/api/sign_out');
     this.props.logOut();
+  };
+
+  debouncedSearch = debounce(async () => this.state.searchInputValue, 500);
+
+  doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ searchInputValue: e.target.value });
+    this.setState({ search: await this.debouncedSearch() });
   };
 
   render() {
@@ -267,26 +278,28 @@ class App extends Component<Props, State> {
               Noted
             </Typography>
             <div className={classes.grow} />
-            <BindKeyboard keys='ctrl+o' callback={this.createNewShortcut}>
-              <div className={classes.search}>
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
+            <BindKeyboard keys='esc' callback={this.cancelSearch}>
+              <BindKeyboard keys='ctrl+o' callback={this.createNewShortcut}>
+                <div className={classes.search}>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  <form onSubmit={this.startEdit}>
+                    <InputBase
+                      inputProps={{
+                        ref: this.searchInput,
+                      }}
+                      placeholder='Search...'
+                      classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                      }}
+                      value={this.state.searchInputValue}
+                      onChange={this.doSearch}
+                    />
+                  </form>
                 </div>
-                <form onSubmit={this.startEdit}>
-                  <InputBase
-                    inputProps={{
-                      ref: this.searchInput,
-                    }}
-                    placeholder='Search...'
-                    classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput,
-                    }}
-                    value={this.state.search}
-                    onChange={e => this.setState({ search: e.target.value })}
-                  />
-                </form>
-              </div>
+              </BindKeyboard>
             </BindKeyboard>
             <IconButton
               aria-haspopup='true'
@@ -302,7 +315,7 @@ class App extends Component<Props, State> {
             <Grid item xs={12}>
               <Note
                 new
-                innerRef={this.newNote}
+                depth={1}
                 search={this.state.search}
                 note={{
                   id: -1,
@@ -321,6 +334,9 @@ class App extends Component<Props, State> {
           <Switch>
             <Route exact path='/'>
               <NoteList
+                createFromSearch={this.createNewShortcut}
+                parent_note_id={null}
+                depth={1}
                 notes={this.props.notes}
                 search={this.state.search}
                 updateNote={this.updateNote}
@@ -330,6 +346,7 @@ class App extends Component<Props, State> {
             </Route>
             <Route path={['/note/:ids', '/disambiguation/:ids']}>
               <FilteredNoteList
+                depth={1}
                 search={this.state.search}
                 updateNote={this.updateNote}
                 deleteNote={this.props.deleteNote}
@@ -357,7 +374,7 @@ class App extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  notes: getTopLevelNotes(state.notes),
+  notes: getTopLevelNotes(state),
   is_signed_in: state.user.is_signed_in,
 });
 

@@ -13,11 +13,12 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Note, { InnerNote } from 'components/Note';
 import classNames from 'classnames';
-import { NoteData } from 'data/types';
+import { NoteData, AppState } from 'data/types';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
-import { LinkIdMap } from 'data/selectors';
+import { LinkIdMap, getFilteredSearchIndex } from 'data/selectors';
+import { connect } from 'react-redux';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,11 +43,15 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
+  searchIndex: Map<number, NoteData>;
   search: string;
+  depth: number;
   updateNote: (note?: NoteData) => void;
   deleteNote: (id: number) => void;
+  createFromSearch?: (e: React.SyntheticEvent) => void;
   firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
+  state: AppState;
   width?:
     | false
     | 'auto'
@@ -83,9 +88,8 @@ class NoteList extends React.Component<Props> {
     }
 
     if (this.props.search != '') {
-      let fuse = new Fuse(Array.from(notes.values()), {
+      let fuse = new Fuse(Array.from(this.props.searchIndex.values()), {
         distance: 100,
-        includeMatches: true,
         keys: [
           {
             name: 'title',
@@ -100,6 +104,7 @@ class NoteList extends React.Component<Props> {
             weight: 0.5,
           },
         ],
+        id: 'id',
         location: 0,
         matchAllTokens: true,
         maxPatternLength: 32,
@@ -110,14 +115,20 @@ class NoteList extends React.Component<Props> {
       });
 
       let elements = [];
-      let results = fuse.search(this.props.search);
-      if (results.length == 0 || results[0].item.title != this.props.search) {
+      let results = (fuse.search(this.props.search) as any) as string[];
+
+      if (
+        this.props.depth == 1 &&
+        (results.length == 0 ||
+          notes.get(parseInt(results[0], 10)).title != this.props.search)
+      ) {
         elements.push(
           <Grid item key='new' className={classes.item} xs={this.props.width}>
             <Button
               variant='contained'
               color='primary'
               className={classes.newButton}
+              onClick={this.props.createFromSearch}
             >
               <AddIcon
                 className={classNames(classes.leftIcon, classes.iconSmall)}
@@ -129,18 +140,14 @@ class NoteList extends React.Component<Props> {
       }
 
       let i = 0;
-      for (let n of results) {
+      for (let idStr of results) {
+        let id = parseInt(idStr, 10);
         elements.push(
-          <Grid
-            item
-            key={n.item.id}
-            className={classes.item}
-            xs={this.props.width}
-          >
+          <Grid item key={id} className={classes.item} xs={this.props.width}>
             <Note
-              note={n.item}
+              depth={this.props.depth + 1}
+              note={notes.get(id)}
               search={this.props.search}
-              matches={n.matches}
               updateNote={this.props.updateNote}
               deleteNote={this.props.deleteNote}
               innerRef={i == 0 ? this.props.firstNoteRef : null}
@@ -165,6 +172,7 @@ class NoteList extends React.Component<Props> {
       return sorted_notes.map(n => (
         <Grid item key={n.id} className={classes.item} xs={this.props.width}>
           <Note
+            depth={this.props.depth + 1}
             note={n}
             updateNote={this.props.updateNote}
             deleteNote={this.props.deleteNote}
@@ -176,4 +184,14 @@ class NoteList extends React.Component<Props> {
   }
 }
 
-export default withRouter(withStyles(styles)(NoteList));
+const mapStateToProps = (
+  state: AppState,
+  props: { parent_note_id: number }
+) => ({
+  state,
+  searchIndex: getFilteredSearchIndex(state, { note_id: props.parent_note_id }),
+});
+
+export default withRouter(
+  connect(mapStateToProps)(withStyles(styles)(NoteList))
+);

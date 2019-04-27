@@ -179,6 +179,7 @@ interface Props extends WithStyles<typeof styles> {
   updateNote: (note?: NoteData) => void;
   deleteNote: (id: number) => void;
   width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  depth?: number;
   matches?: {
     indices: number[][];
     value: string;
@@ -199,12 +200,12 @@ type State = Readonly<typeof initialState>;
 class Note extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = initialState;
+    this.state = Object.assign({}, initialState, { edit: props.new });
   }
 
   cancelEdit = () => {
     this.setState({ edit: false, creatingSubnote: false });
-    // this.props.updateNote(null);
+    this.props.updateNote(null);
   };
 
   save = async (note: {
@@ -394,6 +395,8 @@ class Note extends React.Component<Props, State> {
 
           <Grid container spacing={8}>
             <NoteList
+              parent_note_id={this.props.note.id}
+              depth={(this.props.depth || 0) + 1}
               notes={this.props.subnotes}
               search={this.props.search}
               updateNote={this.props.updateNote}
@@ -409,8 +412,8 @@ class Note extends React.Component<Props, State> {
 export type InnerNote = Note;
 
 const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
-  titles: getLinkIds(state.notes),
-  subnotes: getSubnotes(state.notes, props.note.id),
+  titles: getLinkIds(state),
+  subnotes: getSubnotes(state, { note_id: props.note.id }),
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(withWidth()(Note)));

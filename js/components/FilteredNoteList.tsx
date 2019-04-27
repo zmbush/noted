@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
   search: string;
+  depth: number;
   updateNote: (note: NoteData) => void;
   deleteNote: (id: number) => void;
   firstNoteRef: React.RefObject<InnerNote>;
@@ -29,7 +30,9 @@ class FilteredNoteList extends React.Component<Props> {
     const params = this.props.match.params as { ids: string };
     const parsedIds = new Set(params.ids.split(',').map(i => parseInt(i, 10)));
 
-    return <NoteList renderOnly={parsedIds} {...this.props} />;
+    return (
+      <NoteList parent_note_id={null} renderOnly={parsedIds} {...this.props} />
+    );
   }
 }
 
