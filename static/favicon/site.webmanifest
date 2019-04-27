@@ -1,6 +1,10 @@
 {
   "name": "Noted",
   "short_name": "Noted",
+  "lang": "en-US",
+  "orientation": "portrait-primary",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -15,5 +19,5 @@
   ],
   "theme_color": "#3f51b5",
   "background_color": "#3f51b5",
-  "display": "standalone"
+  "display": "fullscreen"
 }

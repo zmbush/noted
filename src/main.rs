@@ -125,7 +125,7 @@ fn main() -> Result<(), Error> {
 
     let mut favicons = Vec::new();
     for file in std::fs::read_dir("static/favicon")? {
-        favicons.push(file?.path());
+        favicons.push(file?.file_name());
     }
 
     let middleware = {
@@ -148,8 +148,8 @@ fn main() -> Result<(), Error> {
 
         for favicon in favicons {
             route
-                .get_or_head(&format!("/{}", favicon.display()))
-                .to_file(format!("static/favicon/{}", favicon.display()));
+                .get_or_head(&format!("/{}", favicon.to_string_lossy()))
+                .to_file(format!("static/favicon/{}", favicon.to_string_lossy()));
         }
 
         route.get_or_head("/*").to_file("dist/index.html");
