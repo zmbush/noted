@@ -7,7 +7,13 @@
 // except according to those terms.
 
 import notes from '../notes';
-import { notesFetched, updateNote, apiError, logOut } from 'data/actions';
+import {
+  notesFetched,
+  updateNote,
+  apiError,
+  deleteNote,
+  logOut,
+} from 'data/actions';
 import { NoteData } from 'data/types';
 
 describe('reducers::notes()', () => {
@@ -45,6 +51,9 @@ describe('reducers::notes()', () => {
 
     note_two.title = 'title 4';
     state = notes(state, updateNote(note_two));
+    expect(state).toMatchSnapshot();
+
+    state = notes(state, deleteNote(note_two.id));
     expect(state).toMatchSnapshot();
 
     expect(notes(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();

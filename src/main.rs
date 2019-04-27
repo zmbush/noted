@@ -37,6 +37,14 @@ struct RedisBackendProvider(redis::Client);
 
 struct RedisBackend(redis::Connection);
 
+impl RedisBackend {
+    fn set_expiry(&self, identifier: &SessionIdentifier) -> Result<(), SessionError> {
+        self.0
+            .expire(&identifier.value, 60 * 60 * 24 * 5) // 5 Days from last request
+            .map_err(|e| SessionError::Backend(format!("{}", e)))
+    }
+}
+
 impl Backend for RedisBackend {
     fn persist_session(
         &self,
@@ -47,19 +55,14 @@ impl Backend for RedisBackend {
             .set(&identifier.value, content)
             .map_err(|e| SessionError::Backend(format!("{}", e)))?;
 
-        self.0
-            .expire(identifier.value, 60 * 60 * 24 * 30)
-            .map_err(|e| SessionError::Backend(format!("{}", e)))
+        self.set_expiry(&identifier)
     }
 
     fn read_session(
         &self,
         identifier: SessionIdentifier,
     ) -> Box<dyn Future<Item = Option<Vec<u8>>, Error = SessionError> + Send> {
-        let _: Result<(), _> = self
-            .0
-            .expire(&identifier.value, 60 * 60 * 24 * 30)
-            .map_err(|e| SessionError::Backend(format!("{}", e)));
+        let _ = self.set_expiry(&identifier);
 
         Box::new(match self.0.get(identifier.value) {
             Ok(v) => future::ok(v),

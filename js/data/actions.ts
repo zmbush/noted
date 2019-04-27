@@ -14,6 +14,7 @@ export enum NotedEvent {
   NotesFetchStart = 'NOTES_FETCH_START',
   NotesFetched = 'NOTES_FETCHED',
   NotesUpdateNote = 'NOTES_UPDATE_NOTE',
+  NotesDeleteNote = 'NOTES_DELETE_NOTE',
 
   ApiError = 'API_ERROR',
 
@@ -31,6 +32,10 @@ export function notesFetched(notes: NoteData[]) {
 
 export function updateNote(note: NoteData) {
   return { type: NotedEvent.NotesUpdateNote, note };
+}
+
+export function deleteNote(id: number) {
+  return { type: NotedEvent.NotesDeleteNote, id };
 }
 
 export function apiError(error: ErrorData) {

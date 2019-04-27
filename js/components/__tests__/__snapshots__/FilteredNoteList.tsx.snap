@@ -2,6 +2,7 @@
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
 <withRouter(WithStyles(NoteList))
+  deleteNote={[Function]}
   history={
     Object {
       "action": "POP",

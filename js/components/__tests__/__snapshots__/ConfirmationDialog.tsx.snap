@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ConfirmationDialog /> matches snapshot 1`] = `
+<WithStyles(Dialog)
+  aria-labelledby="confirmation-dialog-title"
+  disableBackdropClick={true}
+  disableEscapeKeyDown={true}
+  maxWidth="xs"
+  open={true}
+>
+  <WithStyles(DialogTitle)
+    id="confirmation-dialog-title"
+  />
+  <WithStyles(DialogContent)>
+    Are you sure?
+  </WithStyles(DialogContent)>
+  <WithStyles(DialogActions)>
+    <WithStyles(Button)
+      color="primary"
+      onClick={[Function]}
+    >
+      No
+    </WithStyles(Button)>
+    <WithStyles(Button)
+      color="primary"
+      onClick={[Function]}
+    >
+      Yes
+    </WithStyles(Button)>
+  </WithStyles(DialogActions)>
+</WithStyles(Dialog)>
+`;

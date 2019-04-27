@@ -18,6 +18,7 @@ interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
   search: string;
   updateNote: (note: NoteData) => void;
+  deleteNote: (id: number) => void;
   firstNoteRef: React.RefObject<InnerNote>;
 }
 

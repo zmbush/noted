@@ -44,6 +44,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
   search: string;
   updateNote: (note?: NoteData) => void;
+  deleteNote: (id: number) => void;
   firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
   width?:
@@ -141,6 +142,7 @@ class NoteList extends React.Component<Props> {
               search={this.props.search}
               matches={n.matches}
               updateNote={this.props.updateNote}
+              deleteNote={this.props.deleteNote}
               innerRef={i == 0 ? this.props.firstNoteRef : null}
             />
           </Grid>
@@ -165,6 +167,7 @@ class NoteList extends React.Component<Props> {
           <Note
             note={n}
             updateNote={this.props.updateNote}
+            deleteNote={this.props.deleteNote}
             search={this.props.search}
           />
         </Grid>
