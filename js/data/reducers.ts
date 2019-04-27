@@ -8,9 +8,9 @@
 
 import { combineReducers } from 'redux';
 
-import notes from './notes';
-import user from './user';
-import ui from './ui';
+import notes from 'data/reducers/notes';
+import user from 'data/reducers/user';
+import ui from 'data/reducers/ui';
 
 const rootReducer = combineReducers({ notes, user, ui });
 

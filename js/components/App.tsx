@@ -330,7 +330,6 @@ class App extends Component<Props, State> {
             </Route>
             <Route path={['/note/:ids', '/disambiguation/:ids']}>
               <FilteredNoteList
-                notes={this.props.notes}
                 search={this.state.search}
                 updateNote={this.updateNote}
                 deleteNote={this.props.deleteNote}

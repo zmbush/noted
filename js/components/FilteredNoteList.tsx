@@ -13,6 +13,8 @@ import { NoteData } from 'data/types';
 import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom';
 import NoteList from 'components/NoteList';
 import { LinkIdMap } from 'data/selectors';
+import { AppState } from 'data/types';
+import { connect } from 'react-redux';
 
 interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
@@ -32,4 +34,9 @@ class FilteredNoteList extends React.Component<Props> {
 }
 
 export const Inner = FilteredNoteList;
-export default withRouter(FilteredNoteList);
+
+const mapStateToProps = (state: AppState) => ({
+  notes: state.notes,
+});
+
+export default withRouter(connect(mapStateToProps)(FilteredNoteList));

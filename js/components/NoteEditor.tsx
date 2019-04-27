@@ -34,7 +34,12 @@ const styles = (theme: Theme) =>
     root: {},
 
     editorRoot: {
-      height: '84vh',
+      [theme.breakpoints.up('sm')]: {
+        height: '84vh',
+      },
+      [theme.breakpoints.down('sm')]: {
+        height: '100vh',
+      },
     },
 
     editorContent: {

@@ -17,6 +17,7 @@ export type NoteData = {
   updated_at?: string;
   user_id?: number;
   parent_note_id?: number;
+  archived?: boolean;
 };
 
 export type ErrorData = {

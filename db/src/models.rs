@@ -30,6 +30,7 @@ pub struct Note {
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
     pub parent_note_id: Option<i32>,
+    pub archived: bool,
 }
 
 type Conn = PooledConnection<ConnectionManager<PgConnection>>;
@@ -44,6 +45,7 @@ impl Note {
             updated_at: self.updated_at,
             user_id: self.user_id,
             parent_note_id: self.parent_note_id,
+            archived: self.archived,
         }
     }
 }
@@ -79,6 +81,7 @@ impl WithTags for Note {
             updated_at: self.updated_at,
             user_id: self.user_id,
             parent_note_id: self.parent_note_id,
+            archived: self.archived,
             tags,
         })
     }
@@ -94,6 +97,7 @@ pub struct NoteWithTags {
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
     pub parent_note_id: Option<i32>,
+    pub archived: bool,
 }
 
 #[derive(Identifiable, Queryable, Serialize, Associations)]
@@ -138,6 +142,7 @@ pub struct UpdateNote {
     pub title: Option<String>,
     pub body: Option<String>,
     pub parent_note_id: Option<i32>,
+    pub archived: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

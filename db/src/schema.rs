@@ -7,6 +7,7 @@ table! {
         updated_at -> Timestamptz,
         user_id -> Int4,
         parent_note_id -> Nullable<Int4>,
+        archived -> Bool,
     }
 }
 
