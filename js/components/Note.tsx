@@ -191,8 +191,8 @@ class Note extends React.Component<Props, State> {
   }
 
   cancelEdit = () => {
-    this.setState({ edit: false });
-    this.props.updateNote(null);
+    this.setState({ edit: false, creating_subnote: false });
+    // this.props.updateNote(null);
   };
 
   save = async (note: {
@@ -278,7 +278,7 @@ class Note extends React.Component<Props, State> {
         <CardContent className={classes.cardContent}>
           <Dialog
             classes={{ root: classes.markdown }}
-            open={this.state.edit}
+            open={this.state.edit || this.state.creating_subnote}
             fullWidth
             maxWidth='lg'
             onClose={this.cancelEdit}
@@ -295,35 +295,16 @@ class Note extends React.Component<Props, State> {
               <NoteEditor
                 open={this.state.edit}
                 onSave={this.save}
-                note={this.props.note}
-              />
-            </Suspense>
-          </Dialog>
-          <Dialog
-            classes={{ root: classes.markdown }}
-            open={this.state.creating_subnote}
-            fullWidth
-            maxWidth='lg'
-            onClose={this.cancelEdit}
-          >
-            <Suspense
-              fallback={
-                <ReactLoading
-                  type='spin'
-                  className={classes.loadingSpinner}
-                  color='#000000'
-                />
-              }
-            >
-              <NoteEditor
-                open={this.state.edit}
-                onSave={this.save}
-                note={{
-                  title: '',
-                  body: '',
-                  tags: [],
-                  parent_note_id: this.props.note.id,
-                }}
+                note={
+                  this.state.edit
+                    ? this.props.note
+                    : {
+                        title: '',
+                        body: '',
+                        tags: [],
+                        parent_note_id: this.props.note.id,
+                      }
+                }
               />
             </Suspense>
           </Dialog>
