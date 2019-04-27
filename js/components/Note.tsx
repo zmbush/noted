@@ -6,7 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Suspense } from 'react';
 import { connect } from 'react-redux';
@@ -23,6 +22,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import EditIcon from '@material-ui/icons/Edit';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ArchiveIcon from '@material-ui/icons/Archive';
 import ReactLoading from 'react-loading';
 import {
   createStyles,
@@ -30,6 +32,9 @@ import {
   Theme,
   WithStyles,
 } from '@material-ui/core/styles';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
@@ -40,6 +45,7 @@ import BindKeyboard from 'components/BindKeyboard';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
 import NoteList from 'components/NoteList';
+import ConfirmationDialog from 'components/ConfirmationDialog';
 import { AppState } from 'data/types';
 import { getLinkIds, getSubnotes } from 'data/selectors';
 
@@ -169,6 +175,7 @@ interface Props extends WithStyles<typeof styles> {
   titles: Map<string, Set<number>>;
   subnotes: Map<number, NoteData>;
   updateNote: (note?: NoteData) => void;
+  deleteNote: (id: number) => void;
   matches?: {
     indices: number[][];
     value: string;
@@ -179,7 +186,9 @@ interface Props extends WithStyles<typeof styles> {
 
 const initialState = {
   edit: false,
-  creating_subnote: false,
+  creatingSubnote: false,
+  moreMenuEl: null as HTMLElement,
+  confirmationOpen: false,
 };
 
 type State = Readonly<typeof initialState>;
@@ -191,7 +200,7 @@ class Note extends React.Component<Props, State> {
   }
 
   cancelEdit = () => {
-    this.setState({ edit: false, creating_subnote: false });
+    this.setState({ edit: false, creatingSubnote: false });
     // this.props.updateNote(null);
   };
 
@@ -203,7 +212,7 @@ class Note extends React.Component<Props, State> {
   }) => {
     const { title, body, tags, parent_note_id } = note;
     let result;
-    if (this.props.new || this.state.creating_subnote) {
+    if (this.props.new || this.state.creatingSubnote) {
       result = await axios.put('/api/secure/note', {
         title,
         body,
@@ -221,10 +230,16 @@ class Note extends React.Component<Props, State> {
 
     this.setState({
       edit: false,
-      creating_subnote: false,
+      creatingSubnote: false,
     });
 
     this.props.updateNote(result.data);
+  };
+
+  doDelete = async () => {
+    const { id } = this.props.note;
+    let result = await axios.delete(`/api/secure/notes/${id}`);
+    this.props.deleteNote(id);
   };
 
   startEdit = () => {
@@ -235,7 +250,7 @@ class Note extends React.Component<Props, State> {
 
   startSubnoteCreate = () => {
     this.setState({
-      creating_subnote: true,
+      creatingSubnote: true,
     });
   };
 
@@ -244,6 +259,7 @@ class Note extends React.Component<Props, State> {
     const parseHtml = htmlParser({
       isValidNode: (node: { type: string }) => node.type !== 'script',
     });
+    const { moreMenuEl } = this.state;
 
     return (
       <Card
@@ -259,6 +275,7 @@ class Note extends React.Component<Props, State> {
               ? null
               : [
                   <IconButton
+                    key='add-subnote'
                     onClick={this.startSubnoteCreate}
                     className={classes.noPrint}
                     aria-label='Add Subnote'
@@ -266,19 +283,59 @@ class Note extends React.Component<Props, State> {
                     <LibraryAddIcon />
                   </IconButton>,
                   <IconButton
+                    key='edit'
                     onClick={this.startEdit}
                     className={classes.noPrint}
                     aria-label='Edit Note'
                   >
                     <EditIcon />
                   </IconButton>,
+                  <IconButton
+                    key='more-button'
+                    onClick={e =>
+                      this.setState({ moreMenuEl: e.currentTarget })
+                    }
+                    className={classes.noPrint}
+                    aria-owns={moreMenuEl ? 'more-menu' : undefined}
+                    aria-label='More Options'
+                  >
+                    <MoreVertIcon />
+                  </IconButton>,
                 ]
           }
+        />
+        <Menu
+          id='more-menu'
+          anchorEl={moreMenuEl}
+          open={Boolean(moreMenuEl)}
+          onClose={() => this.setState({ moreMenuEl: null })}
+          getContentAnchorEl={null}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        >
+          <MenuItem onClick={() => this.setState({ confirmationOpen: true })}>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            Delete Note
+          </MenuItem>
+          <MenuItem>
+            <ListItemIcon>
+              <ArchiveIcon />
+            </ListItemIcon>
+            Archive Note
+          </MenuItem>
+        </Menu>
+        <ConfirmationDialog
+          open={this.state.confirmationOpen}
+          title={`You are about to delete note: ${this.props.note.title}`}
+          onPositive={this.doDelete}
+          onNegative={() => this.setState({ confirmationOpen: false })}
         />
         <CardContent className={classes.cardContent}>
           <Dialog
             classes={{ root: classes.markdown }}
-            open={this.state.edit || this.state.creating_subnote}
+            open={this.state.edit || this.state.creatingSubnote}
             fullWidth
             maxWidth='lg'
             onClose={this.cancelEdit}
@@ -325,6 +382,7 @@ class Note extends React.Component<Props, State> {
               notes={this.props.subnotes}
               search={this.props.search}
               updateNote={this.props.updateNote}
+              deleteNote={this.props.deleteNote}
             />
           </Grid>
         </CardContent>

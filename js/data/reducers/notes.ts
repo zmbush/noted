@@ -20,6 +20,7 @@ export default function notes(
     notes?: NoteData[];
     note?: NoteData;
     error?: ErrorData;
+    id?: number;
   }
 ): State {
   switch (action.type) {
@@ -33,6 +34,11 @@ export default function notes(
     case NotedEvent.NotesUpdateNote: {
       let data = new Map(state);
       data.set(action.note.id, action.note);
+      return data;
+    }
+    case NotedEvent.NotesDeleteNote: {
+      let data = new Map(state);
+      data.delete(action.id);
       return data;
     }
     case NotedEvent.ApiError: {

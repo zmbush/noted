@@ -44,7 +44,7 @@ import {
 import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 import NoteList from 'components/NoteList';
-import { updateNote, logOut } from 'data/actions';
+import { updateNote, deleteNote, logOut } from 'data/actions';
 import { NoteData, AppState } from 'data/types';
 import { getLinkIds, LinkIdMap, getTopLevelNotes } from 'data/selectors';
 import FilteredNoteList from 'components/FilteredNoteList';
@@ -151,6 +151,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
   is_signed_in: boolean;
   updateNote: (note: NoteData) => void;
+  deleteNote: (id: number) => void;
   logOut: () => void;
 }
 
@@ -313,6 +314,7 @@ class App extends Component<Props, State> {
                   user_id: 0,
                 }}
                 updateNote={this.updateNote}
+                deleteNote={this.props.deleteNote}
               />
             </Grid>
           ) : null}
@@ -322,6 +324,7 @@ class App extends Component<Props, State> {
                 notes={this.props.notes}
                 search={this.state.search}
                 updateNote={this.updateNote}
+                deleteNote={this.props.deleteNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
@@ -330,6 +333,7 @@ class App extends Component<Props, State> {
                 notes={this.props.notes}
                 search={this.state.search}
                 updateNote={this.updateNote}
+                deleteNote={this.props.deleteNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
@@ -361,6 +365,10 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   updateNote(data: NoteData) {
     dispatch(updateNote(data));
+  },
+
+  deleteNote(id: number) {
+    dispatch(deleteNote(id));
   },
 
   logOut() {
