@@ -80,7 +80,7 @@ jobs:
           key: kcov-cache-{{arch}}-33
       - run:
           name: Install diesel
-          command: (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres
+          command: (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres || true
       - save_cache:
           paths:
             - /usr/local/cargo/bin/cargo-kcov

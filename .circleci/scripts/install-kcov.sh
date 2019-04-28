@@ -10,4 +10,4 @@ wget https://github.com/SimonKagstrom/kcov/archive/v$KCOV_VERSION.tar.gz && \
     mkdir build && cd build && \
     cmake .. && make
 
-(cargo install --list | grep cargo-kcov) || cargo install cargo-kcov
+(cargo install --list | grep cargo-kcov) || cargo install cargo-kcov || true
