@@ -58,6 +58,9 @@ jobs:
       - restore_cache:
           keys:
             - kcov-cache-{{arch}}-33
+      - restore_cache:
+          keys:
+            - v4-cargo-bin-cache-{{arch}}-{{ checksum "Cargo.lock" }}
       - run:
           name: Build all targets
           command: cargo build --all --all-targets
@@ -77,7 +80,12 @@ jobs:
           key: kcov-cache-{{arch}}-33
       - run:
           name: Install diesel
-          command: cargo install diesel_cli --no-default-features --features postgres
+          command: (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres
+      - save_cache:
+          paths:
+            - /usr/local/cargo/bin/cargo-kcov
+            - /usr/local/cargo/bin/diesel
+          key: v4-cargo-bin-cache-{{arch}}-{{ checksum "Cargo.lock" }}
       - run:
           name: Run Migrations
           command: diesel migration run
