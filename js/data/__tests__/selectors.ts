@@ -12,6 +12,7 @@ import {
   getSubnotes,
   getSearchIndex,
   getFilteredSearchIndex,
+  getSortedNoteIds,
 } from '../selectors';
 import rootReducer from '../reducers';
 import { notesFetched } from '../actions';
@@ -200,5 +201,46 @@ describe('getFilteredSearchIndex()', () => {
     });
 
     expect(getFilteredSearchIndex(state, { note_id: 3 })).toEqual(expected);
+  });
+});
+
+describe('getSortedNoteIds()', () => {
+  test('returns an empty map for empty notes map', () => {
+    expect(getSortedNoteIds(rootReducer(undefined, { type: '' }))).toEqual([]);
+  });
+
+  test('works with several notes', () => {
+    const state = rootReducer(
+      undefined,
+      notesFetched([
+        {
+          id: 1,
+          title: 'Test 1',
+          body: 'body',
+          tags: [],
+          parent_note_id: 4,
+          updated_at: '3',
+        },
+        {
+          id: 2,
+          title: 'Test 2',
+          body: 'body',
+          tags: [],
+          parent_note_id: 3,
+          updated_at: '2',
+        },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], updated_at: '1' },
+        {
+          id: 4,
+          title: 'Test 4',
+          body: 'body',
+          tags: [],
+          parent_note_id: 3,
+          updated_at: '2',
+        },
+      ])
+    );
+
+    expect(getSortedNoteIds(state)).toEqual([1, 4, 2, 3]);
   });
 });

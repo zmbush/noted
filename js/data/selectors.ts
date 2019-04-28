@@ -128,3 +128,38 @@ export const getFilteredSearchIndex = createCachedSelector(
 )((state, props: { note_id: number }) =>
   props.note_id == null ? -1 : props.note_id
 );
+
+const mostRecent = (a: string, b: string) => (a > b ? a : b);
+
+export const getSortedNoteIds = createSelector(
+  getNotes,
+  allNotes => {
+    let map = new Map();
+
+    for (let note of allNotes.values()) {
+      map.set(note.id, note.updated_at);
+    }
+
+    for (let note of allNotes.values()) {
+      while (note.parent_note_id != null) {
+        map.set(
+          note.parent_note_id,
+          mostRecent(note.updated_at, map.get(note.parent_note_id))
+        );
+        note = allNotes.get(note.parent_note_id);
+      }
+    }
+
+    return Array.from(map.entries())
+      .sort(([_aid, a]: [number, string], [_bid, b]: [number, string]) => {
+        if (a > b) {
+          return -1;
+        }
+        if (a < b) {
+          return 1;
+        }
+        return 0;
+      })
+      .map(([id, _]) => id);
+  }
+);

@@ -17,7 +17,11 @@ import { NoteData, AppState } from 'data/types';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
-import { LinkIdMap, getFilteredSearchIndex } from 'data/selectors';
+import {
+  LinkIdMap,
+  getFilteredSearchIndex,
+  getSortedNoteIds,
+} from 'data/selectors';
 import { connect } from 'react-redux';
 
 const styles = (theme: Theme) =>
@@ -44,6 +48,7 @@ const styles = (theme: Theme) =>
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   notes: Map<number, NoteData>;
   searchIndex: Map<number, NoteData>;
+  sortedIds: number[];
   search: string;
   depth: number;
   updateNote: (note?: NoteData) => void;
@@ -51,7 +56,6 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   createFromSearch?: (e: React.SyntheticEvent) => void;
   firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
-  state: AppState;
   width?:
     | false
     | 'auto'
@@ -158,28 +162,29 @@ class NoteList extends React.Component<Props> {
       }
       return elements;
     } else {
-      let sorted_notes = Array.from(notes.values()).sort((a, b) => {
-        var x = a.title;
-        var y = b.title;
-        if (x < y) {
-          return -1;
+      let result = [];
+      for (let id of this.props.sortedIds) {
+        if (notes.has(id)) {
+          const n = notes.get(id);
+          result.push(
+            <Grid
+              item
+              key={n.id}
+              className={classes.item}
+              xs={this.props.width}
+            >
+              <Note
+                depth={this.props.depth + 1}
+                note={n}
+                updateNote={this.props.updateNote}
+                deleteNote={this.props.deleteNote}
+                search={this.props.search}
+              />
+            </Grid>
+          );
         }
-        if (x > y) {
-          return 1;
-        }
-        return 0;
-      });
-      return sorted_notes.map(n => (
-        <Grid item key={n.id} className={classes.item} xs={this.props.width}>
-          <Note
-            depth={this.props.depth + 1}
-            note={n}
-            updateNote={this.props.updateNote}
-            deleteNote={this.props.deleteNote}
-            search={this.props.search}
-          />
-        </Grid>
-      ));
+      }
+      return result;
     }
   }
 }
@@ -188,8 +193,8 @@ const mapStateToProps = (
   state: AppState,
   props: { parent_note_id: number }
 ) => ({
-  state,
   searchIndex: getFilteredSearchIndex(state, { note_id: props.parent_note_id }),
+  sortedIds: getSortedNoteIds(state),
 });
 
 export default withRouter(
