@@ -1,4 +1,4 @@
-KCOV_VERSION=33
+KCOV_VERSION=36
 
 sudo apt install -y cmake g++ pkg-config jq
 sudo apt install -y libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev

@@ -57,7 +57,7 @@ jobs:
             - v4-cargo-cache-{{arch}}-{{checksum "Cargo.lock" }}
       - restore_cache:
           keys:
-            - kcov-cache-{{arch}}-33
+            - kcov-cache-{{arch}}-36
       - restore_cache:
           keys:
             - v4-cargo-bin-cache-{{arch}}-{{ checksum "Cargo.lock" }}
@@ -76,8 +76,8 @@ jobs:
           command: ./.circleci/scripts/install-kcov.sh
       - save_cache:
           paths:
-            - kcov-33
-          key: kcov-cache-{{arch}}-33
+            - kcov-36
+          key: kcov-cache-{{arch}}-36
       - run:
           name: Install diesel
           command: (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres || true
@@ -94,7 +94,7 @@ jobs:
           command: cargo test --all
       - run:
           name: Run kcov
-          command: cargo kcov --all --kcov kcov-33/build/src/kcov
+          command: 'cargo kcov --all --kcov kcov-36/build/src/kcov || true'
       - store_artifacts:
           path: target/cov
       - codecov/upload:
