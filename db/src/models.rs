@@ -264,7 +264,7 @@ impl User {
             // BODY: In the meantime, we need to calculate exactly which tags need to be added.
             let tag_set = set_tags
                 .iter()
-                .map(|s| s.to_owned())
+                .map(ToOwned::to_owned)
                 .collect::<HashSet<_>>();
 
             let known_tags = tags
