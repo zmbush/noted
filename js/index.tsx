@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+import '@babel/polyfill';
+
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 
