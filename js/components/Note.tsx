@@ -168,6 +168,13 @@ const styles = (theme: Theme) =>
       marginTop: -32,
       marginLeft: -32,
     },
+    contentRoot: {
+      '@media print': {
+        marginTop: 0,
+        display: 'block',
+      },
+      marginTop: 75,
+    },
   });
 
 interface Props extends WithStyles<typeof styles> {
@@ -393,7 +400,7 @@ class Note extends React.Component<Props, State> {
             {this.props.note.body}
           </ReactMarkdown>
 
-          <Grid container spacing={8}>
+          <Grid container spacing={8} className={classes.contentRoot}>
             <NoteList
               parent_note_id={this.props.note.id}
               depth={(this.props.depth || 0) + 1}
