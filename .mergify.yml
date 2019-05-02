@@ -1,0 +1,16 @@
+pull_request_rules:
+  - name: automatic merge when author is zmbush and CI passes
+    conditions:
+      - status-success=Travis CI - Branch
+      - status-success=Travis CI - Pull Request
+      - status-success=codecov/patch
+      - status-success=codecov/project
+      - author=zmbush
+    actions:
+      comment:
+        message: Auto-submitting change that passed CI
+      merge:
+        method: squash
+      label:
+        add:
+          - auto-approve
