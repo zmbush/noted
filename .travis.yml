@@ -16,6 +16,7 @@ matrix:
       cache: cargo
       services: postgresql
       env:
+        - RUSTFLAGS="-C link-dead-code"
         - DATABASE_URL=postgres://postgres@localhost/noted
         - MIGRATION_DIRECTORY=db/migrations
         - DIESEL_CONFIG_FILE=db/diesel.toml
