@@ -1,5 +1,15 @@
 matrix:
   include:
+    - language: node_js
+      node_js: '8.10'
+      cache: npm
+      script:
+        - npm run build
+        - npm run test
+      after_success: |
+        bash <(curl -s https://codecov.io/bash) &&
+        echo "Uploaded code coverage"
+
     - language: rust
       sudo: required
       rust: 1.34.1
