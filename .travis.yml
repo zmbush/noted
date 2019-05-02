@@ -2,7 +2,7 @@ matrix:
   include:
     - language: rust
       sudo: required
-      rust: 1.41.0
+      rust: 1.34.1
       addons:
         apt:
           packages:
