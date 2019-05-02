@@ -20,8 +20,7 @@ matrix:
             - binutils-dev
             - libiberty-dev
       install:
-        - cargo install cargo-kcov
-        - cargo install diesel_cli --no-default-features --features postgres
+        - (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres
       before_script:
         - psql -c 'create database noted;' -U postgres
         - diesel migration run
