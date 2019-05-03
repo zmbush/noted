@@ -29,7 +29,7 @@ pub struct Note {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
-    pub parent_note_id: Option<i32>,
+    pub parent_note_id: i32,
     pub archived: bool,
 }
 
@@ -96,7 +96,7 @@ pub struct NoteWithTags {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     pub user_id: i32,
-    pub parent_note_id: Option<i32>,
+    pub parent_note_id: i32,
     pub archived: bool,
 }
 

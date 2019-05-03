@@ -18,6 +18,8 @@ const listNotes = createSelector(
   (notes: Map<number, NoteData>) => Array.from(notes.values())
 );
 
+const validParent = (note: NoteData) => !!note.parent_note_id;
+
 const listAllTitles = createSelector(
   listNotes,
   notes => notes.map(note => [note.id, note.title])
@@ -57,7 +59,7 @@ export const getTopLevelNotes = createSelector(
   notes => {
     const topLevel = new Map();
     for (let note of notes) {
-      if (!note.parent_note_id) {
+      if (!validParent(note)) {
         topLevel.set(note.id, note);
       }
     }
@@ -141,7 +143,7 @@ export const getSortedNoteIds = createSelector(
     }
 
     for (let note of allNotes.values()) {
-      while (note.parent_note_id != null) {
+      while (validParent(note)) {
         map.set(
           note.parent_note_id,
           mostRecent(note.updated_at, map.get(note.parent_note_id))
