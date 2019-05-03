@@ -7,13 +7,17 @@
 // except according to those terms.
 
 use {
-    gotham::handler::{HandlerError, IntoHandlerError},
+    gotham::{
+        handler::{HandlerError, IntoHandlerError, IntoResponse},
+        state::State,
+    },
     http::status::StatusCode,
 };
 
 macro_rules! impl_noted_error {
     (native { $($native:ident => $native_code:path),* } $($type:ident => ($inner:ty, $code:path)),*) => {
         pub enum NotedError {
+            DbError(noted_db::error::DbError),
             $($native),*,
             $($type($inner)),*
         }
@@ -23,6 +27,7 @@ macro_rules! impl_noted_error {
                 use NotedError::*;
 
                 match self {
+                    DbError(_) => StatusCode::SERVICE_UNAVAILABLE,
                     $($native => $native_code),*,
                     $($type(_) => $code),*
                 }
@@ -36,6 +41,7 @@ macro_rules! impl_noted_error {
                 let code = self.code();
 
                 match self {
+                    DbError(e) => e.into_handler_error(),
                     $($native => failure::format_err!(stringify!($native)).compat().into_handler_error()),*,
                     $($type(e) => e.into_handler_error()),*
                 }
@@ -82,5 +88,23 @@ impl_noted_error! {
     Hyper => (hyper::error::Error, StatusCode::INTERNAL_SERVER_ERROR),
     HTTP => (http::Error, StatusCode::INTERNAL_SERVER_ERROR),
     IO => (std::io::Error, StatusCode::SERVICE_UNAVAILABLE),
-    DbError => (noted_db::error::DbError, StatusCode::SERVICE_UNAVAILABLE),
+}
+
+impl From<noted_db::error::DbError> for NotedError {
+    fn from(e: noted_db::error::DbError) -> Self {
+        NotedError::DbError(e)
+    }
+}
+
+impl NotedError {
+    pub fn into_json_response(self, state: &State) -> hyper::http::Response<hyper::Body> {
+        match self {
+            NotedError::DbError(inner_error) => {
+                let mut resp = hyper::Response::new(hyper::Body::from(inner_error.to_json()));
+                *resp.status_mut() = inner_error.code();
+                resp
+            }
+            e => e.into_handler_error().into_response(state),
+        }
+    }
 }

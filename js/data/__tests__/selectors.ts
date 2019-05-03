@@ -229,7 +229,14 @@ describe('getSortedNoteIds()', () => {
           parent_note_id: 3,
           updated_at: '2',
         },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], updated_at: '1' },
+        {
+          id: 3,
+          title: 'Test 3',
+          body: 'body',
+          tags: [],
+          parent_note_id: 0,
+          updated_at: '1',
+        },
         {
           id: 4,
           title: 'Test 4',

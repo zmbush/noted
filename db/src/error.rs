@@ -6,12 +6,19 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use {
+    diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error},
+    serde_json::json,
+};
+
 macro_rules! impl_noted_db_error {
     ($($type:ident => $inner:ty),*) =>{
         #[derive(Debug)]
         pub enum DbError {
             NotFound,
             NotLoggedIn,
+            UnknownDiesel(Error),
+            DatabaseError(DatabaseErrorKind, Box<DatabaseErrorInformation+Send+Sync>),
             $($type($inner)),*
         }
 
@@ -25,11 +32,14 @@ macro_rules! impl_noted_db_error {
 
         impl std::fmt::Display for DbError {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                use DbError::*;
                 match *self {
-                    DbError::NotFound => write!(f, "record not found"),
-                    DbError::NotLoggedIn => write!(f, "not logged in"),
+                    NotFound => write!(f, "record not found"),
+                    NotLoggedIn => write!(f, "not logged in"),
+                    UnknownDiesel(ref e) => write!(f, "UnknownDiesel: {}", e),
+                    DatabaseError(e, ref m) => write!(f, "DatabaseError({:?}): {}", e, m.message()),
                     $(
-                        DbError::$type(ref e) => write!(f, "{}: {}", stringify!($type), e)
+                        $type(ref e) => write!(f, "{}: {}", stringify!($type), e)
                     ),*
                 }
             }
@@ -37,6 +47,7 @@ macro_rules! impl_noted_db_error {
 
         impl std::error::Error for DbError {
         }
+
     };
 
     ($($type:ident => $inner:ty),*,) => {
@@ -47,7 +58,50 @@ macro_rules! impl_noted_db_error {
 pub type Result<T> = std::result::Result<T, DbError>;
 
 impl_noted_db_error! {
-    DieselResult => diesel::result::Error,
     R2D2 => r2d2::Error,
     IOError => std::io::Error,
+}
+
+impl From<Error> for DbError {
+    fn from(e: Error) -> DbError {
+        match e {
+            Error::DatabaseError(k, d) => DbError::DatabaseError(k, d),
+            e => DbError::UnknownDiesel(e),
+        }
+    }
+}
+
+impl DbError {
+    pub fn code(&self) -> hyper::StatusCode {
+        use {diesel::result::DatabaseErrorKind::*, hyper::StatusCode, DbError::*};
+
+        match *self {
+            NotFound => StatusCode::NOT_FOUND,
+            NotLoggedIn => StatusCode::UNAUTHORIZED,
+            UnknownDiesel(_) => StatusCode::SERVICE_UNAVAILABLE,
+            DatabaseError(kind, _) => match kind {
+                UniqueViolation | ForeignKeyViolation => StatusCode::BAD_REQUEST,
+                _ => StatusCode::INTERNAL_SERVER_ERROR,
+            },
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(&match *self {
+            DbError::DatabaseError(_, ref info) => json!({
+                "code": self.code().as_u16(),
+                "message": info.message(),
+                "details": info.details(),
+                "hint": info.hint(),
+                "table_name": info.table_name(),
+                "column_name": info.column_name(),
+                "constraint_name": info.constraint_name(),
+            }),
+            ref s => json!({
+                "code": s.code().as_u16(),
+            }),
+        })
+        .unwrap_or_else(|_| r#"{"error": "serialize failed"}"#.to_owned())
+    }
 }

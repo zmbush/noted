@@ -10,7 +10,7 @@ use {
     diesel::prelude::*,
     futures::{future, stream::Stream, Future},
     gotham::{
-        handler::{HandlerFuture, IntoHandlerError, IntoResponse},
+        handler::{HandlerFuture, IntoResponse},
         middleware::{session::SessionData, Middleware},
         pipeline::{new_pipeline, single::single_pipeline},
         router::{builder::*, response::extender::ResponseExtender, Router},
@@ -98,10 +98,8 @@ impl Middleware for RequireUser {
             chain(state)
         } else {
             info!("No user available");
-            Box::new(future::err((
-                state,
-                crate::error::NotedError::NotLoggedIn.into_handler_error(),
-            )))
+            let resp = crate::error::NotedError::NotLoggedIn.into_json_response(&state);
+            Box::new(future::ok((state, resp)))
         }
     }
 }
@@ -178,15 +176,16 @@ where
             .then(move |full_body| match full_body {
                 Ok(valid_body) => {
                     let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
-                    match f(body_content, &mut state) {
-                        Ok(res) => future::ok((state, res)),
-                        Err(e) => future::err((state, e.into_handler_error())),
-                    }
+                    let res = match f(body_content, &mut state) {
+                        Ok(res) => res,
+                        Err(e) => e.into_json_response(&state),
+                    };
+                    future::ok((state, res))
                 }
-                Err(e) => future::err((
-                    state,
-                    crate::error::NotedError::from(e).into_handler_error(),
-                )),
+                Err(e) => {
+                    let res = crate::error::NotedError::from(e).into_json_response(&state);
+                    future::ok((state, res))
+                }
             }),
     )
 }
@@ -197,10 +196,12 @@ where
         + Send
         + Fn(&mut State) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError>,
 {
-    Box::new(match f(&mut state) {
-        Ok(res) => future::ok((state, res)),
-        Err(e) => future::err((state, e.into_handler_error())),
-    })
+    let res = match f(&mut state) {
+        Ok(res) => res,
+        Err(e) => e.into_json_response(&state),
+    };
+
+    Box::new(future::ok((state, res)))
 }
 
 trait StateExt {
