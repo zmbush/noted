@@ -1,4 +1,25 @@
 pull_request_rules:
+  - name: delete head branch after merge
+    conditions: []
+    actions:
+      delete_head_branch:
+
+  - name: automatic merge when reviewed and CI passes
+    conditions:
+      - status-success=Travis CI - Branch
+      - status-success=Travis CI - Pull Request
+      - status-success=codecov/patch
+      - status-success=codecov/project
+      - '#approved-reviews-by>=1'
+      - '#review-requested=0'
+      - '#changes-requested-reviews-by=0'
+      - '#commented-reviews-by=0'
+    actions:
+      comment:
+        message: Auto-submitting change that passed CI
+      merge:
+        method: squash
+
   - name: automatic merge when author is zmbush and CI passes
     conditions:
       - status-success=Travis CI - Branch
@@ -7,11 +28,7 @@ pull_request_rules:
       - status-success=codecov/project
       - author=zmbush
     actions:
-      label:
-        add:
-          - auto-approve
       comment:
         message: Auto-submitting change that passed CI
       merge:
         method: squash
-      delete_head_branch:
