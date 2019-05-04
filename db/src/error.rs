@@ -105,3 +105,20 @@ impl DbError {
         .unwrap_or_else(|_| r#"{"error": "serialize failed"}"#.to_owned())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use {super::*, hyper::StatusCode};
+
+    #[test]
+    fn test_code() {
+        assert_eq!(DbError::NotFound.code(), StatusCode::NOT_FOUND);
+        assert_eq!(DbError::NotLoggedIn.code(), StatusCode::UNAUTHORIZED);
+    }
+
+    #[test]
+    fn test_to_json() {
+        assert_eq!(DbError::NotFound.to_json(), r#"{"code":404}"#.to_owned());
+        assert_eq!(DbError::NotLoggedIn.to_json(), r#"{"code":401}"#.to_owned());
+    }
+}
