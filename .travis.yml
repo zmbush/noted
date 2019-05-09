@@ -32,6 +32,7 @@ matrix:
             - libiberty-dev
       install:
         - (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres
+        - (cargo install --list | grep 'cargo-kcov') || cargo install cargo-kcov
       before_script:
         - psql -c 'create database noted;' -U postgres
         - diesel migration run
@@ -49,6 +50,6 @@ matrix:
         make install DESTDIR=../../kcov-build &&
         cd ../.. &&
         rm -rf kcov-master &&
-        for file in target/debug/noted*-*; do [ -x "${file}" ] || continue; mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+        cargo kcov --no-clean-rebuild --kcov kcov-build/usr/local/bin/kcov &&
         bash <(curl -s https://codecov.io/bash) &&
         echo "Uploaded code coverage"
