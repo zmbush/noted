@@ -199,19 +199,35 @@ const initialState = {
   edit: false,
   creatingSubnote: false,
   moreMenuEl: null as HTMLElement,
-  confirmationOpen: false,
+  confirmDeleteOpen: false,
+  confirmCancelEditOpen: false,
 };
 
 type State = Readonly<typeof initialState>;
 
 class Note extends React.Component<Props, State> {
+  noteEditor: React.RefObject<any>;
+
   constructor(props: Props) {
     super(props);
     this.state = Object.assign({}, initialState, { edit: props.new });
+    this.noteEditor = React.createRef();
   }
 
+  tryCancelEdit = () => {
+    if (!this.noteEditor.current || !this.noteEditor.current.hasChanges()) {
+      this.cancelEdit();
+    } else {
+      this.setState({ confirmCancelEditOpen: true });
+    }
+  };
+
   cancelEdit = () => {
-    this.setState({ edit: false, creatingSubnote: false });
+    this.setState({
+      edit: false,
+      creatingSubnote: false,
+      confirmCancelEditOpen: false,
+    });
     this.props.updateNote(null);
   };
 
@@ -335,7 +351,7 @@ class Note extends React.Component<Props, State> {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         >
-          <MenuItem onClick={() => this.setState({ confirmationOpen: true })}>
+          <MenuItem onClick={() => this.setState({ confirmDeleteOpen: true })}>
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
@@ -349,10 +365,16 @@ class Note extends React.Component<Props, State> {
           </MenuItem>
         </Menu>
         <ConfirmationDialog
-          open={this.state.confirmationOpen}
+          open={this.state.confirmDeleteOpen}
           title={`You are about to delete note: ${this.props.note.title}`}
           onPositive={this.doDelete}
-          onNegative={() => this.setState({ confirmationOpen: false })}
+          onNegative={() => this.setState({ confirmDeleteOpen: false })}
+        />
+        <ConfirmationDialog
+          open={this.state.confirmCancelEditOpen}
+          title={`If you close this editor, you will lose your changes.`}
+          onPositive={this.cancelEdit}
+          onNegative={() => this.setState({ confirmCancelEditOpen: false })}
         />
         <CardContent className={classes.cardContent}>
           <Dialog
@@ -361,7 +383,7 @@ class Note extends React.Component<Props, State> {
             fullWidth
             maxWidth='lg'
             fullScreen={isWidthDown('xs', this.props.width)}
-            onClose={this.cancelEdit}
+            onClose={this.tryCancelEdit}
           >
             <Suspense
               fallback={
@@ -375,6 +397,7 @@ class Note extends React.Component<Props, State> {
               <NoteEditor
                 open={this.state.edit}
                 onSave={this.save}
+                innerRef={this.noteEditor}
                 note={
                   this.state.edit
                     ? this.props.note

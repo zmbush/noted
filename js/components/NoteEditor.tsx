@@ -90,6 +90,16 @@ class NoteEditor extends React.Component<Props, State> {
     this.props.onSave(this.state);
   };
 
+  hasChanges() {
+    let current = new Map(Object.entries(this.state));
+    let initial = new Map(Object.entries(this.props.note));
+    return (
+      Array.from(current.keys()).filter((key: string) => {
+        return current.get(key) != initial.get(key);
+      }).length > 0
+    );
+  }
+
   addTag = (tag: string) => {
     this.setState({
       tags: [...this.state.tags, tag],
