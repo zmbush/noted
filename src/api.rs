@@ -18,7 +18,7 @@ use {
     },
     gotham_derive::{NewMiddleware, StateData, StaticResponseExtender},
     http::{response::Response, status::StatusCode},
-    log::info,
+    log::warn,
     serde_derive::{Deserialize, Serialize},
     serde_json::json,
 };
@@ -38,15 +38,10 @@ impl Middleware for JsonifyErrors {
     {
         let result = chain(state);
 
-        info!("Checking for errors");
-
         let f = result.then(|result| match result {
-            Ok((state, response)) => {
-                info!("It's a thing? {:?}", response);
-                future::ok((state, response))
-            }
+            Ok((state, response)) => future::ok((state, response)),
             Err((state, error)) => {
-                info!("Creating better response");
+                warn!("Converting to JSON response");
                 let response_body = json!({
                     "error": format!("{}", error),
                     "details": format!("{:?}", error),
@@ -90,14 +85,13 @@ impl Middleware for RequireUser {
     where
         Chain: FnOnce(State) -> Box<HandlerFuture> + Send + 'static,
     {
-        info!("Checking for user");
         if SessionData::<crate::AppData>::borrow_from(&state)
             .user
             .is_some()
         {
             chain(state)
         } else {
-            info!("No user available");
+            warn!("No user available, refusing request.");
             let resp = crate::error::NotedError::NotLoggedIn.into_json_response(&state);
             Box::new(future::ok((state, resp)))
         }
