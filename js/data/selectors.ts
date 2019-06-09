@@ -120,7 +120,7 @@ export const getFilteredSearchIndex = createCachedSelector(
     const subnotes = new Map();
 
     for (let note of notes.values()) {
-      if (note.parent_note_id == note_id) {
+      if (note.parent_note_id == note_id || note_id == null) {
         subnotes.set(note.id, note);
       }
     }
