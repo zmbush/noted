@@ -8,7 +8,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   <WithStyles(Card)
     classes={
       Object {
-        "root": "NoteEditor-editorRoot-2",
+        "root": "NoteEditor-editorRoot-1",
       }
     }
   >
@@ -21,17 +21,18 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
         </WithStyles(IconButton)>
       }
       title={
-        <WithStyles(WithFormControlContext(InputBase))
-          fullWidth={false}
-          inputComponent="input"
-          multiline={false}
+        <WithStyles(Input)
+          classes={
+            Object {
+              "root": "NoteEditor-titleInput-2",
+            }
+          }
           onChange={[Function]}
           style={
             Object {
               "fontSize": "inherit",
             }
           }
-          type="text"
           value="note title"
         />
       }
@@ -88,7 +89,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
   <WithStyles(Card)
     classes={
       Object {
-        "root": "NoteEditor-editorRoot-2",
+        "root": "NoteEditor-editorRoot-1",
       }
     }
   >
@@ -101,17 +102,18 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
         </WithStyles(IconButton)>
       }
       title={
-        <WithStyles(WithFormControlContext(InputBase))
-          fullWidth={false}
-          inputComponent="input"
-          multiline={false}
+        <WithStyles(Input)
+          classes={
+            Object {
+              "root": "NoteEditor-titleInput-2",
+            }
+          }
           onChange={[Function]}
           style={
             Object {
               "fontSize": "inherit",
             }
           }
-          type="text"
           value="note title"
         />
       }
