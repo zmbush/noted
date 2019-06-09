@@ -106,7 +106,26 @@ impl ResponseExtender<hyper::Body> for NotFoundHandler {
 }
 
 fn main() -> Result<(), Error> {
-    simple_logger::init().unwrap();
+    //simple_logger::init().unwrap();
+    fern::Dispatch::new()
+        .format(|out, message, record| {
+            if record.target() == "gotham::middleware::logger" {
+                out.finish(format_args!("{}", message))
+            } else {
+                out.finish(format_args!(
+                    "{}[{}][{}] {}",
+                    chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
+                    record.target(),
+                    record.level(),
+                    message
+                ))
+            }
+        })
+        .level(log::LevelFilter::Warn)
+        .level_for("noted", log::LevelFilter::Trace)
+        .level_for("gotham::middleware::logger", log::LevelFilter::Info)
+        .chain(std::io::stdout())
+        .apply()?;
 
     let matches = clap_app! {
         noted =>
@@ -139,7 +158,14 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let (chain, pipelines) = single_pipeline(new_pipeline().add(middleware).build());
+    let (chain, pipelines) = single_pipeline(
+        new_pipeline()
+            .add(middleware)
+            .add(gotham::middleware::logger::RequestLogger::new(
+                log::Level::Info,
+            ))
+            .build(),
+    );
 
     let router = build_router(chain, pipelines, |route| {
         route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
