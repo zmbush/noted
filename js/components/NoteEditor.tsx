@@ -11,7 +11,7 @@ import * as React from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import InputBase from '@material-ui/core/InputBase';
+import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
 import ChipInput from 'material-ui-chip-input';
 import SaveIcon from '@material-ui/icons/Save';
@@ -31,8 +31,6 @@ import { Editor } from '@toast-ui/react-editor';
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {},
-
     editorRoot: {
       [theme.breakpoints.up('sm')]: {
         height: '84vh',
@@ -40,6 +38,10 @@ const styles = (theme: Theme) =>
       [theme.breakpoints.down('sm')]: {
         height: '100vh',
       },
+    },
+
+    titleInput: {
+      width: '100%',
     },
 
     editorContent: {
@@ -110,7 +112,8 @@ class NoteEditor extends React.Component<Props, State> {
         <Card classes={{ root: classes.editorRoot }}>
           <CardHeader
             title={
-              <InputBase
+              <Input
+                classes={{ root: classes.titleInput }}
                 value={this.state.title}
                 onChange={e => {
                   this.setState({ title: e.target.value });

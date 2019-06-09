@@ -12,7 +12,7 @@ import { shallow } from 'enzyme';
 import NoteEditor, { Inner } from '../NoteEditor';
 import ChipInput from 'material-ui-chip-input';
 import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
+import Input from '@material-ui/core/Input';
 import { Editor } from '@toast-ui/react-editor';
 
 const editor = (
@@ -65,7 +65,7 @@ describe('<NoteEditor />', () => {
       .find('WithStyles(CardHeader)')
       .dive()
       .dive()
-      .find(InputBase)
+      .find(Input)
       .simulate('change', { target: { value: 'new title' } });
 
     expect(wrapper.state('title')).toEqual('new title');
