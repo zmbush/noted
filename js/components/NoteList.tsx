@@ -146,19 +146,23 @@ class NoteList extends React.Component<Props> {
       let i = 0;
       for (let idStr of results) {
         let id = parseInt(idStr, 10);
-        elements.push(
-          <Grid item key={id} className={classes.item} xs={this.props.width}>
-            <Note
-              depth={this.props.depth + 1}
-              note={notes.get(id)}
-              search={this.props.search}
-              updateNote={this.props.updateNote}
-              deleteNote={this.props.deleteNote}
-              innerRef={i == 0 ? this.props.firstNoteRef : null}
-            />
-          </Grid>
-        );
-        i++;
+        if (!notes.has(id)) {
+          console.log('Note ', id, ' not found');
+        } else {
+          elements.push(
+            <Grid item key={id} className={classes.item} xs={this.props.width}>
+              <Note
+                depth={this.props.depth + 1}
+                note={notes.get(id)}
+                search={this.props.search}
+                updateNote={this.props.updateNote}
+                deleteNote={this.props.deleteNote}
+                innerRef={i == 0 ? this.props.firstNoteRef : null}
+              />
+            </Grid>
+          );
+          i++;
+        }
       }
       return elements;
     } else {

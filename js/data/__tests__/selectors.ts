@@ -201,6 +201,22 @@ describe('getFilteredSearchIndex()', () => {
     });
 
     expect(getFilteredSearchIndex(state, { note_id: 3 })).toEqual(expected);
+
+    expected.set(1, {
+      id: 1,
+      title: 'Test 1',
+      body: 'body',
+      tags: [],
+      parent_note_id: 2,
+    });
+    expected.set(3, {
+      id: 3,
+      title: 'Test 3 Test 2 Test 1 Test 4',
+      body: 'body body body body',
+      tags: [],
+    });
+
+    expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected);
   });
 });
 
