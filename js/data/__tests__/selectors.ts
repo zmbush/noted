@@ -26,10 +26,10 @@ describe('getLinkIds()', () => {
     let state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [] },
-        { id: 2, title: 'Test 2', body: 'body', tags: [] },
-        { id: 3, title: 'Test 3', body: 'body', tags: [] },
-        { id: 4, title: 'Test 4', body: 'body', tags: [] },
+        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
+        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 0 },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
+        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 0 },
       ])
     );
 
@@ -55,16 +55,28 @@ describe('getTopLevelNotes()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [] },
+        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
         { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [] },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
         { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
       ])
     );
 
     const expected = new Map();
-    expected.set(1, { id: 1, title: 'Test 1', body: 'body', tags: [] });
-    expected.set(3, { id: 3, title: 'Test 3', body: 'body', tags: [] });
+    expected.set(1, {
+      id: 1,
+      title: 'Test 1',
+      body: 'body',
+      tags: [],
+      parent_note_id: 0,
+    });
+    expected.set(3, {
+      id: 3,
+      title: 'Test 3',
+      body: 'body',
+      tags: [],
+      parent_note_id: 0,
+    });
 
     expect(getTopLevelNotes(state)).toEqual(expected);
   });
@@ -83,9 +95,9 @@ describe('getSubnotes()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [] },
+        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
         { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [] },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
         { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
       ])
     );
@@ -121,9 +133,9 @@ describe('getSearchIndex()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [] },
+        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
         { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [] },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
         { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
       ])
     );
@@ -134,6 +146,7 @@ describe('getSearchIndex()', () => {
       title: 'Test 1',
       body: 'body',
       tags: [],
+      parent_note_id: 0,
     });
 
     expected.set(2, {
@@ -149,6 +162,7 @@ describe('getSearchIndex()', () => {
       title: 'Test 3 Test 2 Test 4',
       body: 'body body body',
       tags: [],
+      parent_note_id: 0,
     });
 
     expected.set(4, {
@@ -178,7 +192,7 @@ describe('getFilteredSearchIndex()', () => {
       notesFetched([
         { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 2 },
         { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [] },
+        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
         { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
       ])
     );
@@ -202,21 +216,16 @@ describe('getFilteredSearchIndex()', () => {
 
     expect(getFilteredSearchIndex(state, { note_id: 3 })).toEqual(expected);
 
-    expected.set(1, {
-      id: 1,
-      title: 'Test 1',
-      body: 'body',
-      tags: [],
-      parent_note_id: 2,
-    });
-    expected.set(3, {
+    const expected2 = new Map();
+    expected2.set(3, {
       id: 3,
       title: 'Test 3 Test 2 Test 1 Test 4',
       body: 'body body body body',
       tags: [],
+      parent_note_id: 0,
     });
 
-    expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected);
+    expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected2);
   });
 });
 
