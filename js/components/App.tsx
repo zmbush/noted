@@ -230,7 +230,7 @@ class App extends Component<Props, State> {
     this.props.logOut();
   };
 
-  debouncedSearch = debounce(async () => this.state.searchInputValue, 500);
+  debouncedSearch = debounce(async () => this.state.searchInputValue, 100);
 
   doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ searchInputValue: e.target.value });

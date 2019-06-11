@@ -23,6 +23,7 @@ import {
   getSortedNoteIds,
 } from 'data/selectors';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -79,6 +80,39 @@ class NoteList extends React.Component<Props> {
     width: 12 as 12,
   };
 
+  constructor(props: Props) {
+    super(props);
+    this.getFuse(props.searchIndex);
+  }
+
+  getFuse = memoize((index: Map<number, NoteData>) => {
+    return new Fuse(Array.from(index.values()), {
+      distance: 100,
+      keys: [
+        {
+          name: 'title',
+          weight: 1.0,
+        },
+        {
+          name: 'tags',
+          weight: 1.0,
+        },
+        {
+          name: 'body',
+          weight: 0.5,
+        },
+      ],
+      id: 'id',
+      location: 0,
+      matchAllTokens: true,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      shouldSort: true,
+      threshold: 0.4,
+      tokenize: true,
+    });
+  });
+
   render() {
     const { classes } = this.props;
     let { notes } = this.props;
@@ -92,34 +126,10 @@ class NoteList extends React.Component<Props> {
     }
 
     if (this.props.search != '') {
-      let fuse = new Fuse(Array.from(this.props.searchIndex.values()), {
-        distance: 100,
-        keys: [
-          {
-            name: 'title',
-            weight: 1.0,
-          },
-          {
-            name: 'tags',
-            weight: 1.0,
-          },
-          {
-            name: 'body',
-            weight: 0.5,
-          },
-        ],
-        id: 'id',
-        location: 0,
-        matchAllTokens: true,
-        maxPatternLength: 32,
-        minMatchCharLength: 1,
-        shouldSort: true,
-        threshold: 0.4,
-        tokenize: true,
-      });
-
       let elements = [];
-      let results = (fuse.search(this.props.search) as any) as string[];
+      let results = (this.getFuse(this.props.searchIndex).search(
+        this.props.search
+      ) as any) as string[];
 
       if (
         this.props.depth == 1 &&
