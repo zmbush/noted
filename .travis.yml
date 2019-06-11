@@ -36,7 +36,7 @@ matrix:
       before_script:
         - psql -c 'create database noted;' -U postgres
         - diesel migration run
-        - rm target/debug/*-*
+        - rm -f target/debug/*-*
       script:
         - cargo build --verbose --all
         - cargo test --verbose --all
