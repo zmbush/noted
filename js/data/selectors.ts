@@ -157,12 +157,23 @@ export const getSortedNoteIds = createSelector(
 
     return Array.from(map.entries())
       .sort(([aid, a]: [number, string], [bid, b]: [number, string]) => {
-        if (allNotes.get(aid).archived) {
-          return 1;
-        }
-        if (allNotes.get(bid).archived) {
+        let na = allNotes.get(aid);
+        let nb = allNotes.get(bid);
+
+        if (na.pinned && !nb.pinned) {
           return -1;
         }
+        if (!na.pinned && nb.pinned) {
+          return 1;
+        }
+
+        if (na.archived && !nb.archived) {
+          return 1;
+        }
+        if (!na.archived && nb.archived) {
+          return -1;
+        }
+
         if (a > b) {
           return -1;
         }

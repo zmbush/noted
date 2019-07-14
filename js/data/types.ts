@@ -18,6 +18,7 @@ export type NoteData = {
   user_id?: number;
   parent_note_id?: number;
   archived?: boolean;
+  pinned?: boolean;
 };
 
 export type ErrorData = {
