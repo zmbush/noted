@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import NoteEditor, { Inner } from '../NoteEditor';
+import { Inner as NoteEditor } from '../NoteEditor';
 import ChipInput from 'material-ui-chip-input';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
@@ -17,6 +17,7 @@ import { Editor } from '@toast-ui/react-editor';
 
 const editor = (
   <NoteEditor
+    classes={{ editorRoot: '', titleInput: '', editorContent: '' }}
     open={false}
     note={{
       id: 1,
@@ -33,7 +34,7 @@ const editor = (
 
 describe('<NoteEditor />', () => {
   test('matches snapshot', () => {
-    let wrapper = shallow(editor).dive();
+    let wrapper = shallow(editor);
 
     expect(wrapper).toMatchSnapshot();
 
@@ -49,7 +50,7 @@ describe('<NoteEditor />', () => {
   });
 
   test('tag input works', () => {
-    let wrapper = shallow(editor).dive();
+    let wrapper = shallow(editor);
 
     const input = wrapper.find(ChipInput);
 
@@ -60,7 +61,7 @@ describe('<NoteEditor />', () => {
   });
 
   test('title change works', () => {
-    let wrapper = shallow(editor).dive();
+    let wrapper = shallow(editor);
     wrapper
       .find('WithStyles(CardHeader)')
       .dive()
@@ -96,7 +97,7 @@ describe('<NoteEditor />', () => {
   test('switching to open works', () => {
     let focusCalled = false;
     let moveCursorToEndCalled = false;
-    let wrapper = shallow(editor).dive();
+    let wrapper = shallow(editor);
     (wrapper.instance() as any).editor = {
       current: {
         getInstance: () => ({
@@ -117,7 +118,7 @@ describe('<NoteEditor />', () => {
 
   test('submitting works', () => {
     let noteSaved;
-    let wrapper = shallow(editor).dive();
+    let wrapper = shallow(editor);
     wrapper.setProps({
       onSave: (note: any) => {
         noteSaved = note;
