@@ -8,7 +8,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   <WithStyles(Card)
     classes={
       Object {
-        "root": "NoteEditor-editorRoot-1",
+        "root": "",
       }
     }
   >
@@ -24,7 +24,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
         <WithStyles(Input)
           classes={
             Object {
-              "root": "NoteEditor-titleInput-2",
+              "root": "",
             }
           }
           onChange={[Function]}
@@ -40,7 +40,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
     <WithStyles(CardContent)
       classes={
         Object {
-          "root": "NoteEditor-editorContent-3",
+          "root": "",
         }
       }
     >
@@ -89,7 +89,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
   <WithStyles(Card)
     classes={
       Object {
-        "root": "NoteEditor-editorRoot-1",
+        "root": "",
       }
     }
   >
@@ -105,7 +105,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
         <WithStyles(Input)
           classes={
             Object {
-              "root": "NoteEditor-titleInput-2",
+              "root": "",
             }
           }
           onChange={[Function]}
@@ -121,7 +121,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
     <WithStyles(CardContent)
       classes={
         Object {
-          "root": "NoteEditor-editorContent-3",
+          "root": "",
         }
       }
     >
