@@ -31,6 +31,7 @@ pub struct Note {
     pub user_id: i32,
     pub parent_note_id: i32,
     pub archived: bool,
+    pub pinned: bool,
 }
 
 type Conn = PooledConnection<ConnectionManager<PgConnection>>;
@@ -46,6 +47,7 @@ impl Note {
             user_id: self.user_id,
             parent_note_id: self.parent_note_id,
             archived: self.archived,
+            pinned: self.pinned,
         }
     }
 }
@@ -82,6 +84,7 @@ impl WithTags for Note {
             user_id: self.user_id,
             parent_note_id: self.parent_note_id,
             archived: self.archived,
+            pinned: self.pinned,
             tags,
         })
     }
@@ -98,6 +101,7 @@ pub struct NoteWithTags {
     pub user_id: i32,
     pub parent_note_id: i32,
     pub archived: bool,
+    pub pinned: bool,
 }
 
 #[derive(Identifiable, Queryable, Serialize, Associations)]
@@ -143,6 +147,7 @@ pub struct UpdateNote {
     pub body: Option<String>,
     pub parent_note_id: Option<i32>,
     pub archived: Option<bool>,
+    pub pinned: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -183,7 +188,7 @@ impl SignIn {
     }
 }
 
-#[derive(Identifiable, Queryable, Serialize, Associations)]
+#[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
 pub struct User {
     pub id: i32,
     pub name: String,

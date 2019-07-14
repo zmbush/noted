@@ -26,6 +26,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
+import PinIcon from '@material-ui/icons/Done';
+import UnpinIcon from '@material-ui/icons/Clear';
 import ReactLoading from 'react-loading';
 import {
   createStyles,
@@ -291,6 +293,22 @@ class Note extends React.Component<Props, State> {
     this.props.updateNote(result.data);
   };
 
+  pinNote = async () => {
+    this.setState({ moreMenuEl: null });
+
+    // What even does pinning a new note mean?
+    if (this.props.new) {
+      return;
+    }
+
+    const { id, pinned } = this.props.note;
+    const result = await axios.patch(`/api/secure/notes/${id}`, {
+      pinned: !pinned,
+    });
+
+    this.props.updateNote(result.data);
+  };
+
   startEdit = () => {
     this.setState({
       edit: true,
@@ -319,6 +337,7 @@ class Note extends React.Component<Props, State> {
       >
         <CardHeader
           className={classes.cardHeader}
+          avatar={this.props.note.pinned ? <PinIcon /> : null}
           title={this.props.note.title}
           action={
             this.state.edit ? null : (
@@ -363,6 +382,12 @@ class Note extends React.Component<Props, State> {
               <DeleteIcon />
             </ListItemIcon>
             Delete Note
+          </MenuItem>
+          <MenuItem onClick={this.pinNote}>
+            <ListItemIcon>
+              {this.props.note.pinned ? <UnpinIcon /> : <PinIcon />}
+            </ListItemIcon>
+            {this.props.note.pinned ? 'Unpin Note' : 'Pin Note'}
           </MenuItem>
           <MenuItem onClick={this.archiveNote}>
             <ListItemIcon>
@@ -447,6 +472,7 @@ class Note extends React.Component<Props, State> {
 }
 
 export type InnerNote = Note;
+export const Inner = Note;
 
 const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
   titles: getLinkIds(state),

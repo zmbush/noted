@@ -8,6 +8,7 @@ table! {
         user_id -> Int4,
         parent_note_id -> Int4,
         archived -> Bool,
+        pinned -> Bool,
     }
 }
 

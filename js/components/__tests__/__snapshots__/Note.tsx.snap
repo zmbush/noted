@@ -1,0 +1,518 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Note /> matches snapshot 1`] = `
+<WithStyles(Card)
+  className=""
+>
+  <WithStyles(CardHeader)
+    action={
+      <React.Fragment>
+        <WithStyles(IconButton)
+          aria-label="Add Subnote"
+          onClick={[Function]}
+        >
+          <pure(LibraryAddIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="Edit Note"
+          onClick={[Function]}
+        >
+          <pure(EditIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="More Options"
+          onClick={[Function]}
+        >
+          <pure(MoreVertIcon) />
+        </WithStyles(IconButton)>
+      </React.Fragment>
+    }
+    avatar={null}
+    title="note title"
+  />
+  <WithStyles(Menu)
+    anchorEl={null}
+    anchorOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "bottom",
+      }
+    }
+    getContentAnchorEl={null}
+    id="more-menu"
+    onClose={[Function]}
+    open={false}
+    transformOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "top",
+      }
+    }
+  >
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(DeleteIcon) />
+      </WithStyles(ListItemIcon)>
+      Delete Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(DoneIcon) />
+      </WithStyles(ListItemIcon)>
+      Pin Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(ArchiveIcon) />
+      </WithStyles(ListItemIcon)>
+      Archive Note
+    </WithStyles(MenuItem)>
+  </WithStyles(Menu)>
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="You are about to delete note: note title"
+  />
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <WithStyles(CardContent)>
+    <WithStyles(Dialog)
+      classes={
+        Object {
+          "root": undefined,
+        }
+      }
+      fullScreen={false}
+      fullWidth={true}
+      maxWidth="lg"
+      onClose={[Function]}
+      open={false}
+    >
+      <React.Suspense
+        fallback={
+          <Loading
+            color="#000000"
+            delay={0}
+            height={64}
+            type="spin"
+            width={64}
+          />
+        }
+      >
+        <lazy
+          innerRef={
+            Object {
+              "current": null,
+            }
+          }
+          note={
+            Object {
+              "body": "",
+              "parent_note_id": 1,
+              "tags": Array [],
+              "title": "",
+            }
+          }
+          onSave={[Function]}
+        />
+      </React.Suspense>
+    </WithStyles(Dialog)>
+    <WithStyles(Tags)
+      tags={
+        Array [
+          "tag1",
+        ]
+      }
+    />
+    <ReactMarkdown
+      astPlugins={
+        Array [
+          [Function],
+        ]
+      }
+      escapeHtml={false}
+      parserOptions={Object {}}
+      plugins={Array []}
+      rawSourcePos={false}
+      renderers={
+        Object {
+          "text": [Function],
+        }
+      }
+      skipHtml={false}
+      sourcePos={false}
+      transformLinkUri={[Function]}
+    >
+      note body
+    </ReactMarkdown>
+    <WithStyles(Grid)
+      container={true}
+      spacing={8}
+    >
+      <withRouter(Connect(WithStyles(NoteList)))
+        deleteNote={[Function]}
+        depth={1}
+        notes={Map {}}
+        parent_note_id={1}
+        search=""
+        updateNote={[Function]}
+      />
+    </WithStyles(Grid)>
+  </WithStyles(CardContent)>
+</WithStyles(Card)>
+`;
+
+exports[`<Note /> matches snapshot 2`] = `
+<WithStyles(Card)
+  className=""
+>
+  <WithStyles(CardHeader)
+    action={
+      <React.Fragment>
+        <WithStyles(IconButton)
+          aria-label="Add Subnote"
+          onClick={[Function]}
+        >
+          <pure(LibraryAddIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="Edit Note"
+          onClick={[Function]}
+        >
+          <pure(EditIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="More Options"
+          onClick={[Function]}
+        >
+          <pure(MoreVertIcon) />
+        </WithStyles(IconButton)>
+      </React.Fragment>
+    }
+    avatar={<pure(DoneIcon) />}
+  />
+  <WithStyles(Menu)
+    anchorEl={null}
+    anchorOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "bottom",
+      }
+    }
+    getContentAnchorEl={null}
+    id="more-menu"
+    onClose={[Function]}
+    open={false}
+    transformOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "top",
+      }
+    }
+  >
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(DeleteIcon) />
+      </WithStyles(ListItemIcon)>
+      Delete Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(ClearIcon) />
+      </WithStyles(ListItemIcon)>
+      Unpin Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(ArchiveIcon) />
+      </WithStyles(ListItemIcon)>
+      Archive Note
+    </WithStyles(MenuItem)>
+  </WithStyles(Menu)>
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="You are about to delete note: undefined"
+  />
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <WithStyles(CardContent)>
+    <WithStyles(Dialog)
+      classes={
+        Object {
+          "root": undefined,
+        }
+      }
+      fullScreen={false}
+      fullWidth={true}
+      maxWidth="lg"
+      onClose={[Function]}
+      open={false}
+    >
+      <React.Suspense
+        fallback={
+          <Loading
+            color="#000000"
+            delay={0}
+            height={64}
+            type="spin"
+            width={64}
+          />
+        }
+      >
+        <lazy
+          innerRef={
+            Object {
+              "current": null,
+            }
+          }
+          note={
+            Object {
+              "body": "",
+              "parent_note_id": undefined,
+              "tags": Array [],
+              "title": "",
+            }
+          }
+          onSave={[Function]}
+        />
+      </React.Suspense>
+    </WithStyles(Dialog)>
+    <WithStyles(Tags) />
+    <ReactMarkdown
+      astPlugins={
+        Array [
+          [Function],
+        ]
+      }
+      escapeHtml={false}
+      parserOptions={Object {}}
+      plugins={Array []}
+      rawSourcePos={false}
+      renderers={
+        Object {
+          "text": [Function],
+        }
+      }
+      skipHtml={false}
+      sourcePos={false}
+      transformLinkUri={[Function]}
+    />
+    <WithStyles(Grid)
+      container={true}
+      spacing={8}
+    >
+      <withRouter(Connect(WithStyles(NoteList)))
+        deleteNote={[Function]}
+        depth={1}
+        notes={Map {}}
+        search=""
+        updateNote={[Function]}
+      />
+    </WithStyles(Grid)>
+  </WithStyles(CardContent)>
+</WithStyles(Card)>
+`;
+
+exports[`<Note /> matches snapshot 3`] = `
+<WithStyles(Card)
+  className="undefined"
+>
+  <WithStyles(CardHeader)
+    action={
+      <React.Fragment>
+        <WithStyles(IconButton)
+          aria-label="Add Subnote"
+          onClick={[Function]}
+        >
+          <pure(LibraryAddIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="Edit Note"
+          onClick={[Function]}
+        >
+          <pure(EditIcon) />
+        </WithStyles(IconButton)>
+        <WithStyles(IconButton)
+          aria-label="More Options"
+          onClick={[Function]}
+        >
+          <pure(MoreVertIcon) />
+        </WithStyles(IconButton)>
+      </React.Fragment>
+    }
+    avatar={null}
+  />
+  <WithStyles(Menu)
+    anchorEl={null}
+    anchorOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "bottom",
+      }
+    }
+    getContentAnchorEl={null}
+    id="more-menu"
+    onClose={[Function]}
+    open={false}
+    transformOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "top",
+      }
+    }
+  >
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(DeleteIcon) />
+      </WithStyles(ListItemIcon)>
+      Delete Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(DoneIcon) />
+      </WithStyles(ListItemIcon)>
+      Pin Note
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      onClick={[Function]}
+    >
+      <WithStyles(ListItemIcon)>
+        <pure(UnarchiveIcon) />
+      </WithStyles(ListItemIcon)>
+      Unarchive Note
+    </WithStyles(MenuItem)>
+  </WithStyles(Menu)>
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="You are about to delete note: undefined"
+  />
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <WithStyles(CardContent)>
+    <WithStyles(Dialog)
+      classes={
+        Object {
+          "root": undefined,
+        }
+      }
+      fullScreen={false}
+      fullWidth={true}
+      maxWidth="lg"
+      onClose={[Function]}
+      open={false}
+    >
+      <React.Suspense
+        fallback={
+          <Loading
+            color="#000000"
+            delay={0}
+            height={64}
+            type="spin"
+            width={64}
+          />
+        }
+      >
+        <lazy
+          innerRef={
+            Object {
+              "current": null,
+            }
+          }
+          note={
+            Object {
+              "body": "",
+              "parent_note_id": undefined,
+              "tags": Array [],
+              "title": "",
+            }
+          }
+          onSave={[Function]}
+        />
+      </React.Suspense>
+    </WithStyles(Dialog)>
+    <WithStyles(Tags) />
+    <ReactMarkdown
+      astPlugins={
+        Array [
+          [Function],
+        ]
+      }
+      escapeHtml={false}
+      parserOptions={Object {}}
+      plugins={Array []}
+      rawSourcePos={false}
+      renderers={
+        Object {
+          "text": [Function],
+        }
+      }
+      skipHtml={false}
+      sourcePos={false}
+      transformLinkUri={[Function]}
+    />
+    <WithStyles(Grid)
+      container={true}
+      spacing={8}
+    >
+      <withRouter(Connect(WithStyles(NoteList)))
+        deleteNote={[Function]}
+        depth={1}
+        notes={Map {}}
+        search=""
+        updateNote={[Function]}
+      />
+    </WithStyles(Grid)>
+  </WithStyles(CardContent)>
+</WithStyles(Card)>
+`;
