@@ -212,7 +212,7 @@ impl User {
         };
 
         let tags_query = {
-            use crate::schema::{note_tags_id::dsl::*, tags};
+            use crate::schema::note_tags_id::dsl::*;
             note_tags_id
                 .filter(note_id.eq_any(all_notes.iter().map(|n| n.id).collect::<Vec<_>>()))
                 .inner_join(tags::table)
