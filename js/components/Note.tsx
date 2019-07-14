@@ -70,6 +70,12 @@ const styles = (theme: Theme) =>
     unlinked: {
       border: '5px solid red',
     },
+    archived: {
+      opacity: 0.4,
+      '@media print': {
+        display: 'none',
+      },
+    },
     bodyEditor: {
       fontFamily: 'Roboto Mono',
     },
@@ -308,11 +314,12 @@ class Note extends React.Component<Props, State> {
       <Card
         className={classNames(classes.card, {
           [classes.unlinked]: this.props.note.user_id == 1,
+          [classes.archived]: this.props.note.archived,
         })}
       >
         <CardHeader
           className={classes.cardHeader}
-          title={(this.props.note.archived ? '*' : '') + this.props.note.title}
+          title={this.props.note.title}
           action={
             this.state.edit ? null : (
               <>
