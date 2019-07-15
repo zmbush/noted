@@ -14,6 +14,8 @@ import ChipInput from 'material-ui-chip-input';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import { Editor } from '@toast-ui/react-editor';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
 const editor = (
   <NoteEditor
@@ -63,7 +65,7 @@ describe('<NoteEditor />', () => {
   test('title change works', () => {
     let wrapper = shallow(editor);
     wrapper
-      .find('WithStyles(CardHeader)')
+      .find(CardHeader)
       .dive()
       .dive()
       .find(Input)
@@ -72,7 +74,7 @@ describe('<NoteEditor />', () => {
     expect(wrapper.state('title')).toEqual('new title');
 
     let toastEditor = wrapper
-      .find('WithStyles(CardContent)')
+      .find(CardContent)
       .dive()
       .dive()
       .find(Editor);
@@ -126,7 +128,7 @@ describe('<NoteEditor />', () => {
     });
 
     wrapper
-      .find('WithStyles(CardHeader)')
+      .find(CardHeader)
       .dive()
       .dive()
       .find(IconButton)

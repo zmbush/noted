@@ -1,36 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Note /> matches snapshot 1`] = `
-<WithStyles(Card)
+<WithStyles(ForwardRef(Card))
   className=""
 >
-  <WithStyles(CardHeader)
+  <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <WithStyles(IconButton)
+        <ForwardRef(WithStyles)
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <pure(LibraryAddIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <pure(EditIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <pure(MoreVertIcon) />
-        </WithStyles(IconButton)>
+          <Memo />
+        </ForwardRef(WithStyles)>
       </React.Fragment>
     }
     avatar={null}
     title="note title"
   />
-  <WithStyles(Menu)
+  <WithStyles(ForwardRef(Menu))
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -49,31 +49,31 @@ exports[`<Note /> matches snapshot 1`] = `
       }
     }
   >
-    <WithStyles(MenuItem)
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(DeleteIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <DeleteIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(DoneIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <DoneIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Pin Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(ArchiveIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <ArchiveIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Archive Note
-    </WithStyles(MenuItem)>
-  </WithStyles(Menu)>
+    </WithStyles(ForwardRef(MenuItem))>
+  </WithStyles(ForwardRef(Menu))>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -92,8 +92,8 @@ exports[`<Note /> matches snapshot 1`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(CardContent)>
-    <WithStyles(Dialog)
+  <WithStyles(ForwardRef(CardContent))>
+    <WithStyles(ForwardRef(Dialog))
       classes={
         Object {
           "root": undefined,
@@ -117,11 +117,6 @@ exports[`<Note /> matches snapshot 1`] = `
         }
       >
         <lazy
-          innerRef={
-            Object {
-              "current": null,
-            }
-          }
           note={
             Object {
               "body": "",
@@ -133,7 +128,7 @@ exports[`<Note /> matches snapshot 1`] = `
           onSave={[Function]}
         />
       </React.Suspense>
-    </WithStyles(Dialog)>
+    </WithStyles(ForwardRef(Dialog))>
     <WithStyles(Tags)
       tags={
         Array [
@@ -162,7 +157,7 @@ exports[`<Note /> matches snapshot 1`] = `
     >
       note body
     </ReactMarkdown>
-    <WithStyles(Grid)
+    <WithStyles(ForwardRef(Grid))
       container={true}
       spacing={8}
     >
@@ -174,41 +169,41 @@ exports[`<Note /> matches snapshot 1`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(Grid)>
-  </WithStyles(CardContent)>
-</WithStyles(Card)>
+    </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(CardContent))>
+</WithStyles(ForwardRef(Card))>
 `;
 
 exports[`<Note /> matches snapshot 2`] = `
-<WithStyles(Card)
+<WithStyles(ForwardRef(Card))
   className=""
 >
-  <WithStyles(CardHeader)
+  <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <WithStyles(IconButton)
+        <ForwardRef(WithStyles)
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <pure(LibraryAddIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <pure(EditIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <pure(MoreVertIcon) />
-        </WithStyles(IconButton)>
+          <Memo />
+        </ForwardRef(WithStyles)>
       </React.Fragment>
     }
-    avatar={<pure(DoneIcon) />}
+    avatar={<Memo />}
   />
-  <WithStyles(Menu)
+  <WithStyles(ForwardRef(Menu))
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -227,31 +222,31 @@ exports[`<Note /> matches snapshot 2`] = `
       }
     }
   >
-    <WithStyles(MenuItem)
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(DeleteIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <DeleteIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(ClearIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <ClearIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Unpin Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(ArchiveIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <ArchiveIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Archive Note
-    </WithStyles(MenuItem)>
-  </WithStyles(Menu)>
+    </WithStyles(ForwardRef(MenuItem))>
+  </WithStyles(ForwardRef(Menu))>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -270,8 +265,8 @@ exports[`<Note /> matches snapshot 2`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(CardContent)>
-    <WithStyles(Dialog)
+  <WithStyles(ForwardRef(CardContent))>
+    <WithStyles(ForwardRef(Dialog))
       classes={
         Object {
           "root": undefined,
@@ -295,11 +290,6 @@ exports[`<Note /> matches snapshot 2`] = `
         }
       >
         <lazy
-          innerRef={
-            Object {
-              "current": null,
-            }
-          }
           note={
             Object {
               "body": "",
@@ -311,7 +301,7 @@ exports[`<Note /> matches snapshot 2`] = `
           onSave={[Function]}
         />
       </React.Suspense>
-    </WithStyles(Dialog)>
+    </WithStyles(ForwardRef(Dialog))>
     <WithStyles(Tags) />
     <ReactMarkdown
       astPlugins={
@@ -332,7 +322,7 @@ exports[`<Note /> matches snapshot 2`] = `
       sourcePos={false}
       transformLinkUri={[Function]}
     />
-    <WithStyles(Grid)
+    <WithStyles(ForwardRef(Grid))
       container={true}
       spacing={8}
     >
@@ -343,41 +333,41 @@ exports[`<Note /> matches snapshot 2`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(Grid)>
-  </WithStyles(CardContent)>
-</WithStyles(Card)>
+    </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(CardContent))>
+</WithStyles(ForwardRef(Card))>
 `;
 
 exports[`<Note /> matches snapshot 3`] = `
-<WithStyles(Card)
+<WithStyles(ForwardRef(Card))
   className="undefined"
 >
-  <WithStyles(CardHeader)
+  <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <WithStyles(IconButton)
+        <ForwardRef(WithStyles)
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <pure(LibraryAddIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <pure(EditIcon) />
-        </WithStyles(IconButton)>
-        <WithStyles(IconButton)
+          <Memo />
+        </ForwardRef(WithStyles)>
+        <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <pure(MoreVertIcon) />
-        </WithStyles(IconButton)>
+          <Memo />
+        </ForwardRef(WithStyles)>
       </React.Fragment>
     }
     avatar={null}
   />
-  <WithStyles(Menu)
+  <WithStyles(ForwardRef(Menu))
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -396,31 +386,31 @@ exports[`<Note /> matches snapshot 3`] = `
       }
     }
   >
-    <WithStyles(MenuItem)
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(DeleteIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <DeleteIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(DoneIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <DoneIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Pin Note
-    </WithStyles(MenuItem)>
-    <WithStyles(MenuItem)
+    </WithStyles(ForwardRef(MenuItem))>
+    <WithStyles(ForwardRef(MenuItem))
       onClick={[Function]}
     >
-      <WithStyles(ListItemIcon)>
-        <pure(UnarchiveIcon) />
-      </WithStyles(ListItemIcon)>
+      <WithStyles(ForwardRef(ListItemIcon))>
+        <UnarchiveIcon />
+      </WithStyles(ForwardRef(ListItemIcon))>
       Unarchive Note
-    </WithStyles(MenuItem)>
-  </WithStyles(Menu)>
+    </WithStyles(ForwardRef(MenuItem))>
+  </WithStyles(ForwardRef(Menu))>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -439,8 +429,8 @@ exports[`<Note /> matches snapshot 3`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(CardContent)>
-    <WithStyles(Dialog)
+  <WithStyles(ForwardRef(CardContent))>
+    <WithStyles(ForwardRef(Dialog))
       classes={
         Object {
           "root": undefined,
@@ -464,11 +454,6 @@ exports[`<Note /> matches snapshot 3`] = `
         }
       >
         <lazy
-          innerRef={
-            Object {
-              "current": null,
-            }
-          }
           note={
             Object {
               "body": "",
@@ -480,7 +465,7 @@ exports[`<Note /> matches snapshot 3`] = `
           onSave={[Function]}
         />
       </React.Suspense>
-    </WithStyles(Dialog)>
+    </WithStyles(ForwardRef(Dialog))>
     <WithStyles(Tags) />
     <ReactMarkdown
       astPlugins={
@@ -501,7 +486,7 @@ exports[`<Note /> matches snapshot 3`] = `
       sourcePos={false}
       transformLinkUri={[Function]}
     />
-    <WithStyles(Grid)
+    <WithStyles(ForwardRef(Grid))
       container={true}
       spacing={8}
     >
@@ -512,7 +497,7 @@ exports[`<Note /> matches snapshot 3`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(Grid)>
-  </WithStyles(CardContent)>
-</WithStyles(Card)>
+    </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(CardContent))>
+</WithStyles(ForwardRef(Card))>
 `;
