@@ -87,7 +87,7 @@ const styles = (theme: Theme) =>
           //pageBreakInside: 'avoid',
           //display: 'inline-block',
           //margin: 0,
-          textIndent: theme.spacing.unit,
+          textIndent: theme.spacing(1),
         },
       },
       '& blockquote': {
@@ -95,7 +95,7 @@ const styles = (theme: Theme) =>
         borderLeftStyle: 'solid',
         borderLeftColor: theme.palette.secondary.dark,
 
-        paddingLeft: theme.spacing.unit,
+        paddingLeft: theme.spacing(1),
         '@media print': {
           margin: 0,
         },
@@ -223,6 +223,7 @@ class Note extends React.Component<Props, State> {
   }
 
   tryCancelEdit = () => {
+    debugger;
     if (!this.noteEditor.current || !this.noteEditor.current.hasChanges()) {
       this.cancelEdit();
     } else {
@@ -429,7 +430,7 @@ class Note extends React.Component<Props, State> {
               <NoteEditor
                 open={this.state.edit}
                 onSave={this.save}
-                innerRef={this.noteEditor}
+                ref={this.noteEditor}
                 note={
                   this.state.edit
                     ? this.props.note

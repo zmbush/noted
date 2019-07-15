@@ -19,7 +19,7 @@ import GradeIcon from '@material-ui/icons/Grade';
 const styles = (theme: Theme) =>
   createStyles({
     chip: {
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(1),
     },
   });
 

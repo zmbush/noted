@@ -28,7 +28,7 @@ import memoize from 'memoize-one';
 const styles = (theme: Theme) =>
   createStyles({
     newButton: {
-      margin: theme.spacing.unit,
+      margin: theme.spacing(1),
       '@media print': {
         display: 'none',
       },
@@ -39,7 +39,7 @@ const styles = (theme: Theme) =>
       },
     },
     leftIcon: {
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(1),
     },
     iconSmall: {
       fontSize: 20,
@@ -167,7 +167,7 @@ class NoteList extends React.Component<Props> {
                 search={this.props.search}
                 updateNote={this.props.updateNote}
                 deleteNote={this.props.deleteNote}
-                innerRef={i == 0 ? this.props.firstNoteRef : null}
+                ref={i == 0 ? this.props.firstNoteRef : null}
               />
             </Grid>
           );

@@ -90,15 +90,15 @@ const styles = (theme: Theme) =>
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
       marginLeft: 0,
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(1),
       width: '100%',
       [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
         width: 'auto',
       },
     },
     searchIcon: {
-      width: theme.spacing.unit * 9,
+      width: theme.spacing(9),
       height: '100%',
       position: 'absolute',
       pointerEvents: 'none',
@@ -111,10 +111,10 @@ const styles = (theme: Theme) =>
       width: '100%',
     },
     inputInput: {
-      paddingTop: theme.spacing.unit,
-      paddingRight: theme.spacing.unit,
-      paddingBottom: theme.spacing.unit,
-      paddingLeft: theme.spacing.unit * 10,
+      paddingTop: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      paddingLeft: theme.spacing(10),
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('sm')]: {
@@ -125,10 +125,10 @@ const styles = (theme: Theme) =>
       },
     },
     newButton: {
-      margin: theme.spacing.unit,
+      margin: theme.spacing(1),
     },
     leftIcon: {
-      marginRight: theme.spacing.unit,
+      marginRight: theme.spacing(1),
     },
     iconSmall: {
       fontSize: 20,
@@ -310,7 +310,7 @@ class App extends Component<Props, State> {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={16} className={classes.contentRoot}>
+        <Grid container spacing={2} className={classes.contentRoot}>
           {this.state.newNote ? (
             <Grid item xs={12}>
               <Note
