@@ -17,6 +17,7 @@ use {
     http::response::Response,
     lazy_static::lazy_static,
     redis::Commands,
+    std::cell::RefCell,
 };
 
 lazy_static! {
@@ -35,11 +36,12 @@ lazy_static! {
 #[derive(Clone)]
 struct RedisBackendProvider(redis::Client);
 
-struct RedisBackend(redis::Connection);
+struct RedisBackend(RefCell<redis::Connection>);
 
 impl RedisBackend {
     fn set_expiry(&self, identifier: &SessionIdentifier) -> Result<(), SessionError> {
         self.0
+            .borrow_mut()
             .expire(&identifier.value, 60 * 60 * 24 * 5) // 5 Days from last request
             .map_err(|e| SessionError::Backend(format!("{}", e)))
     }
@@ -52,6 +54,7 @@ impl Backend for RedisBackend {
         content: &[u8],
     ) -> Result<(), SessionError> {
         self.0
+            .borrow_mut()
             .set(&identifier.value, content)
             .map_err(|e| SessionError::Backend(format!("{}", e)))?;
 
@@ -64,7 +67,7 @@ impl Backend for RedisBackend {
     ) -> Box<dyn Future<Item = Option<Vec<u8>>, Error = SessionError> + Send> {
         let _ = self.set_expiry(&identifier);
 
-        Box::new(match self.0.get(identifier.value) {
+        Box::new(match self.0.borrow_mut().get(identifier.value) {
             Ok(v) => future::ok(v),
             Err(e) => future::err(SessionError::Backend(format!("{}", e))),
         })
@@ -72,6 +75,7 @@ impl Backend for RedisBackend {
 
     fn drop_session(&self, identifier: SessionIdentifier) -> Result<(), SessionError> {
         self.0
+            .borrow_mut()
             .del(identifier.value)
             .map_err(|e| SessionError::Backend(format!("{}", e)))
     }
@@ -87,9 +91,11 @@ impl NewBackend for RedisBackendProvider {
     type Instance = RedisBackend;
 
     fn new_backend(&self) -> std::io::Result<RedisBackend> {
-        Ok(RedisBackend(self.0.get_connection().map_err(|e| {
-            std::io::Error::new(std::io::ErrorKind::ConnectionRefused, e)
-        })?))
+        Ok(RedisBackend(RefCell::new(
+            self.0
+                .get_connection()
+                .map_err(|e| std::io::Error::new(std::io::ErrorKind::ConnectionRefused, e))?,
+        )))
     }
 }
 
