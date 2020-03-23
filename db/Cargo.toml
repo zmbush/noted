@@ -5,7 +5,7 @@ authors = ["Zach Bush <zach@zmbush.com>"]
 edition = "2018"
 
 [dependencies]
-diesel = { version = "1.4.2", features = ["postgres", "r2d2", "chrono"] }
+diesel = { version = "1.4.4", features = ["postgres", "r2d2", "chrono"] }
 dotenv = "0.14.1"
 lazy_static = "1.3.0"
 serde = "1.0.98"
