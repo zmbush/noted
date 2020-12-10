@@ -40,7 +40,7 @@
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/fuse": "^2.6.0",
     "@types/immutability-helper": "^2.6.3",
-    "@types/jest": "^24.0.11",
+    "@types/jest": "^26.0.19",
     "@types/memoize-one": "^4.1.1",
     "@types/mousetrap": "^1.6.3",
     "@types/node": "^12.0.0",
