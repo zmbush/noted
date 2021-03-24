@@ -91,7 +91,7 @@
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.0",
     "typescript": "^3.3.4000",
-    "webpack": "^4.29.6",
+    "webpack": "^5.28.0",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.2.3",
     "webpack-merge": "^4.2.1"
