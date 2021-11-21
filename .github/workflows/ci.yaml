@@ -25,8 +25,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-      - name: Install Bevy Dependencies
-        run: sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev clang
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -43,8 +41,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-      - name: Install Bevy Dependencies
-        run: sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev clang
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -55,14 +51,13 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+          args: '--verbose --all'
   lints:
     name: Lints
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-      - name: Install Bevy Dependencies
-        run: sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev clang
       - with:
           components: 'rustfmt, clippy'
           profile: minimal
