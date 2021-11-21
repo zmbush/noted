@@ -75,6 +75,7 @@ jobs:
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
   node-ci:
+    name: Node Build/Test/Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
