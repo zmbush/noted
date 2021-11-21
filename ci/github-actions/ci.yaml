@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
-      - *install-deps
       - *install-toolchain
       - name: Run cargo check
         uses: actions-rs/cargo@v1
@@ -38,7 +37,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
-      - *install-deps
       - *install-toolchain
       - name: Run cargo test
         uses: actions-rs/cargo@v1
@@ -50,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
-      - *install-deps
       - <<: *install-toolchain
         with:
           <<: *toolchain
