@@ -49,7 +49,12 @@ impl App {
     fn from_args() -> Result<Self, Box<dyn Error>> {
         // Parse CLI arguments
         let args = std::env::args().skip(1).collect::<Vec<_>>();
-        let (mode, base) = match args.iter().map(|s| s.as_str()).collect::<Vec<_>>().as_slice() {
+        let (mode, base) = match args
+            .iter()
+            .map(|s| s.as_str())
+            .collect::<Vec<_>>()
+            .as_slice()
+        {
             ["generate", ref base] => (Mode::Generate, PathBuf::from(base)),
             ["check", ref base] => (Mode::Check, PathBuf::from(base)),
             _ => {
@@ -73,39 +78,49 @@ impl App {
                 }
 
                 let dest_path = dest.join(path.file_name().unwrap());
-                self.expand(&path, &dest_path).with_context(|| match self.mode {
-                    Mode::Generate => format!("failed to expand {} into {}", self.path(&path), self.path(&dest_path)),
-                    Mode::Check => format!("{} is not up to date", self.path(&dest_path)),
-                })?;
+                self.expand(&path, &dest_path)
+                    .with_context(|| match self.mode {
+                        Mode::Generate => format!(
+                            "failed to expand {} into {}",
+                            self.path(&path),
+                            self.path(&dest_path)
+                        ),
+                        Mode::Check => format!("{} is not up to date", self.path(&dest_path)),
+                    })?;
             }
         }
         Ok(())
     }
 
     fn expand(&self, source: &Path, dest: &Path) -> Result<(), Box<dyn Error>> {
-        let content =
-            std::fs::read_to_string(source).with_context(|| format!("failed to read {}", self.path(source)))?;
+        let content = std::fs::read_to_string(source)
+            .with_context(|| format!("failed to read {}", self.path(source)))?;
 
-        let mut buf = HEADER_MESSAGE.replace("{source}", &self.path(source).to_string().replace("\\", "/"));
+        let mut buf = HEADER_MESSAGE.replace(
+            "{source}",
+            &self.path(source).to_string().replace("\\", "/"),
+        );
 
-        let documents =
-            YamlLoader::load_from_str(&content).with_context(|| format!("failed to parse {}", self.path(source)))?;
+        let documents = YamlLoader::load_from_str(&content)
+            .with_context(|| format!("failed to parse {}", self.path(source)))?;
         for mut document in documents.into_iter() {
             document = yaml_merge_keys::merge_keys(document)
                 .with_context(|| format!("failed to expand {}", self.path(source)))?;
             document = filter_document(document);
 
-            YamlEmitter::new(&mut buf).dump(&document).map_err(|err| WithContext {
-                context: "failed to serialize the expanded yaml".into(),
-                source: Box::new(err),
-            })?;
+            YamlEmitter::new(&mut buf)
+                .dump(&document)
+                .map_err(|err| WithContext {
+                    context: "failed to serialize the expanded yaml".into(),
+                    source: Box::new(err),
+                })?;
             buf.push('\n');
         }
 
         match self.mode {
             Mode::Check => {
-                let old =
-                    std::fs::read_to_string(dest).with_context(|| format!("failed to read {}", self.path(dest)))?;
+                let old = std::fs::read_to_string(dest)
+                    .with_context(|| format!("failed to read {}", self.path(dest)))?;
                 if old != buf {
                     return Err(Box::new(StrError(format!(
                         "{} and {} are different",
