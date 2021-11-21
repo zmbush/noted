@@ -44,4 +44,4 @@ joinable!(note_tags_id -> notes (note_id));
 joinable!(note_tags_id -> tags (tag_id));
 joinable!(notes -> users (user_id));
 
-allow_tables_to_appear_in_same_query!(note_tags_id, notes, tags, users,);
+allow_tables_to_appear_in_same_query!(note_tags_id, notes, tags, users);

@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage --ci",
-    "build": "webpack --config webpack.prod.js --color=true"
+    "build": "webpack --config webpack.prod.js --color=true",
+    "pretty": "pretty-quick --staged",
+    "expand-yaml-anchors": "cargo run --manifest-path expand-yaml-anchors/Cargo.toml -- generate $PWD && git add .github/workflows"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged",
+      "pre-commit": "npm run pretty && npm run expand-yaml-anchors",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },

@@ -15,12 +15,12 @@
 
 ---
 name: CI
-'on':
+"on":
   - push
   - pull_request
 jobs:
   check:
-    name: Check
+    name: Rust Build/Test/Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -31,7 +31,7 @@ jobs:
           profile: minimal
           toolchain: 1.47.0
           override: true
-          components: 'rustfmt, clippy'
+          components: "rustfmt, clippy"
       - name: Install diesel_cli
         uses: actions-rs/install@v0.1
         with:
@@ -52,16 +52,16 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: '--verbose --all'
+          args: "--verbose --all"
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: '--all -- --check'
+          args: "--all -- --check"
       - name: Run cargo clippy
         uses: actions-rs/clippy-check@v1
         with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
+          token: "${{ secrets.GITHUB_TOKEN }}"
   node-ci:
     name: Node Build/Test/Lint
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '10'
+          node-version: "10"
       - name: Build Package
         run: npm ci && npm run build
       - name: Test
