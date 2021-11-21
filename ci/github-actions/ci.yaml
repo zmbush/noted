@@ -85,3 +85,5 @@ jobs:
       #   run: npm run lint
       - name: Test
         run: npm run test
+      - name: Upload Codecov
+        uses: codecov/codecov-action@v2
