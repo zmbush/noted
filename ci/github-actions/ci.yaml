@@ -45,7 +45,7 @@ jobs:
           echo "DIESEL_CONFIG_FILE=db/diesel.toml" >> $GITHUB_ENV
 
       - name: Migrate Database
-        run: diesel migration run
+        run: diesel migration run --locked-schema
 
       - name: Run cargo check
         uses: actions-rs/cargo@v1
@@ -58,11 +58,11 @@ jobs:
           command: test
           args: --verbose --all
 
-      # - name: Run cargo fmt
-      #   uses: actions-rs/cargo@v1
-      #   with:
-      #     command: fmt
-      #     args: --all -- --check
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/clippy-check@v1
