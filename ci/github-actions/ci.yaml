@@ -3,20 +3,6 @@ x--expand-yaml-anchors--remove:
     name: Checkout sources
     uses: actions/checkout@v2
 
-  - &install-deps
-    name: Install Bevy Dependencies
-    run: sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev clang
-
-  - &toolchain
-    profile: minimal
-    toolchain: 1.47.0
-    override: true
-
-  - &install-toolchain
-    name: Install toolchain
-    uses: actions-rs/toolchain@v1
-    with: *toolchain
-
 name: CI
 on: [push, pull_request]
 
@@ -24,35 +10,53 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
+
     steps:
       - *checkout
-      - *install-toolchain
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.47.0
+          override: true
+          components: rustfmt, clippy
+
+      - name: Install diesel_cli
+        uses: actions-rs/install@v0.1
+        with:
+          crate: diesel_cli
+          version: 0.4.1
+          use-tool-cache: true
+
+      - name: Install postgres
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev postgresql
+          echo "host    all             all             127.0.0.1/32            md5" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf
+          sudo service postgresql restart && sleep 3
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          sudo service postgresql restart && sleep 3
+
+      - name: Create database
+        run: |
+          sudo -u postgres psql -c 'create database noted;' -U postgres
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost/noted" >> $GITHUB_ENV
+          echo "MIGRATION_DIRECTORY=db/migrations" >> $GITHUB_ENV
+          echo "DIESEL_CONFIG_FILE=db/diesel.toml" >> $GITHUB_ENV
+
+      - name: Migrate Database
+        run: diesel migration run
+
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
           command: check
 
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - *checkout
-      - *install-toolchain
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
           command: test
           args: --verbose --all
-
-  lints:
-    name: Lints
-    runs-on: ubuntu-latest
-    steps:
-      - *checkout
-      - <<: *install-toolchain
-        with:
-          <<: *toolchain
-          components: rustfmt, clippy
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
