@@ -76,7 +76,8 @@ jobs:
           node-version: '10'
       - name: Build Package
         run: npm ci && npm run build
-      - name: Lint
-        run: npm run lint
+      # TODO: Enable eslint
+      # - name: Lint
+      #   run: npm run lint
       - name: Test
         run: npm run test
