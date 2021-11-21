@@ -1,4 +1,12 @@
 table! {
+    note_tags_id (id) {
+        id -> Int4,
+        note_id -> Int4,
+        tag_id -> Int4,
+    }
+}
+
+table! {
     notes (id) {
         id -> Int4,
         title -> Varchar,
@@ -9,14 +17,6 @@ table! {
         parent_note_id -> Int4,
         archived -> Bool,
         pinned -> Bool,
-    }
-}
-
-table! {
-    note_tags_id (id) {
-        id -> Int4,
-        note_id -> Int4,
-        tag_id -> Int4,
     }
 }
 
@@ -45,8 +45,8 @@ joinable!(note_tags_id -> tags (tag_id));
 joinable!(notes -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
-    notes,
     note_tags_id,
+    notes,
     tags,
     users,
 );

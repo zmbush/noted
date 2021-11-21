@@ -18,7 +18,7 @@ macro_rules! impl_noted_db_error {
             NotFound,
             NotLoggedIn,
             UnknownDiesel(Error),
-            DatabaseError(DatabaseErrorKind, Box<DatabaseErrorInformation+Send+Sync>),
+            DatabaseError(DatabaseErrorKind, Box<dyn DatabaseErrorInformation+Send+Sync>),
             $($type($inner)),*
         }
 
