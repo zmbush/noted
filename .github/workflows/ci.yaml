@@ -36,7 +36,7 @@ jobs:
         uses: actions-rs/install@v0.1
         with:
           crate: diesel_cli
-          version: 0.4.1
+          version: 1.4.1
           use-tool-cache: true
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
