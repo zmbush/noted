@@ -8,6 +8,7 @@ pull_request_rules:
     conditions:
       - status-success=Rust Build/Test/Lint
       - status-success=Node Build/Test/Lint
+      - status-success=Rust Coverage
       - status-success=codecov/patch
       - status-success=codecov/project
       - '#approved-reviews-by>=1'
@@ -24,6 +25,7 @@ pull_request_rules:
     conditions:
       - status-success=Rust Build/Test/Lint
       - status-success=Node Build/Test/Lint
+      - status-success=Rust Coverage
       - status-success=codecov/patch
       - status-success=codecov/project
       - author=zmbush
