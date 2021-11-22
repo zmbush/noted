@@ -38,9 +38,7 @@ jobs:
 
       - name: Install diesel_cli
         run: |
-          cargo install --list
-          cargo install --list | grep diesel
-          (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres 
+          which diesel || cargo install diesel_cli --no-default-features --features postgres 
 
       - name: Install postgres
         run: |
