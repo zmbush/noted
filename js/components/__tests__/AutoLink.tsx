@@ -19,9 +19,7 @@ describe('<AutoLink />', () => {
     titles.set('Boat', new Set([1, 2]));
 
     const wrapper = shallow(
-      <AutoLink titles={titles}>
-        This goat is here. It also has boats galore.
-      </AutoLink>
+      <AutoLink titles={titles}>This goat is here. It also has boats galore.</AutoLink>,
     );
     expect(wrapper).toMatchSnapshot();
   });
@@ -37,31 +35,19 @@ describe('<AutoLink />', () => {
     titles.set('Boat', new Set([1, 2]));
 
     const wrapper = shallow(
-      <AutoLink titles={titles}>
-        This goat is here. It also has boats galore.
-      </AutoLink>
+      <AutoLink titles={titles}>This goat is here. It also has boats galore.</AutoLink>,
     );
 
-    expect(
-      wrapper.contains(<LinkedText ids={new Set([1])} text='Goat' />)
-    ).toBeTruthy();
-    expect(
-      wrapper.contains(<LinkedText ids={new Set([1, 2])} text='Boat' />)
-    ).toBeTruthy();
+    expect(wrapper.contains(<LinkedText ids={new Set([1])} text='Goat' />)).toBeTruthy();
+    expect(wrapper.contains(<LinkedText ids={new Set([1, 2])} text='Boat' />)).toBeTruthy();
   });
 });
 
 describe('<LinkedText />', () => {
   test('matches snapshot', () => {
-    expect(
-      shallow(<LinkedText ids={new Set()} text='Link' />)
-    ).toMatchSnapshot();
-    expect(
-      shallow(<LinkedText ids={new Set([1])} text='Link' />)
-    ).toMatchSnapshot();
-    expect(
-      shallow(<LinkedText ids={new Set([1, 2])} text='Link' />)
-    ).toMatchSnapshot();
+    expect(shallow(<LinkedText ids={new Set()} text='Link' />)).toMatchSnapshot();
+    expect(shallow(<LinkedText ids={new Set([1])} text='Link' />)).toMatchSnapshot();
+    expect(shallow(<LinkedText ids={new Set([1, 2])} text='Link' />)).toMatchSnapshot();
   });
 
   test('works with no ids', () => {
@@ -75,11 +61,7 @@ describe('<LinkedText />', () => {
   });
 
   test('works with more than 1 id', () => {
-    const wrapper = shallow(
-      <LinkedText ids={new Set([1, 2, 3])} text='Link' />
-    );
-    expect(
-      wrapper.contains(<Link to='/disambiguation/1,2,3'>Link</Link>)
-    ).toBeTruthy();
+    const wrapper = shallow(<LinkedText ids={new Set([1, 2, 3])} text='Link' />);
+    expect(wrapper.contains(<Link to='/disambiguation/1,2,3'>Link</Link>)).toBeTruthy();
   });
 });

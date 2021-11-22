@@ -15,7 +15,7 @@ type LinkProps = {
   ids: Set<number>;
 };
 
-const LinkedText = ({ ids, text }: LinkProps) => {
+export const LinkedText = ({ ids, text }: LinkProps) => {
   if (ids.size === 1) {
     const id = ids.values().next().value;
     return <Link to={`/note/${id}`}>{text}</Link>;
@@ -24,8 +24,9 @@ const LinkedText = ({ ids, text }: LinkProps) => {
     const theseIds = Array.from(ids.values()).join(',');
     return <Link to={`/disambiguation/${theseIds}`}>{text}</Link>;
   }
-  return <>text</>;
+  return (text as any) as React.ReactElement;
 };
+LinkedText.displayName = 'LinkedText';
 
 type Props = {
   titles: LinkIdMap;

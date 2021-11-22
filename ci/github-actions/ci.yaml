@@ -49,7 +49,7 @@ jobs:
       - name: Create database
         run: |
           sudo -u postgres psql -c 'create database noted;' -U postgres
-          echo "RUSTFLAGS=\"-C link-dead-code\"" >> $GITHUB_ENV
+          echo 'RUSTFLAGS="-C link-dead-code"' >> $GITHUB_ENV
           echo "DATABASE_URL=postgres://postgres:postgres@localhost/noted" >> $GITHUB_ENV
           echo "MIGRATION_DIRECTORY=db/migrations" >> $GITHUB_ENV
           echo "DIESEL_CONFIG_FILE=db/diesel.toml" >> $GITHUB_ENV

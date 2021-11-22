@@ -138,11 +138,11 @@ export const getSortedNoteIds = createSelector(
       map.set(note.id, note.updated_at);
     });
 
-    [...allNotes.values()].forEach(note => {
-      let curNote = note;
-      while (validParent(curNote)) {
+    [...allNotes.values()].forEach(thisNote => {
+      let note = thisNote;
+      while (validParent(note)) {
         map.set(note.parent_note_id, mostRecent(note.updated_at, map.get(note.parent_note_id)));
-        curNote = allNotes.get(note.parent_note_id);
+        note = allNotes.get(note.parent_note_id);
       }
     });
 
