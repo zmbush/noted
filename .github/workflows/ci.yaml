@@ -36,6 +36,7 @@ jobs:
           toolchain: nightly
           profile: minimal
           components: "clippy, rustfmt"
+          override: true
         name: Install toolchain
         uses: actions-rs/toolchain@v1
       - uses: actions/cache@v2
@@ -87,6 +88,7 @@ jobs:
           profile: minimal
           toolchain: 1.47.0
           components: "clippy, rustfmt"
+          override: true
       - uses: actions/cache@v2
         with:
           path: "~/.cargo/bin/\n~/.cargo/registry/index/\n~/.cargo/registry/cache/\n~/.cargo/git/db/\ntarget/\n"
