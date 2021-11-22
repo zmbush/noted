@@ -24,6 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RUSTFLAGS: "-C link-dead-code"
+      DATABASE_URL: "postgres://postgres:postgres@localhost/noted"
+      MIGRATION_DIRECTORY: db/migrations
+      DIESEL_CONFIG_FILE: db/diesel.toml
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -54,7 +57,7 @@ jobs:
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
       - name: Create database
-        run: "sudo -u postgres psql -c 'create database noted;' -U postgres\necho \"DATABASE_URL=postgres://postgres:postgres@localhost/noted\" >> $GITHUB_ENV\necho \"MIGRATION_DIRECTORY=db/migrations\" >> $GITHUB_ENV\necho \"DIESEL_CONFIG_FILE=db/diesel.toml\" >> $GITHUB_ENV\n"
+        run: "sudo -u postgres psql -c 'create database noted;' -U postgres\n"
       - name: Migrate Database
         run: diesel migration run --locked-schema
       - name: Run cargo check
@@ -65,7 +68,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: "--verbose --all"
+          args: "--all"
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
@@ -87,6 +90,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "16"
+      - name: Build Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
+          restore-keys: "${{ runner.os }}-node-\n"
       - name: Build Package
         run: npm ci && npm run build
       - name: Lint
