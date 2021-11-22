@@ -87,7 +87,8 @@ jobs:
         if: github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]'
         uses: actions-rs/cargo@v1
         with:
-          command: +1.47.0 clippy
+          command: clippy
+          toolchain: 1.47.0
           args: --all-targets -- -D warnings
 
       - name: Run cargo test
