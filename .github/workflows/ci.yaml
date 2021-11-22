@@ -34,6 +34,10 @@ jobs:
           components: "rustfmt, clippy"
       - name: Install kcov packages
         run: sudo apt-get install -y libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
+      - uses: actions/cache@v2
+        with:
+          path: "~/.cargo/bin/\n~/.cargo/registry/index/\n~/.cargo/registry/cache/\n~/.cargo/git/db/\ntarget/\n"
+          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}"
       - name: Install diesel_cli
         uses: actions-rs/install@v0.1
         with:
