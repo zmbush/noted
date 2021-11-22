@@ -86,10 +86,13 @@ jobs:
           args: --all
 
       - name: GRCov
+        id: coverage
         uses: actions-rs/grcov@v0.1
 
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
+        with:
+          files: ${{ steps.coverage.outputs.report }}
 
   node-ci:
     name: Node Build/Test/Lint
