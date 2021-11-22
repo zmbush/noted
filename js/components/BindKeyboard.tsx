@@ -7,19 +7,19 @@
 // except according to those terms.
 
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 
 import Mousetrap from 'mousetrap';
 
 type Props = {
   keys: string;
   action?: string;
-  callback: (e: ExtendedKeyboardEvent, combo: string) => void;
+  callback: (e: Mousetrap.ExtendedKeyboardEvent, combo: string) => void;
 };
 
 export default class BindKeyboard extends React.Component<Props> {
   main: React.RefObject<HTMLDivElement>;
-  mousetrap: MousetrapInstance | MousetrapStatic;
+
+  mousetrap: Mousetrap.MousetrapInstance | Mousetrap.MousetrapStatic;
 
   constructor(props: Props) {
     super(props);
@@ -28,28 +28,26 @@ export default class BindKeyboard extends React.Component<Props> {
   }
 
   componentDidMount() {
-    if (this.props.children) {
+    const { children, keys, callback, action } = this.props;
+    if (children) {
       this.mousetrap = new Mousetrap(this.main.current);
     } else {
       this.mousetrap = Mousetrap;
     }
 
-    this.mousetrap.bind(
-      this.props.keys,
-      this.props.callback,
-      this.props.action
-    );
+    this.mousetrap.bind(keys, callback, action);
   }
 
   componentWillUnmount() {
-    this.mousetrap.unbind(this.props.keys, this.props.action);
+    const { keys, action } = this.props;
+    this.mousetrap.unbind(keys, action);
   }
 
   render() {
-    if (this.props.children) {
-      return <div ref={this.main}>{this.props.children}</div>;
-    } else {
-      return null;
+    const { children } = this.props;
+    if (children) {
+      return <div ref={this.main}>{children}</div>;
     }
+    return null;
   }
 }

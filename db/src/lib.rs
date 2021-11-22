@@ -11,6 +11,7 @@ extern crate diesel;
 
 pub mod error;
 pub mod models;
+#[rustfmt::skip]
 pub mod schema;
 
 use {

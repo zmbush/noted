@@ -7,15 +7,13 @@
 // except according to those terms.
 
 import * as React from 'react';
-import { useState, useEffect, Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import axios from 'axios';
-import * as Fuse from 'fuse.js';
-import classNames from 'classnames';
+import Mousetrap from 'mousetrap';
 
-import * as PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -25,29 +23,22 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
-import AddIcon from '@material-ui/icons/Add';
 import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
-import Button from '@material-ui/core/Button';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import debounce from 'debounce-promise';
 
-import {
-  withRouter,
-  Route,
-  Switch,
-  RouteComponentProps,
-} from 'react-router-dom';
+import { withRouter, Route, Switch, RouteComponentProps } from 'react-router-dom';
 
 import Note, { InnerNote } from 'components/Note';
 import BindKeyboard from 'components/BindKeyboard';
 import NoteList from 'components/NoteList';
 import { updateNote, deleteNote, logOut } from 'data/actions';
 import { NoteData, AppState } from 'data/types';
-import { getLinkIds, LinkIdMap, getTopLevelNotes } from 'data/selectors';
+import { getTopLevelNotes } from 'data/selectors';
 import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
 
@@ -59,7 +50,7 @@ const styles = (theme: Theme) =>
         overflow: 'visible !important',
         columnCount: 2,
         columnWidth: 200,
-        //columnBreakInside: 'avoid',
+        // columnBreakInside: 'avoid',
       },
     },
     grow: {
@@ -159,7 +150,11 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
 
 class App extends Component<Props, State> {
   searchInput: React.RefObject<HTMLInputElement>;
+
   firstNote: React.RefObject<InnerNote>;
+
+  // eslint-disable-next-line react/destructuring-assignment
+  debouncedSearch = debounce(async () => this.state.searchInputValue, 100);
 
   constructor(props: Props) {
     super(props);
@@ -172,13 +167,6 @@ class App extends Component<Props, State> {
   componentDidMount() {
     document.title = `noted`;
   }
-
-  updateNote = (note?: NoteData) => {
-    if (note) {
-      this.props.updateNote(note);
-    }
-    this.setState({ newNote: false });
-  };
 
   startSearch = (e: Event) => {
     e.preventDefault();
@@ -194,23 +182,32 @@ class App extends Component<Props, State> {
     }
   };
 
-  create() {
-    this.setState({ newNote: true });
-  }
+  doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ searchInputValue: e.target.value });
+    this.setState({ search: await this.debouncedSearch() });
+  };
+
+  updateNote = (note?: NoteData) => {
+    if (note) {
+      const { updateNote: doUpdateNote } = this.props;
+      doUpdateNote(note);
+    }
+    this.setState({ newNote: false });
+  };
 
   createNew = (e: React.SyntheticEvent) => {
     e.preventDefault();
     this.create();
   };
 
-  cancelSearch = (e: ExtendedKeyboardEvent, combo?: string) => {
+  cancelSearch = (e: Mousetrap.ExtendedKeyboardEvent, _combo?: string) => {
     e.preventDefault();
     this.setState({ searchInputValue: '', search: '' });
   };
 
   createNewShortcut = (
-    e: ExtendedKeyboardEvent | React.SyntheticEvent,
-    combo?: string
+    e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
+    _combo?: string,
   ) => {
     e.preventDefault();
     this.create();
@@ -224,22 +221,26 @@ class App extends Component<Props, State> {
     this.setState({ userMenuEl: e.currentTarget });
   };
 
-  signOut = async (e: React.SyntheticEvent) => {
+  signOut = async (_e: React.SyntheticEvent) => {
+    const { logOut: doLogOut } = this.props;
     this.setState({ userMenuEl: null });
     await axios.post('/api/sign_out');
-    this.props.logOut();
+    doLogOut();
   };
 
-  debouncedSearch = debounce(async () => this.state.searchInputValue, 100);
-
-  doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchInputValue: e.target.value });
-    this.setState({ search: await this.debouncedSearch() });
-  };
+  create() {
+    this.setState({ newNote: true });
+  }
 
   render() {
-    const { userMenuEl } = this.state;
-    const { classes } = this.props;
+    const {
+      classes,
+      history,
+      deleteNote: doDeleteNote,
+      is_signed_in: isSignedIn,
+      notes,
+    } = this.props;
+    const { userMenuEl, searchInputValue, newNote, search } = this.state;
     const isUserMenuOpen = Boolean(userMenuEl);
 
     return (
@@ -248,11 +249,7 @@ class App extends Component<Props, State> {
           <Toolbar>
             <Switch>
               <Route exact path='/'>
-                <IconButton
-                  className={classes.menuButton}
-                  aria-label='Menu'
-                  color='inherit'
-                >
+                <IconButton className={classes.menuButton} aria-label='Menu' color='inherit'>
                   <MenuIcon />
                 </IconButton>
               </Route>
@@ -262,19 +259,14 @@ class App extends Component<Props, State> {
                   aria-label='Menu'
                   color='inherit'
                   onClick={() => {
-                    this.props.history.push('/');
+                    history.push('/');
                   }}
                 >
                   <HomeIcon />
                 </IconButton>
               </Route>
             </Switch>
-            <Typography
-              className={classes.title}
-              variant='h6'
-              color='inherit'
-              noWrap
-            >
+            <Typography className={classes.title} variant='h6' color='inherit' noWrap>
               Noted
             </Typography>
             <div className={classes.grow} />
@@ -294,32 +286,28 @@ class App extends Component<Props, State> {
                         root: classes.inputRoot,
                         input: classes.inputInput,
                       }}
-                      value={this.state.searchInputValue}
+                      value={searchInputValue}
                       onChange={this.doSearch}
                     />
                   </form>
                 </div>
               </BindKeyboard>
             </BindKeyboard>
-            <IconButton
-              aria-haspopup='true'
-              onClick={this.openUserMenu}
-              color='inherit'
-            >
+            <IconButton aria-haspopup='true' onClick={this.openUserMenu} color='inherit'>
               <AccountCircle />
             </IconButton>
           </Toolbar>
         </AppBar>
         <Grid container spacing={2} className={classes.contentRoot}>
-          {this.state.newNote ? (
+          {newNote ? (
             <Grid item xs={12}>
               <Note
                 new
                 depth={1}
-                search={this.state.search}
+                search={search}
                 note={{
                   id: -1,
-                  title: this.state.search,
+                  title: search,
                   tags: [],
                   body: '',
                   created_at: '',
@@ -327,7 +315,7 @@ class App extends Component<Props, State> {
                   user_id: 0,
                 }}
                 updateNote={this.updateNote}
-                deleteNote={this.props.deleteNote}
+                deleteNote={deleteNote}
               />
             </Grid>
           ) : null}
@@ -337,19 +325,19 @@ class App extends Component<Props, State> {
                 createFromSearch={this.createNewShortcut}
                 parent_note_id={null}
                 depth={1}
-                notes={this.props.notes}
-                search={this.state.search}
+                notes={notes}
+                search={search}
                 updateNote={this.updateNote}
-                deleteNote={this.props.deleteNote}
+                deleteNote={doDeleteNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
             <Route path={['/note/:ids', '/disambiguation/:ids']}>
               <FilteredNoteList
                 depth={1}
-                search={this.state.search}
+                search={search}
                 updateNote={this.updateNote}
-                deleteNote={this.props.deleteNote}
+                deleteNote={doDeleteNote}
                 firstNoteRef={this.firstNote}
               />
             </Route>
@@ -357,9 +345,9 @@ class App extends Component<Props, State> {
         </Grid>
 
         <BindKeyboard keys='/' callback={this.startSearch} />
-        <LogIn open={!this.props.is_signed_in} />
+        <LogIn open={!isSignedIn} />
         <Menu
-          anchorEl={this.state.userMenuEl}
+          anchorEl={userMenuEl}
           open={isUserMenuOpen}
           onClose={this.closeUserMenu}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -395,6 +383,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )(withStyles(styles)(App))
+    mapDispatchToProps,
+  )(withStyles(styles)(App)),
 );

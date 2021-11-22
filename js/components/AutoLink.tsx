@@ -8,7 +8,6 @@
 
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { NoteData } from 'data/types';
 import { LinkIdMap } from 'data/selectors';
 
 type LinkProps = {
@@ -16,19 +15,18 @@ type LinkProps = {
   ids: Set<number>;
 };
 
-export class LinkedText extends React.Component<LinkProps> {
-  render() {
-    if (this.props.ids.size == 1) {
-      const id = this.props.ids.values().next().value;
-      return <Link to={`/note/${id}`}>{this.props.text}</Link>;
-    } else if (this.props.ids.size > 1) {
-      const ids = Array.from(this.props.ids.values()).join(',');
-      return <Link to={`/disambiguation/${ids}`}>{this.props.text}</Link>;
-    } else {
-      return this.props.text;
-    }
+export const LinkedText = ({ ids, text }: LinkProps) => {
+  if (ids.size === 1) {
+    const id = ids.values().next().value;
+    return <Link to={`/note/${id}`}>{text}</Link>;
   }
-}
+  if (ids.size > 1) {
+    const theseIds = Array.from(ids.values()).join(',');
+    return <Link to={`/disambiguation/${theseIds}`}>{text}</Link>;
+  }
+  return (text as any) as React.ReactElement;
+};
+LinkedText.displayName = 'LinkedText';
 
 type Props = {
   titles: LinkIdMap;
@@ -37,33 +35,27 @@ type Props = {
 
 export default class AutoLink extends React.Component<Props> {
   render() {
-    let body: any[] = [this.props.children];
+    const { children, titles } = this.props;
+    let body: any[] = [children];
     let keyIx = 1;
 
-    this.props.titles.forEach((value, key) => {
+    titles.forEach((value, key) => {
       let newBody: any[] = [];
-      for (let part of body) {
-        if (typeof part == 'string' || part instanceof String) {
-          let elements = part
-            .split(new RegExp(key, 'i'))
-            .reduce((r, a, ix, arr) => {
-              r.push(a);
-              if (ix + 1 < arr.length) {
-                r.push(
-                  <LinkedText
-                    key={`linked-text-${keyIx++}`}
-                    text={key}
-                    ids={value}
-                  />
-                );
-              }
-              return r;
-            }, []);
+      body.forEach(part => {
+        if (typeof part === 'string' || part instanceof String) {
+          const elements = part.split(new RegExp(key, 'i')).reduce((r, a, ix, arr) => {
+            r.push(a);
+            if (ix + 1 < arr.length) {
+              r.push(<LinkedText key={`linked-text-${keyIx}`} text={key} ids={value} />);
+              keyIx += 1;
+            }
+            return r;
+          }, []);
           newBody = newBody.concat(elements);
         } else {
           newBody.push(part);
         }
-      }
+      });
       body = newBody;
     });
 

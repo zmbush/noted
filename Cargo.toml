@@ -5,7 +5,7 @@ authors = ["Zach Bush <zach@zmbush.com>"]
 edition = "2018"
 
 [workspace]
-members = ["db"]
+members = ["db", "expand-yaml-anchors"]
 
 [dependencies]
 chrono = "0.4.7"

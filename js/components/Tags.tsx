@@ -32,40 +32,31 @@ const Tag = withStyles(styles)((props: TagProps) => {
 
   const parts = tag.split(':');
 
-  if (parts.length == 1) {
+  if (parts.length === 1) {
     return <Chip label={parts[0]} className={classes.chip} />;
-  } else {
-    const type = parts[0];
-    const label = parts.slice(1).join(':');
-    let Icon = null;
-    let color: PropTypes.Color = undefined;
-    switch (type) {
-      case 'arc':
-        Icon = GestureIcon;
-        color = 'secondary';
-        break;
-      case 'type':
-        Icon = GradeIcon;
-        color = 'primary';
-        break;
-    }
-    if (Icon) {
-      return (
-        <Chip
-          label={label}
-          color={color}
-          className={classes.chip}
-          icon={<Icon />}
-        />
-      );
-    } else {
-      console.log('No match found for ', type);
-      return <Chip label={label} color={color} className={classes.chip} />;
-    }
   }
+  const type = parts[0];
+  const label = parts.slice(1).join(':');
+  let Icon = null;
+  let color: PropTypes.Color;
+  switch (type) {
+    case 'arc':
+      Icon = GestureIcon;
+      color = 'secondary';
+      break;
+    case 'type':
+    default:
+      Icon = GradeIcon;
+      color = 'primary';
+      break;
+  }
+  if (Icon) {
+    return <Chip label={label} color={color} className={classes.chip} icon={<Icon />} />;
+  }
+  return <Chip label={label} color={color} className={classes.chip} />;
 });
 
-const tagsStyles = (theme: Theme) =>
+const tagsStyles = (_theme: Theme) =>
   createStyles({
     noPrint: {
       '@media print': {
@@ -78,19 +69,19 @@ interface TagsProps extends WithStyles<typeof tagsStyles> {
   tags: string[];
 }
 
-function Tags(props: TagsProps) {
-  const { classes } = props;
-  if (props.tags.length == 0) {
+const Tags = (props: TagsProps) => {
+  const { classes, tags } = props;
+  if (tags.length === 0) {
     return null;
   }
 
   return (
     <div className={classes.noPrint}>
-      {props.tags.map(t => (
+      {tags.map(t => (
         <Tag key={t} tag={t} />
       ))}
     </div>
   );
-}
+};
 
 export default withStyles(tagsStyles)(Tags);

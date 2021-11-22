@@ -11,7 +11,10 @@ use {
             Backend, NewBackend, NewSessionMiddleware, SessionError, SessionIdentifier,
         },
         pipeline::{new_pipeline, single::single_pipeline},
-        router::{builder::*, response::extender::ResponseExtender},
+        router::{
+            builder::{build_router, DefineSingleRoute, DrawRoutes},
+            response::extender::ResponseExtender,
+        },
         state::State,
     },
     http::response::Response,

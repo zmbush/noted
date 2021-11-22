@@ -29,32 +29,28 @@ import UnarchiveIcon from '@material-ui/icons/Unarchive';
 import PinIcon from '@material-ui/icons/Done';
 import UnpinIcon from '@material-ui/icons/Clear';
 import ReactLoading from 'react-loading';
-import {
-  createStyles,
-  withStyles,
-  Theme,
-  WithStyles,
-} from '@material-ui/core/styles';
+import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'codemirror/lib/codemirror.css';
+// eslint-disable-next-line import/extensions
 import 'tui-editor/dist/tui-editor.min.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'tui-color-picker/dist/tui-color-picker.css';
 
-import { NoteData } from 'data/types';
-import BindKeyboard from 'components/BindKeyboard';
+import { NoteData, AppState } from 'data/types';
 import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
 import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/ConfirmationDialog';
-import { AppState } from 'data/types';
 import { getLinkIds, getSubnotes } from 'data/selectors';
 
 const NoteEditor = React.lazy(() =>
-  import(/* webpackChunkName: "editor" */ 'components/NoteEditor')
+  import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
 );
 
 const styles = (theme: Theme) =>
@@ -66,7 +62,7 @@ const styles = (theme: Theme) =>
       '@media print': {
         border: 'none',
         boxShadow: 'none',
-        //pageBreakInside: 'avoid',
+        // pageBreakInside: 'avoid',
       },
     },
     unlinked: {
@@ -84,9 +80,9 @@ const styles = (theme: Theme) =>
     markdown: {
       '& p': {
         '@media print': {
-          //pageBreakInside: 'avoid',
-          //display: 'inline-block',
-          //margin: 0,
+          // pageBreakInside: 'avoid',
+          // display: 'inline-block',
+          // margin: 0,
           textIndent: theme.spacing(1),
         },
       },
@@ -218,12 +214,11 @@ class Note extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = Object.assign({}, initialState, { edit: props.new });
+    this.state = { ...initialState, edit: props.new };
     this.noteEditor = React.createRef();
   }
 
   tryCancelEdit = () => {
-    debugger;
     if (!this.noteEditor.current || !this.noteEditor.current.hasChanges()) {
       this.cancelEdit();
     } else {
@@ -232,33 +227,36 @@ class Note extends React.Component<Props, State> {
   };
 
   cancelEdit = () => {
+    const { updateNote } = this.props;
     this.setState({
       edit: false,
       creatingSubnote: false,
       confirmCancelEditOpen: false,
     });
-    this.props.updateNote(null);
+    updateNote(null);
   };
 
-  save = async (note: {
+  save = async (noteData: {
     title: string;
     body: string;
     tags: string[];
     parent_note_id?: number;
   }) => {
-    const { title, body, tags, parent_note_id } = note;
+    const { new: isNew, note, updateNote } = this.props;
+    const { creatingSubnote } = this.state;
+    const { title, body, tags, parent_note_id: parentNoteId } = noteData;
     let result;
-    if (this.props.new || this.state.creatingSubnote) {
+    if (isNew || creatingSubnote) {
       result = await axios.put('/api/secure/note', {
         title,
         body,
-        parent_note_id,
+        parent_note_id: parentNoteId,
       });
     } else {
-      result = await axios.patch(`/api/secure/notes/${this.props.note.id}`, {
+      result = await axios.patch(`/api/secure/notes/${note.id}`, {
         title,
         body,
-        parent_note_id,
+        parent_note_id: parentNoteId,
       });
     }
 
@@ -269,45 +267,47 @@ class Note extends React.Component<Props, State> {
       creatingSubnote: false,
     });
 
-    this.props.updateNote(result.data);
+    updateNote(result.data);
   };
 
   doDelete = async () => {
-    const { id } = this.props.note;
-    let result = await axios.delete(`/api/secure/notes/${id}`);
-    this.props.deleteNote(id);
+    const { note, deleteNote } = this.props;
+    const _ = await axios.delete(`/api/secure/notes/${note.id}`);
+    deleteNote(note.id);
   };
 
   archiveNote = async () => {
+    const { new: isNew, note, updateNote } = this.props;
     this.setState({ moreMenuEl: null });
 
     // What even does archiving a new note mean?
-    if (this.props.new) {
+    if (isNew) {
       return;
     }
 
-    const { id, archived } = this.props.note;
+    const { id, archived } = note;
     const result = await axios.patch(`/api/secure/notes/${id}`, {
       archived: !archived,
     });
 
-    this.props.updateNote(result.data);
+    updateNote(result.data);
   };
 
   pinNote = async () => {
+    const { new: isNew, note, updateNote } = this.props;
     this.setState({ moreMenuEl: null });
 
     // What even does pinning a new note mean?
-    if (this.props.new) {
+    if (isNew) {
       return;
     }
 
-    const { id, pinned } = this.props.note;
+    const { id, pinned } = note;
     const result = await axios.patch(`/api/secure/notes/${id}`, {
       pinned: !pinned,
     });
 
-    this.props.updateNote(result.data);
+    updateNote(result.data);
   };
 
   startEdit = () => {
@@ -323,7 +323,18 @@ class Note extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      note,
+      width,
+      titles,
+      depth,
+      subnotes,
+      search,
+      updateNote,
+      deleteNote,
+    } = this.props;
+    const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
     const parseHtml = htmlParser({
       isValidNode: (node: { type: string }) => node.type !== 'script',
     });
@@ -332,16 +343,16 @@ class Note extends React.Component<Props, State> {
     return (
       <Card
         className={classNames(classes.card, {
-          [classes.unlinked]: this.props.note.user_id == 1,
-          [classes.archived]: this.props.note.archived,
+          [classes.unlinked]: note.user_id === 1,
+          [classes.archived]: note.archived,
         })}
       >
         <CardHeader
           className={classes.cardHeader}
-          avatar={this.props.note.pinned ? <PinIcon /> : null}
-          title={this.props.note.title}
+          avatar={note.pinned ? <PinIcon /> : null}
+          title={note.title}
           action={
-            this.state.edit ? null : (
+            edit ? null : (
               <>
                 <IconButton
                   onClick={this.startSubnoteCreate}
@@ -385,85 +396,77 @@ class Note extends React.Component<Props, State> {
             Delete Note
           </MenuItem>
           <MenuItem onClick={this.pinNote}>
-            <ListItemIcon>
-              {this.props.note.pinned ? <UnpinIcon /> : <PinIcon />}
-            </ListItemIcon>
-            {this.props.note.pinned ? 'Unpin Note' : 'Pin Note'}
+            <ListItemIcon>{note.pinned ? <UnpinIcon /> : <PinIcon />}</ListItemIcon>
+            {note.pinned ? 'Unpin Note' : 'Pin Note'}
           </MenuItem>
           <MenuItem onClick={this.archiveNote}>
-            <ListItemIcon>
-              {this.props.note.archived ? <UnarchiveIcon /> : <ArchiveIcon />}
-            </ListItemIcon>
-            {this.props.note.archived ? 'Unarchive Note' : 'Archive Note'}
+            <ListItemIcon>{note.archived ? <UnarchiveIcon /> : <ArchiveIcon />}</ListItemIcon>
+            {note.archived ? 'Unarchive Note' : 'Archive Note'}
           </MenuItem>
         </Menu>
         <ConfirmationDialog
-          open={this.state.confirmDeleteOpen}
-          title={`You are about to delete note: ${this.props.note.title}`}
+          open={confirmDeleteOpen}
+          title={`You are about to delete note: ${note.title}`}
           onPositive={this.doDelete}
           onNegative={() => this.setState({ confirmDeleteOpen: false })}
         />
         <ConfirmationDialog
-          open={this.state.confirmCancelEditOpen}
-          title={`If you close this editor, you will lose your changes.`}
+          open={confirmCancelEditOpen}
+          title='If you close this editor, you will lose your changes.'
           onPositive={this.cancelEdit}
           onNegative={() => this.setState({ confirmCancelEditOpen: false })}
         />
         <CardContent className={classes.cardContent}>
           <Dialog
             classes={{ root: classes.markdown }}
-            open={this.state.edit || this.state.creatingSubnote}
+            open={edit || creatingSubnote}
             fullWidth
             maxWidth='lg'
-            fullScreen={isWidthDown('xs', this.props.width)}
+            fullScreen={isWidthDown('xs', width)}
             onClose={this.tryCancelEdit}
           >
             <Suspense
               fallback={
-                <ReactLoading
-                  type='spin'
-                  className={classes.loadingSpinner}
-                  color='#000000'
-                />
+                <ReactLoading type='spin' className={classes.loadingSpinner} color='#000000' />
               }
             >
               <NoteEditor
-                open={this.state.edit}
+                open={edit}
                 onSave={this.save}
                 ref={this.noteEditor}
                 note={
-                  this.state.edit
-                    ? this.props.note
+                  edit
+                    ? note
                     : {
                         title: '',
                         body: '',
                         tags: [],
-                        parent_note_id: this.props.note.id,
+                        parent_note_id: note.id,
                       }
                 }
               />
             </Suspense>
           </Dialog>
-          <Tags tags={this.props.note.tags} />
+          <Tags tags={note.tags} />
           <ReactMarkdown
             className={classes.markdown}
             renderers={{
-              text: props => <AutoLink titles={this.props.titles} {...props} />,
+              text: props => <AutoLink titles={titles}>{props.children}</AutoLink>,
             }}
             escapeHtml={false}
             astPlugins={[parseHtml]}
           >
-            {this.props.note.body}
+            {note.body}
           </ReactMarkdown>
 
           <Grid container spacing={8} className={classes.contentRoot}>
             <NoteList
-              parent_note_id={this.props.note.id}
-              depth={(this.props.depth || 0) + 1}
-              notes={this.props.subnotes}
-              search={this.props.search}
-              updateNote={this.props.updateNote}
-              deleteNote={this.props.deleteNote}
+              parent_note_id={note.id}
+              depth={(depth || 0) + 1}
+              notes={subnotes}
+              search={search}
+              updateNote={updateNote}
+              deleteNote={deleteNote}
             />
           </Grid>
         </CardContent>

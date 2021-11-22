@@ -7,14 +7,11 @@
 // except according to those terms.
 
 import * as React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Note, { InnerNote } from 'components/Note';
-import { NoteData } from 'data/types';
-import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom';
+import { NoteData, AppState } from 'data/types';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import NoteList from 'components/NoteList';
-import { LinkIdMap } from 'data/selectors';
-import { AppState } from 'data/types';
 import { connect } from 'react-redux';
+import { InnerNote } from './Note';
 
 interface Props extends RouteComponentProps {
   notes: Map<number, NoteData>;
@@ -25,16 +22,14 @@ interface Props extends RouteComponentProps {
   firstNoteRef: React.RefObject<InnerNote>;
 }
 
-class FilteredNoteList extends React.Component<Props> {
-  render() {
-    const params = this.props.match.params as { ids: string };
-    const parsedIds = new Set(params.ids.split(',').map(i => parseInt(i, 10)));
+const FilteredNoteList = (props: Props) => {
+  const { match } = props;
+  const params = match.params as { ids: string };
+  const parsedIds = new Set(params.ids.split(',').map(i => parseInt(i, 10)));
 
-    return (
-      <NoteList parent_note_id={null} renderOnly={parsedIds} {...this.props} />
-    );
-  }
-}
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <NoteList parent_note_id={null} renderOnly={parsedIds} {...props} />;
+};
 
 export const Inner = FilteredNoteList;
 
