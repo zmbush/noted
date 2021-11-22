@@ -10,7 +10,7 @@ members = ["db", "expand-yaml-anchors"]
 [dependencies]
 chrono = "0.4.7"
 clap = "2.33.3"
-diesel = { version = "1.4.2", features = ["postgres", "r2d2"] }
+diesel = { version = "1.4.8", features = ["postgres", "r2d2"] }
 failure = "0.1.8"
 fern = "0.6.0"
 futures = "0.1.28"
