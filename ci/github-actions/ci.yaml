@@ -21,6 +21,9 @@ jobs:
           override: true
           components: rustfmt, clippy
 
+      - name: Install kcov packages
+        run: sudo apt-get install -y libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
+
       - name: Install diesel_cli
         uses: actions-rs/install@v0.1
         with:
@@ -28,8 +31,11 @@ jobs:
           version: 1.4.1
           use-tool-cache: true
 
-      - name: Install kcov packages
-        run: sudo apt-get install -y libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
+      - name: Install cargo-kcov
+        uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-kcov
+          use-tool-cache: true
 
       - name: Install postgres
         run: |
