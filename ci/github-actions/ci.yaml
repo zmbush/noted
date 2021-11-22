@@ -37,11 +37,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install diesel_cli
-        uses: actions-rs/install@v0.1
-        with:
-          crate: diesel_cli
-          version: 1.4.1
-          use-tool-cache: true
+        run: |
+          (cargo install --list | grep 'diesel_cli') || cargo install diesel_cli --no-default-features --features postgres 
 
       - name: Install postgres
         run: |
