@@ -85,7 +85,11 @@ jobs:
           command: test
           args: --all
 
-      - name: GRCov
+      - name: Pre-Install grcov
+        run: |
+          which grcov || cargo install grcov
+
+      - name: Run grcov
         id: coverage
         uses: actions-rs/grcov@v0.1
 

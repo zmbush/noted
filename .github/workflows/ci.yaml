@@ -74,7 +74,9 @@ jobs:
         with:
           command: test
           args: "--all"
-      - name: GRCov
+      - name: Pre-Install grcov
+        run: "which grcov || cargo install grcov\n"
+      - name: Run grcov
         id: coverage
         uses: actions-rs/grcov@v0.1
       - name: Upload Codecov
