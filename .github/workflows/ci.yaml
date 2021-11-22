@@ -62,6 +62,8 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Generate Kcov
+        run: "wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&\ntar xzf master.tar.gz &&\ncd kcov-master &&\nmkdir build &&\ncd build &&\ncmake .. &&\nmake &&\nmake install DESTDIR=../../kcov-build &&\ncd ../.. &&\nrm -rf kcov-master &&\ncargo kcov --all --no-clean-rebuild --kcov kcov-build/usr/local/bin/kcov &&\nbash <(curl -s https://codecov.io/bash) &&\necho \"Uploaded code coverage\"\n"
   node-ci:
     name: Node Build/Test/Lint
     runs-on: ubuntu-latest

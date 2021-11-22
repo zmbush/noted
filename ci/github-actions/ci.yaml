@@ -69,6 +69,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate Kcov
+        run: |
+          wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+          tar xzf master.tar.gz &&
+          cd kcov-master &&
+          mkdir build &&
+          cd build &&
+          cmake .. &&
+          make &&
+          make install DESTDIR=../../kcov-build &&
+          cd ../.. &&
+          rm -rf kcov-master &&
+          cargo kcov --all --no-clean-rebuild --kcov kcov-build/usr/local/bin/kcov &&
+          bash <(curl -s https://codecov.io/bash) &&
+          echo "Uploaded code coverage"
+
   node-ci:
     name: Node Build/Test/Lint
     runs-on: ubuntu-latest
