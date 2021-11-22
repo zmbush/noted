@@ -6,10 +6,8 @@ pull_request_rules:
 
   - name: automatic merge when reviewed and CI passes
     conditions:
-      - status-success=CI / Rust Build/Test/Lint (push)
-      - status-success=CI / Rust Build/Test/Lint (pull_request)
-      - status-success=CI / Node Build/Test/Lint (push)
-      - status-success=CI / Node Build/Test/Lint (pull_request)
+      - status-success=Rust Build/Test/Lint
+      - status-success=Node Build/Test/Lint
       - status-success=codecov/patch
       - status-success=codecov/project
       - '#approved-reviews-by>=1'
@@ -24,10 +22,8 @@ pull_request_rules:
 
   - name: automatic merge when author is zmbush and CI passes
     conditions:
-      - status-success=CI / Rust Build/Test/Lint (push)
-      - status-success=CI / Rust Build/Test/Lint (pull_request)
-      - status-success=CI / Node Build/Test/Lint (push)
-      - status-success=CI / Node Build/Test/Lint (pull_request)
+      - status-success=Rust Build/Test/Lint
+      - status-success=Node Build/Test/Lint
       - status-success=codecov/patch
       - status-success=codecov/project
       - author=zmbush
