@@ -34,4 +34,5 @@ export type UserData = {
   updated_at: string;
 };
 
+// eslint-disable-next-line no-redeclare
 export type AppState = AppState;

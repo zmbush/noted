@@ -17,11 +17,7 @@ import { NoteData, AppState } from 'data/types';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
-import {
-  LinkIdMap,
-  getFilteredSearchIndex,
-  getSortedNoteIds,
-} from 'data/selectors';
+import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
@@ -57,22 +53,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   createFromSearch?: (e: React.SyntheticEvent) => void;
   firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
-  width?:
-    | false
-    | 'auto'
-    | true
-    | 1
-    | 2
-    | 3
-    | 4
-    | 5
-    | 6
-    | 7
-    | 8
-    | 9
-    | 10
-    | 11
-    | 12;
+  width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 }
 
 class NoteList extends React.Component<Props> {
@@ -85,132 +66,126 @@ class NoteList extends React.Component<Props> {
     this.getFuse(props.searchIndex);
   }
 
-  getFuse = memoize((index: Map<number, NoteData>) => {
-    return new Fuse(Array.from(index.values()), {
-      distance: 100,
-      keys: [
-        {
-          name: 'title',
-          weight: 1.0,
-        },
-        {
-          name: 'tags',
-          weight: 1.0,
-        },
-        {
-          name: 'body',
-          weight: 0.5,
-        },
-      ],
-      id: 'id',
-      location: 0,
-      matchAllTokens: true,
-      maxPatternLength: 32,
-      minMatchCharLength: 1,
-      shouldSort: true,
-      threshold: 0.4,
-      tokenize: true,
-    });
-  });
+  getFuse = memoize(
+    (index: Map<number, NoteData>) =>
+      new Fuse(Array.from(index.values()), {
+        distance: 100,
+        keys: [
+          {
+            name: 'title',
+            weight: 1.0,
+          },
+          {
+            name: 'tags',
+            weight: 1.0,
+          },
+          {
+            name: 'body',
+            weight: 0.5,
+          },
+        ],
+        id: 'id',
+        location: 0,
+        matchAllTokens: true,
+        maxPatternLength: 32,
+        minMatchCharLength: 1,
+        shouldSort: true,
+        threshold: 0.4,
+        tokenize: true,
+      }),
+  );
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      renderOnly,
+      sortedIds,
+      search,
+      searchIndex,
+      depth,
+      width,
+      createFromSearch,
+      updateNote,
+      firstNoteRef,
+      deleteNote,
+    } = this.props;
     let { notes } = this.props;
 
-    if (this.props.renderOnly) {
-      notes = new Map(
-        Array.from(notes.entries()).filter(([id, note]) =>
-          this.props.renderOnly.has(id)
-        )
-      );
+    if (renderOnly) {
+      notes = new Map(Array.from(notes.entries()).filter(([id, _note]) => renderOnly.has(id)));
     }
 
-    if (this.props.search != '') {
-      let elements = [];
-      let results = (this.getFuse(this.props.searchIndex).search(
-        this.props.search
-      ) as any) as string[];
+    if (search !== '') {
+      const elements = [];
+      const results = (this.getFuse(searchIndex).search(search) as any) as string[];
 
       if (
-        this.props.depth == 1 &&
-        (results.length == 0 ||
-          notes.get(parseInt(results[0], 10)).title != this.props.search)
+        depth === 1 &&
+        (results.length === 0 || notes.get(parseInt(results[0], 10)).title !== search)
       ) {
         elements.push(
-          <Grid item key='new' className={classes.item} xs={this.props.width}>
+          <Grid item key='new' className={classes.item} xs={width}>
             <Button
               variant='contained'
               color='primary'
               className={classes.newButton}
-              onClick={this.props.createFromSearch}
+              onClick={createFromSearch}
             >
-              <AddIcon
-                className={classNames(classes.leftIcon, classes.iconSmall)}
-              />
-              Add {this.props.search}
+              <AddIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+              Add {search}
             </Button>
-          </Grid>
+          </Grid>,
         );
       }
 
       let i = 0;
-      for (let idStr of results) {
-        let id = parseInt(idStr, 10);
+      results.forEach(idStr => {
+        const id = parseInt(idStr, 10);
         if (!notes.has(id)) {
+          // eslint-disable-next-line no-console
           console.log('Note ', id, ' not found');
         } else {
           elements.push(
-            <Grid item key={id} className={classes.item} xs={this.props.width}>
+            <Grid item key={id} className={classes.item} xs={width}>
               <Note
-                depth={this.props.depth + 1}
+                depth={depth + 1}
                 note={notes.get(id)}
-                search={this.props.search}
-                updateNote={this.props.updateNote}
-                deleteNote={this.props.deleteNote}
-                ref={i == 0 ? this.props.firstNoteRef : null}
+                search={search}
+                updateNote={updateNote}
+                deleteNote={deleteNote}
+                ref={i === 0 ? firstNoteRef : null}
               />
-            </Grid>
+            </Grid>,
           );
-          i++;
+          i += 1;
         }
-      }
+      });
       return elements;
-    } else {
-      let result = [];
-      for (let id of this.props.sortedIds) {
-        if (notes.has(id)) {
-          const n = notes.get(id);
-          result.push(
-            <Grid
-              item
-              key={n.id}
-              className={classes.item}
-              xs={this.props.width}
-            >
-              <Note
-                depth={this.props.depth + 1}
-                note={n}
-                updateNote={this.props.updateNote}
-                deleteNote={this.props.deleteNote}
-                search={this.props.search}
-              />
-            </Grid>
-          );
-        }
-      }
-      return result;
     }
+    const result: any[] = [];
+    sortedIds.forEach(id => {
+      if (notes.has(id)) {
+        const n = notes.get(id);
+        result.push(
+          <Grid item key={n.id} className={classes.item} xs={width}>
+            <Note
+              depth={depth + 1}
+              note={n}
+              updateNote={updateNote}
+              deleteNote={deleteNote}
+              search={search}
+            />
+          </Grid>,
+        );
+      }
+    });
+    return result;
   }
 }
 
-const mapStateToProps = (
-  state: AppState,
-  props: { parent_note_id: number }
-) => ({
+const mapStateToProps = (state: AppState, props: { parent_note_id: number }) => ({
   searchIndex: getFilteredSearchIndex(state, { note_id: props.parent_note_id }),
   sortedIds: getSortedNoteIds(state),
 });
 
-export default withRouter(
-  connect(mapStateToProps)(withStyles(styles)(NoteList))
-);
+export default withRouter(connect(mapStateToProps)(withStyles(styles)(NoteList)));

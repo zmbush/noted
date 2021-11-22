@@ -43,54 +43,57 @@ class LogIn extends React.Component<LogInProps, LogInState> {
   }
 
   signInOrUp = async (e: React.SyntheticEvent) => {
+    const { logIn: doLogIn } = this.props;
+    const { signing_in: signingIn, email, password, name } = this.state;
     e.preventDefault();
 
     let result;
-    if (this.state.signing_in) {
+    if (signingIn) {
       result = await axios.post('/api/sign_in', {
-        email: this.state.email,
-        password: this.state.password,
+        email,
+        password,
       });
     } else {
       result = await axios.put('/api/sign_up', {
-        email: this.state.email,
-        password: this.state.password,
-        name: this.state.name,
+        email,
+        password,
+        name,
       });
     }
 
     this.setState(initialState);
-    this.props.logIn(result.data);
+    doLogIn(result.data);
   };
 
   render() {
+    const { open } = this.props;
+    const { signing_in: signingIn, name, email, password } = this.state;
     return (
-      <Dialog open={this.props.open}>
-        <DialogTitle>
-          {this.state.signing_in ? 'Sign In' : 'Sign Up'}
-        </DialogTitle>
+      <Dialog open={open}>
+        <DialogTitle>{signingIn ? 'Sign In' : 'Sign Up'}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             To use Noted, you must sign in.{' '}
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               href='#'
               onClick={e => {
                 e.preventDefault();
-                this.setState({ signing_in: !this.state.signing_in });
+                this.setState({ signing_in: !signingIn });
               }}
             >
-              {this.state.signing_in ? 'Sign Up' : 'Sign In'}
+              {signingIn ? 'Sign Up' : 'Sign In'}
             </a>{' '}
             instead.
           </DialogContentText>
           <form onSubmit={this.signInOrUp}>
-            {this.state.signing_in ? null : (
+            {signingIn ? null : (
               <TextField
                 margin='dense'
                 id='name'
                 label='Name'
                 type='text'
-                value={this.state.name}
+                value={name}
                 onChange={e => this.setState({ name: e.target.value })}
                 fullWidth
               />
@@ -100,7 +103,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
               id='name'
               label='Email Address'
               type='email'
-              value={this.state.email}
+              value={email}
               onChange={e => this.setState({ email: e.target.value })}
               fullWidth
             />
@@ -109,20 +112,16 @@ class LogIn extends React.Component<LogInProps, LogInState> {
               id='name'
               label='Password'
               type='password'
-              value={this.state.password}
+              value={password}
               onChange={e => this.setState({ password: e.target.value })}
               fullWidth
             />
-            <input
-              type='submit'
-              value='Submit'
-              style={{ visibility: 'hidden' }}
-            />
+            <input type='submit' value='Submit' style={{ visibility: 'hidden' }} />
           </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.signInOrUp} color='primary'>
-            {this.state.signing_in ? 'Sign In' : 'Sign Up'}
+            {signingIn ? 'Sign In' : 'Sign Up'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -130,7 +129,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
   }
 }
 
-const mapStateToProps = (state: AppState) => ({});
+const mapStateToProps = (_state: AppState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   logIn(user: UserData) {
@@ -141,5 +140,5 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(LogIn);

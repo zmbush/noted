@@ -15,28 +15,28 @@ const getNoteId = (_: any, props: { note_id: number }) => props.note_id;
 
 const listNotes = createSelector(
   getNotes,
-  (notes: Map<number, NoteData>) => Array.from(notes.values())
+  (notes: Map<number, NoteData>) => Array.from(notes.values()),
 );
 
 const validParent = (note: NoteData) => !!note.parent_note_id;
 
 const listAllTitles = createSelector(
   listNotes,
-  notes => notes.map(note => [note.id, note.title])
+  notes => notes.map(note => [note.id, note.title]),
 );
 
 const listAllTitleParts = createSelector(
   listAllTitles,
   (titleList: [number, string][]) =>
     titleList.flatMap(([id, title]) => {
-      let titles = [[title, id]];
-      for (let titlePart of title.split(' ')) {
+      const titles = [[title, id]];
+      title.split(' ').forEach(titlePart => {
         if (titlePart.length > 3) {
           titles.push([titlePart, id]);
         }
-      }
+      });
       return titles;
-    })
+    }),
 );
 
 export const getLinkIds = createSelector(
@@ -49,7 +49,7 @@ export const getLinkIds = createSelector(
         titles.set(titlePart, new Set([id]));
       }
       return titles;
-    }, new Map<string, Set<number>>())
+    }, new Map<string, Set<number>>()),
 );
 
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
@@ -58,46 +58,40 @@ export const getTopLevelNotes = createSelector(
   listNotes,
   notes => {
     const topLevel = new Map();
-    for (let note of notes) {
+    notes.forEach(note => {
       if (!validParent(note)) {
         topLevel.set(note.id, note);
       }
-    }
+    });
     return topLevel;
-  }
+  },
 );
 
-export const getSubnotes = createCachedSelector(
-  listNotes,
-  getNoteId,
-  (notes, note_id) => {
-    const subnotes = new Map();
+export const getSubnotes = createCachedSelector(listNotes, getNoteId, (notes, noteId) => {
+  const subnotes = new Map();
 
-    for (let note of notes.values()) {
-      if (note.parent_note_id == note_id) {
-        subnotes.set(note.id, note);
-      }
+  [...notes.values()].forEach(note => {
+    if (note.parent_note_id === noteId) {
+      subnotes.set(note.id, note);
     }
+  });
 
-    return subnotes;
-  }
-)((state, props: { note_id: number }) => props.note_id);
+  return subnotes;
+})((state, props: { note_id: number }) => props.note_id);
 
 export type SubnoteMap = ReturnType<typeof getSubnotes>;
 
-const calculateMergedNote = (
-  note: NoteData,
-  notes: Map<number, NoteData>
-): NoteData => {
-  let newNote = Object.assign({}, note);
-  let subnotes = getSubnotes({ notes }, { note_id: note.id });
+const calculateMergedNote = (note: NoteData, notes: Map<number, NoteData>): NoteData => {
+  const newNote = { ...note };
+  const subnotes = getSubnotes({ notes }, { note_id: note.id });
 
-  for (let subnote of subnotes.values()) {
-    let mergedNote = calculateMergedNote(subnote, notes);
+  // eslint-disable-next-line no-restricted-syntax
+  [...subnotes.values()].forEach(subnote => {
+    const mergedNote = calculateMergedNote(subnote, notes);
     newNote.title = `${newNote.title} ${mergedNote.title}`;
     newNote.tags = Array.from(new Set([...newNote.tags, ...mergedNote.tags]));
     newNote.body = `${newNote.body} ${mergedNote.body}`;
-  }
+  });
 
   return newNote;
 };
@@ -105,60 +99,57 @@ const calculateMergedNote = (
 export const getSearchIndex = createSelector(
   getNotes,
   allNotes => {
-    let result = new Map();
-    for (let note of allNotes.values()) {
+    const result = new Map();
+    [...allNotes.values()].forEach(note => {
       result.set(note.id, calculateMergedNote(note, allNotes));
-    }
+    });
     return result;
-  }
+  },
 );
 
 export const getFilteredSearchIndex = createCachedSelector(
   getSearchIndex,
   getNoteId,
-  (notes, note_id) => {
+  (notes, noteId) => {
     const subnotes = new Map();
-    if (note_id == null) {
-      note_id = 0;
+    if (noteId == null) {
+      // eslint-disable-next-line no-param-reassign
+      noteId = 0;
     }
 
-    for (let note of notes.values()) {
-      if (note.parent_note_id == note_id) {
+    [...notes.values()].forEach(note => {
+      if (note.parent_note_id === noteId) {
         subnotes.set(note.id, note);
       }
-    }
+    });
 
     return subnotes;
-  }
-)((state, props: { note_id: number }) =>
-  props.note_id == null ? -1 : props.note_id
-);
+  },
+)((state, props: { note_id: number }) => (props.note_id == null ? -1 : props.note_id));
 
 const mostRecent = (a: string, b: string) => (a > b ? a : b);
 
 export const getSortedNoteIds = createSelector(
   getNotes,
   allNotes => {
-    let map = new Map();
+    const map = new Map();
 
-    for (let note of allNotes.values()) {
+    [...allNotes.values()].forEach(note => {
       map.set(note.id, note.updated_at);
-    }
+    });
 
-    for (let note of allNotes.values()) {
-      while (validParent(note)) {
-        map.set(
-          note.parent_note_id,
-          mostRecent(note.updated_at, map.get(note.parent_note_id))
-        );
-        note = allNotes.get(note.parent_note_id);
+    [...allNotes.values()].forEach(note => {
+      let curNote = note;
+      while (validParent(curNote)) {
+        map.set(note.parent_note_id, mostRecent(note.updated_at, map.get(note.parent_note_id)));
+        curNote = allNotes.get(note.parent_note_id);
       }
-    }
+    });
 
     return Array.from(map.entries())
       .sort(([aid, a]: [number, string], [bid, b]: [number, string]) => {
-        let na = allNotes.get(aid);
-        let nb = allNotes.get(bid);
+        const na = allNotes.get(aid);
+        const nb = allNotes.get(bid);
 
         if (na.pinned && !nb.pinned) {
           return -1;
@@ -183,5 +174,5 @@ export const getSortedNoteIds = createSelector(
         return 0;
       })
       .map(([id, _]) => id);
-  }
+  },
 );

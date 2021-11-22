@@ -1,0 +1,66 @@
+env:
+  browser: true
+  es2021: true
+  mocha: true
+  jest: true
+globals:
+  google: 'readonly'
+extends:
+  - 'plugin:react/recommended'
+  - airbnb
+  - prettier
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaFeatures:
+    jsx: true
+  ecmaVersion: 13
+  sourceType: module
+plugins:
+  - react
+  - '@typescript-eslint'
+  - prettier
+settings:
+  'import/resolver':
+    webpack:
+      config: 'webpack.dev.js'
+  react:
+    version: 'detect'
+rules:
+  'prettier/prettier': error
+  'react/jsx-filename-extension':
+    - error
+    - allow: 'as-needed'
+      extensions:
+        - .jsx
+        - .tsx
+        - .css
+  'react/require-default-props': off
+  'import/extensions':
+    - error
+    - never
+  'import/no-extraneous-dependencies':
+    - error
+    - devDependencies:
+        - '**/*.spec.js'
+        - '**/*.spec.ts'
+        - '**/*.spec.jsx'
+        - '**/*.spec.tsx'
+        - './webpack.config.ts'
+  no-use-before-define: off
+  '@typescript-eslint/no-use-before-define':
+    - error
+  no-unused-vars: off
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - varsIgnorePattern: ^_
+      argsIgnorePattern: ^_
+  no-shadow: off
+  '@typescript-eslint/no-shadow':
+    - error
+  'react/function-component-definition':
+    - error
+    - namedComponents: arrow-function
+      unnamedComponents: arrow-function
+  'react/static-property-placement':
+    - error
+    - static public field

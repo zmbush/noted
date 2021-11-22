@@ -19,12 +19,7 @@ import { NoteData } from 'data/types';
 
 import BindKeyboard from 'components/BindKeyboard';
 
-import {
-  createStyles,
-  withStyles,
-  Theme,
-  WithStyles,
-} from '@material-ui/core/styles';
+import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
 
 import 'tui-editor/dist/tui-editor-extColorSyntax';
 import { Editor } from '@toast-ui/react-editor';
@@ -71,13 +66,15 @@ class NoteEditor extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { title, body, tags, parent_note_id } = this.props.note;
-    this.state = { title, body, tags, parent_note_id };
+    const { note } = this.props;
+    const { title, body, tags, parent_note_id: parentNoteId } = note;
+    this.state = { title, body, tags, parent_note_id: parentNoteId };
     this.editor = React.createRef();
   }
 
   componentDidUpdate(oldProps: Props) {
-    if (this.props.open && this.props.open != oldProps.open) {
+    const { open } = this.props;
+    if (open && open !== oldProps.open) {
       const e = this.editor.current;
       if (e) {
         const inst = e.getInstance();
@@ -89,34 +86,38 @@ class NoteEditor extends React.Component<Props, State> {
 
   save = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
-    this.props.onSave(this.state);
+    const { onSave } = this.props;
+    onSave(this.state);
   };
 
-  hasChanges() {
-    let current = new Map(Object.entries(this.state));
-    let initial = new Map(Object.entries(this.props.note));
-    return (
-      Array.from(current.keys()).filter((key: string) => {
-        return current.get(key) != initial.get(key);
-      }).length > 0
-    );
-  }
-
   addTag = (tag: string) => {
-    this.setState({
-      tags: [...this.state.tags, tag],
-    });
+    this.setState(prevState => ({
+      tags: [...prevState.tags, tag],
+    }));
   };
 
   deleteTag = (tag: string, index: number) => {
-    this.state.tags.splice(index, 1);
+    const { tags } = this.state;
+    tags.splice(index, 1);
     this.setState({
-      tags: this.state.tags,
+      tags,
     });
   };
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
+  hasChanges() {
+    const { note } = this.props;
+    const current = new Map(Object.entries(this.state));
+    const initial = new Map(Object.entries(note));
+    return (
+      Array.from(current.keys()).filter((key: string) => current.get(key) !== initial.get(key))
+        .length > 0
+    );
+  }
+
   render() {
     const { classes } = this.props;
+    const { title, tags, body } = this.state;
     return (
       <BindKeyboard keys='ctrl+s' callback={this.save}>
         <Card classes={{ root: classes.editorRoot }}>
@@ -124,7 +125,7 @@ class NoteEditor extends React.Component<Props, State> {
             title={
               <Input
                 classes={{ root: classes.titleInput }}
-                value={this.state.title}
+                value={title}
                 onChange={e => {
                   this.setState({ title: e.target.value });
                 }}
@@ -143,12 +144,12 @@ class NoteEditor extends React.Component<Props, State> {
               placeholder='Tags'
               fullWidth
               dataSource={['arc:Delmirev', 'type:Location', 'type:Character']}
-              value={this.state.tags}
+              value={tags}
               onAdd={this.addTag}
               onDelete={this.deleteTag}
             />
             <Editor
-              initialValue={this.state.body}
+              initialValue={body}
               initialEditType='wysiwyg'
               ref={this.editor}
               onChange={() => {

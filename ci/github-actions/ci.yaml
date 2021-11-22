@@ -49,6 +49,7 @@ jobs:
       - name: Create database
         run: |
           sudo -u postgres psql -c 'create database noted;' -U postgres
+          echo "RUSTFLAGS=\"-C link-dead-code\"" >> $GITHUB_ENV
           echo "DATABASE_URL=postgres://postgres:postgres@localhost/noted" >> $GITHUB_ENV
           echo "MIGRATION_DIRECTORY=db/migrations" >> $GITHUB_ENV
           echo "DIESEL_CONFIG_FILE=db/diesel.toml" >> $GITHUB_ENV
@@ -102,12 +103,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '10'
+          node-version: '16'
       - name: Build Package
         run: npm ci && npm run build
-      # TODO: Enable eslint
-      # - name: Lint
-      #   run: npm run lint
+      - name: Lint
+        run: npm run lint
       - name: Test
         run: npm run test
       - name: Upload Codecov

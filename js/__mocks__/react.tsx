@@ -8,6 +8,7 @@
 
 const react = jest.requireActual('react');
 
+// eslint-disable-next-line react/react-in-jsx-scope
 const Suspense = ({ children }: any) => <div>{children}</div>;
 Suspense.displayName = 'React.Suspense';
 

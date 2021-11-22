@@ -6,8 +6,10 @@ pull_request_rules:
 
   - name: automatic merge when reviewed and CI passes
     conditions:
-      - status-success=Travis CI - Branch
-      - status-success=Travis CI - Pull Request
+      - status-success=Rust Build/Test/Lint - Branch
+      - status-success=Rust Build/Test/Lint - Pull Request
+      - status-success=Node Build/Test/Lint - Branch
+      - status-success=Node Build/Test/Lint - Pull Request
       - status-success=codecov/patch
       - status-success=codecov/project
       - '#approved-reviews-by>=1'
@@ -22,8 +24,10 @@ pull_request_rules:
 
   - name: automatic merge when author is zmbush and CI passes
     conditions:
-      - status-success=Travis CI - Branch
-      - status-success=Travis CI - Pull Request
+      - status-success=Rust Build/Test/Lint - Branch
+      - status-success=Rust Build/Test/Lint - Pull Request
+      - status-success=Node Build/Test/Lint - Branch
+      - status-success=Node Build/Test/Lint - Pull Request
       - status-success=codecov/patch
       - status-success=codecov/project
       - author=zmbush

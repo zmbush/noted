@@ -22,6 +22,7 @@ interface Props extends DialogProps {
   onPositive?: () => void;
 }
 
+// eslint-disable-next-line react/prefer-stateless-function
 export default class ConfirmationDialog extends React.Component<Props> {
   static defaultProps = {
     message: 'Are you sure?',
@@ -32,21 +33,14 @@ export default class ConfirmationDialog extends React.Component<Props> {
   };
 
   render() {
-    const {
-      title,
-      message,
-      negative,
-      onNegative,
-      positive,
-      onPositive,
-      ...other
-    } = this.props;
+    const { title, message, negative, onNegative, positive, onPositive, ...other } = this.props;
     return (
       <Dialog
         disableBackdropClick
         disableEscapeKeyDown
         maxWidth='xs'
         aria-labelledby='confirmation-dialog-title'
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...other}
       >
         <DialogTitle id='confirmation-dialog-title'>{title}</DialogTitle>
