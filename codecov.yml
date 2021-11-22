@@ -1,0 +1,2 @@
+ignore:
+  - 'expand-yaml-anchors'
