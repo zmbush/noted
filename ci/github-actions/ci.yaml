@@ -4,7 +4,11 @@ x--expand-yaml-anchors--remove:
     uses: actions/checkout@v2
 
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
 
 jobs:
   check:
@@ -69,11 +73,22 @@ jobs:
           command: fmt
           args: --all -- --check
 
-      - name: Run cargo clippy
+      - name: Run clippy action to produce annotations
+        # Don't run on dependabot PRs
+        # https://github.com/actions-rs/clippy-check/issues/2#issuecomment-807852653
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
         uses: actions-rs/clippy-check@v1
         with:
-          toolchain: 1.47.0
           token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.47.0
+          args: --all-features
+
+      - name: Run clippy manually without annotations
+        if: github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]'
+        uses: actions-rs/cargo@v1
+        with:
+          command: +1.47.0 clippy
+          args: --all-targets -- -D warnings
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
