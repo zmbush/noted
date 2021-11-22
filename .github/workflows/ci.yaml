@@ -21,6 +21,56 @@ name: CI
       - dependabot/**
   pull_request: ~
 jobs:
+  coverage:
+    name: Rust Coverage
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-C link-dead-code"
+      DATABASE_URL: "postgres://postgres:postgres@localhost/noted"
+      MIGRATION_DIRECTORY: db/migrations
+      DIESEL_CONFIG_FILE: db/diesel.toml
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - with:
+          toolchain: nightly
+          profile: minimal
+          components: "clippy, rustfmt"
+          override: true
+        name: Install toolchain
+        uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v2
+        with:
+          path: "~/.cargo/bin/\n"
+          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-cov"
+      - name: Install diesel_cli
+        run: "which diesel || cargo install diesel_cli --no-default-features --features postgres \n"
+      - name: Install postgres
+        run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
+      - name: Create database
+        run: "sudo -u postgres psql -c 'create database noted;' -U postgres\ndiesel migration run --locked-schema\n"
+      - name: Clean target
+        uses: actions-rs/cargo@v1
+        with:
+          command: clean
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        env:
+          CARGO_INCREMENTAL: "0"
+          RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
+          RUSTDOCFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
+        with:
+          command: test
+          args: "--all --all-features --no-fail-fast"
+      - name: Pre-Install grcov
+        run: "which grcov || cargo install grcov\n"
+      - name: Run grcov
+        id: coverage
+        uses: actions-rs/grcov@v0.1
+      - name: Upload Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: "${{ steps.coverage.outputs.report }}"
   check:
     name: Rust Build/Test/Lint
     runs-on: ubuntu-latest
@@ -37,14 +87,8 @@ jobs:
         with:
           profile: minimal
           toolchain: 1.47.0
-          components: clippy
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
+          components: "clippy, rustfmt"
           override: true
-          components: "rustfmt, clippy"
       - uses: actions/cache@v2
         with:
           path: "~/.cargo/bin/\n~/.cargo/registry/index/\n~/.cargo/registry/cache/\n~/.cargo/git/db/\ntarget/\n"
@@ -54,9 +98,7 @@ jobs:
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
       - name: Create database
-        run: "sudo -u postgres psql -c 'create database noted;' -U postgres\n"
-      - name: Migrate Database
-        run: diesel migration run --locked-schema
+        run: "sudo -u postgres psql -c 'create database noted;' -U postgres\ndiesel migration run --locked-schema\n"
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
@@ -67,33 +109,18 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          toolchain: 1.47.0
           args: "--all-features"
       - name: Run clippy manually without annotations
         if: "github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]'"
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          toolchain: 1.47.0
           args: "--all-targets -- -D warnings"
       - name: Run cargo test
         uses: actions-rs/cargo@v1
-        env:
-          CARGO_INCREMENTAL: "0"
-          RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
-          RUSTDOCFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
         with:
           command: test
           args: "--all"
-      - name: Pre-Install grcov
-        run: "which grcov || cargo install grcov\n"
-      - name: Run grcov
-        id: coverage
-        uses: actions-rs/grcov@v0.1
-      - name: Upload Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          files: "${{ steps.coverage.outputs.report }}"
   node-ci:
     name: Node Build/Test/Lint
     runs-on: ubuntu-latest
