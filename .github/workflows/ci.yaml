@@ -37,8 +37,6 @@ jobs:
           toolchain: 1.47.0
           override: true
           components: "rustfmt, clippy"
-      - name: Install kcov packages
-        run: sudo apt-get install -y libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
       - uses: actions/cache@v2
         with:
           path: "~/.cargo/bin/\n~/.cargo/registry/index/\n~/.cargo/registry/cache/\n~/.cargo/git/db/\ntarget/\n"
@@ -48,11 +46,6 @@ jobs:
         with:
           crate: diesel_cli
           version: 1.4.1
-          use-tool-cache: true
-      - name: Install cargo-kcov
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-kcov
           use-tool-cache: true
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
@@ -78,8 +71,6 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Generate Kcov
-        run: "wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&\ntar xzf master.tar.gz &&\ncd kcov-master &&\nmkdir build &&\ncd build &&\ncmake .. &&\nmake &&\nmake install DESTDIR=../../kcov-build &&\ncd ../.. &&\nrm -rf kcov-master &&\ncargo kcov --all --no-clean-rebuild --kcov kcov-build/usr/local/bin/kcov &&\nbash <(curl -s https://codecov.io/bash) &&\necho \"Uploaded code coverage\"\n"
   node-ci:
     name: Node Build/Test/Lint
     runs-on: ubuntu-latest

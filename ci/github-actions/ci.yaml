@@ -26,9 +26,6 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Install kcov packages
-        run: sudo apt-get install -y libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev
-
       - uses: actions/cache@v2
         with:
           path: |
@@ -44,12 +41,6 @@ jobs:
         with:
           crate: diesel_cli
           version: 1.4.1
-          use-tool-cache: true
-
-      - name: Install cargo-kcov
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-kcov
           use-tool-cache: true
 
       - name: Install postgres
@@ -89,22 +80,6 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Kcov
-        run: |
-          wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-          tar xzf master.tar.gz &&
-          cd kcov-master &&
-          mkdir build &&
-          cd build &&
-          cmake .. &&
-          make &&
-          make install DESTDIR=../../kcov-build &&
-          cd ../.. &&
-          rm -rf kcov-master &&
-          cargo kcov --all --no-clean-rebuild --kcov kcov-build/usr/local/bin/kcov &&
-          bash <(curl -s https://codecov.io/bash) &&
-          echo "Uploaded code coverage"
 
   node-ci:
     name: Node Build/Test/Lint
