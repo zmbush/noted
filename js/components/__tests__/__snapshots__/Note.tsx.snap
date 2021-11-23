@@ -11,19 +11,19 @@ exports[`<Note /> matches snapshot 1`] = `
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
       </React.Fragment>
     }
@@ -185,23 +185,23 @@ exports[`<Note /> matches snapshot 2`] = `
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
       </React.Fragment>
     }
-    avatar={<Memo />}
+    avatar={<UNDEFINED />}
   />
   <WithStyles(ForwardRef(Menu))
     anchorEl={null}
@@ -349,19 +349,19 @@ exports[`<Note /> matches snapshot 3`] = `
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
         <ForwardRef(WithStyles)
           aria-label="More Options"
           onClick={[Function]}
         >
-          <Memo />
+          <UNDEFINED />
         </ForwardRef(WithStyles)>
       </React.Fragment>
     }
