@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -8,6 +5,7 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
 import { Editor } from '@toast-ui/react-editor';
 import { shallow } from 'enzyme';
 import ChipInput from 'material-ui-chip-input';
@@ -91,7 +89,7 @@ describe('<NoteEditor />', () => {
       },
     };
 
-    toastEditor.props().onChange();
+    toastEditor.props().events.change({ source: 'wysiwyg', data: null });
 
     expect(wrapper.state('body')).toEqual('new body');
   });

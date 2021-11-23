@@ -5,14 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
 import axios from 'axios';
 import classNames from 'classnames';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'codemirror/lib/codemirror.css';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'tui-color-picker/dist/tui-color-picker.css';
-// eslint-disable-next-line import/extensions
-import 'tui-editor/dist/tui-editor.min.css';
 
 import * as React from 'react';
 import { Suspense } from 'react';
