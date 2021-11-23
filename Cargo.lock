@@ -1647,9 +1647,9 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yaml-merge-keys"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd236a7dc9bb598f349fe4a8754f49181fee50284daa15cd1ba652d722280004"
+checksum = "6284ae06f1140e880ea73836ec628023d4e4810aeabe626591b15e5842963142"
 dependencies = [
  "lazy_static",
  "thiserror",
