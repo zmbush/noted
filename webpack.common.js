@@ -8,8 +8,7 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
@@ -22,6 +21,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
+    fallback: { path: require.resolve('path-browserify') },
     modules: ['node_modules', 'js'],
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
   },
@@ -65,21 +65,6 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks: 'all',
-      minSize: 30000,
-      maxSize: 0,
-      minChunks: 1,
-      maxAsyncRequests: 5,
-      maxInitialRequests: 3,
-      automaticNameDelimiter: '~',
-      name: true,
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\=]/,
-          chunks: 'initial',
-          name: 'vendor',
-          enforce: true,
-        },
-      },
     },
     runtimeChunk: true,
   },

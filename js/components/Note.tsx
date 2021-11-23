@@ -9,7 +9,6 @@
 import * as React from 'react';
 import { Suspense } from 'react';
 import { connect } from 'react-redux';
-import htmlParser from 'react-markdown/plugins/html-parser';
 import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 
@@ -48,6 +47,7 @@ import AutoLink from 'components/AutoLink';
 import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 import { getLinkIds, getSubnotes } from 'data/selectors';
+import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
@@ -326,10 +326,15 @@ class Note extends React.Component<Props, State> {
     const { classes, note, width, titles, depth, subnotes, search, updateNote, deleteNote } =
       this.props;
     const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
-    const parseHtml = htmlParser({
-      isValidNode: (node: { type: string }) => node.type !== 'script',
-    });
     const { moreMenuEl } = this.state;
+    const markdownComponents: ReactMarkdownOptions['components'] = {
+      // eslint-disable-next-line react/no-unstable-nested-components
+      p: ({ children }) => (
+        <p>
+          <AutoLink titles={titles}>{children}</AutoLink>
+        </p>
+      ),
+    };
 
     return (
       <Card
@@ -439,14 +444,7 @@ class Note extends React.Component<Props, State> {
             </Suspense>
           </Dialog>
           <Tags tags={note.tags} />
-          <ReactMarkdown
-            className={classes.markdown}
-            renderers={{
-              text: (props) => <AutoLink titles={titles}>{props.children}</AutoLink>,
-            }}
-            escapeHtml={false}
-            astPlugins={[parseHtml]}
-          >
+          <ReactMarkdown className={classes.markdown} components={markdownComponents}>
             {note.body}
           </ReactMarkdown>
 

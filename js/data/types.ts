@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import { AppState } from 'data/reducers';
+export { AppState } from 'data/reducers';
 
 export type NoteData = {
   id?: number;
@@ -33,6 +33,3 @@ export type UserData = {
   created_at: string;
   updated_at: string;
 };
-
-// eslint-disable-next-line no-redeclare
-export type AppState = AppState;

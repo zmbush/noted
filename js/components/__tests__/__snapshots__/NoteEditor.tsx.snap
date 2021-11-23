@@ -14,14 +14,14 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   >
     <WithStyles(ForwardRef(CardHeader))
       action={
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(IconButton))
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
       }
       title={
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(Input))
           classes={
             Object {
               "root": "",
@@ -95,14 +95,14 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
   >
     <WithStyles(ForwardRef(CardHeader))
       action={
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(IconButton))
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
       }
       title={
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(Input))
           classes={
             Object {
               "root": "",

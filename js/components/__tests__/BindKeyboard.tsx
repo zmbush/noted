@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -14,16 +18,14 @@ import BindKeyboard from '../BindKeyboard';
 
 describe('<BindKeyboard />', () => {
   test('matches snapshot', () => {
-    expect(
-      shallow(<BindKeyboard keys={'key'} callback={() => {}} />)
-    ).toMatchSnapshot();
+    expect(shallow(<BindKeyboard keys={'key'} callback={() => {}} />)).toMatchSnapshot();
 
     expect(
       shallow(
         <BindKeyboard keys={'key'} callback={() => {}}>
           Contents
-        </BindKeyboard>
-      )
+        </BindKeyboard>,
+      ),
     ).toMatchSnapshot();
   });
 
@@ -36,9 +38,7 @@ describe('<BindKeyboard />', () => {
 
     let cb = () => {};
 
-    const wrapper = shallow(
-      <BindKeyboard keys='a+key' callback={cb} action='toot' />
-    );
+    const wrapper = shallow(<BindKeyboard keys='a+key' callback={cb} action='toot' />);
     expect(bindFn).toBeCalledWith('a+key', cb, 'toot');
     wrapper.unmount();
     expect(unbindFn).toBeCalledWith('a+key', 'toot');

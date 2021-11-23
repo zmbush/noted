@@ -156,7 +156,7 @@ fn main() -> Result<(), Error> {
                 ));
             }
         })
-        .level(log::LevelFilter::Warn)
+        .level(log::LevelFilter::Info)
         .level_for("noted", log::LevelFilter::Trace)
         .level_for("gotham::middleware::logger", log::LevelFilter::Info)
         .chain(std::io::stdout())
@@ -217,5 +217,6 @@ fn main() -> Result<(), Error> {
         route.get_or_head("/").to_file("dist/index.html");
     });
 
+    println!("Starting gotham at port {}", port);
     Ok(gotham::start(("0.0.0.0", port), router)?)
 }
