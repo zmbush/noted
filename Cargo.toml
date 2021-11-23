@@ -13,7 +13,7 @@ clap = "2.33.3"
 diesel = { version = "1.4.8", features = ["postgres", "r2d2"] }
 failure = "0.1.8"
 fern = "0.6.0"
-futures = "0.3.1"
+futures = "0.3.18"
 gotham = "0.7.1"
 gotham_derive = "0.7.0"
 http = "0.2"
