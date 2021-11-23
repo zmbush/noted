@@ -45,7 +45,7 @@
     "@types/fuse": "^2.6.0",
     "@types/immutability-helper": "^2.6.3",
     "@types/jest": "^27.0.3",
-    "@types/memoize-one": "^4.1.1",
+    "@types/memoize-one": "^5.1.2",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.8.3",
