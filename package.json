@@ -57,7 +57,7 @@
     "classnames": "^2.2.6",
     "cli": ">=1.0.0",
     "core-js": "^3.0.1",
-    "css-loader": "^3.0.0",
+    "css-loader": "^6.5.1",
     "debounce-promise": "^3.1.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.15.6",
@@ -95,7 +95,7 @@
     "ts-loader": "^6.0.0",
     "tui-editor": "^1.4.10",
     "typescript": "^3.3.4000",
-    "webpack": "^4.46.0",
+    "webpack": "^5.64.2",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.1",
     "webpack-merge": "^5.8.0"
