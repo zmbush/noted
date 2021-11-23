@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rustup override set 1.47.0
+rustup override set 1.50.0
 rustup component add clippy
 rustup component add rust-src
 rustup component add rustfmt

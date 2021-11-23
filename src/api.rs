@@ -1,3 +1,7 @@
+use std::pin::Pin;
+
+use hyper::body;
+
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -8,7 +12,7 @@
 
 use {
     diesel::prelude::*,
-    futures::{future, stream::Stream, Future},
+    futures::{future, FutureExt},
     gotham::{
         handler::{HandlerFuture, IntoResponse},
         middleware::{session::SessionData, Middleware},
@@ -32,31 +36,31 @@ pub struct UserData {
 struct JsonifyErrors;
 
 impl Middleware for JsonifyErrors {
-    fn call<Chain>(self, state: State, chain: Chain) -> Box<HandlerFuture>
+    fn call<Chain>(self, state: State, chain: Chain) -> Pin<Box<HandlerFuture>>
     where
-        Chain: FnOnce(State) -> Box<HandlerFuture> + Send + 'static,
+        Chain: FnOnce(State) -> Pin<Box<HandlerFuture>> + Send + 'static,
     {
         let result = chain(state);
 
-        let f = result.then(|result| match result {
-            Ok((state, response)) => future::ok((state, response)),
-            Err((state, error)) => {
-                warn!("Converting to JSON response");
-                let response_body = json!({
-                    "error": format!("{}", error),
-                    "details": format!("{:?}", error),
-                });
+        result
+            .then(|result| match result {
+                Ok((state, response)) => future::ok((state, response)),
+                Err((state, error)) => {
+                    warn!("Converting to JSON response");
+                    let response_body = json!({
+                        "error": format!("{}", error.status()),
+                        "details": format!("{:?}", error),
+                    });
 
-                let mut response = error.into_response(&state);
+                    let mut response = error.into_response(&state);
 
-                *response.body_mut() =
-                    hyper::Body::from(serde_json::to_string(&response_body).unwrap());
+                    *response.body_mut() =
+                        hyper::Body::from(serde_json::to_string(&response_body).unwrap());
 
-                future::ok((state, response))
-            }
-        });
-
-        Box::new(f)
+                    future::ok((state, response))
+                }
+            })
+            .boxed()
     }
 }
 
@@ -81,9 +85,9 @@ impl ResponseExtender<hyper::Body> for StaticErrorHandler {
 struct RequireUser;
 
 impl Middleware for RequireUser {
-    fn call<Chain>(self, state: State, chain: Chain) -> Box<HandlerFuture>
+    fn call<Chain>(self, state: State, chain: Chain) -> Pin<Box<HandlerFuture>>
     where
-        Chain: FnOnce(State) -> Box<HandlerFuture> + Send + 'static,
+        Chain: FnOnce(State) -> Pin<Box<HandlerFuture>> + Send + 'static,
     {
         if SessionData::<crate::AppData>::borrow_from(&state)
             .user
@@ -93,7 +97,7 @@ impl Middleware for RequireUser {
         } else {
             warn!("No user available, refusing request.");
             let resp = crate::error::NotedError::NotLoggedIn.into_json_response(&state);
-            Box::new(future::ok((state, resp)))
+            future::ok((state, resp)).boxed()
         }
     }
 }
@@ -155,7 +159,7 @@ fn json_response<S: serde::Serialize>(
         .unwrap())
 }
 
-fn body_handler<F>(mut state: State, f: F) -> Box<HandlerFuture>
+fn body_handler<F>(mut state: State, f: F) -> Pin<Box<HandlerFuture>>
 where
     F: 'static
         + Send
@@ -164,27 +168,25 @@ where
             &mut State,
         ) -> Result<hyper::http::Response<hyper::Body>, crate::error::NotedError>,
 {
-    Box::new(
-        hyper::Body::take_from(&mut state)
-            .concat2()
-            .then(move |full_body| match full_body {
-                Ok(valid_body) => {
-                    let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
-                    let res = match f(body_content, &mut state) {
-                        Ok(res) => res,
-                        Err(e) => e.into_json_response(&state),
-                    };
-                    future::ok((state, res))
-                }
-                Err(e) => {
-                    let res = crate::error::NotedError::from(e).into_json_response(&state);
-                    future::ok((state, res))
-                }
-            }),
-    )
+    body::to_bytes(hyper::Body::take_from(&mut state))
+        .then(move |full_body| match full_body {
+            Ok(valid_body) => {
+                let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
+                let res = match f(body_content, &mut state) {
+                    Ok(res) => res,
+                    Err(e) => e.into_json_response(&state),
+                };
+                future::ok((state, res))
+            }
+            Err(e) => {
+                let res = crate::error::NotedError::from(e).into_json_response(&state);
+                future::ok((state, res))
+            }
+        })
+        .boxed()
 }
 
-fn handler<F>(mut state: State, f: F) -> Box<HandlerFuture>
+fn handler<F>(mut state: State, f: F) -> Pin<Box<HandlerFuture>>
 where
     F: 'static
         + Send
@@ -195,7 +197,7 @@ where
         Err(e) => e.into_json_response(&state),
     };
 
-    Box::new(future::ok((state, res)))
+    future::ok((state, res)).boxed()
 }
 
 trait StateExt {
@@ -209,7 +211,7 @@ impl StateExt for State {
         let current_user_id = SessionData::<crate::AppData>::borrow_from(self)
             .user
             .as_ref()
-            .ok_or_else(|| crate::error::NotedError::NotLoggedIn)?
+            .ok_or(crate::error::NotedError::NotLoggedIn)?
             .current_user_id;
 
         Ok(users::table
@@ -223,13 +225,13 @@ struct IdParams {
     id: i32,
 }
 
-fn list_notes(state: State) -> Box<HandlerFuture> {
+fn list_notes(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         json_response(state.current_user()?.list_notes(&noted_db::db()?)?)
     })
 }
 
-fn new_note(state: State) -> Box<HandlerFuture> {
+fn new_note(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
         json_response(
             state
@@ -239,14 +241,14 @@ fn new_note(state: State) -> Box<HandlerFuture> {
     })
 }
 
-fn read_note(state: State) -> Box<HandlerFuture> {
+fn read_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         let note_id = IdParams::borrow_from(&state).id;
         json_response(state.current_user()?.note(note_id, &noted_db::db()?)?)
     })
 }
 
-fn update_note(state: State) -> Box<HandlerFuture> {
+fn update_note(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
         json_response(state.current_user()?.update_note(
             IdParams::borrow_from(&state).id,
@@ -256,7 +258,7 @@ fn update_note(state: State) -> Box<HandlerFuture> {
     })
 }
 
-fn delete_note(state: State) -> Box<HandlerFuture> {
+fn delete_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         if state
             .current_user()?
@@ -273,7 +275,7 @@ fn delete_note(state: State) -> Box<HandlerFuture> {
     })
 }
 
-fn set_tags(state: State) -> Box<HandlerFuture> {
+fn set_tags(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
         json_response(state.current_user()?.set_note_tags(
             IdParams::borrow_from(&state).id,
@@ -290,7 +292,7 @@ fn log_in(state: &mut State, u: &noted_db::models::User) {
     });
 }
 
-fn sign_up(state: State) -> Box<HandlerFuture> {
+fn sign_up(state: State) -> Pin<Box<HandlerFuture>> {
     use noted_db::models::User;
 
     body_handler(state, move |s, mut state| {
@@ -301,7 +303,7 @@ fn sign_up(state: State) -> Box<HandlerFuture> {
     })
 }
 
-fn sign_in(state: State) -> Box<HandlerFuture> {
+fn sign_in(state: State) -> Pin<Box<HandlerFuture>> {
     use noted_db::models::User;
 
     body_handler(state, move |s, mut state| {
@@ -321,11 +323,11 @@ fn sign_in(state: State) -> Box<HandlerFuture> {
     })
 }
 
-fn get_user(state: State) -> Box<HandlerFuture> {
+fn get_user(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| json_response(state.current_user()?))
 }
 
-fn sign_out(state: State) -> Box<HandlerFuture> {
+fn sign_out(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         let data = SessionData::<crate::AppData>::borrow_mut_from(state);
         data.user = None;
