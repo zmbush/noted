@@ -24,7 +24,7 @@ export const LinkedText = ({ ids, text }: LinkProps) => {
     const theseIds = Array.from(ids.values()).join(',');
     return <Link to={`/disambiguation/${theseIds}`}>{text}</Link>;
   }
-  return (text as any) as React.ReactElement;
+  return text as any as React.ReactElement;
 };
 LinkedText.displayName = 'LinkedText';
 
@@ -41,7 +41,7 @@ export default class AutoLink extends React.Component<Props> {
 
     titles.forEach((value, key) => {
       let newBody: any[] = [];
-      body.forEach(part => {
+      body.forEach((part) => {
         if (typeof part === 'string' || part instanceof String) {
           const elements = part.split(new RegExp(key, 'i')).reduce((r, a, ix, arr) => {
             r.push(a);

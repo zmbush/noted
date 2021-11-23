@@ -380,9 +380,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withStyles(styles)(App)),
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App)));
