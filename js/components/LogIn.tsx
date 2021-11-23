@@ -77,7 +77,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               href='#'
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 this.setState({ signing_in: !signingIn });
               }}
@@ -94,7 +94,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
                 label='Name'
                 type='text'
                 value={name}
-                onChange={e => this.setState({ name: e.target.value })}
+                onChange={(e) => this.setState({ name: e.target.value })}
                 fullWidth
               />
             )}
@@ -104,7 +104,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
               label='Email Address'
               type='email'
               value={email}
-              onChange={e => this.setState({ email: e.target.value })}
+              onChange={(e) => this.setState({ email: e.target.value })}
               fullWidth
             />
             <TextField
@@ -113,7 +113,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
               label='Password'
               type='password'
               value={password}
-              onChange={e => this.setState({ password: e.target.value })}
+              onChange={(e) => this.setState({ password: e.target.value })}
               fullWidth
             />
             <input type='submit' value='Submit' style={{ visibility: 'hidden' }} />
@@ -138,7 +138,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(LogIn);
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

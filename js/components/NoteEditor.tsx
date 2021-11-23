@@ -91,7 +91,7 @@ class NoteEditor extends React.Component<Props, State> {
   };
 
   addTag = (tag: string) => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       tags: [...prevState.tags, tag],
     }));
   };
@@ -126,7 +126,7 @@ class NoteEditor extends React.Component<Props, State> {
               <Input
                 classes={{ root: classes.titleInput }}
                 value={title}
-                onChange={e => {
+                onChange={(e) => {
                   this.setState({ title: e.target.value });
                 }}
                 style={{ fontSize: 'inherit' }}

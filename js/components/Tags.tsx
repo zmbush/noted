@@ -77,7 +77,7 @@ const Tags = (props: TagsProps) => {
 
   return (
     <div className={classes.noPrint}>
-      {tags.map(t => (
+      {tags.map((t) => (
         <Tag key={t} tag={t} />
       ))}
     </div>
