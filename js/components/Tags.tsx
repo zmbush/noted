@@ -10,8 +10,7 @@ import * as React from 'react';
 
 import { PropTypes } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
-import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
 
 import GestureIcon from '@material-ui/icons/Gesture';
 import GradeIcon from '@material-ui/icons/Grade';

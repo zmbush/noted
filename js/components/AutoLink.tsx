@@ -30,13 +30,16 @@ LinkedText.displayName = 'LinkedText';
 
 type Props = {
   titles: LinkIdMap;
-  children: string;
+  children: (React.ReactNode & React.ReactNode[]) | string;
 };
 
 export default class AutoLink extends React.Component<Props> {
   render() {
     const { children, titles } = this.props;
-    let body: any[] = [children];
+    let body: any[] = children as any[];
+    if (!(children instanceof Array)) {
+      body = [children];
+    }
     let keyIx = 1;
 
     titles.forEach((value, key) => {

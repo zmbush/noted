@@ -9,7 +9,6 @@
 import * as React from 'react';
 import { Suspense } from 'react';
 import { connect } from 'react-redux';
-import htmlParser from 'react-markdown/plugins/html-parser';
 import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 
@@ -326,9 +325,6 @@ class Note extends React.Component<Props, State> {
     const { classes, note, width, titles, depth, subnotes, search, updateNote, deleteNote } =
       this.props;
     const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
-    const parseHtml = htmlParser({
-      isValidNode: (node: { type: string }) => node.type !== 'script',
-    });
     const { moreMenuEl } = this.state;
 
     return (
@@ -441,11 +437,12 @@ class Note extends React.Component<Props, State> {
           <Tags tags={note.tags} />
           <ReactMarkdown
             className={classes.markdown}
-            renderers={{
-              text: (props) => <AutoLink titles={titles}>{props.children}</AutoLink>,
+            components={{
+              text: ({ node, children, ...props }) => (
+                <AutoLink titles={titles}>{children}</AutoLink>
+              ),
+              p: ({ node, children, ...props }) => <AutoLink titles={titles}>{children}</AutoLink>,
             }}
-            escapeHtml={false}
-            astPlugins={[parseHtml]}
           >
             {note.body}
           </ReactMarkdown>
