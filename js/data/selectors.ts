@@ -76,7 +76,6 @@ const calculateMergedNote = (note: NoteData, notes: Map<number, NoteData>): Note
   const newNote = { ...note };
   const subnotes = getSubnotes({ notes }, { note_id: note.id });
 
-  // eslint-disable-next-line no-restricted-syntax
   [...subnotes.values()].forEach((subnote) => {
     const mergedNote = calculateMergedNote(subnote, notes);
     newNote.title = `${newNote.title} ${mergedNote.title}`;
