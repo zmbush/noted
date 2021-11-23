@@ -14,7 +14,7 @@ diesel = { version = "1.4.8", features = ["postgres", "r2d2"] }
 failure = "0.1.8"
 fern = "0.6.0"
 futures = "0.3.1"
-gotham = "0.5.0"
+gotham = "0.7.1"
 gotham_derive = "0.5.0"
 http = "0.2"
 hyper = "0.13.1"
