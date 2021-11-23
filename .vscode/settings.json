@@ -17,7 +17,8 @@
   "psi-header.changes-tracking": {
     "isActive": true,
     "autoHeader": "autoSave",
-    "enforceHeader": true
+    "enforceHeader": true,
+    "exclude": ["json"]
   },
   "psi-header.lang-config": [
     {
