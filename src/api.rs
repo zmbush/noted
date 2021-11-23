@@ -16,8 +16,8 @@ use {
     gotham::{
         handler::{HandlerFuture, IntoResponse},
         middleware::{session::SessionData, Middleware},
-        pipeline::{new_pipeline, single::single_pipeline},
-        router::{builder::*, response::extender::ResponseExtender, Router},
+        pipeline::{new_pipeline, single_pipeline},
+        router::{builder::*, response::ResponseExtender, Router},
         state::{FromState, State},
     },
     gotham_derive::{NewMiddleware, StateData, StaticResponseExtender},
@@ -243,7 +243,7 @@ fn new_note(state: State) -> Pin<Box<HandlerFuture>> {
 
 fn read_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
-        let note_id = IdParams::borrow_from(&state).id;
+        let note_id = IdParams::borrow_from(state).id;
         json_response(state.current_user()?.note(note_id, &noted_db::db()?)?)
     })
 }
@@ -251,7 +251,7 @@ fn read_note(state: State) -> Pin<Box<HandlerFuture>> {
 fn update_note(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
         json_response(state.current_user()?.update_note(
-            IdParams::borrow_from(&state).id,
+            IdParams::borrow_from(state).id,
             &parse_json(&s)?,
             &noted_db::db()?,
         )?)
@@ -262,7 +262,7 @@ fn delete_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         if state
             .current_user()?
-            .delete_note(IdParams::borrow_from(&state).id, &noted_db::db()?)
+            .delete_note(IdParams::borrow_from(state).id, &noted_db::db()?)
         {
             json_response(json!({
                 "status": "ok"
@@ -278,7 +278,7 @@ fn delete_note(state: State) -> Pin<Box<HandlerFuture>> {
 fn set_tags(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
         json_response(state.current_user()?.set_note_tags(
-            IdParams::borrow_from(&state).id,
+            IdParams::borrow_from(state).id,
             &parse_json::<Vec<_>>(&s)?,
             &noted_db::db()?,
         )?)
