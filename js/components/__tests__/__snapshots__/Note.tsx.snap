@@ -7,24 +7,24 @@ exports[`<Note /> matches snapshot 1`] = `
   <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="More Options"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
       </React.Fragment>
     }
     avatar={null}
@@ -53,7 +53,7 @@ exports[`<Note /> matches snapshot 1`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <DeleteIcon />
+        <Memo(ForwardRef(DeleteIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -61,7 +61,7 @@ exports[`<Note /> matches snapshot 1`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <DoneIcon />
+        <Memo(ForwardRef(DoneIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Pin Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -69,7 +69,7 @@ exports[`<Note /> matches snapshot 1`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <ArchiveIcon />
+        <Memo(ForwardRef(ArchiveIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Archive Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -136,27 +136,15 @@ exports[`<Note /> matches snapshot 1`] = `
         ]
       }
     />
-    <ReactMarkdown
-      astPlugins={
-        Array [
-          [Function],
-        ]
-      }
-      escapeHtml={false}
-      parserOptions={Object {}}
-      plugins={Array []}
-      rawSourcePos={false}
-      renderers={
+    <default_1
+      components={
         Object {
-          "text": [Function],
+          "p": [Function],
         }
       }
-      skipHtml={false}
-      sourcePos={false}
-      transformLinkUri={[Function]}
     >
       note body
-    </ReactMarkdown>
+    </default_1>
     <WithStyles(ForwardRef(Grid))
       container={true}
       spacing={8}
@@ -181,27 +169,27 @@ exports[`<Note /> matches snapshot 2`] = `
   <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="More Options"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
       </React.Fragment>
     }
-    avatar={<UNDEFINED />}
+    avatar={<Memo />}
   />
   <WithStyles(ForwardRef(Menu))
     anchorEl={null}
@@ -226,7 +214,7 @@ exports[`<Note /> matches snapshot 2`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <DeleteIcon />
+        <Memo(ForwardRef(DeleteIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -234,7 +222,7 @@ exports[`<Note /> matches snapshot 2`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <ClearIcon />
+        <Memo(ForwardRef(ClearIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Unpin Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -242,7 +230,7 @@ exports[`<Note /> matches snapshot 2`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <ArchiveIcon />
+        <Memo(ForwardRef(ArchiveIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Archive Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -303,24 +291,12 @@ exports[`<Note /> matches snapshot 2`] = `
       </React.Suspense>
     </WithStyles(ForwardRef(Dialog))>
     <WithStyles(Tags) />
-    <ReactMarkdown
-      astPlugins={
-        Array [
-          [Function],
-        ]
-      }
-      escapeHtml={false}
-      parserOptions={Object {}}
-      plugins={Array []}
-      rawSourcePos={false}
-      renderers={
+    <default_1
+      components={
         Object {
-          "text": [Function],
+          "p": [Function],
         }
       }
-      skipHtml={false}
-      sourcePos={false}
-      transformLinkUri={[Function]}
     />
     <WithStyles(ForwardRef(Grid))
       container={true}
@@ -345,24 +321,24 @@ exports[`<Note /> matches snapshot 3`] = `
   <WithStyles(ForwardRef(CardHeader))
     action={
       <React.Fragment>
-        <ForwardRef(WithStyles)
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Add Subnote"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="Edit Note"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
-        <ForwardRef(WithStyles)
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
+        <WithStyles(ForwardRef(IconButton))
           aria-label="More Options"
           onClick={[Function]}
         >
-          <UNDEFINED />
-        </ForwardRef(WithStyles)>
+          <Memo />
+        </WithStyles(ForwardRef(IconButton))>
       </React.Fragment>
     }
     avatar={null}
@@ -390,7 +366,7 @@ exports[`<Note /> matches snapshot 3`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <DeleteIcon />
+        <Memo(ForwardRef(DeleteIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Delete Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -398,7 +374,7 @@ exports[`<Note /> matches snapshot 3`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <DoneIcon />
+        <Memo(ForwardRef(DoneIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Pin Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -406,7 +382,7 @@ exports[`<Note /> matches snapshot 3`] = `
       onClick={[Function]}
     >
       <WithStyles(ForwardRef(ListItemIcon))>
-        <UnarchiveIcon />
+        <Memo(ForwardRef(UnarchiveIcon)) />
       </WithStyles(ForwardRef(ListItemIcon))>
       Unarchive Note
     </WithStyles(ForwardRef(MenuItem))>
@@ -467,24 +443,12 @@ exports[`<Note /> matches snapshot 3`] = `
       </React.Suspense>
     </WithStyles(ForwardRef(Dialog))>
     <WithStyles(Tags) />
-    <ReactMarkdown
-      astPlugins={
-        Array [
-          [Function],
-        ]
-      }
-      escapeHtml={false}
-      parserOptions={Object {}}
-      plugins={Array []}
-      rawSourcePos={false}
-      renderers={
+    <default_1
+      components={
         Object {
-          "text": [Function],
+          "p": [Function],
         }
       }
-      skipHtml={false}
-      sourcePos={false}
-      transformLinkUri={[Function]}
     />
     <WithStyles(ForwardRef(Grid))
       container={true}

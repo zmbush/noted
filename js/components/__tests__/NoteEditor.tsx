@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -73,11 +77,7 @@ describe('<NoteEditor />', () => {
 
     expect(wrapper.state('title')).toEqual('new title');
 
-    let toastEditor = wrapper
-      .find(CardContent)
-      .dive()
-      .dive()
-      .find(Editor);
+    let toastEditor = wrapper.find(CardContent).dive().dive().find(Editor);
 
     (wrapper.instance() as any).editor = {
       current: {

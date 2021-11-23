@@ -8,10 +8,16 @@
 
 module.exports = {
   preset: 'ts-jest',
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
   roots: ['<rootDir>/js'],
   moduleNameMapper: {
     '^core-js/.*': 'identity-obj-proxy',
     '\\.(css|less)$': 'identity-obj-proxy',
+    'react-markdown': '<rootDir>/js/__mocks__/react-markdown.tsx',
   },
   setupFiles: ['core-js', './js/setupTests.ts'],
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}', '!js/index.tsx'],
