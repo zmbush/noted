@@ -207,7 +207,7 @@ impl User {
             .values((new_note, user_id.eq(self.id)))
             .get_result::<Note>(db)?
             .with_tags(db)
-            .ok_or_else(|| DbError::NotFound)
+            .ok_or(DbError::NotFound)
     }
 
     pub fn list_notes(&self, db: &Conn) -> Result<Vec<NoteWithTags>> {
@@ -238,7 +238,7 @@ impl User {
             .find(id)
             .first::<Note>(db)?
             .with_tags(db)
-            .ok_or_else(|| DbError::NotFound)?)
+            .ok_or(DbError::NotFound)?)
     }
 
     pub fn update_note(&self, id: i32, note: &UpdateNote, db: &Conn) -> Result<NoteWithTags> {

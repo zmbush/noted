@@ -8,7 +8,7 @@
 
 use {
     gotham::{
-        handler::{HandlerError, IntoHandlerError, IntoResponse},
+        handler::{HandlerError, IntoResponse},
         state::State,
     },
     http::status::StatusCode,
@@ -34,16 +34,16 @@ macro_rules! impl_noted_error {
             }
         }
 
-        impl IntoHandlerError for NotedError {
-            fn into_handler_error(self) -> HandlerError {
+        impl From<NotedError> for HandlerError {
+            fn from(error: NotedError) -> HandlerError {
                 use NotedError::*;
 
-                let code = self.code();
+                let code = error.code();
 
-                match self {
-                    DbError(e) => e.into_handler_error(),
-                    $($native => failure::format_err!(stringify!($native)).compat().into_handler_error()),*,
-                    $($type(e) => e.into_handler_error()),*
+                match error {
+                    DbError(e) => e.into(),
+                    $($native => failure::format_err!(stringify!($native)).compat().into()),*,
+                    $($type(e) => HandlerError::from(e)),*
                 }
                 .with_status(code)
             }
@@ -85,7 +85,7 @@ impl_noted_error! {
     DieselResult => (diesel::result::Error, StatusCode::BAD_REQUEST),
     R2D2 => (r2d2::Error, StatusCode::SERVICE_UNAVAILABLE),
     NotFound => (failure::Compat<failure::Error>, StatusCode::NOT_FOUND),
-    Hyper => (hyper::error::Error, StatusCode::INTERNAL_SERVER_ERROR),
+    Hyper => (hyper::Error, StatusCode::INTERNAL_SERVER_ERROR),
     HTTP => (http::Error, StatusCode::INTERNAL_SERVER_ERROR),
     IO => (std::io::Error, StatusCode::SERVICE_UNAVAILABLE),
 }
@@ -104,7 +104,7 @@ impl NotedError {
                 *resp.status_mut() = inner_error.code();
                 resp
             }
-            e => e.into_handler_error().into_response(state),
+            e => HandlerError::from(e).into_response(state),
         }
     }
 }

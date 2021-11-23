@@ -46,7 +46,7 @@ struct App {
 }
 
 impl App {
-    fn from_args() -> Result<Self, Box<dyn Error>> {
+    fn from_args() -> App {
         // Parse CLI arguments
         let args = std::env::args().skip(1).collect::<Vec<_>>();
         let (mode, base) = match args
@@ -63,7 +63,7 @@ impl App {
             }
         };
 
-        Ok(App { mode, base })
+        App { mode, base }
     }
 
     fn run(&self) -> Result<(), Box<dyn Error>> {
@@ -162,7 +162,7 @@ fn filter_document(document: Yaml) -> Yaml {
 }
 
 fn main() {
-    if let Err(err) = App::from_args().and_then(|app| app.run()) {
+    if let Err(err) = App::from_args().run() {
         eprintln!("error: {}", err);
 
         let mut source = err.as_ref() as &dyn Error;

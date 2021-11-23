@@ -1,6 +1,10 @@
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::all))]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::pedantic))]
 
+use std::pin::Pin;
+
+use futures::FutureExt;
+
 use {
     clap::clap_app,
     failure::Error,
@@ -50,6 +54,7 @@ impl RedisBackend {
     }
 }
 
+type SessionFuture = dyn Future<Output = Result<Option<Vec<u8>>, SessionError>> + Send;
 impl Backend for RedisBackend {
     fn persist_session(
         &self,
@@ -64,16 +69,14 @@ impl Backend for RedisBackend {
         self.set_expiry(&identifier)
     }
 
-    fn read_session(
-        &self,
-        identifier: SessionIdentifier,
-    ) -> Box<dyn Future<Item = Option<Vec<u8>>, Error = SessionError> + Send> {
+    fn read_session(&self, identifier: SessionIdentifier) -> Pin<Box<SessionFuture>> {
         let _ = self.set_expiry(&identifier);
 
-        Box::new(match self.0.borrow_mut().get(identifier.value) {
+        match self.0.borrow_mut().get(identifier.value) {
             Ok(v) => future::ok(v),
             Err(e) => future::err(SessionError::Backend(format!("{}", e))),
-        })
+        }
+        .boxed()
     }
 
     fn drop_session(&self, identifier: SessionIdentifier) -> Result<(), SessionError> {
@@ -93,7 +96,7 @@ impl RedisBackendProvider {
 impl NewBackend for RedisBackendProvider {
     type Instance = RedisBackend;
 
-    fn new_backend(&self) -> std::io::Result<RedisBackend> {
+    fn new_backend(&self) -> gotham::anyhow::Result<RedisBackend> {
         Ok(RedisBackend(RefCell::new(
             self.0
                 .get_connection()
