@@ -142,6 +142,11 @@ exports[`<Note /> matches snapshot 1`] = `
           "p": [Function],
         }
       }
+      rehypePlugins={
+        Array [
+          [Function],
+        ]
+      }
     >
       note body
     </default_1>
@@ -297,6 +302,11 @@ exports[`<Note /> matches snapshot 2`] = `
           "p": [Function],
         }
       }
+      rehypePlugins={
+        Array [
+          [Function],
+        ]
+      }
     />
     <WithStyles(ForwardRef(Grid))
       container={true}
@@ -448,6 +458,11 @@ exports[`<Note /> matches snapshot 3`] = `
         Object {
           "p": [Function],
         }
+      }
+      rehypePlugins={
+        Array [
+          [Function],
+        ]
       }
     />
     <WithStyles(ForwardRef(Grid))

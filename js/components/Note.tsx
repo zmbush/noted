@@ -8,6 +8,7 @@
 //
 import axios from 'axios';
 import classNames from 'classnames';
+import rehypeRaw from 'rehype-raw';
 
 import * as React from 'react';
 import { Suspense } from 'react';
@@ -438,7 +439,11 @@ class Note extends React.Component<Props, State> {
             </Suspense>
           </Dialog>
           <Tags tags={note.tags} />
-          <ReactMarkdown className={classes.markdown} components={markdownComponents}>
+          <ReactMarkdown
+            className={classes.markdown}
+            components={markdownComponents}
+            rehypePlugins={[rehypeRaw]}
+          >
             {note.body}
           </ReactMarkdown>
 
