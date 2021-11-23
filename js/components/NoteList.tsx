@@ -117,7 +117,7 @@ class NoteList extends React.Component<Props> {
 
     if (search !== '') {
       const elements = [];
-      const results = (this.getFuse(searchIndex).search(search) as any) as string[];
+      const results = this.getFuse(searchIndex).search(search) as any as string[];
 
       if (
         depth === 1 &&
@@ -139,7 +139,7 @@ class NoteList extends React.Component<Props> {
       }
 
       let i = 0;
-      results.forEach(idStr => {
+      results.forEach((idStr) => {
         const id = parseInt(idStr, 10);
         if (!notes.has(id)) {
           // eslint-disable-next-line no-console
@@ -163,7 +163,7 @@ class NoteList extends React.Component<Props> {
       return elements;
     }
     const result: any[] = [];
-    sortedIds.forEach(id => {
+    sortedIds.forEach((id) => {
       if (notes.has(id)) {
         const n = notes.get(id);
         result.push(

@@ -49,8 +49,8 @@ import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 import { getLinkIds, getSubnotes } from 'data/selectors';
 
-const NoteEditor = React.lazy(() =>
-  import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
+const NoteEditor = React.lazy(
+  () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
 );
 
 const styles = (theme: Theme) =>
@@ -323,17 +323,8 @@ class Note extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      note,
-      width,
-      titles,
-      depth,
-      subnotes,
-      search,
-      updateNote,
-      deleteNote,
-    } = this.props;
+    const { classes, note, width, titles, depth, subnotes, search, updateNote, deleteNote } =
+      this.props;
     const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
     const parseHtml = htmlParser({
       isValidNode: (node: { type: string }) => node.type !== 'script',
@@ -369,7 +360,7 @@ class Note extends React.Component<Props, State> {
                   <EditIcon />
                 </IconButton>
                 <IconButton
-                  onClick={e => this.setState({ moreMenuEl: e.currentTarget })}
+                  onClick={(e) => this.setState({ moreMenuEl: e.currentTarget })}
                   className={classes.noPrint}
                   aria-owns={moreMenuEl ? 'more-menu' : undefined}
                   aria-label='More Options'
@@ -451,7 +442,7 @@ class Note extends React.Component<Props, State> {
           <ReactMarkdown
             className={classes.markdown}
             renderers={{
-              text: props => <AutoLink titles={titles}>{props.children}</AutoLink>,
+              text: (props) => <AutoLink titles={titles}>{props.children}</AutoLink>,
             }}
             escapeHtml={false}
             astPlugins={[parseHtml]}
