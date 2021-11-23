@@ -47,6 +47,7 @@ import AutoLink from 'components/AutoLink';
 import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 import { getLinkIds, getSubnotes } from 'data/selectors';
+import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
@@ -326,6 +327,14 @@ class Note extends React.Component<Props, State> {
       this.props;
     const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
     const { moreMenuEl } = this.state;
+    const markdownComponents: ReactMarkdownOptions['components'] = {
+      // eslint-disable-next-line react/no-unstable-nested-components
+      p: ({ children }) => (
+        <p>
+          <AutoLink titles={titles}>{children}</AutoLink>
+        </p>
+      ),
+    };
 
     return (
       <Card
@@ -435,15 +444,7 @@ class Note extends React.Component<Props, State> {
             </Suspense>
           </Dialog>
           <Tags tags={note.tags} />
-          <ReactMarkdown
-            className={classes.markdown}
-            components={{
-              text: ({ node, children, ...props }) => (
-                <AutoLink titles={titles}>{children}</AutoLink>
-              ),
-              p: ({ node, children, ...props }) => <AutoLink titles={titles}>{children}</AutoLink>,
-            }}
-          >
+          <ReactMarkdown className={classes.markdown} components={markdownComponents}>
             {note.body}
           </ReactMarkdown>
 
