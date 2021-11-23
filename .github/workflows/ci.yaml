@@ -86,7 +86,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.50.0
+          toolchain: 1.56.1
           components: "clippy, rustfmt"
           override: true
       - uses: actions/cache@v2
