@@ -18,11 +18,11 @@ import BindKeyboard from '../BindKeyboard';
 
 describe('<BindKeyboard />', () => {
   test('matches snapshot', () => {
-    expect(shallow(<BindKeyboard keys={'key'} callback={() => {}} />)).toMatchSnapshot();
+    expect(shallow(<BindKeyboard keys='key' callback={() => {}} />)).toMatchSnapshot();
 
     expect(
       shallow(
-        <BindKeyboard keys={'key'} callback={() => {}}>
+        <BindKeyboard keys='key' callback={() => {}}>
           Contents
         </BindKeyboard>,
       ),
@@ -36,7 +36,7 @@ describe('<BindKeyboard />', () => {
     const unbindFn = jest.spyOn(Mousetrap, 'unbind');
     unbindFn.mockClear();
 
-    let cb = () => {};
+    const cb = () => {};
 
     const wrapper = shallow(<BindKeyboard keys='a+key' callback={cb} action='toot' />);
     expect(bindFn).toBeCalledWith('a+key', cb, 'toot');

@@ -13,10 +13,8 @@ const initialState = { loading_notes: false };
 
 type State = typeof initialState;
 
-export default function ui(
-  state = initialState,
-  action: { type?: NotedEvent }
-): State {
+// eslint-disable-next-line default-param-last
+export default function ui(state = initialState, action: { type?: NotedEvent }): State {
   switch (action.type) {
     case NotedEvent.NotesFetchStart: {
       return update(state, { loading_notes: { $set: true } });
@@ -25,6 +23,7 @@ export default function ui(
     case NotedEvent.ApiError: {
       return update(state, { loading_notes: { $set: false } });
     }
+    default:
+      return state;
   }
-  return state;
 }

@@ -34,7 +34,7 @@ const editor = (
 
 describe('<Note />', () => {
   test('matches snapshot', () => {
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
 
     expect(wrapper).toMatchSnapshot();
 

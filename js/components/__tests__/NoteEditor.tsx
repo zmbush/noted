@@ -13,13 +13,13 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { Inner as NoteEditor } from '../NoteEditor';
 import ChipInput from 'material-ui-chip-input';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import { Editor } from '@toast-ui/react-editor';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
+import { Inner as NoteEditor } from '../NoteEditor';
 
 const editor = (
   <NoteEditor
@@ -40,7 +40,7 @@ const editor = (
 
 describe('<NoteEditor />', () => {
   test('matches snapshot', () => {
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
 
     expect(wrapper).toMatchSnapshot();
 
@@ -56,7 +56,7 @@ describe('<NoteEditor />', () => {
   });
 
   test('tag input works', () => {
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
 
     const input = wrapper.find(ChipInput);
 
@@ -67,7 +67,7 @@ describe('<NoteEditor />', () => {
   });
 
   test('title change works', () => {
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
     wrapper
       .find(CardHeader)
       .dive()
@@ -77,7 +77,7 @@ describe('<NoteEditor />', () => {
 
     expect(wrapper.state('title')).toEqual('new title');
 
-    let toastEditor = wrapper.find(CardContent).dive().dive().find(Editor);
+    const toastEditor = wrapper.find(CardContent).dive().dive().find(Editor);
 
     (wrapper.instance() as any).editor = {
       current: {
@@ -99,7 +99,7 @@ describe('<NoteEditor />', () => {
   test('switching to open works', () => {
     let focusCalled = false;
     let moveCursorToEndCalled = false;
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
     (wrapper.instance() as any).editor = {
       current: {
         getInstance: () => ({
@@ -120,7 +120,7 @@ describe('<NoteEditor />', () => {
 
   test('submitting works', () => {
     let noteSaved;
-    let wrapper = shallow(editor);
+    const wrapper = shallow(editor);
     wrapper.setProps({
       onSave: (note: any) => {
         noteSaved = note;

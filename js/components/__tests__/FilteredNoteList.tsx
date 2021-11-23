@@ -14,7 +14,7 @@ import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    const history = createMemoryHistory({ keyLength: 0 });
+    const history = createMemoryHistory();
     expect(
       shallow(
         <FilteredNoteList
@@ -34,8 +34,8 @@ describe('<FilteredNoteList />', () => {
               ids: '1',
             },
           }}
-        />
-      )
+        />,
+      ),
     ).toMatchSnapshot();
   });
 });

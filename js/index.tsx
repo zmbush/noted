@@ -6,14 +6,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-import '@babel/polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 
 import axios from 'axios';
 import reducers from 'data/reducers';
-import { notesFetchStart, logIn, fetchData } from 'data/actions';
+import { logIn, fetchData } from 'data/actions';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -28,7 +29,8 @@ if (process.env.NODE_ENV !== 'production') {
 const w = window as any;
 const store = createStore(
   reducers,
-  w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__()
+  // eslint-disable-next-line no-underscore-dangle
+  w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
 (async () => {
@@ -42,5 +44,5 @@ ReactDOM.render(
       <App />
     </Provider>
   </Router>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

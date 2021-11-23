@@ -9,8 +9,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import AutoLink, { LinkedText } from '../AutoLink';
 import { Link } from 'react-router-dom';
+import AutoLink, { LinkedText } from '../AutoLink';
 
 describe('<AutoLink />', () => {
   test('matches snapshot', () => {
