@@ -5,10 +5,10 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-import { NoteData, ErrorData, UserData } from 'data/types';
 import axios from 'axios';
 import { Dispatch } from 'redux';
+
+import { NoteData, ErrorData, UserData } from 'data/types';
 
 export enum NotedEvent {
   NotesFetchStart = 'NOTES_FETCH_START',

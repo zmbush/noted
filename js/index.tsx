@@ -5,22 +5,19 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
+import axios from 'axios';
 import 'core-js/stable';
+import { createStore } from 'redux';
 import 'regenerator-runtime/runtime';
 
-import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-
-import axios from 'axios';
-import reducers from 'data/reducers';
-import { logIn, fetchData } from 'data/actions';
-
-import { createStore } from 'redux';
+import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import App from 'components/App';
+import { logIn, fetchData } from 'data/actions';
+import reducers from 'data/reducers';
 
 if (process.env.NODE_ENV !== 'production') {
   import('map.prototype.tojson');

@@ -5,9 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+
 import { LinkIdMap } from 'data/selectors';
 
 type LinkProps = {

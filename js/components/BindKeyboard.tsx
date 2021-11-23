@@ -5,10 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import Mousetrap from 'mousetrap';
 
 import * as React from 'react';
-
-import Mousetrap from 'mousetrap';
 
 type Props = {
   keys: string;

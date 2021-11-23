@@ -1,16 +1,17 @@
-// Copyright 2019 Zachary Bush.
+// Copyright 2018 - 2021 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
 import * as React from 'react';
-import { NoteData, AppState } from 'data/types';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import NoteList from 'components/NoteList';
 import { connect } from 'react-redux';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+
+import NoteList from 'components/NoteList';
+import { NoteData, AppState } from 'data/types';
+
 import { InnerNote } from './Note';
 
 interface Props extends RouteComponentProps {

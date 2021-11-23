@@ -5,9 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import update from 'immutability-helper';
 
 import { NotedEvent } from 'data/actions';
-import update from 'immutability-helper';
 
 const initialState = { loading_notes: false };
 

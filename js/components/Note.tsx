@@ -5,49 +5,48 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import axios from 'axios';
+import classNames from 'classnames';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'codemirror/lib/codemirror.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'tui-color-picker/dist/tui-color-picker.css';
+// eslint-disable-next-line import/extensions
+import 'tui-editor/dist/tui-editor.min.css';
 
 import * as React from 'react';
 import { Suspense } from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
+import ReactLoading from 'react-loading';
 import ReactMarkdown from 'react-markdown';
+import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
+import { connect } from 'react-redux';
 
-import axios from 'axios';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
 import CardHeader from '@material-ui/core/CardHeader';
-import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
+import ArchiveIcon from '@material-ui/icons/Archive';
+import UnpinIcon from '@material-ui/icons/Clear';
+import DeleteIcon from '@material-ui/icons/Delete';
+import PinIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ArchiveIcon from '@material-ui/icons/Archive';
 import UnarchiveIcon from '@material-ui/icons/Unarchive';
-import PinIcon from '@material-ui/icons/Done';
-import UnpinIcon from '@material-ui/icons/Clear';
-import ReactLoading from 'react-loading';
-import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'codemirror/lib/codemirror.css';
-// eslint-disable-next-line import/extensions
-import 'tui-editor/dist/tui-editor.min.css';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'tui-color-picker/dist/tui-color-picker.css';
-
-import { NoteData, AppState } from 'data/types';
-import Tags from 'components/Tags';
 import AutoLink from 'components/AutoLink';
-import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/ConfirmationDialog';
+import NoteList from 'components/NoteList';
+import Tags from 'components/Tags';
 import { getLinkIds, getSubnotes } from 'data/selectors';
-import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
+import { NoteData, AppState } from 'data/types';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),

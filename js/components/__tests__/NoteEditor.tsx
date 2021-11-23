@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -9,16 +8,17 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import { Editor } from '@toast-ui/react-editor';
+import { shallow } from 'enzyme';
+import ChipInput from 'material-ui-chip-input';
 
 import * as React from 'react';
-import { shallow } from 'enzyme';
 
-import ChipInput from 'material-ui-chip-input';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
-import { Editor } from '@toast-ui/react-editor';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+
 import { Inner as NoteEditor } from '../NoteEditor';
 
 const editor = (

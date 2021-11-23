@@ -5,13 +5,11 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
 import * as React from 'react';
 
 import { PropTypes } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
-
 import GestureIcon from '@material-ui/icons/Gesture';
 import GradeIcon from '@material-ui/icons/Grade';
 
