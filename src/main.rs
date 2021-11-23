@@ -4,20 +4,21 @@
 use std::pin::Pin;
 
 use futures::FutureExt;
+use gotham::middleware::session::{GetSessionFuture, SetSessionFuture};
 
 use {
     clap::clap_app,
     failure::Error,
-    futures::{future, Future},
+    futures::future,
     gotham::{
         self,
         middleware::session::{
             Backend, NewBackend, NewSessionMiddleware, SessionError, SessionIdentifier,
         },
-        pipeline::{new_pipeline, single::single_pipeline},
+        pipeline::{new_pipeline, single_pipeline},
         router::{
             builder::{build_router, DefineSingleRoute, DrawRoutes},
-            response::extender::ResponseExtender,
+            response::ResponseExtender,
         },
         state::State,
     },
@@ -54,23 +55,35 @@ impl RedisBackend {
     }
 }
 
-type SessionFuture = dyn Future<Output = Result<Option<Vec<u8>>, SessionError>> + Send;
 impl Backend for RedisBackend {
     fn persist_session(
         &self,
+        _state: &State,
         identifier: SessionIdentifier,
         content: &[u8],
-    ) -> Result<(), SessionError> {
-        self.0
+    ) -> Pin<Box<SetSessionFuture>> {
+        if let Err(e) = self
+            .0
             .borrow_mut()
-            .set(&identifier.value, content)
-            .map_err(|e| SessionError::Backend(format!("{}", e)))?;
+            .set::<_, _, String>(&identifier.value, content)
+            .map_err(|e| SessionError::Backend(format!("{}", e)))
+        {
+            return future::err(e).boxed();
+        }
 
-        self.set_expiry(&identifier)
+        match self.set_expiry(&identifier) {
+            Ok(_) => future::ok(()),
+            Err(e) => future::err(e),
+        }
+        .boxed()
     }
 
-    fn read_session(&self, identifier: SessionIdentifier) -> Pin<Box<SessionFuture>> {
-        let _ = self.set_expiry(&identifier);
+    fn read_session(
+        &self,
+        _state: &State,
+        identifier: SessionIdentifier,
+    ) -> Pin<Box<GetSessionFuture>> {
+        std::mem::drop(self.set_expiry(&identifier));
 
         match self.0.borrow_mut().get(identifier.value) {
             Ok(v) => future::ok(v),
@@ -79,11 +92,21 @@ impl Backend for RedisBackend {
         .boxed()
     }
 
-    fn drop_session(&self, identifier: SessionIdentifier) -> Result<(), SessionError> {
-        self.0
+    fn drop_session(
+        &self,
+        _state: &State,
+        identifier: SessionIdentifier,
+    ) -> Pin<Box<SetSessionFuture>> {
+        match self
+            .0
             .borrow_mut()
-            .del(identifier.value)
+            .del::<_, String>(identifier.value)
             .map_err(|e| SessionError::Backend(format!("{}", e)))
+        {
+            Ok(_) => future::ok(()),
+            Err(e) => future::err(e),
+        }
+        .boxed()
     }
 }
 
@@ -122,7 +145,7 @@ fn main() -> Result<(), Error> {
     fern::Dispatch::new()
         .format(|out, message, record| {
             if record.target() == "gotham::middleware::logger" {
-                out.finish(format_args!("{}", message))
+                out.finish(format_args!("{}", message));
             } else {
                 out.finish(format_args!(
                     "{}[{}][{}] {}",
@@ -130,7 +153,7 @@ fn main() -> Result<(), Error> {
                     record.target(),
                     record.level(),
                     message
-                ))
+                ));
             }
         })
         .level(log::LevelFilter::Warn)
@@ -194,7 +217,5 @@ fn main() -> Result<(), Error> {
         route.get_or_head("/").to_file("dist/index.html");
     });
 
-    gotham::start(("0.0.0.0", port), router);
-
-    Ok(())
+    Ok(gotham::start(("0.0.0.0", port), router)?)
 }

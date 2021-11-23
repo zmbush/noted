@@ -234,11 +234,11 @@ impl User {
     }
 
     pub fn note(&self, id: i32, db: &Conn) -> Result<NoteWithTags> {
-        Ok(Note::belonging_to(self)
+        Note::belonging_to(self)
             .find(id)
             .first::<Note>(db)?
             .with_tags(db)
-            .ok_or(DbError::NotFound)?)
+            .ok_or(DbError::NotFound)
     }
 
     pub fn update_note(&self, id: i32, note: &UpdateNote, db: &Conn) -> Result<NoteWithTags> {
