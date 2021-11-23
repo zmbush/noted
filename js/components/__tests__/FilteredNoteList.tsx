@@ -14,7 +14,7 @@ import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    const history = createMemoryHistory();
+    const history = createMemoryHistory({ keyLength: 0 });
     expect(
       shallow(
         <FilteredNoteList

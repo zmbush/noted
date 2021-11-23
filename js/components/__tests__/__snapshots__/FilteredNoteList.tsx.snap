@@ -7,19 +7,28 @@ exports[`<FilteredNoteList /> matches snapshot 1`] = `
   history={
     Object {
       "action": "POP",
-      "back": [Function],
       "block": [Function],
+      "canGo": [Function],
       "createHref": [Function],
-      "forward": [Function],
+      "entries": Array [
+        Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+      ],
       "go": [Function],
+      "goBack": [Function],
+      "goForward": [Function],
       "index": 0,
+      "length": 1,
       "listen": [Function],
       "location": Object {
         "hash": "",
-        "key": "698s17x9",
         "pathname": "/",
         "search": "",
-        "state": null,
+        "state": undefined,
       },
       "push": [Function],
       "replace": [Function],
@@ -28,10 +37,9 @@ exports[`<FilteredNoteList /> matches snapshot 1`] = `
   location={
     Object {
       "hash": "",
-      "key": "698s17x9",
       "pathname": "/",
       "search": "",
-      "state": null,
+      "state": undefined,
     }
   }
   match={
