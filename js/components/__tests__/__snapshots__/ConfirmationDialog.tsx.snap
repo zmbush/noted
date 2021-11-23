@@ -3,9 +3,8 @@
 exports[`<ConfirmationDialog /> matches snapshot 1`] = `
 <WithStyles(ForwardRef(Dialog))
   aria-labelledby="confirmation-dialog-title"
-  disableBackdropClick={true}
-  disableEscapeKeyDown={true}
   maxWidth="xs"
+  onClose={[Function]}
   open={true}
 >
   <WithStyles(ForwardRef(DialogTitle))
