@@ -2,12 +2,16 @@ version: 2
 updates:
   - package-ecosystem: cargo
     directory: '/'
+    commit-message:
+      prefix: '[chore]'
     schedule:
       interval: daily
       time: '13:00'
     open-pull-requests-limit: 10
   - package-ecosystem: npm
     directory: '/'
+    commit-message:
+      prefix: '[chore]'
     schedule:
       interval: daily
       time: '13:00'
