@@ -35,8 +35,7 @@ export default class ConfirmationDialog extends React.Component<Props> {
     const { title, message, negative, onNegative, positive, onPositive, ...other } = this.props;
     return (
       <Dialog
-        disableBackdropClick
-        disableEscapeKeyDown
+        onClose={() => false}
         maxWidth='xs'
         aria-labelledby='confirmation-dialog-title'
         // eslint-disable-next-line react/jsx-props-no-spreading
