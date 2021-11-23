@@ -63,16 +63,20 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
           ]
         }
       />
-      <t
-        exts={
-          Array [
-            "colorSyntax",
-          ]
+      <c
+        events={
+          Object {
+            "change": [Function],
+          }
         }
         height="calc(100% - 40px)"
         initialEditType="wysiwyg"
         initialValue="note body"
-        onChange={[Function]}
+        plugins={
+          Array [
+            [Function],
+          ]
+        }
         usageStatistics={false}
         useCommandShortcut={false}
       />
@@ -144,16 +148,20 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
           ]
         }
       />
-      <t
-        exts={
-          Array [
-            "colorSyntax",
-          ]
+      <c
+        events={
+          Object {
+            "change": [Function],
+          }
         }
         height="calc(100% - 40px)"
         initialEditType="wysiwyg"
         initialValue="note body"
-        onChange={[Function]}
+        plugins={
+          Array [
+            [Function],
+          ]
+        }
         usageStatistics={false}
         useCommandShortcut={false}
       />

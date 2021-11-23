@@ -5,9 +5,12 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
+import 'codemirror/lib/codemirror.css';
 import ChipInput from 'material-ui-chip-input';
-import 'tui-editor/dist/tui-editor-extColorSyntax';
+import 'tui-color-picker/dist/tui-color-picker.css';
 
 import * as React from 'react';
 
@@ -150,17 +153,19 @@ class NoteEditor extends React.Component<Props, State> {
               initialValue={body}
               initialEditType='wysiwyg'
               ref={this.editor}
-              onChange={() => {
-                if (this.editor.current) {
-                  this.setState({
-                    body: this.editor.current.getInstance().getMarkdown(),
-                  });
-                }
+              events={{
+                change: () => {
+                  if (this.editor.current) {
+                    this.setState({
+                      body: this.editor.current.getInstance().getMarkdown(),
+                    });
+                  }
+                },
               }}
               height='calc(100% - 40px)'
               usageStatistics={false}
               useCommandShortcut={false}
-              exts={['colorSyntax']}
+              plugins={[colorSyntax]}
             />
           </CardContent>
         </Card>
