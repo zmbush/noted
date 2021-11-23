@@ -5,15 +5,15 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
+//
 import { NotedEvent } from 'data/actions';
 import { NoteData, ErrorData } from 'data/types';
-import update from 'immutability-helper';
 
 const initialState = new Map<number, NoteData>();
 type State = typeof initialState;
 
 export default function notes(
+  // eslint-disable-next-line default-param-last
   state = initialState,
   action: {
     type?: NotedEvent;
@@ -21,30 +21,29 @@ export default function notes(
     note?: NoteData;
     error?: ErrorData;
     id?: number;
-  }
+  },
 ): State {
   switch (action.type) {
     case NotedEvent.NotesFetched: {
-      let data = new Map();
-      for (let note of action.notes) {
-        data.set(note.id, note);
-      }
+      const data = new Map();
+      action.notes.forEach((note) => data.set(note.id, note));
       return data;
     }
     case NotedEvent.NotesUpdateNote: {
-      let data = new Map(state);
+      const data = new Map(state);
       data.set(action.note.id, action.note);
       return data;
     }
     case NotedEvent.NotesDeleteNote: {
-      let data = new Map(state);
+      const data = new Map(state);
       data.delete(action.id);
       return data;
     }
     case NotedEvent.ApiError: {
-      if (action.error.code == 401) {
+      if (action.error.code === 401) {
         return new Map();
       }
+      return state;
     }
     case NotedEvent.UserSignedOut: {
       return new Map();

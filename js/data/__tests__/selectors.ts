@@ -5,7 +5,8 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
+import { notesFetched } from '../actions';
+import rootReducer from '../reducers';
 import {
   getTopLevelNotes,
   getLinkIds,
@@ -14,8 +15,6 @@ import {
   getFilteredSearchIndex,
   getSortedNoteIds,
 } from '../selectors';
-import rootReducer from '../reducers';
-import { notesFetched } from '../actions';
 
 describe('getLinkIds()', () => {
   test('returns empty map for empty notes map', () => {

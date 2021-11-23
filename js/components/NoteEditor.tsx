@@ -5,24 +5,22 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import { Editor } from '@toast-ui/react-editor';
+import ChipInput from 'material-ui-chip-input';
+import 'tui-editor/dist/tui-editor-extColorSyntax';
 
 import * as React from 'react';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
-import ChipInput from 'material-ui-chip-input';
+import Input from '@material-ui/core/Input';
+import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import SaveIcon from '@material-ui/icons/Save';
-import { NoteData } from 'data/types';
 
 import BindKeyboard from 'components/BindKeyboard';
-
-import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
-
-import 'tui-editor/dist/tui-editor-extColorSyntax';
-import { Editor } from '@toast-ui/react-editor';
+import { NoteData } from 'data/types';
 
 const styles = (theme: Theme) =>
   createStyles({

@@ -5,29 +5,31 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import update from 'immutability-helper';
 
 import { NotedEvent } from 'data/actions';
 import { UserData, ErrorData } from 'data/types';
-import update from 'immutability-helper';
 
-const initialState = { is_signed_in: false, user: null as (null | UserData) };
+const initialState = { is_signed_in: false, user: null as null | UserData };
 
 type State = typeof initialState;
 
 export default function user(
+  // eslint-disable-next-line default-param-last
   state = initialState,
   action: {
     type?: NotedEvent;
     error?: ErrorData;
     is_signed_in?: boolean;
     user?: UserData;
-  }
+  },
 ): State {
   switch (action.type) {
     case NotedEvent.ApiError: {
-      if (action.error.code == 401) {
+      if (action.error.code === 401) {
         return initialState;
       }
+      return state;
     }
     case NotedEvent.UserSignedIn: {
       return update(state, {
@@ -38,6 +40,7 @@ export default function user(
     case NotedEvent.UserSignedOut: {
       return initialState;
     }
+    default:
+      return state;
   }
-  return state;
 }

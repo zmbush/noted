@@ -5,13 +5,11 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import { logIn, logOut, apiError } from 'data/actions';
 
 import user from '../user';
-import { logIn, logOut, apiError } from 'data/actions';
-import { NoteData } from 'data/types';
 
 describe('reducers::user()', () => {
-  let id = 1;
   const getInitial = () => user(undefined, {});
 
   test('returns initial state', () => {
@@ -20,7 +18,7 @@ describe('reducers::user()', () => {
 
   test('responds to events', () => {
     let state = getInitial();
-    let u = {
+    const u = {
       id: 1,
       name: 'Test User',
       email: 'test@example.com',

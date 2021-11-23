@@ -5,12 +5,12 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import AutoLink, { LinkedText } from '../AutoLink';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
+
+import AutoLink, { LinkedText } from '../AutoLink';
 
 describe('<AutoLink />', () => {
   test('matches snapshot', () => {

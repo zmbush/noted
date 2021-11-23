@@ -5,10 +5,9 @@ singleQuote: true
 jsxSingleQuote: true
 printWidth: 100
 importOrder:
-  - '^firestore'
-  - '^@mui'
-  - '^utils'
-  - '^components'
+  - '^react'
+  - '^@(mui|material-ui)'
+  - '^(components|data)'
   - "^\\.\\./"
   - "^\\./"
   - '^/'

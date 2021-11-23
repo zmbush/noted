@@ -5,40 +5,38 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import axios from 'axios';
+import debounce from 'debounce-promise';
+import Mousetrap from 'mousetrap';
+import { Dispatch } from 'redux';
 
 import * as React from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-
-import axios from 'axios';
-import Mousetrap from 'mousetrap';
-
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import HomeIcon from '@material-ui/icons/Home';
-import Typography from '@material-ui/core/Typography';
-import { withStyles, createStyles, WithStyles, Theme, alpha } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import debounce from 'debounce-promise';
-
 import { withRouter, Route, Switch, RouteComponentProps } from 'react-router-dom';
 
-import Note, { InnerNote } from 'components/Note';
+import AppBar from '@material-ui/core/AppBar';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { withStyles, createStyles, WithStyles, Theme, alpha } from '@material-ui/core/styles';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import HomeIcon from '@material-ui/icons/Home';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+
 import BindKeyboard from 'components/BindKeyboard';
-import NoteList from 'components/NoteList';
-import { updateNote, deleteNote, logOut } from 'data/actions';
-import { NoteData, AppState } from 'data/types';
-import { getTopLevelNotes } from 'data/selectors';
 import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
+import Note, { InnerNote } from 'components/Note';
+import NoteList from 'components/NoteList';
+import { updateNote, deleteNote, logOut } from 'data/actions';
+import { getTopLevelNotes } from 'data/selectors';
+import { NoteData, AppState } from 'data/types';
 
 const styles = (theme: Theme) =>
   createStyles({

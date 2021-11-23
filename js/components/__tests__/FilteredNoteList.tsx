@@ -5,10 +5,11 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-import * as React from 'react';
+//
 import { shallow } from 'enzyme';
 import { createMemoryHistory } from 'history';
+
+import * as React from 'react';
 
 import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
@@ -34,8 +35,8 @@ describe('<FilteredNoteList />', () => {
               ids: '1',
             },
           }}
-        />
-      )
+        />,
+      ),
     ).toMatchSnapshot();
   });
 });

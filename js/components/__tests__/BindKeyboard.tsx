@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -9,20 +8,20 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-import * as React from 'react';
 import { shallow } from 'enzyme';
 import Mousetrap from 'mousetrap';
+
+import * as React from 'react';
 
 import BindKeyboard from '../BindKeyboard';
 
 describe('<BindKeyboard />', () => {
   test('matches snapshot', () => {
-    expect(shallow(<BindKeyboard keys={'key'} callback={() => {}} />)).toMatchSnapshot();
+    expect(shallow(<BindKeyboard keys='key' callback={() => {}} />)).toMatchSnapshot();
 
     expect(
       shallow(
-        <BindKeyboard keys={'key'} callback={() => {}}>
+        <BindKeyboard keys='key' callback={() => {}}>
           Contents
         </BindKeyboard>,
       ),
@@ -36,7 +35,7 @@ describe('<BindKeyboard />', () => {
     const unbindFn = jest.spyOn(Mousetrap, 'unbind');
     unbindFn.mockClear();
 
-    let cb = () => {};
+    const cb = () => {};
 
     const wrapper = shallow(<BindKeyboard keys='a+key' callback={cb} action='toot' />);
     expect(bindFn).toBeCalledWith('a+key', cb, 'toot');

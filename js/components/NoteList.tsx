@@ -5,20 +5,22 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+import classNames from 'classnames';
+import Fuse from 'fuse.js';
+import memoize from 'memoize-one';
 
 import * as React from 'react';
-import Fuse from 'fuse.js';
-import AddIcon from '@material-ui/icons/Add';
+import { connect } from 'react-redux';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Note, { InnerNote } from 'components/Note';
-import classNames from 'classnames';
-import { NoteData, AppState } from 'data/types';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
+
+import Note, { InnerNote } from 'components/Note';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
-import { connect } from 'react-redux';
-import memoize from 'memoize-one';
+import { NoteData, AppState } from 'data/types';
 
 const styles = (theme: Theme) =>
   createStyles({
