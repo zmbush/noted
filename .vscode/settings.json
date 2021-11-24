@@ -18,7 +18,7 @@
     "isActive": true,
     "autoHeader": "autoSave",
     "enforceHeader": true,
-    "exclude": ["json", "yaml"]
+    "exclude": ["json", "yaml", "git-commit", "git-rebase"]
   },
   "psi-header.lang-config": [
     {
@@ -26,6 +26,12 @@
       "begin": "",
       "end": "",
       "prefix": "// "
+    },
+    {
+      "language": "shellscript",
+      "begin": "",
+      "end": "",
+      "prefix": "# "
     },
     {
       "language": "typescript",
