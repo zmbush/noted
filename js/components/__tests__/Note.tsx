@@ -17,8 +17,8 @@ const editor = (
     search=''
     titles={new Map()}
     subnotes={new Map()}
-    updateNote={() => {}}
-    deleteNote={() => {}}
+    onUpdateNote={() => {}}
+    onDeleteNote={() => {}}
     note={{
       id: 1,
       title: 'note title',

@@ -18,8 +18,8 @@ interface Props {
   notes: Map<number, NoteData>;
   search: string;
   depth: number;
-  updateNote: (note: NoteData) => void;
-  deleteNote: (id: number) => void;
+  onUpdateNote: (note: NoteData) => void;
+  onDeleteNote: (id: number) => void;
   firstNoteRef: React.RefObject<InnerNote>;
 }
 

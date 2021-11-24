@@ -131,20 +131,13 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles> {
   notes: Map<number, NoteData>;
-  is_signed_in: boolean;
-  updateNote: (note: NoteData) => void;
-  deleteNote: (id: number) => void;
-  logOut: () => void;
+  isSignedIn: boolean;
+  doUpdateNote: (note: NoteData) => void;
+  doDeleteNote: (id: number) => void;
+  doLogOut: () => void;
 }
 
-const App = ({
-  classes,
-  deleteNote: doDeleteNote,
-  updateNote: doUpdateNote,
-  logOut: doLogOut,
-  is_signed_in: isSignedIn,
-  notes,
-}: Props) => {
+const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
   const firstNote = React.useRef<InnerNote>();
   const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement>(null);
@@ -230,8 +223,8 @@ const App = ({
     <FilteredNoteList
       depth={1}
       search={search}
-      updateNote={updateNote}
-      deleteNote={doDeleteNote}
+      onUpdateNote={updateNote}
+      onDeleteNote={doDeleteNote}
       firstNoteRef={firstNote}
     />
   );
@@ -319,8 +312,8 @@ const App = ({
                 updated_at: '',
                 user_id: 0,
               }}
-              updateNote={updateNote}
-              deleteNote={deleteNote}
+              onUpdateNote={updateNote}
+              onDeleteNote={deleteNote}
             />
           </Grid>
         ) : null}
@@ -334,8 +327,8 @@ const App = ({
                 depth={1}
                 notes={notes}
                 search={search}
-                updateNote={updateNote}
-                deleteNote={doDeleteNote}
+                onUpdateNote={updateNote}
+                onDeleteNote={doDeleteNote}
                 firstNoteRef={firstNote}
               />
             }
@@ -363,19 +356,19 @@ const App = ({
 
 const mapStateToProps = (state: AppState) => ({
   notes: getTopLevelNotes(state),
-  is_signed_in: state.user.is_signed_in,
+  isSignedIn: state.user.is_signed_in,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  updateNote(data: NoteData) {
+  doUpdateNote(data: NoteData) {
     dispatch(updateNoteAction(data));
   },
 
-  deleteNote(id: number) {
+  doDeleteNote(id: number) {
     dispatch(deleteNote(id));
   },
 
-  logOut() {
+  doLogOut() {
     dispatch(logOut());
   },
 });

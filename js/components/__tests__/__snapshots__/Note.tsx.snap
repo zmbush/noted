@@ -158,12 +158,12 @@ exports[`<Note /> matches snapshot 1`] = `
       spacing={8}
     >
       <Connect(WithStyles(NoteList))
-        deleteNote={[Function]}
         depth={1}
         notes={Map {}}
+        onUeleteNote={[Function]}
+        onUpdateNote={[Function]}
         parent_note_id={1}
         search=""
-        updateNote={[Function]}
       />
     </ForwardRef(Grid)>
   </ForwardRef(CardContent)>
@@ -319,11 +319,11 @@ exports[`<Note /> matches snapshot 2`] = `
       spacing={8}
     >
       <Connect(WithStyles(NoteList))
-        deleteNote={[Function]}
         depth={1}
         notes={Map {}}
+        onUeleteNote={[Function]}
+        onUpdateNote={[Function]}
         search=""
-        updateNote={[Function]}
       />
     </ForwardRef(Grid)>
   </ForwardRef(CardContent)>
@@ -479,11 +479,11 @@ exports[`<Note /> matches snapshot 3`] = `
       spacing={8}
     >
       <Connect(WithStyles(NoteList))
-        deleteNote={[Function]}
         depth={1}
         notes={Map {}}
+        onUeleteNote={[Function]}
+        onUpdateNote={[Function]}
         search=""
-        updateNote={[Function]}
       />
     </ForwardRef(Grid)>
   </ForwardRef(CardContent)>
