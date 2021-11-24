@@ -7,11 +7,14 @@
 // except according to those terms.
 import * as React from 'react';
 
-import { PropTypes } from '@material-ui/core';
-import Chip from '@material-ui/core/Chip';
-import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
-import GestureIcon from '@material-ui/icons/Gesture';
-import GradeIcon from '@material-ui/icons/Grade';
+import GestureIcon from '@mui/icons-material/Gesture';
+import GradeIcon from '@mui/icons-material/Grade';
+import { PropTypes } from '@mui/material';
+import Chip from '@mui/material/Chip';
+import { Theme } from '@mui/material/styles';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = (theme: Theme) =>
   createStyles({

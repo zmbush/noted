@@ -5,23 +5,24 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   callback={[Function]}
   keys="ctrl+s"
 >
-  <WithStyles(ForwardRef(Card))
+  <ForwardRef(Card)
     classes={
       Object {
         "root": "",
       }
     }
   >
-    <WithStyles(ForwardRef(CardHeader))
+    <ForwardRef(CardHeader)
       action={
-        <WithStyles(ForwardRef(IconButton))
+        <ForwardRef(IconButton)
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
+        </ForwardRef(IconButton)>
       }
       title={
-        <WithStyles(ForwardRef(Input))
+        <ForwardRef(Input)
           classes={
             Object {
               "root": "",
@@ -37,7 +38,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
         />
       }
     />
-    <WithStyles(ForwardRef(CardContent))
+    <ForwardRef(CardContent)
       classes={
         Object {
           "root": "",
@@ -80,8 +81,8 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
         usageStatistics={false}
         useCommandShortcut={false}
       />
-    </WithStyles(ForwardRef(CardContent))>
-  </WithStyles(ForwardRef(Card))>
+    </ForwardRef(CardContent)>
+  </ForwardRef(Card)>
 </BindKeyboard>
 `;
 
@@ -90,23 +91,24 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
   callback={[Function]}
   keys="ctrl+s"
 >
-  <WithStyles(ForwardRef(Card))
+  <ForwardRef(Card)
     classes={
       Object {
         "root": "",
       }
     }
   >
-    <WithStyles(ForwardRef(CardHeader))
+    <ForwardRef(CardHeader)
       action={
-        <WithStyles(ForwardRef(IconButton))
+        <ForwardRef(IconButton)
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
+        </ForwardRef(IconButton)>
       }
       title={
-        <WithStyles(ForwardRef(Input))
+        <ForwardRef(Input)
           classes={
             Object {
               "root": "",
@@ -122,7 +124,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
         />
       }
     />
-    <WithStyles(ForwardRef(CardContent))
+    <ForwardRef(CardContent)
       classes={
         Object {
           "root": "",
@@ -165,7 +167,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
         usageStatistics={false}
         useCommandShortcut={false}
       />
-    </WithStyles(ForwardRef(CardContent))>
-  </WithStyles(ForwardRef(Card))>
+    </ForwardRef(CardContent)>
+  </ForwardRef(Card)>
 </BindKeyboard>
 `;
