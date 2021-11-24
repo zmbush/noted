@@ -15,6 +15,9 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import { createTheme, StyledEngineProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/styles';
+
 import App from 'components/App';
 import { logIn, fetchData } from 'data/actions';
 import reducers from 'data/reducers';
@@ -35,10 +38,19 @@ const store = createStore(
   fetchData(store.dispatch);
 })();
 
+const theme = createTheme();
+const ThemedApp = () => (
+  <StyledEngineProvider injectFirst>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </StyledEngineProvider>
+);
+
 ReactDOM.render(
   <Router>
     <Provider store={store}>
-      <App />
+      <ThemedApp />
     </Provider>
   </Router>,
   document.getElementById('root'),

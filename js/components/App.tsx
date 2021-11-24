@@ -14,19 +14,22 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 
-import AppBar from '@material-ui/core/AppBar';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { withStyles, createStyles, WithStyles, Theme, alpha } from '@material-ui/core/styles';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import HomeIcon from '@material-ui/icons/Home';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import AppBar from '@mui/material/AppBar';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { Theme, alpha } from '@mui/material/styles';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import FilteredNoteList from 'components/FilteredNoteList';
@@ -64,9 +67,9 @@ const styles = (theme: Theme) =>
     },
     title: {
       display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
+      // [theme.breakpoints.up('sm')]: {
+      //   display: 'block',
+      // },
     },
     search: {
       position: 'relative',
@@ -78,10 +81,10 @@ const styles = (theme: Theme) =>
       marginLeft: 0,
       marginRight: theme.spacing(1),
       width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
+      // [theme.breakpoints.up('sm')]: {
+      //   marginLeft: theme.spacing(1),
+      //   width: 'auto',
+      // },
     },
     searchIcon: {
       width: theme.spacing(9),
@@ -103,12 +106,12 @@ const styles = (theme: Theme) =>
       paddingLeft: theme.spacing(10),
       transition: theme.transitions.create('width'),
       width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-          width: 200,
-        },
-      },
+      // [theme.breakpoints.up('sm')]: {
+      //   width: 120,
+      //   '&:focus': {
+      //     width: 200,
+      //   },
+      // },
     },
     newButton: {
       margin: theme.spacing(1),
@@ -175,7 +178,9 @@ const App = ({
   const startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (firstNote.current) {
-      firstNote.current.startEdit();
+      // TODO: Fix this.
+      // firstNote.current.startEdit();
+      createNew(e);
     } else {
       createNew(e);
     }
@@ -239,7 +244,12 @@ const App = ({
             <Route
               path='/'
               element={
-                <IconButton className={classes.menuButton} aria-label='Menu' color='inherit'>
+                <IconButton
+                  className={classes.menuButton}
+                  aria-label='Menu'
+                  color='inherit'
+                  size='large'
+                >
                   <MenuIcon />
                 </IconButton>
               }
@@ -254,6 +264,7 @@ const App = ({
                   onClick={() => {
                     navigate('/');
                   }}
+                  size='large'
                 >
                   <HomeIcon />
                 </IconButton>
@@ -287,7 +298,7 @@ const App = ({
               </div>
             </BindKeyboard>
           </BindKeyboard>
-          <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit'>
+          <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit' size='large'>
             <AccountCircle />
           </IconButton>
         </Toolbar>

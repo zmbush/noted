@@ -14,13 +14,16 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 
 import * as React from 'react';
 
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
-import SaveIcon from '@material-ui/icons/Save';
+import SaveIcon from '@mui/icons-material/Save';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import { Theme } from '@mui/material/styles';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import { NoteData } from 'data/types';
@@ -31,7 +34,7 @@ const styles = (theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         height: '84vh',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('md')]: {
         height: '100vh',
       },
     },
@@ -134,7 +137,7 @@ class NoteEditor extends React.Component<Props, State> {
               />
             }
             action={
-              <IconButton onClick={this.save}>
+              <IconButton onClick={this.save} size='large'>
                 <SaveIcon />
               </IconButton>
             }

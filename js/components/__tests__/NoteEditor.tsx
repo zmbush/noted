@@ -12,10 +12,10 @@ import ChipInput from 'material-ui-chip-input';
 
 import * as React from 'react';
 
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
 
 import { Inner as NoteEditor } from '../NoteEditor';
 

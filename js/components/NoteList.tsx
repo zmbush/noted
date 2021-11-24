@@ -12,10 +12,13 @@ import memoize from 'memoize-one';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from '@mui/icons-material/Add';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import { Theme } from '@mui/material/styles';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 import Note, { InnerNote } from 'components/Note';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';

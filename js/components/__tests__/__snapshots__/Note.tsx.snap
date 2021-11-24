@@ -1,36 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Note /> matches snapshot 1`] = `
-<WithStyles(ForwardRef(Card))
+<ForwardRef(Card)
   className=""
 >
-  <WithStyles(ForwardRef(CardHeader))
+  <ForwardRef(CardHeader)
     action={
       <React.Fragment>
-        <WithStyles(ForwardRef(IconButton))
+        <ForwardRef(IconButton)
           aria-label="Add Subnote"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="Edit Note"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="More Options"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
+        </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={null}
     title="note title"
   />
-  <WithStyles(ForwardRef(Menu))
+  <ForwardRef(Menu)
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -38,7 +41,6 @@ exports[`<Note /> matches snapshot 1`] = `
         "vertical": "bottom",
       }
     }
-    getContentAnchorEl={null}
     id="more-menu"
     onClose={[Function]}
     open={false}
@@ -49,31 +51,31 @@ exports[`<Note /> matches snapshot 1`] = `
       }
     }
   >
-    <WithStyles(ForwardRef(MenuItem))
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(DeleteIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Delete Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(DoneIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Pin Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(ArchiveIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Archive Note
-    </WithStyles(ForwardRef(MenuItem))>
-  </WithStyles(ForwardRef(Menu))>
+    </ForwardRef(MenuItem)>
+  </ForwardRef(Menu)>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -92,8 +94,8 @@ exports[`<Note /> matches snapshot 1`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(ForwardRef(CardContent))>
-    <WithStyles(ForwardRef(Dialog))
+  <ForwardRef(CardContent)>
+    <ForwardRef(Dialog)
       classes={
         Object {
           "root": undefined,
@@ -126,9 +128,10 @@ exports[`<Note /> matches snapshot 1`] = `
             }
           }
           onSave={[Function]}
+          open={false}
         />
       </React.Suspense>
-    </WithStyles(ForwardRef(Dialog))>
+    </ForwardRef(Dialog)>
     <WithStyles(Tags)
       tags={
         Array [
@@ -150,7 +153,7 @@ exports[`<Note /> matches snapshot 1`] = `
     >
       note body
     </default_1>
-    <WithStyles(ForwardRef(Grid))
+    <ForwardRef(Grid)
       container={true}
       spacing={8}
     >
@@ -162,41 +165,44 @@ exports[`<Note /> matches snapshot 1`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(ForwardRef(Grid))>
-  </WithStyles(ForwardRef(CardContent))>
-</WithStyles(ForwardRef(Card))>
+    </ForwardRef(Grid)>
+  </ForwardRef(CardContent)>
+</ForwardRef(Card)>
 `;
 
 exports[`<Note /> matches snapshot 2`] = `
-<WithStyles(ForwardRef(Card))
+<ForwardRef(Card)
   className=""
 >
-  <WithStyles(ForwardRef(CardHeader))
+  <ForwardRef(CardHeader)
     action={
       <React.Fragment>
-        <WithStyles(ForwardRef(IconButton))
+        <ForwardRef(IconButton)
           aria-label="Add Subnote"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="Edit Note"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="More Options"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
+        </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={<Memo />}
   />
-  <WithStyles(ForwardRef(Menu))
+  <ForwardRef(Menu)
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -204,7 +210,6 @@ exports[`<Note /> matches snapshot 2`] = `
         "vertical": "bottom",
       }
     }
-    getContentAnchorEl={null}
     id="more-menu"
     onClose={[Function]}
     open={false}
@@ -215,31 +220,31 @@ exports[`<Note /> matches snapshot 2`] = `
       }
     }
   >
-    <WithStyles(ForwardRef(MenuItem))
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(DeleteIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Delete Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(ClearIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Unpin Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(ArchiveIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Archive Note
-    </WithStyles(ForwardRef(MenuItem))>
-  </WithStyles(ForwardRef(Menu))>
+    </ForwardRef(MenuItem)>
+  </ForwardRef(Menu)>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -258,8 +263,8 @@ exports[`<Note /> matches snapshot 2`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(ForwardRef(CardContent))>
-    <WithStyles(ForwardRef(Dialog))
+  <ForwardRef(CardContent)>
+    <ForwardRef(Dialog)
       classes={
         Object {
           "root": undefined,
@@ -292,9 +297,10 @@ exports[`<Note /> matches snapshot 2`] = `
             }
           }
           onSave={[Function]}
+          open={false}
         />
       </React.Suspense>
-    </WithStyles(ForwardRef(Dialog))>
+    </ForwardRef(Dialog)>
     <WithStyles(Tags) />
     <default_1
       components={
@@ -308,7 +314,7 @@ exports[`<Note /> matches snapshot 2`] = `
         ]
       }
     />
-    <WithStyles(ForwardRef(Grid))
+    <ForwardRef(Grid)
       container={true}
       spacing={8}
     >
@@ -319,41 +325,44 @@ exports[`<Note /> matches snapshot 2`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(ForwardRef(Grid))>
-  </WithStyles(ForwardRef(CardContent))>
-</WithStyles(ForwardRef(Card))>
+    </ForwardRef(Grid)>
+  </ForwardRef(CardContent)>
+</ForwardRef(Card)>
 `;
 
 exports[`<Note /> matches snapshot 3`] = `
-<WithStyles(ForwardRef(Card))
+<ForwardRef(Card)
   className="undefined"
 >
-  <WithStyles(ForwardRef(CardHeader))
+  <ForwardRef(CardHeader)
     action={
       <React.Fragment>
-        <WithStyles(ForwardRef(IconButton))
+        <ForwardRef(IconButton)
           aria-label="Add Subnote"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="Edit Note"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
-        <WithStyles(ForwardRef(IconButton))
+        </ForwardRef(IconButton)>
+        <ForwardRef(IconButton)
           aria-label="More Options"
           onClick={[Function]}
+          size="large"
         >
           <Memo />
-        </WithStyles(ForwardRef(IconButton))>
+        </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={null}
   />
-  <WithStyles(ForwardRef(Menu))
+  <ForwardRef(Menu)
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -361,7 +370,6 @@ exports[`<Note /> matches snapshot 3`] = `
         "vertical": "bottom",
       }
     }
-    getContentAnchorEl={null}
     id="more-menu"
     onClose={[Function]}
     open={false}
@@ -372,31 +380,31 @@ exports[`<Note /> matches snapshot 3`] = `
       }
     }
   >
-    <WithStyles(ForwardRef(MenuItem))
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(DeleteIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Delete Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(DoneIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Pin Note
-    </WithStyles(ForwardRef(MenuItem))>
-    <WithStyles(ForwardRef(MenuItem))
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
       onClick={[Function]}
     >
-      <WithStyles(ForwardRef(ListItemIcon))>
+      <ForwardRef(ListItemIcon)>
         <Memo(ForwardRef(UnarchiveIcon)) />
-      </WithStyles(ForwardRef(ListItemIcon))>
+      </ForwardRef(ListItemIcon)>
       Unarchive Note
-    </WithStyles(ForwardRef(MenuItem))>
-  </WithStyles(ForwardRef(Menu))>
+    </ForwardRef(MenuItem)>
+  </ForwardRef(Menu)>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -415,8 +423,8 @@ exports[`<Note /> matches snapshot 3`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <WithStyles(ForwardRef(CardContent))>
-    <WithStyles(ForwardRef(Dialog))
+  <ForwardRef(CardContent)>
+    <ForwardRef(Dialog)
       classes={
         Object {
           "root": undefined,
@@ -449,9 +457,10 @@ exports[`<Note /> matches snapshot 3`] = `
             }
           }
           onSave={[Function]}
+          open={false}
         />
       </React.Suspense>
-    </WithStyles(ForwardRef(Dialog))>
+    </ForwardRef(Dialog)>
     <WithStyles(Tags) />
     <default_1
       components={
@@ -465,7 +474,7 @@ exports[`<Note /> matches snapshot 3`] = `
         ]
       }
     />
-    <WithStyles(ForwardRef(Grid))
+    <ForwardRef(Grid)
       container={true}
       spacing={8}
     >
@@ -476,7 +485,7 @@ exports[`<Note /> matches snapshot 3`] = `
         search=""
         updateNote={[Function]}
       />
-    </WithStyles(ForwardRef(Grid))>
-  </WithStyles(ForwardRef(CardContent))>
-</WithStyles(ForwardRef(Card))>
+    </ForwardRef(Grid)>
+  </ForwardRef(CardContent)>
+</ForwardRef(Card)>
 `;

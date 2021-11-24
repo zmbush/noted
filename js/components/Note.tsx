@@ -17,25 +17,28 @@ import ReactMarkdown from 'react-markdown';
 import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 import { connect } from 'react-redux';
 
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Dialog from '@material-ui/core/Dialog';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { createStyles, withStyles, Theme, WithStyles } from '@material-ui/core/styles';
-import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
-import ArchiveIcon from '@material-ui/icons/Archive';
-import UnpinIcon from '@material-ui/icons/Clear';
-import DeleteIcon from '@material-ui/icons/Delete';
-import PinIcon from '@material-ui/icons/Done';
-import EditIcon from '@material-ui/icons/Edit';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import UnarchiveIcon from '@material-ui/icons/Unarchive';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import UnpinIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PinIcon from '@mui/icons-material/Done';
+import EditIcon from '@mui/icons-material/Edit';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useTheme, Theme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 import AutoLink from 'components/AutoLink';
 import ConfirmationDialog from 'components/ConfirmationDialog';
@@ -184,61 +187,50 @@ interface Props extends WithStyles<typeof styles> {
   subnotes: Map<number, NoteData>;
   updateNote: (note?: NoteData) => void;
   deleteNote: (id: number) => void;
-  width: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   depth?: number;
-  matches?: {
-    indices: number[][];
-    value: string;
-    key: string;
-    arrayIndex: number;
-  }[];
 }
 
-const initialState = {
-  edit: false,
-  creatingSubnote: false,
-  moreMenuEl: null as HTMLElement,
-  confirmDeleteOpen: false,
-  confirmCancelEditOpen: false,
-};
+const Note = ({
+  classes,
+  note,
+  titles,
+  depth,
+  new: isNew,
+  subnotes,
+  search,
+  updateNote,
+  deleteNote,
+}: Props) => {
+  const [edit, setEdit] = React.useState(false);
+  const [creatingSubnote, setCreatingSubnote] = React.useState(false);
+  const [confirmDeleteOpen, setConfirmDeletOpen] = React.useState(false);
+  const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
+  const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
+  const noteEditor = React.useRef<any>();
+  const theme = useTheme();
+  const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
 
-type State = Readonly<typeof initialState>;
-
-class Note extends React.Component<Props, State> {
-  noteEditor: React.RefObject<any>;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = { ...initialState, edit: props.new };
-    this.noteEditor = React.createRef();
-  }
-
-  tryCancelEdit = () => {
-    if (!this.noteEditor.current || !this.noteEditor.current.hasChanges()) {
-      this.cancelEdit();
-    } else {
-      this.setState({ confirmCancelEditOpen: true });
-    }
-  };
-
-  cancelEdit = () => {
-    const { updateNote } = this.props;
-    this.setState({
-      edit: false,
-      creatingSubnote: false,
-      confirmCancelEditOpen: false,
-    });
+  const cancelEdit = () => {
+    setEdit(false);
+    setCreatingSubnote(false);
+    setConfirmCancelEditOpen(false);
     updateNote(null);
   };
 
-  save = async (noteData: {
+  const tryCancelEdit = () => {
+    if (!noteEditor.current || !noteEditor.current.hasChanges()) {
+      cancelEdit();
+    } else {
+      setConfirmCancelEditOpen(true);
+    }
+  };
+
+  const save = async (noteData: {
     title: string;
     body: string;
     tags: string[];
     parent_note_id?: number;
   }) => {
-    const { new: isNew, note, updateNote } = this.props;
-    const { creatingSubnote } = this.state;
     const { title, body, tags, parent_note_id: parentNoteId } = noteData;
     let result;
     if (isNew || creatingSubnote) {
@@ -257,23 +249,18 @@ class Note extends React.Component<Props, State> {
 
     result = await axios.put(`/api/secure/notes/${result.data.id}/tags`, tags);
 
-    this.setState({
-      edit: false,
-      creatingSubnote: false,
-    });
-
+    setEdit(false);
+    setCreatingSubnote(false);
     updateNote(result.data);
   };
 
-  doDelete = async () => {
-    const { note, deleteNote } = this.props;
+  const doDelete = async () => {
     const _ = await axios.delete(`/api/secure/notes/${note.id}`);
     deleteNote(note.id);
   };
 
-  archiveNote = async () => {
-    const { new: isNew, note, updateNote } = this.props;
-    this.setState({ moreMenuEl: null });
+  const archiveNote = async () => {
+    setMoreMenuEl(null);
 
     // What even does archiving a new note mean?
     if (isNew) {
@@ -288,9 +275,8 @@ class Note extends React.Component<Props, State> {
     updateNote(result.data);
   };
 
-  pinNote = async () => {
-    const { new: isNew, note, updateNote } = this.props;
-    this.setState({ moreMenuEl: null });
+  const pinNote = async () => {
+    setMoreMenuEl(null);
 
     // What even does pinning a new note mean?
     if (isNew) {
@@ -305,165 +291,157 @@ class Note extends React.Component<Props, State> {
     updateNote(result.data);
   };
 
-  startEdit = () => {
-    this.setState({
-      edit: true,
-    });
+  const startEdit = () => {
+    setEdit(true);
   };
 
-  startSubnoteCreate = () => {
-    this.setState({
-      creatingSubnote: true,
-    });
+  const startSubnoteCreate = () => {
+    setCreatingSubnote(true);
   };
 
-  render() {
-    const { classes, note, width, titles, depth, subnotes, search, updateNote, deleteNote } =
-      this.props;
-    const { edit, confirmDeleteOpen, confirmCancelEditOpen, creatingSubnote } = this.state;
-    const { moreMenuEl } = this.state;
-    const markdownComponents: ReactMarkdownOptions['components'] = {
-      // eslint-disable-next-line react/no-unstable-nested-components
-      p: ({ children }) => (
-        <p>
-          <AutoLink titles={titles}>{children}</AutoLink>
-        </p>
-      ),
-    };
+  const markdownComponents: ReactMarkdownOptions['components'] = {
+    // eslint-disable-next-line react/no-unstable-nested-components
+    p: ({ children }) => (
+      <p>
+        <AutoLink titles={titles}>{children}</AutoLink>
+      </p>
+    ),
+  };
 
-    return (
-      <Card
-        className={classNames(classes.card, {
-          [classes.unlinked]: note.user_id === 1,
-          [classes.archived]: note.archived,
-        })}
+  return (
+    <Card
+      className={classNames(classes.card, {
+        [classes.unlinked]: note.user_id === 1,
+        [classes.archived]: note.archived,
+      })}
+    >
+      <CardHeader
+        className={classes.cardHeader}
+        avatar={note.pinned ? <PinIcon /> : null}
+        title={note.title}
+        action={
+          edit ? null : (
+            <>
+              <IconButton
+                onClick={startSubnoteCreate}
+                className={classes.noPrint}
+                aria-label='Add Subnote'
+                size='large'
+              >
+                <LibraryAddIcon />
+              </IconButton>
+              <IconButton
+                onClick={startEdit}
+                className={classes.noPrint}
+                aria-label='Edit Note'
+                size='large'
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                onClick={(e) => setMoreMenuEl(e.currentTarget)}
+                className={classes.noPrint}
+                aria-owns={moreMenuEl ? 'more-menu' : undefined}
+                aria-label='More Options'
+                size='large'
+              >
+                <MoreVertIcon />
+              </IconButton>
+            </>
+          )
+        }
+      />
+      <Menu
+        id='more-menu'
+        anchorEl={moreMenuEl}
+        open={Boolean(moreMenuEl)}
+        onClose={() => setMoreMenuEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        <CardHeader
-          className={classes.cardHeader}
-          avatar={note.pinned ? <PinIcon /> : null}
-          title={note.title}
-          action={
-            edit ? null : (
-              <>
-                <IconButton
-                  onClick={this.startSubnoteCreate}
-                  className={classes.noPrint}
-                  aria-label='Add Subnote'
-                >
-                  <LibraryAddIcon />
-                </IconButton>
-                <IconButton
-                  onClick={this.startEdit}
-                  className={classes.noPrint}
-                  aria-label='Edit Note'
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  onClick={(e) => this.setState({ moreMenuEl: e.currentTarget })}
-                  className={classes.noPrint}
-                  aria-owns={moreMenuEl ? 'more-menu' : undefined}
-                  aria-label='More Options'
-                >
-                  <MoreVertIcon />
-                </IconButton>
-              </>
-            )
-          }
-        />
-        <Menu
-          id='more-menu'
-          anchorEl={moreMenuEl}
-          open={Boolean(moreMenuEl)}
-          onClose={() => this.setState({ moreMenuEl: null })}
-          getContentAnchorEl={null}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        <MenuItem onClick={() => setConfirmDeletOpen(true)}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          Delete Note
+        </MenuItem>
+        <MenuItem onClick={pinNote}>
+          <ListItemIcon>{note.pinned ? <UnpinIcon /> : <PinIcon />}</ListItemIcon>
+          {note.pinned ? 'Unpin Note' : 'Pin Note'}
+        </MenuItem>
+        <MenuItem onClick={archiveNote}>
+          <ListItemIcon>{note.archived ? <UnarchiveIcon /> : <ArchiveIcon />}</ListItemIcon>
+          {note.archived ? 'Unarchive Note' : 'Archive Note'}
+        </MenuItem>
+      </Menu>
+      <ConfirmationDialog
+        open={confirmDeleteOpen}
+        title={`You are about to delete note: ${note.title}`}
+        onPositive={doDelete}
+        onNegative={() => setConfirmDeletOpen(false)}
+      />
+      <ConfirmationDialog
+        open={confirmCancelEditOpen}
+        title='If you close this editor, you will lose your changes.'
+        onPositive={cancelEdit}
+        onNegative={() => setConfirmCancelEditOpen(false)}
+      />
+      <CardContent className={classes.cardContent}>
+        <Dialog
+          classes={{ root: classes.markdown }}
+          open={edit || creatingSubnote}
+          fullWidth
+          maxWidth='lg'
+          fullScreen={editorFullscreen}
+          onClose={tryCancelEdit}
         >
-          <MenuItem onClick={() => this.setState({ confirmDeleteOpen: true })}>
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            Delete Note
-          </MenuItem>
-          <MenuItem onClick={this.pinNote}>
-            <ListItemIcon>{note.pinned ? <UnpinIcon /> : <PinIcon />}</ListItemIcon>
-            {note.pinned ? 'Unpin Note' : 'Pin Note'}
-          </MenuItem>
-          <MenuItem onClick={this.archiveNote}>
-            <ListItemIcon>{note.archived ? <UnarchiveIcon /> : <ArchiveIcon />}</ListItemIcon>
-            {note.archived ? 'Unarchive Note' : 'Archive Note'}
-          </MenuItem>
-        </Menu>
-        <ConfirmationDialog
-          open={confirmDeleteOpen}
-          title={`You are about to delete note: ${note.title}`}
-          onPositive={this.doDelete}
-          onNegative={() => this.setState({ confirmDeleteOpen: false })}
-        />
-        <ConfirmationDialog
-          open={confirmCancelEditOpen}
-          title='If you close this editor, you will lose your changes.'
-          onPositive={this.cancelEdit}
-          onNegative={() => this.setState({ confirmCancelEditOpen: false })}
-        />
-        <CardContent className={classes.cardContent}>
-          <Dialog
-            classes={{ root: classes.markdown }}
-            open={edit || creatingSubnote}
-            fullWidth
-            maxWidth='lg'
-            fullScreen={isWidthDown('xs', width)}
-            onClose={this.tryCancelEdit}
+          <Suspense
+            fallback={
+              <ReactLoading type='spin' className={classes.loadingSpinner} color='#000000' />
+            }
           >
-            <Suspense
-              fallback={
-                <ReactLoading type='spin' className={classes.loadingSpinner} color='#000000' />
+            <NoteEditor
+              open={edit}
+              onSave={save}
+              ref={noteEditor}
+              note={
+                edit
+                  ? note
+                  : {
+                      title: '',
+                      body: '',
+                      tags: [],
+                      parent_note_id: note.id,
+                    }
               }
-            >
-              <NoteEditor
-                open={edit}
-                onSave={this.save}
-                ref={this.noteEditor}
-                note={
-                  edit
-                    ? note
-                    : {
-                        title: '',
-                        body: '',
-                        tags: [],
-                        parent_note_id: note.id,
-                      }
-                }
-              />
-            </Suspense>
-          </Dialog>
-          <Tags tags={note.tags} />
-          <ReactMarkdown
-            className={classes.markdown}
-            components={markdownComponents}
-            rehypePlugins={[rehypeRaw]}
-          >
-            {note.body}
-          </ReactMarkdown>
-
-          <Grid container spacing={8} className={classes.contentRoot}>
-            <NoteList
-              parent_note_id={note.id}
-              depth={(depth || 0) + 1}
-              notes={subnotes}
-              search={search}
-              updateNote={updateNote}
-              deleteNote={deleteNote}
             />
-          </Grid>
-        </CardContent>
-      </Card>
-    );
-  }
-}
+          </Suspense>
+        </Dialog>
+        <Tags tags={note.tags} />
+        <ReactMarkdown
+          className={classes.markdown}
+          components={markdownComponents}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {note.body}
+        </ReactMarkdown>
 
-export type InnerNote = Note;
+        <Grid container spacing={8} className={classes.contentRoot}>
+          <NoteList
+            parent_note_id={note.id}
+            depth={(depth || 0) + 1}
+            notes={subnotes}
+            search={search}
+            updateNote={updateNote}
+            deleteNote={deleteNote}
+          />
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+};
+
+export type InnerNote = typeof Note;
 export const Inner = Note;
 
 const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
@@ -471,4 +449,4 @@ const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
   subnotes: getSubnotes(state, { note_id: props.note.id }),
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(withWidth()(Note)));
+export default connect(mapStateToProps)(withStyles(styles)(Note));
