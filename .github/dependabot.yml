@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: cargo
     directory: '/'
     commit-message:
-      prefix: '[chore]'
+      prefix: '[build]'
     schedule:
       interval: daily
       time: '13:00'
@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: npm
     directory: '/'
     commit-message:
-      prefix: '[chore]'
+      prefix: '[build]'
     schedule:
       interval: daily
       time: '13:00'
