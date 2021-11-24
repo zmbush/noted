@@ -51,8 +51,8 @@ interface Props extends WithStyles<typeof styles> {
   sortedIds: number[];
   search: string;
   depth: number;
-  updateNote: (note?: NoteData) => void;
-  deleteNote: (id: number) => void;
+  onUpdateNote: (note?: NoteData) => void;
+  onDeleteNote: (id: number) => void;
   createFromSearch?: (e: React.SyntheticEvent) => void;
   firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
@@ -103,9 +103,9 @@ class NoteList extends React.Component<Props> {
       depth,
       width,
       createFromSearch,
-      updateNote,
+      onUpdateNote,
       firstNoteRef,
-      deleteNote,
+      onDeleteNote,
     } = this.props;
     let { notes } = this.props;
 
@@ -146,8 +146,8 @@ class NoteList extends React.Component<Props> {
                 depth={depth + 1}
                 note={notes.get(id)}
                 search={search}
-                updateNote={updateNote}
-                deleteNote={deleteNote}
+                onUpdateNote={onUpdateNote}
+                onDeleteNote={onDeleteNote}
                 ref={i === 0 ? firstNoteRef : null}
               />
             </Grid>,
@@ -166,8 +166,8 @@ class NoteList extends React.Component<Props> {
             <Note
               depth={depth + 1}
               note={n}
-              updateNote={updateNote}
-              deleteNote={deleteNote}
+              onUpdateNote={onUpdateNote}
+              onDeleteNote={onDeleteNote}
               search={search}
             />
           </Grid>,

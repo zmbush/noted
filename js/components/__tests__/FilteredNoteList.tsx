@@ -21,8 +21,8 @@ describe('<FilteredNoteList />', () => {
           depth={1}
           notes={new Map()}
           search=''
-          updateNote={() => {}}
-          deleteNote={() => {}}
+          onUpdateNote={() => {}}
+          onDeleteNote={() => {}}
           firstNoteRef={undefined}
         />
         ;

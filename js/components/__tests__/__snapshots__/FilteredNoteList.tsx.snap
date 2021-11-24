@@ -2,10 +2,10 @@
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
 <FilteredNoteList
-  deleteNote={[Function]}
   depth={1}
   notes={Map {}}
+  onDeleteNote={[Function]}
+  onUpdateNote={[Function]}
   search=""
-  updateNote={[Function]}
 />
 `;

@@ -185,8 +185,8 @@ interface Props extends WithStyles<typeof styles> {
   search: string;
   titles: Map<string, Set<number>>;
   subnotes: Map<number, NoteData>;
-  updateNote: (note?: NoteData) => void;
-  deleteNote: (id: number) => void;
+  onUpdateNote: (note?: NoteData) => void;
+  onDeleteNote: (id: number) => void;
   depth?: number;
 }
 
@@ -198,8 +198,8 @@ const Note = ({
   new: isNew,
   subnotes,
   search,
-  updateNote,
-  deleteNote,
+  onUpdateNote,
+  onDeleteNote,
 }: Props) => {
   const [edit, setEdit] = React.useState(false);
   const [creatingSubnote, setCreatingSubnote] = React.useState(false);
@@ -214,7 +214,7 @@ const Note = ({
     setEdit(false);
     setCreatingSubnote(false);
     setConfirmCancelEditOpen(false);
-    updateNote(null);
+    onUpdateNote(null);
   };
 
   const tryCancelEdit = () => {
@@ -251,12 +251,12 @@ const Note = ({
 
     setEdit(false);
     setCreatingSubnote(false);
-    updateNote(result.data);
+    onUpdateNote(result.data);
   };
 
   const doDelete = async () => {
     const _ = await axios.delete(`/api/secure/notes/${note.id}`);
-    deleteNote(note.id);
+    onDeleteNote(note.id);
   };
 
   const archiveNote = async () => {
@@ -272,7 +272,7 @@ const Note = ({
       archived: !archived,
     });
 
-    updateNote(result.data);
+    onUpdateNote(result.data);
   };
 
   const pinNote = async () => {
@@ -288,7 +288,7 @@ const Note = ({
       pinned: !pinned,
     });
 
-    updateNote(result.data);
+    onUpdateNote(result.data);
   };
 
   const startEdit = () => {
@@ -432,8 +432,8 @@ const Note = ({
             depth={(depth || 0) + 1}
             notes={subnotes}
             search={search}
-            updateNote={updateNote}
-            deleteNote={deleteNote}
+            onUpdateNote={onUpdateNote}
+            onUeleteNote={onDeleteNote}
           />
         </Grid>
       </CardContent>
