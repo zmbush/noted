@@ -15,6 +15,8 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+
 import App from 'components/App';
 import { logIn, fetchData } from 'data/actions';
 import reducers from 'data/reducers';
@@ -35,10 +37,18 @@ const store = createStore(
   fetchData(store.dispatch);
 })();
 
+const theme = createMuiTheme();
+
+const ThemedApp = () => (
+  <ThemeProvider theme={theme}>
+    <App />
+  </ThemeProvider>
+);
+
 ReactDOM.render(
   <Router>
     <Provider store={store}>
-      <App />
+      <ThemedApp />
     </Provider>
   </Router>,
   document.getElementById('root'),
