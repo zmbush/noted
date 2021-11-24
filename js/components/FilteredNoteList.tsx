@@ -7,14 +7,14 @@
 // except according to those terms.
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import NoteList from 'components/NoteList';
 import { NoteData, AppState } from 'data/types';
 
 import { InnerNote } from './Note';
 
-interface Props extends RouteComponentProps {
+interface Props {
   notes: Map<number, NoteData>;
   search: string;
   depth: number;
@@ -24,8 +24,9 @@ interface Props extends RouteComponentProps {
 }
 
 const FilteredNoteList = (props: Props) => {
-  const { match } = props;
-  const params = match.params as { ids: string };
+  const params = useParams() as { ids: string };
+  // const { match } = props;
+  // const params = match.params as { ids: string };
   const parsedIds = new Set(params.ids.split(',').map((i) => parseInt(i, 10)));
 
   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -38,4 +39,4 @@ const mapStateToProps = (state: AppState) => ({
   notes: state.notes,
 });
 
-export default withRouter(connect(mapStateToProps)(FilteredNoteList));
+export default connect(mapStateToProps)(FilteredNoteList);

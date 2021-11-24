@@ -11,9 +11,8 @@ import Mousetrap from 'mousetrap';
 import { Dispatch } from 'redux';
 
 import * as React from 'react';
-import { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Route, Switch, RouteComponentProps } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -34,7 +33,7 @@ import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
 import Note, { InnerNote } from 'components/Note';
 import NoteList from 'components/NoteList';
-import { updateNote, deleteNote, logOut } from 'data/actions';
+import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { getTopLevelNotes } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
@@ -127,16 +126,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const initialState = {
-  searchInputValue: '',
-  search: '',
-  newNote: false,
-  userMenuEl: null as HTMLElement,
-};
-
-type State = Readonly<typeof initialState>;
-
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+interface Props extends WithStyles<typeof styles> {
   notes: Map<number, NoteData>;
   is_signed_in: boolean;
   updateNote: (note: NoteData) => void;
@@ -144,218 +134,221 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {
   logOut: () => void;
 }
 
-class App extends Component<Props, State> {
-  searchInput: React.RefObject<HTMLInputElement>;
-
-  firstNote: React.RefObject<InnerNote>;
-
-  // eslint-disable-next-line react/destructuring-assignment
-  debouncedSearch = debounce(async () => this.state.searchInputValue, 100);
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = initialState;
-    this.searchInput = React.createRef();
-    this.firstNote = React.createRef();
-  }
-
-  componentDidMount() {
+const App = ({
+  classes,
+  deleteNote: doDeleteNote,
+  updateNote: doUpdateNote,
+  logOut: doLogOut,
+  is_signed_in: isSignedIn,
+  notes,
+}: Props) => {
+  const searchInput = React.useRef<HTMLInputElement>();
+  const firstNote = React.useRef<InnerNote>();
+  const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement>(null);
+  const [searchInputValue, setSearchInputValue] = React.useState('');
+  const [newNote, setNewNote] = React.useState(false);
+  const [search, setSearch] = React.useState('');
+  const [debouncedSearch, _] = React.useState<(v: string) => Promise<string>>(() =>
+    debounce(async (v) => v, 100),
+  );
+  const navigate = useNavigate();
+  React.useEffect(() => {
     document.title = `noted`;
-  }
+  }, []);
 
-  startSearch = (e: Event) => {
+  const isUserMenuOpen = Boolean(userMenuEl);
+
+  const startSearch = (e: Event) => {
     e.preventDefault();
-    this.searchInput.current.focus();
+    searchInput.current.focus();
   };
 
-  startEdit = (e: React.SyntheticEvent) => {
+  const create = () => {
+    setNewNote(true);
+  };
+
+  const createNew = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (this.firstNote.current) {
-      this.firstNote.current.startEdit();
+    create();
+  };
+
+  const startEdit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (firstNote.current) {
+      firstNote.current.startEdit();
     } else {
-      this.createNew(e);
+      createNew(e);
     }
   };
 
-  doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchInputValue: e.target.value });
-    this.setState({ search: await this.debouncedSearch() });
+  const doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInputValue(e.target.value);
+    setSearch(await debouncedSearch(e.target.value));
   };
 
-  updateNote = (note?: NoteData) => {
+  const updateNote = (note?: NoteData) => {
     if (note) {
-      const { updateNote: doUpdateNote } = this.props;
       doUpdateNote(note);
     }
-    this.setState({ newNote: false });
+    setNewNote(false);
   };
 
-  createNew = (e: React.SyntheticEvent) => {
+  const cancelSearch = (e: Mousetrap.ExtendedKeyboardEvent, _combo?: string) => {
     e.preventDefault();
-    this.create();
+    setSearchInputValue('');
+    setSearch('');
   };
 
-  cancelSearch = (e: Mousetrap.ExtendedKeyboardEvent, _combo?: string) => {
-    e.preventDefault();
-    this.setState({ searchInputValue: '', search: '' });
-  };
-
-  createNewShortcut = (
+  const createNewShortcut = (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     _combo?: string,
   ) => {
     e.preventDefault();
-    this.create();
+    create();
   };
 
-  closeUserMenu = () => {
-    this.setState({ userMenuEl: null });
+  const closeUserMenu = () => {
+    setUserMenuEl(null);
   };
 
-  openUserMenu = (e: React.MouseEvent<HTMLElement>) => {
-    this.setState({ userMenuEl: e.currentTarget });
+  const openUserMenu = (e: React.MouseEvent<HTMLElement>) => {
+    setUserMenuEl(e.currentTarget);
   };
 
-  signOut = async (_e: React.SyntheticEvent) => {
-    const { logOut: doLogOut } = this.props;
-    this.setState({ userMenuEl: null });
+  const signOut = async (_e: React.SyntheticEvent) => {
+    setUserMenuEl(null);
     await axios.post('/api/sign_out');
     doLogOut();
   };
 
-  create() {
-    this.setState({ newNote: true });
-  }
+  const filteredNoteList = (
+    <FilteredNoteList
+      depth={1}
+      search={search}
+      updateNote={updateNote}
+      deleteNote={doDeleteNote}
+      firstNoteRef={firstNote}
+    />
+  );
 
-  render() {
-    const {
-      classes,
-      history,
-      deleteNote: doDeleteNote,
-      is_signed_in: isSignedIn,
-      notes,
-    } = this.props;
-    const { userMenuEl, searchInputValue, newNote, search } = this.state;
-    const isUserMenuOpen = Boolean(userMenuEl);
-
-    return (
-      <div className={classes.root}>
-        <AppBar className={classes.noPrint}>
-          <Toolbar>
-            <Switch>
-              <Route exact path='/'>
+  return (
+    <div className={classes.root}>
+      <AppBar className={classes.noPrint}>
+        <Toolbar>
+          <Routes>
+            <Route
+              path='/'
+              element={
                 <IconButton className={classes.menuButton} aria-label='Menu' color='inherit'>
                   <MenuIcon />
                 </IconButton>
-              </Route>
-              <Route>
+              }
+            />
+            <Route
+              path='/*'
+              element={
                 <IconButton
                   className={classes.menuButton}
                   aria-label='Menu'
                   color='inherit'
                   onClick={() => {
-                    history.push('/');
+                    navigate('/');
                   }}
                 >
                   <HomeIcon />
                 </IconButton>
-              </Route>
-            </Switch>
-            <Typography className={classes.title} variant='h6' color='inherit' noWrap>
-              Noted
-            </Typography>
-            <div className={classes.grow} />
-            <BindKeyboard keys='esc' callback={this.cancelSearch}>
-              <BindKeyboard keys='ctrl+o' callback={this.createNewShortcut}>
-                <div className={classes.search}>
-                  <div className={classes.searchIcon}>
-                    <SearchIcon />
-                  </div>
-                  <form onSubmit={this.startEdit}>
-                    <InputBase
-                      inputProps={{
-                        ref: this.searchInput,
-                      }}
-                      placeholder='Search...'
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                      }}
-                      value={searchInputValue}
-                      onChange={this.doSearch}
-                    />
-                  </form>
+              }
+            />
+          </Routes>
+          <Typography className={classes.title} variant='h6' color='inherit' noWrap>
+            Noted
+          </Typography>
+          <div className={classes.grow} />
+          <BindKeyboard keys='esc' callback={cancelSearch}>
+            <BindKeyboard keys='ctrl+o' callback={createNewShortcut}>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
                 </div>
-              </BindKeyboard>
+                <form onSubmit={startEdit}>
+                  <InputBase
+                    inputProps={{
+                      ref: searchInput,
+                    }}
+                    placeholder='Search...'
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                    value={searchInputValue}
+                    onChange={doSearch}
+                  />
+                </form>
+              </div>
             </BindKeyboard>
-            <IconButton aria-haspopup='true' onClick={this.openUserMenu} color='inherit'>
-              <AccountCircle />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Grid container spacing={2} className={classes.contentRoot}>
-          {newNote ? (
-            <Grid item xs={12}>
-              <Note
-                new
-                depth={1}
-                search={search}
-                note={{
-                  id: -1,
-                  title: search,
-                  tags: [],
-                  body: '',
-                  created_at: '',
-                  updated_at: '',
-                  user_id: 0,
-                }}
-                updateNote={this.updateNote}
-                deleteNote={deleteNote}
-              />
-            </Grid>
-          ) : null}
-          <Switch>
-            <Route exact path='/'>
+          </BindKeyboard>
+          <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit'>
+            <AccountCircle />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Grid container spacing={2} className={classes.contentRoot}>
+        {newNote ? (
+          <Grid item xs={12}>
+            <Note
+              new
+              depth={1}
+              search={search}
+              note={{
+                id: -1,
+                title: search,
+                tags: [],
+                body: '',
+                created_at: '',
+                updated_at: '',
+                user_id: 0,
+              }}
+              updateNote={updateNote}
+              deleteNote={deleteNote}
+            />
+          </Grid>
+        ) : null}
+        <Routes>
+          <Route
+            path='/'
+            element={
               <NoteList
-                createFromSearch={this.createNewShortcut}
+                createFromSearch={createNewShortcut}
                 parent_note_id={null}
                 depth={1}
                 notes={notes}
                 search={search}
-                updateNote={this.updateNote}
+                updateNote={updateNote}
                 deleteNote={doDeleteNote}
-                firstNoteRef={this.firstNote}
+                firstNoteRef={firstNote}
               />
-            </Route>
-            <Route path={['/note/:ids', '/disambiguation/:ids']}>
-              <FilteredNoteList
-                depth={1}
-                search={search}
-                updateNote={this.updateNote}
-                deleteNote={doDeleteNote}
-                firstNoteRef={this.firstNote}
-              />
-            </Route>
-          </Switch>
-        </Grid>
+            }
+          />
+          <Route path='/note/:ids' element={filteredNoteList} />
+          <Route path='/disambiguation/:ids' element={filteredNoteList} />
+        </Routes>
+      </Grid>
 
-        <BindKeyboard keys='/' callback={this.startSearch} />
-        <LogIn open={!isSignedIn} />
-        <Menu
-          anchorEl={userMenuEl}
-          open={isUserMenuOpen}
-          onClose={this.closeUserMenu}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        >
-          <MenuItem onClick={this.signOut}>
-            <p>Sign Out</p>
-          </MenuItem>
-        </Menu>
-      </div>
-    );
-  }
-}
+      <BindKeyboard keys='/' callback={startSearch} />
+      <LogIn open={!isSignedIn} />
+      <Menu
+        anchorEl={userMenuEl}
+        open={isUserMenuOpen}
+        onClose={closeUserMenu}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <MenuItem onClick={signOut}>
+          <p>Sign Out</p>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};
 
 const mapStateToProps = (state: AppState) => ({
   notes: getTopLevelNotes(state),
@@ -364,7 +357,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   updateNote(data: NoteData) {
-    dispatch(updateNote(data));
+    dispatch(updateNoteAction(data));
   },
 
   deleteNote(id: number) {
@@ -376,4 +369,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App)));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));
