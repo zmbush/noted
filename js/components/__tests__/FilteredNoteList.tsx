@@ -15,20 +15,20 @@ import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    expect(
-      shallow(
-        <MemoryRouter>
-          <FilteredNoteList
-            depth={1}
-            notes={new Map()}
-            search=''
-            updateNote={() => {}}
-            deleteNote={() => {}}
-            firstNoteRef={undefined}
-          />
-          ,
-        </MemoryRouter>,
-      ),
-    ).toMatchSnapshot();
+    const node = shallow(
+      <MemoryRouter>
+        <FilteredNoteList
+          depth={1}
+          notes={new Map()}
+          search=''
+          updateNote={() => {}}
+          deleteNote={() => {}}
+          firstNoteRef={undefined}
+        />
+        ;
+      </MemoryRouter>,
+    );
+
+    expect(node.find(FilteredNoteList)).toMatchSnapshot();
   });
 });
