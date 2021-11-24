@@ -89,7 +89,7 @@ describe('<NoteEditor />', () => {
       },
     };
 
-    toastEditor.props().events.change({ source: 'wysiwyg', data: null });
+    toastEditor.props().events.change('wysiwyg');
 
     expect(wrapper.state('body')).toEqual('new body');
   });
