@@ -1,50 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
-<ContextProvider
-  value={
+<Router
+  location={
     Object {
-      "history": Object {
-        "action": "POP",
-        "block": [Function],
-        "canGo": [Function],
-        "createHref": [Function],
-        "entries": Array [
-          Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-        ],
-        "go": [Function],
-        "goBack": [Function],
-        "goForward": [Function],
-        "index": 0,
-        "length": 1,
-        "listen": [Function],
-        "location": Object {
-          "hash": "",
-          "pathname": "/",
-          "search": "",
-          "state": undefined,
-        },
-        "push": [Function],
-        "replace": [Function],
-      },
+      "hash": "",
+      "key": "nj9wgprg",
+      "pathname": "/",
+      "search": "",
+      "state": null,
+    }
+  }
+  navigationType="POP"
+  navigator={
+    Object {
+      "action": "POP",
+      "back": [Function],
+      "block": [Function],
+      "createHref": [Function],
+      "forward": [Function],
+      "go": [Function],
+      "index": 0,
+      "listen": [Function],
       "location": Object {
         "hash": "",
+        "key": "nj9wgprg",
         "pathname": "/",
         "search": "",
-        "state": undefined,
+        "state": null,
       },
-      "match": Object {
-        "isExact": true,
-        "params": Object {},
-        "path": "/",
-        "url": "/",
-      },
-      "staticContext": undefined,
+      "push": [Function],
+      "replace": [Function],
     }
   }
 >
@@ -56,5 +42,5 @@ exports[`<FilteredNoteList /> matches snapshot 1`] = `
     updateNote={[Function]}
   />
   ,
-</ContextProvider>
+</Router>
 `;

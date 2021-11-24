@@ -12,7 +12,7 @@ import { Dispatch } from 'redux';
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -151,7 +151,7 @@ const App = ({
   const [debouncedSearch, _] = React.useState<(v: string) => Promise<string>>(() =>
     debounce(async (v) => v, 100),
   );
-  const history = useHistory();
+  const navigate = useNavigate();
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
@@ -221,29 +221,45 @@ const App = ({
     doLogOut();
   };
 
+  const filteredNoteList = (
+    <FilteredNoteList
+      depth={1}
+      search={search}
+      updateNote={updateNote}
+      deleteNote={doDeleteNote}
+      firstNoteRef={firstNote}
+    />
+  );
+
   return (
     <div className={classes.root}>
       <AppBar className={classes.noPrint}>
         <Toolbar>
-          <Switch>
-            <Route exact path='/'>
-              <IconButton className={classes.menuButton} aria-label='Menu' color='inherit'>
-                <MenuIcon />
-              </IconButton>
-            </Route>
-            <Route>
-              <IconButton
-                className={classes.menuButton}
-                aria-label='Menu'
-                color='inherit'
-                onClick={() => {
-                  history.push('/');
-                }}
-              >
-                <HomeIcon />
-              </IconButton>
-            </Route>
-          </Switch>
+          <Routes>
+            <Route
+              path='/'
+              element={
+                <IconButton className={classes.menuButton} aria-label='Menu' color='inherit'>
+                  <MenuIcon />
+                </IconButton>
+              }
+            />
+            <Route
+              path='/*'
+              element={
+                <IconButton
+                  className={classes.menuButton}
+                  aria-label='Menu'
+                  color='inherit'
+                  onClick={() => {
+                    navigate('/');
+                  }}
+                >
+                  <HomeIcon />
+                </IconButton>
+              }
+            />
+          </Routes>
           <Typography className={classes.title} variant='h6' color='inherit' noWrap>
             Noted
           </Typography>
@@ -297,29 +313,25 @@ const App = ({
             />
           </Grid>
         ) : null}
-        <Switch>
-          <Route exact path='/'>
-            <NoteList
-              createFromSearch={createNewShortcut}
-              parent_note_id={null}
-              depth={1}
-              notes={notes}
-              search={search}
-              updateNote={updateNote}
-              deleteNote={doDeleteNote}
-              firstNoteRef={firstNote}
-            />
-          </Route>
-          <Route path={['/note/:ids', '/disambiguation/:ids']}>
-            <FilteredNoteList
-              depth={1}
-              search={search}
-              updateNote={updateNote}
-              deleteNote={doDeleteNote}
-              firstNoteRef={firstNote}
-            />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <NoteList
+                createFromSearch={createNewShortcut}
+                parent_note_id={null}
+                depth={1}
+                notes={notes}
+                search={search}
+                updateNote={updateNote}
+                deleteNote={doDeleteNote}
+                firstNoteRef={firstNote}
+              />
+            }
+          />
+          <Route path='/note/:ids' element={filteredNoteList} />
+          <Route path='/disambiguation/:ids' element={filteredNoteList} />
+        </Routes>
       </Grid>
 
       <BindKeyboard keys='/' callback={startSearch} />

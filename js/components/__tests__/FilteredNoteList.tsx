@@ -7,10 +7,9 @@
 // except according to those terms.
 //
 import { shallow } from 'enzyme';
-import { createMemoryHistory } from 'history';
 
 import * as React from 'react';
-import { Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
@@ -18,7 +17,7 @@ describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
     expect(
       shallow(
-        <Router history={createMemoryHistory({ keyLength: 0 })}>
+        <MemoryRouter>
           <FilteredNoteList
             depth={1}
             notes={new Map()}
@@ -28,7 +27,7 @@ describe('<FilteredNoteList />', () => {
             firstNoteRef={undefined}
           />
           ,
-        </Router>,
+        </MemoryRouter>,
       ),
     ).toMatchSnapshot();
   });
