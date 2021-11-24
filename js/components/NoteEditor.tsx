@@ -6,6 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import 'codemirror/lib/codemirror.css';
