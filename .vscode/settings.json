@@ -68,5 +68,11 @@
         ""
       ]
     }
-  ]
+  ],
+  "files.associations": {
+    "*.ts.snap": "typescript",
+    "*.tsx.snap": "typescriptreact",
+    "*.js.snap": "javascript",
+    "*.jsx.snap": "javascriptreact"
+  }
 }
