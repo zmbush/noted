@@ -67,9 +67,9 @@ const styles = (theme: Theme) =>
     },
     title: {
       display: 'none',
-      // [theme.breakpoints.up('sm')]: {
-      //   display: 'block',
-      // },
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
+      },
     },
     search: {
       position: 'relative',
@@ -81,10 +81,10 @@ const styles = (theme: Theme) =>
       marginLeft: 0,
       marginRight: theme.spacing(1),
       width: '100%',
-      // [theme.breakpoints.up('sm')]: {
-      //   marginLeft: theme.spacing(1),
-      //   width: 'auto',
-      // },
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+      },
     },
     searchIcon: {
       width: theme.spacing(9),
@@ -106,12 +106,12 @@ const styles = (theme: Theme) =>
       paddingLeft: theme.spacing(10),
       transition: theme.transitions.create('width'),
       width: '100%',
-      // [theme.breakpoints.up('sm')]: {
-      //   width: 120,
-      //   '&:focus': {
-      //     width: 200,
-      //   },
-      // },
+      [theme.breakpoints.up('sm')]: {
+        width: 120,
+        '&:focus': {
+          width: 200,
+        },
+      },
     },
     newButton: {
       margin: theme.spacing(1),
