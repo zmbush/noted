@@ -11,7 +11,6 @@ import memoize from 'memoize-one';
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -43,7 +42,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface Props extends WithStyles<typeof styles>, RouteComponentProps {
+interface Props extends WithStyles<typeof styles> {
   notes: Map<number, NoteData>;
   searchIndex: Map<number, NoteData>;
   sortedIds: number[];
@@ -189,4 +188,4 @@ const mapStateToProps = (state: AppState, props: { parent_note_id: number }) => 
   sortedIds: getSortedNoteIds(state),
 });
 
-export default withRouter(connect(mapStateToProps)(withStyles(styles)(NoteList)));
+export default connect(mapStateToProps)(withStyles(styles)(NoteList));

@@ -1,65 +1,60 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
-<withRouter(Connect(WithStyles(NoteList)))
-  deleteNote={[Function]}
-  depth={1}
-  history={
+<ContextProvider
+  value={
     Object {
-      "action": "POP",
-      "block": [Function],
-      "canGo": [Function],
-      "createHref": [Function],
-      "entries": Array [
-        Object {
+      "history": Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
           "hash": "",
           "pathname": "/",
           "search": "",
           "state": undefined,
         },
-      ],
-      "go": [Function],
-      "goBack": [Function],
-      "goForward": [Function],
-      "index": 0,
-      "length": 1,
-      "listen": [Function],
+        "push": [Function],
+        "replace": [Function],
+      },
       "location": Object {
         "hash": "",
         "pathname": "/",
         "search": "",
         "state": undefined,
       },
-      "push": [Function],
-      "replace": [Function],
-    }
-  }
-  location={
-    Object {
-      "hash": "",
-      "pathname": "/",
-      "search": "",
-      "state": undefined,
-    }
-  }
-  match={
-    Object {
-      "isExact": true,
-      "params": Object {
-        "ids": "1",
+      "match": Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/",
+        "url": "/",
       },
-      "path": "",
-      "url": "",
+      "staticContext": undefined,
     }
   }
-  notes={Map {}}
-  parent_note_id={null}
-  renderOnly={
-    Set {
-      1,
-    }
-  }
-  search=""
-  updateNote={[Function]}
-/>
+>
+  <FilteredNoteList
+    deleteNote={[Function]}
+    depth={1}
+    notes={Map {}}
+    search=""
+    updateNote={[Function]}
+  />
+  ,
+</ContextProvider>
 `;

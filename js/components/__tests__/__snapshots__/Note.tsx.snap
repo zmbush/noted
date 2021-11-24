@@ -154,7 +154,7 @@ exports[`<Note /> matches snapshot 1`] = `
       container={true}
       spacing={8}
     >
-      <withRouter(Connect(WithStyles(NoteList)))
+      <Connect(WithStyles(NoteList))
         deleteNote={[Function]}
         depth={1}
         notes={Map {}}
@@ -312,7 +312,7 @@ exports[`<Note /> matches snapshot 2`] = `
       container={true}
       spacing={8}
     >
-      <withRouter(Connect(WithStyles(NoteList)))
+      <Connect(WithStyles(NoteList))
         deleteNote={[Function]}
         depth={1}
         notes={Map {}}
@@ -469,7 +469,7 @@ exports[`<Note /> matches snapshot 3`] = `
       container={true}
       spacing={8}
     >
-      <withRouter(Connect(WithStyles(NoteList)))
+      <Connect(WithStyles(NoteList))
         deleteNote={[Function]}
         depth={1}
         notes={Map {}}

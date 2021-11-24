@@ -10,32 +10,25 @@ import { shallow } from 'enzyme';
 import { createMemoryHistory } from 'history';
 
 import * as React from 'react';
+import { Router } from 'react-router-dom';
 
 import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    const history = createMemoryHistory({ keyLength: 0 });
     expect(
       shallow(
-        <FilteredNoteList
-          depth={1}
-          notes={new Map()}
-          search=''
-          updateNote={() => {}}
-          deleteNote={() => {}}
-          firstNoteRef={undefined}
-          history={history}
-          location={history.location}
-          match={{
-            isExact: true,
-            path: '',
-            url: '',
-            params: {
-              ids: '1',
-            },
-          }}
-        />,
+        <Router history={createMemoryHistory({ keyLength: 0 })}>
+          <FilteredNoteList
+            depth={1}
+            notes={new Map()}
+            search=''
+            updateNote={() => {}}
+            deleteNote={() => {}}
+            firstNoteRef={undefined}
+          />
+          ,
+        </Router>,
       ),
     ).toMatchSnapshot();
   });
