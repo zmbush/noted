@@ -15,12 +15,8 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 
 import * as React from 'react';
 
-import SaveIcon from '@mui/icons-material/Save';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
+import { Save as SaveIcon } from '@mui/icons-material';
+import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';

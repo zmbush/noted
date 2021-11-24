@@ -14,18 +14,22 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import HomeIcon from '@mui/icons-material/Home';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AppBar from '@mui/material/AppBar';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import {
+  AccountCircle,
+  Home as HomeIcon,
+  Menu as MenuIcon,
+  Search as SearchIcon,
+} from '@mui/icons-material';
+import {
+  AppBar,
+  Grid,
+  IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { Theme, alpha } from '@mui/material/styles';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
