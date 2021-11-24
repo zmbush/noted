@@ -84,14 +84,9 @@ class NoteList extends React.Component<Props> {
             weight: 0.5,
           },
         ],
-        id: 'id',
         location: 0,
-        matchAllTokens: true,
-        maxPatternLength: 32,
-        minMatchCharLength: 1,
         shouldSort: true,
         threshold: 0.4,
-        tokenize: true,
       }),
   );
 
@@ -117,12 +112,9 @@ class NoteList extends React.Component<Props> {
 
     if (search !== '') {
       const elements = [];
-      const results = this.getFuse(searchIndex).search(search) as any as string[];
+      const results = this.getFuse(searchIndex).search(search);
 
-      if (
-        depth === 1 &&
-        (results.length === 0 || notes.get(parseInt(results[0], 10)).title !== search)
-      ) {
+      if (depth === 1 && (results.length === 0 || notes.get(results[0].item.id).title !== search)) {
         elements.push(
           <Grid item key='new' className={classes.item} xs={width}>
             <Button
@@ -139,8 +131,8 @@ class NoteList extends React.Component<Props> {
       }
 
       let i = 0;
-      results.forEach((idStr) => {
-        const id = parseInt(idStr, 10);
+      results.forEach((result) => {
+        const { id } = result.item;
         if (!notes.has(id)) {
           // eslint-disable-next-line no-console
           console.log('Note ', id, ' not found');
