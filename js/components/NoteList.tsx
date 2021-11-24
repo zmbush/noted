@@ -5,6 +5,7 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
 import classNames from 'classnames';
 import Fuse from 'fuse.js';
 import memoize from 'memoize-one';
@@ -12,9 +13,8 @@ import memoize from 'memoize-one';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import AddIcon from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import { Add as AddIcon } from '@mui/icons-material';
+import { Button, Grid } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';

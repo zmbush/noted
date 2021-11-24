@@ -17,23 +17,27 @@ import ReactMarkdown from 'react-markdown';
 import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 import { connect } from 'react-redux';
 
-import ArchiveIcon from '@mui/icons-material/Archive';
-import UnpinIcon from '@mui/icons-material/Clear';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PinIcon from '@mui/icons-material/Done';
-import EditIcon from '@mui/icons-material/Edit';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import {
+  Archive as ArchiveIcon,
+  Clear as UnpinIcon,
+  Delete as DeleteIcon,
+  Done as PinIcon,
+  Edit as EditIcon,
+  LibraryAdd as LibraryAddIcon,
+  MoreVert as MoreVertIcon,
+  Unarchive as UnarchiveIcon,
+} from '@mui/icons-material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Dialog,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { useTheme, Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { WithStyles } from '@mui/styles';

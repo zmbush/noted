@@ -7,10 +7,8 @@
 // except according to those terms.
 import * as React from 'react';
 
-import GestureIcon from '@mui/icons-material/Gesture';
-import GradeIcon from '@mui/icons-material/Grade';
-import { PropTypes } from '@mui/material';
-import Chip from '@mui/material/Chip';
+import { Gesture as GestureIcon, Grade as GradeIcon } from '@mui/icons-material';
+import { PropTypes, Chip } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
