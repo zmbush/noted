@@ -132,7 +132,7 @@ exports[`<Note /> matches snapshot 1`] = `
         />
       </React.Suspense>
     </ForwardRef(Dialog)>
-    <WithStyles(Tags)
+    <Tags
       tags={
         Array [
           "tag1",
@@ -157,10 +157,10 @@ exports[`<Note /> matches snapshot 1`] = `
       container={true}
       spacing={8}
     >
-      <Connect(WithStyles(NoteList))
+      <Connect(NoteList)
         depth={1}
         notes={Map {}}
-        onUeleteNote={[Function]}
+        onDeleteNote={[Function]}
         onUpdateNote={[Function]}
         parent_note_id={1}
         search=""
@@ -301,7 +301,7 @@ exports[`<Note /> matches snapshot 2`] = `
         />
       </React.Suspense>
     </ForwardRef(Dialog)>
-    <WithStyles(Tags) />
+    <Tags />
     <default_1
       components={
         Object {
@@ -318,10 +318,10 @@ exports[`<Note /> matches snapshot 2`] = `
       container={true}
       spacing={8}
     >
-      <Connect(WithStyles(NoteList))
+      <Connect(NoteList)
         depth={1}
         notes={Map {}}
-        onUeleteNote={[Function]}
+        onDeleteNote={[Function]}
         onUpdateNote={[Function]}
         search=""
       />
@@ -461,7 +461,7 @@ exports[`<Note /> matches snapshot 3`] = `
         />
       </React.Suspense>
     </ForwardRef(Dialog)>
-    <WithStyles(Tags) />
+    <Tags />
     <default_1
       components={
         Object {
@@ -478,10 +478,10 @@ exports[`<Note /> matches snapshot 3`] = `
       container={true}
       spacing={8}
     >
-      <Connect(WithStyles(NoteList))
+      <Connect(NoteList)
         depth={1}
         notes={Map {}}
-        onUeleteNote={[Function]}
+        onDeleteNote={[Function]}
         onUpdateNote={[Function]}
         search=""
       />

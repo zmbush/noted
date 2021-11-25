@@ -23,9 +23,7 @@ describe('<FilteredNoteList />', () => {
           search=''
           onUpdateNote={() => {}}
           onDeleteNote={() => {}}
-          firstNoteRef={undefined}
         />
-        ;
       </MemoryRouter>,
     );
 

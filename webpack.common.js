@@ -8,8 +8,7 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   entry: './js/index.tsx',
@@ -23,7 +22,7 @@ module.exports = {
   resolve: {
     fallback: { path: require.resolve('path-browserify') },
     modules: ['node_modules', 'js'],
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.css', '.scss'],
   },
   module: {
     rules: [
@@ -50,6 +49,21 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.s(a|c)ss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                namedExport: true,
+              },
+            },
+          },
+          'sass-loader',
+        ],
+      },
+      {
         test: /\.(png|svg|jpg|gif)$/,
         use: ['file-loader'],
       },
@@ -60,7 +74,6 @@ module.exports = {
       template: 'js/index.ejs',
     }),
     new ForkTsCheckerWebpackPlugin(),
-    //new BundleAnalyzerPlugin(),
   ],
   optimization: {
     splitChunks: {

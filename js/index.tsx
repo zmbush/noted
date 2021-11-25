@@ -15,8 +15,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { createTheme, StyledEngineProvider } from '@mui/material/styles';
-import { ThemeProvider } from '@mui/styles';
+import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 
 import App from 'components/App';
 import { logIn, fetchData } from 'data/actions';

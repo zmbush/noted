@@ -17,43 +17,15 @@ import * as React from 'react';
 
 import { Save as SaveIcon } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import withStyles from '@mui/styles/withStyles';
 
 import BindKeyboard from 'components/BindKeyboard';
 import { NoteData } from 'data/types';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    editorRoot: {
-      [theme.breakpoints.up('sm')]: {
-        height: '84vh',
-      },
-      [theme.breakpoints.down('md')]: {
-        height: '100vh',
-      },
-    },
-
-    titleInput: {
-      width: '100%',
-    },
-
-    editorContent: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      bottom: 0,
-      top: '50px',
-    },
-  });
-
-interface Props extends WithStyles<typeof styles> {
+type Props = {
   note: NoteData;
   open: boolean;
   onSave: (note: { title: string; body: string; tags: string[] }) => void;
-}
+};
 
 type State = {
   title: string;
@@ -62,7 +34,7 @@ type State = {
   parent_note_id?: number;
 };
 
-class NoteEditor extends React.Component<Props, State> {
+export default class NoteEditor extends React.Component<Props, State> {
   editor: React.RefObject<any>;
 
   constructor(props: Props) {
@@ -117,15 +89,23 @@ class NoteEditor extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
     const { title, tags, body } = this.state;
     return (
       <BindKeyboard keys='ctrl+s' callback={this.save}>
-        <Card classes={{ root: classes.editorRoot }}>
+        <Card
+          sx={(theme) => ({
+            [theme.breakpoints.up('sm')]: {
+              height: '84vh',
+            },
+            [theme.breakpoints.down('md')]: {
+              height: '100vh',
+            },
+          })}
+        >
           <CardHeader
             title={
               <Input
-                classes={{ root: classes.titleInput }}
+                sx={{ width: '100%' }}
                 value={title}
                 onChange={(e) => {
                   this.setState({ title: e.target.value });
@@ -139,7 +119,15 @@ class NoteEditor extends React.Component<Props, State> {
               </IconButton>
             }
           />
-          <CardContent classes={{ root: classes.editorContent }}>
+          <CardContent
+            sx={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              top: '50px',
+            }}
+          >
             <ChipInput
               classes={{}}
               placeholder='Tags'
@@ -173,6 +161,3 @@ class NoteEditor extends React.Component<Props, State> {
     );
   }
 }
-
-export const Inner = NoteEditor;
-export default withStyles(styles)(NoteEditor);

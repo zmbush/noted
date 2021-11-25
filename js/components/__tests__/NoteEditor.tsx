@@ -14,11 +14,10 @@ import * as React from 'react';
 
 import { CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
-import { Inner as NoteEditor } from '../NoteEditor';
+import NoteEditor from '../NoteEditor';
 
 const editor = (
   <NoteEditor
-    classes={{ editorRoot: '', titleInput: '', editorContent: '' }}
     open={false}
     note={{
       id: 1,

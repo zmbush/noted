@@ -42,7 +42,6 @@
     "@mui/material": "5.1.1",
     "@mui/private-theming": "5.1.1",
     "@mui/styled-engine": "5.1.1",
-    "@mui/styles": "5.1.1",
     "@mui/system": "5.1.1",
     "@mui/utils": "5.1.1",
     "@toast-ui/editor": "^3.1.1",
@@ -99,6 +98,7 @@
     "regenerator-runtime": "^0.13.9",
     "rehype-raw": "^6.1.0",
     "reselect": "^4.0.0",
+    "sass-loader": "^12.3.0",
     "showdown": "^1.9.0",
     "source-map-loader": "^3.0.0",
     "style-loader": "^3.3.1",
@@ -124,7 +124,9 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
-    "husky": "^7.0.4"
+    "husky": "^7.0.4",
+    "sass": "^1.43.5",
+    "typed-scss-modules": "^4.1.1"
   },
   "//": "Remove once https://github.com/mui-org/material-ui/issues/29860 is resolved",
   "resolutions": {
