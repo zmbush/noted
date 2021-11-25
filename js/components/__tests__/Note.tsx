@@ -13,7 +13,6 @@ import { Inner as Note } from '../Note';
 
 const editor = (
   <Note
-    classes={{} as any}
     search=''
     titles={new Map()}
     subnotes={new Map()}

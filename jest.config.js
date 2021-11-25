@@ -17,7 +17,7 @@ module.exports = {
   roots: ['<rootDir>/js'],
   moduleNameMapper: {
     '^core-js/.*': 'identity-obj-proxy',
-    '\\.(css|less)$': 'identity-obj-proxy',
+    '\\.(css|less|scss)$': 'identity-obj-proxy',
     'react-markdown': '<rootDir>/js/__mocks__/react-markdown.tsx',
     'rehype-raw': '<rootDir>/js/__mocks__/rehype-raw.ts',
   },

@@ -12,15 +12,12 @@ import { useParams } from 'react-router-dom';
 import NoteList from 'components/NoteList';
 import { NoteData, AppState } from 'data/types';
 
-import { InnerNote } from './Note';
-
 interface Props {
   notes: Map<number, NoteData>;
   search: string;
   depth: number;
   onUpdateNote: (note: NoteData) => void;
   onDeleteNote: (id: number) => void;
-  firstNoteRef: React.RefObject<InnerNote>;
 }
 
 const FilteredNoteList = (props: Props) => {

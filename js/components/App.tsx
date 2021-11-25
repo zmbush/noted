@@ -27,123 +27,58 @@ import {
   InputBase,
   Menu,
   MenuItem,
+  styled,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { Theme, alpha } from '@mui/material/styles';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import withStyles from '@mui/styles/withStyles';
+import { alpha } from '@mui/material/styles';
 
+import * as styles from 'components/App.tsx.scss';
 import BindKeyboard from 'components/BindKeyboard';
 import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
-import Note, { InnerNote } from 'components/Note';
+import Note from 'components/Note';
 import NoteList from 'components/NoteList';
 import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { getTopLevelNotes } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-      '@media print': {
-        overflow: 'visible !important',
-        columnCount: 2,
-        columnWidth: 200,
-        // columnBreakInside: 'avoid',
-      },
-    },
-    grow: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginLeft: -12,
-      marginRight: 20,
-    },
-    contentRoot: {
-      '@media print': {
-        marginTop: 0,
-        display: 'block',
-      },
-      marginTop: 75,
-    },
-    title: {
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: alpha(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-      },
-      marginLeft: 0,
-      marginRight: theme.spacing(1),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    searchIcon: {
-      width: theme.spacing(9),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
-      width: '100%',
-    },
-    inputInput: {
-      paddingTop: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
-      paddingLeft: theme.spacing(10),
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-          width: 200,
-        },
-      },
-    },
-    newButton: {
-      margin: theme.spacing(1),
-    },
-    leftIcon: {
-      marginRight: theme.spacing(1),
-    },
-    iconSmall: {
-      fontSize: 20,
-    },
-    noPrint: {
-      '@media print': {
-        display: 'none',
-      },
-    },
-  });
+const SearchDiv = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  marginRight: theme.spacing(1),
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
 
-interface Props extends WithStyles<typeof styles> {
+const SearchIconDiv = styled('div')(({ theme }) => ({
+  width: theme.spacing(9),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+type Props = {
   notes: Map<number, NoteData>;
   isSignedIn: boolean;
   doUpdateNote: (note: NoteData) => void;
   doDeleteNote: (id: number) => void;
   doLogOut: () => void;
-}
+};
 
-const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props) => {
+const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
-  const firstNote = React.useRef<InnerNote>();
   const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement>(null);
   const [searchInputValue, setSearchInputValue] = React.useState('');
   const [newNote, setNewNote] = React.useState(false);
@@ -174,13 +109,12 @@ const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes 
 
   const startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (firstNote.current) {
-      // TODO: Fix this.
-      // firstNote.current.startEdit();
-      createNew(e);
-    } else {
-      createNew(e);
-    }
+    // TODO: Get firstnote feature working again
+    // if (firstNote.current) {
+    //   firstNote.current.startEdit();
+    // } else {
+    createNew(e);
+    // }
   };
 
   const doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,23 +163,25 @@ const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes 
       search={search}
       onUpdateNote={updateNote}
       onDeleteNote={doDeleteNote}
-      firstNoteRef={firstNote}
     />
   );
 
   return (
-    <div className={classes.root}>
-      <AppBar className={classes.noPrint}>
+    <div className={styles.root}>
+      <AppBar sx={{ displayPrint: 'none' }}>
         <Toolbar>
           <Routes>
             <Route
               path='/'
               element={
                 <IconButton
-                  className={classes.menuButton}
                   aria-label='Menu'
                   color='inherit'
                   size='large'
+                  sx={{
+                    marginLeft: '-12px',
+                    marginRight: '20px',
+                  }}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -255,44 +191,71 @@ const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes 
               path='/*'
               element={
                 <IconButton
-                  className={classes.menuButton}
                   aria-label='Menu'
                   color='inherit'
                   onClick={() => {
                     navigate('/');
                   }}
                   size='large'
+                  sx={{
+                    marginLeft: '-12px',
+                    marginRight: '20px',
+                  }}
                 >
                   <HomeIcon />
                 </IconButton>
               }
             />
           </Routes>
-          <Typography className={classes.title} variant='h6' color='inherit' noWrap>
+          <Typography
+            variant='h6'
+            color='inherit'
+            noWrap
+            sx={(theme) => ({
+              display: 'none',
+              [theme.breakpoints.up('sm')]: {
+                display: 'block',
+              },
+            })}
+          >
             Noted
           </Typography>
-          <div className={classes.grow} />
+          <div className={styles.grow} />
           <BindKeyboard keys='esc' callback={cancelSearch}>
             <BindKeyboard keys='ctrl+o' callback={createNewShortcut}>
-              <div className={classes.search}>
-                <div className={classes.searchIcon}>
+              <SearchDiv>
+                <SearchIconDiv>
                   <SearchIcon />
-                </div>
+                </SearchIconDiv>
                 <form onSubmit={startEdit}>
                   <InputBase
                     inputProps={{
                       ref: searchInput,
                     }}
                     placeholder='Search...'
-                    classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput,
-                    }}
                     value={searchInputValue}
                     onChange={doSearch}
+                    sx={(theme) => ({
+                      color: 'inherit',
+                      width: '100%',
+                      '& .MuiInputBase-input': {
+                        paddingTop: theme.spacing(1),
+                        paddingRight: theme.spacing(1),
+                        paddingBottom: theme.spacing(1),
+                        paddingLeft: theme.spacing(10),
+                        transition: theme.transitions.create('width'),
+                        width: '100%',
+                        [theme.breakpoints.up('sm')]: {
+                          width: 120,
+                          '&:focus': {
+                            width: 200,
+                          },
+                        },
+                      },
+                    })}
                   />
                 </form>
-              </div>
+              </SearchDiv>
             </BindKeyboard>
           </BindKeyboard>
           <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit' size='large'>
@@ -300,7 +263,17 @@ const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes 
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Grid container spacing={2} className={classes.contentRoot}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          '@media print': {
+            marginTop: 0,
+            display: 'block',
+          },
+          marginTop: '75px',
+        }}
+      >
         {newNote ? (
           <Grid item xs={12}>
             <Note
@@ -333,7 +306,6 @@ const App = ({ classes, doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes 
                 search={search}
                 onUpdateNote={updateNote}
                 onDeleteNote={doDeleteNote}
-                firstNoteRef={firstNote}
               />
             }
           />
@@ -377,4 +349,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));
+export default connect(mapStateToProps, mapDispatchToProps)(App);

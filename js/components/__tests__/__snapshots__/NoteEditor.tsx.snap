@@ -6,11 +6,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   keys="ctrl+s"
 >
   <ForwardRef(Card)
-    classes={
-      Object {
-        "root": "",
-      }
-    }
+    sx={[Function]}
   >
     <ForwardRef(CardHeader)
       action={
@@ -23,15 +19,15 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
       }
       title={
         <ForwardRef(Input)
-          classes={
-            Object {
-              "root": "",
-            }
-          }
           onChange={[Function]}
           style={
             Object {
               "fontSize": "inherit",
+            }
+          }
+          sx={
+            Object {
+              "width": "100%",
             }
           }
           value="note title"
@@ -39,9 +35,13 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
       }
     />
     <ForwardRef(CardContent)
-      classes={
+      sx={
         Object {
-          "root": "",
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": "50px",
         }
       }
     >
@@ -92,11 +92,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
   keys="ctrl+s"
 >
   <ForwardRef(Card)
-    classes={
-      Object {
-        "root": "",
-      }
-    }
+    sx={[Function]}
   >
     <ForwardRef(CardHeader)
       action={
@@ -109,15 +105,15 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
       }
       title={
         <ForwardRef(Input)
-          classes={
-            Object {
-              "root": "",
-            }
-          }
           onChange={[Function]}
           style={
             Object {
               "fontSize": "inherit",
+            }
+          }
+          sx={
+            Object {
+              "width": "100%",
             }
           }
           value="note title"
@@ -125,9 +121,13 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
       }
     />
     <ForwardRef(CardContent)
-      classes={
+      sx={
         Object {
-          "root": "",
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": "50px",
         }
       }
     >

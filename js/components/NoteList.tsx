@@ -15,37 +15,13 @@ import { connect } from 'react-redux';
 
 import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import withStyles from '@mui/styles/withStyles';
 
-import Note, { InnerNote } from 'components/Note';
+import Note from 'components/Note';
+import * as styles from 'components/NoteList.tsx.scss';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    newButton: {
-      margin: theme.spacing(1),
-      '@media print': {
-        display: 'none',
-      },
-    },
-    item: {
-      '@media print': {
-        padding: '0 !important',
-      },
-    },
-    leftIcon: {
-      marginRight: theme.spacing(1),
-    },
-    iconSmall: {
-      fontSize: 20,
-    },
-  });
-
-interface Props extends WithStyles<typeof styles> {
+type Props = {
   notes: Map<number, NoteData>;
   searchIndex: Map<number, NoteData>;
   sortedIds: number[];
@@ -54,10 +30,9 @@ interface Props extends WithStyles<typeof styles> {
   onUpdateNote: (note?: NoteData) => void;
   onDeleteNote: (id: number) => void;
   createFromSearch?: (e: React.SyntheticEvent) => void;
-  firstNoteRef?: React.RefObject<InnerNote>;
   renderOnly?: Set<number>;
   width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-}
+};
 
 class NoteList extends React.Component<Props> {
   static defaultProps = {
@@ -95,7 +70,6 @@ class NoteList extends React.Component<Props> {
 
   render() {
     const {
-      classes,
       renderOnly,
       sortedIds,
       search,
@@ -104,7 +78,6 @@ class NoteList extends React.Component<Props> {
       width,
       createFromSearch,
       onUpdateNote,
-      firstNoteRef,
       onDeleteNote,
     } = this.props;
     let { notes } = this.props;
@@ -119,21 +92,20 @@ class NoteList extends React.Component<Props> {
 
       if (depth === 1 && (results.length === 0 || notes.get(results[0].item.id).title !== search)) {
         elements.push(
-          <Grid item key='new' className={classes.item} xs={width}>
+          <Grid item key='new' className={styles.item} xs={width}>
             <Button
               variant='contained'
               color='primary'
-              className={classes.newButton}
+              className={styles.newButton}
               onClick={createFromSearch}
             >
-              <AddIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+              <AddIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
               Add {search}
             </Button>
           </Grid>,
         );
       }
 
-      let i = 0;
       results.forEach((result) => {
         const { id } = result.item;
         if (!notes.has(id)) {
@@ -141,18 +113,16 @@ class NoteList extends React.Component<Props> {
           console.log('Note ', id, ' not found');
         } else {
           elements.push(
-            <Grid item key={id} className={classes.item} xs={width}>
+            <Grid item key={id} className={styles.item} xs={width}>
               <Note
                 depth={depth + 1}
                 note={notes.get(id)}
                 search={search}
                 onUpdateNote={onUpdateNote}
                 onDeleteNote={onDeleteNote}
-                ref={i === 0 ? firstNoteRef : null}
               />
             </Grid>,
           );
-          i += 1;
         }
       });
       return elements;
@@ -162,7 +132,7 @@ class NoteList extends React.Component<Props> {
       if (notes.has(id)) {
         const n = notes.get(id);
         result.push(
-          <Grid item key={n.id} className={classes.item} xs={width}>
+          <Grid item key={n.id} className={styles.item} xs={width}>
             <Note
               depth={depth + 1}
               note={n}
@@ -183,4 +153,4 @@ const mapStateToProps = (state: AppState, props: { parent_note_id: number }) => 
   sortedIds: getSortedNoteIds(state),
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(NoteList));
+export default connect(mapStateToProps)(NoteList);

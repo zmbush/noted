@@ -9,29 +9,20 @@ import * as React from 'react';
 
 import { Gesture as GestureIcon, Grade as GradeIcon } from '@mui/icons-material';
 import { PropTypes, Chip } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import withStyles from '@mui/styles/withStyles';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    chip: {
-      marginRight: theme.spacing(1),
-    },
-  });
+import * as styles from 'components/Tags.tsx.scss';
 
-interface TagProps extends WithStyles<typeof styles> {
+type TagProps = {
   tag: string;
-}
+};
 
-const Tag = withStyles(styles)((props: TagProps) => {
-  const { classes, tag } = props;
+const Tag = (props: TagProps) => {
+  const { tag } = props;
 
   const parts = tag.split(':');
 
   if (parts.length === 1) {
-    return <Chip label={parts[0]} className={classes.chip} />;
+    return <Chip label={parts[0]} className={styles.chip} />;
   }
   const type = parts[0];
   const label = parts.slice(1).join(':');
@@ -49,32 +40,23 @@ const Tag = withStyles(styles)((props: TagProps) => {
       break;
   }
   if (Icon) {
-    return <Chip label={label} color={color} className={classes.chip} icon={<Icon />} />;
+    return <Chip label={label} color={color} className={styles.chip} icon={<Icon />} />;
   }
-  return <Chip label={label} color={color} className={classes.chip} />;
-});
+  return <Chip label={label} color={color} className={styles.chip} />;
+};
 
-const tagsStyles = (_theme: Theme) =>
-  createStyles({
-    noPrint: {
-      '@media print': {
-        display: 'none',
-      },
-    },
-  });
-
-interface TagsProps extends WithStyles<typeof tagsStyles> {
+type TagsProps = {
   tags: string[];
-}
+};
 
 const Tags = (props: TagsProps) => {
-  const { classes, tags } = props;
+  const { tags } = props;
   if (tags.length === 0) {
     return null;
   }
 
   return (
-    <div className={classes.noPrint}>
+    <div className={styles.noPrint}>
       {tags.map((t) => (
         <Tag key={t} tag={t} />
       ))}
@@ -82,4 +64,4 @@ const Tags = (props: TagsProps) => {
   );
 };
 
-export default withStyles(tagsStyles)(Tags);
+export default Tags;
