@@ -58,26 +58,26 @@ export const getTopLevelNotes = createSelector(listNotes, (notes) => {
   return topLevel;
 });
 
-export const getSubnotes = createCachedSelector(listNotes, getNoteId, (notes, noteId) => {
-  const subnotes = new Map();
+export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, noteId) => {
+  const subNotes = new Map();
 
   [...notes.values()].forEach((note) => {
     if (note.parent_note_id === noteId) {
-      subnotes.set(note.id, note);
+      subNotes.set(note.id, note);
     }
   });
 
-  return subnotes;
+  return subNotes;
 })((state, props: { note_id: number }) => props.note_id);
 
-export type SubnoteMap = ReturnType<typeof getSubnotes>;
+export type SubNoteMap = ReturnType<typeof getSubNotes>;
 
 const calculateMergedNote = (note: NoteData, notes: Map<number, NoteData>): NoteData => {
   const newNote = { ...note };
-  const subnotes = getSubnotes({ notes }, { note_id: note.id });
+  const subNotes = getSubNotes({ notes }, { note_id: note.id });
 
-  [...subnotes.values()].forEach((subnote) => {
-    const mergedNote = calculateMergedNote(subnote, notes);
+  [...subNotes.values()].forEach((subNote) => {
+    const mergedNote = calculateMergedNote(subNote, notes);
     newNote.title = `${newNote.title} ${mergedNote.title}`;
     newNote.tags = Array.from(new Set([...newNote.tags, ...mergedNote.tags]));
     newNote.body = `${newNote.body} ${mergedNote.body}`;
@@ -98,7 +98,7 @@ export const getFilteredSearchIndex = createCachedSelector(
   getSearchIndex,
   getNoteId,
   (notes, noteId) => {
-    const subnotes = new Map();
+    const subNotes = new Map();
     if (noteId == null) {
       // eslint-disable-next-line no-param-reassign
       noteId = 0;
@@ -106,11 +106,11 @@ export const getFilteredSearchIndex = createCachedSelector(
 
     [...notes.values()].forEach((note) => {
       if (note.parent_note_id === noteId) {
-        subnotes.set(note.id, note);
+        subNotes.set(note.id, note);
       }
     });
 
-    return subnotes;
+    return subNotes;
   },
 )((state, props: { note_id: number }) => (props.note_id == null ? -1 : props.note_id));
 

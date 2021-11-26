@@ -66,7 +66,7 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
 
   const startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // TODO: Get firstnote feature working again
+    // TODO: Get firstNote feature working again
     // if (firstNote.current) {
     //   firstNote.current.startEdit();
     // } else {

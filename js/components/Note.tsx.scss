@@ -39,7 +39,7 @@
 .markdown {
   & p {
     @media print {
-      textindent: $spacing;
+      text-indent: $spacing;
     }
   }
 
