@@ -74,7 +74,7 @@ const Note = ({
   onUpdateNote,
   onDeleteNote,
 }: Props) => {
-  const [edit, setEdit] = React.useState(false);
+  const [edit, setEdit] = React.useState(isNew);
   const [creatingSubnote, setCreatingSubnote] = React.useState(false);
   const [confirmDeleteOpen, setConfirmDeletOpen] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);

@@ -14,60 +14,38 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 
-import {
-  AccountCircle,
-  Home as HomeIcon,
-  Menu as MenuIcon,
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import { AccountCircle, Home as HomeIcon, Menu as MenuIcon } from '@mui/icons-material';
 import {
   AppBar,
   Grid,
   IconButton,
-  InputBase,
   Menu,
   MenuItem,
   styled,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 
-import * as styles from 'components/App.tsx.scss';
 import BindKeyboard from 'components/BindKeyboard';
 import FilteredNoteList from 'components/FilteredNoteList';
 import LogIn from 'components/LogIn';
 import Note from 'components/Note';
 import NoteList from 'components/NoteList';
+import SearchInput from 'components/SearchInput';
 import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { getTopLevelNotes } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
-const SearchDiv = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  marginRight: theme.spacing(1),
+const AppRoot = styled('div')({
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
+  '@media print': {
+    overflow: 'visible !important',
+    columnCount: 2,
+    columnWidth: '200px',
   },
-}));
+});
 
-const SearchIconDiv = styled('div')(({ theme }) => ({
-  width: theme.spacing(9),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+const FillSpace = styled('div')({ flexGrow: 1 });
 
 type Props = {
   notes: Map<number, NoteData>;
@@ -167,7 +145,7 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
   );
 
   return (
-    <div className={styles.root}>
+    <AppRoot>
       <AppBar sx={{ displayPrint: 'none' }}>
         <Toolbar>
           <Routes>
@@ -220,43 +198,14 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
           >
             Noted
           </Typography>
-          <div className={styles.grow} />
-          <BindKeyboard keys='esc' callback={cancelSearch}>
-            <BindKeyboard keys='ctrl+o' callback={createNewShortcut}>
-              <SearchDiv>
-                <SearchIconDiv>
-                  <SearchIcon />
-                </SearchIconDiv>
-                <form onSubmit={startEdit}>
-                  <InputBase
-                    inputProps={{
-                      ref: searchInput,
-                    }}
-                    placeholder='Search...'
-                    value={searchInputValue}
-                    onChange={doSearch}
-                    sx={(theme) => ({
-                      color: 'inherit',
-                      width: '100%',
-                      '& .MuiInputBase-input': {
-                        paddingTop: theme.spacing(1),
-                        paddingRight: theme.spacing(1),
-                        paddingBottom: theme.spacing(1),
-                        paddingLeft: theme.spacing(10),
-                        transition: theme.transitions.create('width'),
-                        width: '100%',
-                        [theme.breakpoints.up('sm')]: {
-                          width: 120,
-                          '&:focus': {
-                            width: 200,
-                          },
-                        },
-                      },
-                    })}
-                  />
-                </form>
-              </SearchDiv>
-            </BindKeyboard>
+          <FillSpace />
+          <BindKeyboard keys='ctrl+o' callback={createNewShortcut}>
+            <SearchInput
+              onCancelSearch={cancelSearch}
+              value={searchInputValue}
+              onChange={doSearch}
+              onSubmit={startEdit}
+            />
           </BindKeyboard>
           <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit' size='large'>
             <AccountCircle />
@@ -326,7 +275,7 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
           <p>Sign Out</p>
         </MenuItem>
       </Menu>
-    </div>
+    </AppRoot>
   );
 };
 

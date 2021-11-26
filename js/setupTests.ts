@@ -7,6 +7,10 @@
 // except according to those terms.
 //
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import { configure } from 'enzyme';
+import Enzyme from 'enzyme';
 
-configure({ adapter: new Adapter() });
+// import * as React from 'react';
+
+// global.React = React;
+
+Enzyme.configure({ adapter: new Adapter() });

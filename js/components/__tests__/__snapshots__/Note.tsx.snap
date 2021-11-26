@@ -128,7 +128,6 @@ exports[`<Note /> matches snapshot 1`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
       </React.Suspense>
     </ForwardRef(Dialog)>
@@ -297,7 +296,6 @@ exports[`<Note /> matches snapshot 2`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
       </React.Suspense>
     </ForwardRef(Dialog)>
@@ -457,7 +455,6 @@ exports[`<Note /> matches snapshot 3`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
       </React.Suspense>
     </ForwardRef(Dialog)>

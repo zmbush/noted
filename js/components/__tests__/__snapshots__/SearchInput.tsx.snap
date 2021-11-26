@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SearchInput /> matches snapshot 1`] = `
+<BindKeyboard
+  callback={[Function]}
+  keys="esc"
+>
+  <Styled(div)>
+    <Styled(div)>
+      <Memo(ForwardRef(SearchIcon)) />
+    </Styled(div)>
+    <form
+      onSubmit={[Function]}
+    >
+      <ForwardRef(InputBase)
+        inputRef={null}
+        onChange={[Function]}
+        placeholder="Search..."
+        sx={[Function]}
+        value=""
+      />
+    </form>
+  </Styled(div)>
+</BindKeyboard>
+`;
+
+exports[`<SearchInput /> matches snapshot 2`] = `
+<BindKeyboard
+  callback={[Function]}
+  keys="esc"
+>
+  <Styled(div)>
+    <Styled(div)>
+      <Memo(ForwardRef(SearchIcon)) />
+    </Styled(div)>
+    <form
+      onSubmit={[Function]}
+    >
+      <ForwardRef(InputBase)
+        inputRef={null}
+        onChange={[Function]}
+        placeholder="Search..."
+        sx={[Function]}
+        value="Search Input"
+      />
+    </form>
+  </Styled(div)>
+</BindKeyboard>
+`;
