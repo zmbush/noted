@@ -132,7 +132,7 @@ export default class NoteEditor extends React.Component<Props, State> {
               classes={{}}
               placeholder='Tags'
               fullWidth
-              dataSource={['arc:Delmirev', 'type:Location', 'type:Character']}
+              dataSource={['type:Location', 'type:Character']}
               value={tags}
               onAdd={this.addTag}
               onDelete={this.deleteTag}

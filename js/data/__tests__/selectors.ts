@@ -10,7 +10,7 @@ import rootReducer from '../reducers';
 import {
   getTopLevelNotes,
   getLinkIds,
-  getSubnotes,
+  getSubNotes,
   getSearchIndex,
   getFilteredSearchIndex,
   getSortedNoteIds,
@@ -79,10 +79,10 @@ describe('getTopLevelNotes()', () => {
   });
 });
 
-describe('getSubnotes()', () => {
+describe('getSubNotes()', () => {
   test('returns an empty map for empty notes map', () => {
     expect(
-      getSubnotes(rootReducer(undefined, { type: '' }), {
+      getSubNotes(rootReducer(undefined, { type: '' }), {
         note_id: 0,
       }),
     ).toEqual(new Map());
@@ -115,7 +115,7 @@ describe('getSubnotes()', () => {
       parent_note_id: 3,
     });
 
-    expect(getSubnotes(state, { note_id: 3 })).toEqual(expected);
+    expect(getSubNotes(state, { note_id: 3 })).toEqual(expected);
   });
 });
 

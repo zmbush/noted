@@ -1,0 +1,29 @@
+{
+  "words": [
+    "Ccodegen",
+    "chrono",
+    "Cinline",
+    "clippy",
+    "Codecov",
+    "codemirror",
+    "Coverflow",
+    "Cpanic",
+    "dotenv",
+    "favicons",
+    "grcov",
+    "Insertable",
+    "Jsonify",
+    "libpq",
+    "pbkdf",
+    "psql",
+    "rehype",
+    "RUSTDOCFLAGS",
+    "RUSTFLAGS",
+    "rustfmt",
+    "toastui",
+    "tojson",
+    "wojtekmaj",
+    "Zpanic"
+  ],
+  "ignorePaths": ["db/src/schema.rs"]
+}

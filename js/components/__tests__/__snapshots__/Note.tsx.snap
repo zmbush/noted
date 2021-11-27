@@ -8,7 +8,7 @@ exports[`<Note /> matches snapshot 1`] = `
     action={
       <React.Fragment>
         <ForwardRef(IconButton)
-          aria-label="Add Subnote"
+          aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
         >
@@ -107,7 +107,7 @@ exports[`<Note /> matches snapshot 1`] = `
       onClose={[Function]}
       open={false}
     >
-      <React.Suspense
+      <Suspense
         fallback={
           <Loading
             color="#000000"
@@ -128,9 +128,8 @@ exports[`<Note /> matches snapshot 1`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
-      </React.Suspense>
+      </Suspense>
     </ForwardRef(Dialog)>
     <Tags
       tags={
@@ -178,7 +177,7 @@ exports[`<Note /> matches snapshot 2`] = `
     action={
       <React.Fragment>
         <ForwardRef(IconButton)
-          aria-label="Add Subnote"
+          aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
         >
@@ -276,7 +275,7 @@ exports[`<Note /> matches snapshot 2`] = `
       onClose={[Function]}
       open={false}
     >
-      <React.Suspense
+      <Suspense
         fallback={
           <Loading
             color="#000000"
@@ -297,9 +296,8 @@ exports[`<Note /> matches snapshot 2`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
-      </React.Suspense>
+      </Suspense>
     </ForwardRef(Dialog)>
     <Tags />
     <default_1
@@ -338,7 +336,7 @@ exports[`<Note /> matches snapshot 3`] = `
     action={
       <React.Fragment>
         <ForwardRef(IconButton)
-          aria-label="Add Subnote"
+          aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
         >
@@ -436,7 +434,7 @@ exports[`<Note /> matches snapshot 3`] = `
       onClose={[Function]}
       open={false}
     >
-      <React.Suspense
+      <Suspense
         fallback={
           <Loading
             color="#000000"
@@ -457,9 +455,8 @@ exports[`<Note /> matches snapshot 3`] = `
             }
           }
           onSave={[Function]}
-          open={false}
         />
-      </React.Suspense>
+      </Suspense>
     </ForwardRef(Dialog)>
     <Tags />
     <default_1

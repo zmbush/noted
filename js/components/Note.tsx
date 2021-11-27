@@ -46,7 +46,7 @@ import ConfirmationDialog from 'components/ConfirmationDialog';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
-import { getLinkIds, getSubnotes } from 'data/selectors';
+import { getLinkIds, getSubNotes } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
 const NoteEditor = React.lazy(
@@ -58,7 +58,7 @@ type Props = {
   note: NoteData;
   search: string;
   titles: Map<string, Set<number>>;
-  subnotes: Map<number, NoteData>;
+  subNotes: Map<number, NoteData>;
   onUpdateNote: (note?: NoteData) => void;
   onDeleteNote: (id: number) => void;
   depth?: number;
@@ -69,14 +69,14 @@ const Note = ({
   titles,
   depth,
   new: isNew,
-  subnotes,
+  subNotes,
   search,
   onUpdateNote,
   onDeleteNote,
 }: Props) => {
-  const [edit, setEdit] = React.useState(false);
-  const [creatingSubnote, setCreatingSubnote] = React.useState(false);
-  const [confirmDeleteOpen, setConfirmDeletOpen] = React.useState(false);
+  const [edit, setEdit] = React.useState(isNew);
+  const [creatingSubNote, setCreatingSubNote] = React.useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
   const noteEditor = React.useRef<any>();
@@ -85,7 +85,7 @@ const Note = ({
 
   const cancelEdit = () => {
     setEdit(false);
-    setCreatingSubnote(false);
+    setCreatingSubNote(false);
     setConfirmCancelEditOpen(false);
     onUpdateNote(null);
   };
@@ -106,7 +106,7 @@ const Note = ({
   }) => {
     const { title, body, tags, parent_note_id: parentNoteId } = noteData;
     let result;
-    if (isNew || creatingSubnote) {
+    if (isNew || creatingSubNote) {
       result = await axios.put('/api/secure/note', {
         title,
         body,
@@ -123,7 +123,7 @@ const Note = ({
     result = await axios.put(`/api/secure/notes/${result.data.id}/tags`, tags);
 
     setEdit(false);
-    setCreatingSubnote(false);
+    setCreatingSubNote(false);
     onUpdateNote(result.data);
   };
 
@@ -168,8 +168,8 @@ const Note = ({
     setEdit(true);
   };
 
-  const startSubnoteCreate = () => {
-    setCreatingSubnote(true);
+  const startSubNoteCreate = () => {
+    setCreatingSubNote(true);
   };
 
   const markdownComponents: ReactMarkdownOptions['components'] = {
@@ -196,9 +196,9 @@ const Note = ({
           edit ? null : (
             <>
               <IconButton
-                onClick={startSubnoteCreate}
+                onClick={startSubNoteCreate}
                 className={styles.noPrint}
-                aria-label='Add Subnote'
+                aria-label='Add SubNote'
                 size='large'
               >
                 <LibraryAddIcon />
@@ -232,7 +232,7 @@ const Note = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        <MenuItem onClick={() => setConfirmDeletOpen(true)}>
+        <MenuItem onClick={() => setConfirmDeleteOpen(true)}>
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
@@ -251,7 +251,7 @@ const Note = ({
         open={confirmDeleteOpen}
         title={`You are about to delete note: ${note.title}`}
         onPositive={doDelete}
-        onNegative={() => setConfirmDeletOpen(false)}
+        onNegative={() => setConfirmDeleteOpen(false)}
       />
       <ConfirmationDialog
         open={confirmCancelEditOpen}
@@ -262,7 +262,7 @@ const Note = ({
       <CardContent className={styles.cardContent}>
         <Dialog
           classes={{ root: styles.markdown }}
-          open={edit || creatingSubnote}
+          open={edit || creatingSubNote}
           fullWidth
           maxWidth='lg'
           fullScreen={editorFullscreen}
@@ -303,7 +303,7 @@ const Note = ({
           <NoteList
             parent_note_id={note.id}
             depth={(depth || 0) + 1}
-            notes={subnotes}
+            notes={subNotes}
             search={search}
             onUpdateNote={onUpdateNote}
             onDeleteNote={onDeleteNote}
@@ -318,7 +318,7 @@ export const Inner = Note;
 
 const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
   titles: getLinkIds(state),
-  subnotes: getSubnotes(state, { note_id: props.note.id }),
+  subNotes: getSubNotes(state, { note_id: props.note.id }),
 });
 
 export default connect(mapStateToProps)(Note);
