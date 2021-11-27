@@ -183,8 +183,10 @@ const Note = ({
 
   return (
     <Card
+      raised
       sx={[
         {
+          marginBottom: 1,
           '@media print': {
             border: 'none',
             boxShadow: 'none',
@@ -329,7 +331,6 @@ const Note = ({
 
         <Grid
           container
-          spacing={8}
           sx={{
             marginTop: '75px',
             '@media print': {

@@ -33,6 +33,7 @@ type Props = {
 };
 
 const GridItem = styled(Grid)({
+  paddingTop: 0,
   '@media print': {
     padding: '0 !important',
   },
