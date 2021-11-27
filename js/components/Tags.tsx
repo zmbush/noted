@@ -8,9 +8,7 @@
 import * as React from 'react';
 
 import { Gesture as GestureIcon, Grade as GradeIcon } from '@mui/icons-material';
-import { PropTypes, Chip } from '@mui/material';
-
-import * as styles from 'components/Tags.tsx.scss';
+import { PropTypes, Chip, styled } from '@mui/material';
 
 type TagProps = {
   tag: string;
@@ -20,9 +18,10 @@ const Tag = (props: TagProps) => {
   const { tag } = props;
 
   const parts = tag.split(':');
+  const chipSx = { marginRight: 1 };
 
   if (parts.length === 1) {
-    return <Chip label={parts[0]} className={styles.chip} />;
+    return <Chip label={parts[0]} sx={chipSx} />;
   }
   const type = parts[0];
   const label = parts.slice(1).join(':');
@@ -40,14 +39,20 @@ const Tag = (props: TagProps) => {
       break;
   }
   if (Icon) {
-    return <Chip label={label} color={color} className={styles.chip} icon={<Icon />} />;
+    return <Chip label={label} color={color} sx={chipSx} icon={<Icon />} />;
   }
-  return <Chip label={label} color={color} className={styles.chip} />;
+  return <Chip label={label} color={color} sx={chipSx} />;
 };
 
 type TagsProps = {
   tags: string[];
 };
+
+const TagsRoot = styled('div')({
+  '@media print': {
+    display: 'none',
+  },
+});
 
 const Tags = (props: TagsProps) => {
   const { tags } = props;
@@ -56,11 +61,11 @@ const Tags = (props: TagsProps) => {
   }
 
   return (
-    <div className={styles.noPrint}>
+    <TagsRoot>
       {tags.map((t) => (
         <Tag key={t} tag={t} />
       ))}
-    </div>
+    </TagsRoot>
   );
 };
 

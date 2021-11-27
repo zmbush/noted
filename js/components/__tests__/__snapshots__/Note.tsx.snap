@@ -2,7 +2,18 @@
 
 exports[`<Note /> matches snapshot 1`] = `
 <ForwardRef(Card)
-  className=""
+  sx={
+    Array [
+      Object {
+        "@media print": Object {
+          "border": "none",
+          "boxShadow": "none",
+        },
+      },
+      Object {},
+      Object {},
+    ]
+  }
 >
   <ForwardRef(CardHeader)
     action={
@@ -11,6 +22,11 @@ exports[`<Note /> matches snapshot 1`] = `
           aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -18,6 +34,11 @@ exports[`<Note /> matches snapshot 1`] = `
           aria-label="Edit Note"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -25,12 +46,29 @@ exports[`<Note /> matches snapshot 1`] = `
           aria-label="More Options"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={null}
+    sx={
+      Object {
+        "@media print": Object {
+          "& span": Object {
+            "color": "#58180d",
+            "fontSize": "0.987cm",
+          },
+          "paddingBottom": 0,
+          "paddingTop": 0,
+        },
+      }
+    }
     title="note title"
   />
   <ForwardRef(Menu)
@@ -94,7 +132,13 @@ exports[`<Note /> matches snapshot 1`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)>
+  <ForwardRef(CardContent)
+    sx={
+      Object {
+        "paddingTop": 0,
+      }
+    }
+  >
     <ForwardRef(Dialog)
       classes={
         Object {
@@ -155,6 +199,15 @@ exports[`<Note /> matches snapshot 1`] = `
     <ForwardRef(Grid)
       container={true}
       spacing={8}
+      sx={
+        Object {
+          "@media print": Object {
+            "display": "block",
+            "marginTop": 0,
+          },
+          "marginTop": "75px",
+        }
+      }
     >
       <Connect(NoteList)
         depth={1}
@@ -171,7 +224,18 @@ exports[`<Note /> matches snapshot 1`] = `
 
 exports[`<Note /> matches snapshot 2`] = `
 <ForwardRef(Card)
-  className=""
+  sx={
+    Array [
+      Object {
+        "@media print": Object {
+          "border": "none",
+          "boxShadow": "none",
+        },
+      },
+      Object {},
+      Object {},
+    ]
+  }
 >
   <ForwardRef(CardHeader)
     action={
@@ -180,6 +244,11 @@ exports[`<Note /> matches snapshot 2`] = `
           aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -187,6 +256,11 @@ exports[`<Note /> matches snapshot 2`] = `
           aria-label="Edit Note"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -194,12 +268,29 @@ exports[`<Note /> matches snapshot 2`] = `
           aria-label="More Options"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={<Memo />}
+    sx={
+      Object {
+        "@media print": Object {
+          "& span": Object {
+            "color": "#58180d",
+            "fontSize": "0.987cm",
+          },
+          "paddingBottom": 0,
+          "paddingTop": 0,
+        },
+      }
+    }
   />
   <ForwardRef(Menu)
     anchorEl={null}
@@ -262,7 +353,13 @@ exports[`<Note /> matches snapshot 2`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)>
+  <ForwardRef(CardContent)
+    sx={
+      Object {
+        "paddingTop": 0,
+      }
+    }
+  >
     <ForwardRef(Dialog)
       classes={
         Object {
@@ -315,6 +412,15 @@ exports[`<Note /> matches snapshot 2`] = `
     <ForwardRef(Grid)
       container={true}
       spacing={8}
+      sx={
+        Object {
+          "@media print": Object {
+            "display": "block",
+            "marginTop": 0,
+          },
+          "marginTop": "75px",
+        }
+      }
     >
       <Connect(NoteList)
         depth={1}
@@ -330,7 +436,23 @@ exports[`<Note /> matches snapshot 2`] = `
 
 exports[`<Note /> matches snapshot 3`] = `
 <ForwardRef(Card)
-  className="undefined"
+  sx={
+    Array [
+      Object {
+        "@media print": Object {
+          "border": "none",
+          "boxShadow": "none",
+        },
+      },
+      Object {},
+      Object {
+        "@media print": Object {
+          "display": "none",
+        },
+        "opacity": 0.4,
+      },
+    ]
+  }
 >
   <ForwardRef(CardHeader)
     action={
@@ -339,6 +461,11 @@ exports[`<Note /> matches snapshot 3`] = `
           aria-label="Add SubNote"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -346,6 +473,11 @@ exports[`<Note /> matches snapshot 3`] = `
           aria-label="Edit Note"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
@@ -353,12 +485,29 @@ exports[`<Note /> matches snapshot 3`] = `
           aria-label="More Options"
           onClick={[Function]}
           size="large"
+          sx={
+            Object {
+              "displayPrint": "none",
+            }
+          }
         >
           <Memo />
         </ForwardRef(IconButton)>
       </React.Fragment>
     }
     avatar={null}
+    sx={
+      Object {
+        "@media print": Object {
+          "& span": Object {
+            "color": "#58180d",
+            "fontSize": "0.987cm",
+          },
+          "paddingBottom": 0,
+          "paddingTop": 0,
+        },
+      }
+    }
   />
   <ForwardRef(Menu)
     anchorEl={null}
@@ -421,7 +570,13 @@ exports[`<Note /> matches snapshot 3`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)>
+  <ForwardRef(CardContent)
+    sx={
+      Object {
+        "paddingTop": 0,
+      }
+    }
+  >
     <ForwardRef(Dialog)
       classes={
         Object {
@@ -474,6 +629,15 @@ exports[`<Note /> matches snapshot 3`] = `
     <ForwardRef(Grid)
       container={true}
       spacing={8}
+      sx={
+        Object {
+          "@media print": Object {
+            "display": "block",
+            "marginTop": 0,
+          },
+          "marginTop": "75px",
+        }
+      }
     >
       <Connect(NoteList)
         depth={1}
