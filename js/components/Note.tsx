@@ -7,7 +7,6 @@
 // except according to those terms.
 //
 import axios from 'axios';
-import classNames from 'classnames';
 import rehypeRaw from 'rehype-raw';
 
 import * as React from 'react';
@@ -183,13 +182,43 @@ const Note = ({
 
   return (
     <Card
-      className={classNames(styles.card, {
-        [styles.unlinked]: note.user_id === 1,
-        [styles.archived]: note.archived,
-      })}
+      raised
+      sx={[
+        {
+          marginBottom: 1,
+          '@media print': {
+            border: 'none',
+            boxShadow: 'none',
+            // pageBreakInside: 'avoid',
+          },
+        },
+        note.user_id === 1
+          ? {
+              border: '5px',
+              borderColor: 'red',
+            }
+          : {},
+        note.archived
+          ? {
+              opacity: 0.4,
+              '@media print': {
+                display: 'none',
+              },
+            }
+          : {},
+      ]}
     >
       <CardHeader
-        className={styles.cardHeader}
+        sx={{
+          '@media print': {
+            paddingBottom: 0,
+            paddingTop: 0,
+            '& span': {
+              color: '#58180d',
+              fontSize: '0.987cm',
+            },
+          },
+        }}
         avatar={note.pinned ? <PinIcon /> : null}
         title={note.title}
         action={
@@ -197,7 +226,7 @@ const Note = ({
             <>
               <IconButton
                 onClick={startSubNoteCreate}
-                className={styles.noPrint}
+                sx={{ displayPrint: 'none' }}
                 aria-label='Add SubNote'
                 size='large'
               >
@@ -205,7 +234,7 @@ const Note = ({
               </IconButton>
               <IconButton
                 onClick={startEdit}
-                className={styles.noPrint}
+                sx={{ displayPrint: 'none' }}
                 aria-label='Edit Note'
                 size='large'
               >
@@ -213,7 +242,7 @@ const Note = ({
               </IconButton>
               <IconButton
                 onClick={(e) => setMoreMenuEl(e.currentTarget)}
-                className={styles.noPrint}
+                sx={{ displayPrint: 'none' }}
                 aria-owns={moreMenuEl ? 'more-menu' : undefined}
                 aria-label='More Options'
                 size='large'
@@ -259,7 +288,7 @@ const Note = ({
         onPositive={cancelEdit}
         onNegative={() => setConfirmCancelEditOpen(false)}
       />
-      <CardContent className={styles.cardContent}>
+      <CardContent sx={{ paddingTop: 0 }}>
         <Dialog
           classes={{ root: styles.markdown }}
           open={edit || creatingSubNote}
@@ -299,7 +328,16 @@ const Note = ({
           {note.body}
         </ReactMarkdown>
 
-        <Grid container spacing={8} className={styles.contentRoot}>
+        <Grid
+          container
+          sx={{
+            marginTop: '75px',
+            '@media print': {
+              marginTop: 0,
+              display: 'block',
+            },
+          }}
+        >
           <NoteList
             parent_note_id={note.id}
             depth={(depth || 0) + 1}

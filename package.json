@@ -55,7 +55,6 @@
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-direct-import": "^1.0.0",
-    "classnames": "^2.3.1",
     "cli": ">=1.0.0",
     "codemirror": "^5.48.4",
     "core-js": "^3.19.1",

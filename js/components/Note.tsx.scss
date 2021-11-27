@@ -9,31 +9,12 @@
 
 @import 'common.scss';
 
-.content-root {
-  margin-top: 75px;
-  @media print {
-    margin-top: 0px;
-    display: block;
-  }
-}
-
 .loading-spinner {
   position: relative;
   left: 50%;
   top: 50%;
   margin-top: -32px;
   margin-left: -32px;
-}
-
-.archived {
-  opacity: 0.4;
-  @media print {
-    display: none;
-  }
-}
-
-.unlinked {
-  border: 5px solid red;
 }
 
 .markdown {
@@ -113,31 +94,5 @@
       font-size: 0.423cm;
       margin-bottom: 0.2em;
     }
-  }
-}
-
-@media print {
-  .no-print {
-    display: none;
-  }
-
-  .card {
-    border: none;
-    box-shadow: none;
-    // page-break-inside: avoid;
-  }
-
-  .card-header {
-    padding-bottom: 0;
-    padding-top: 0;
-
-    & span {
-      color: #58180d;
-      font-size: 0.987cm;
-    }
-  }
-
-  .card-content {
-    padding-top: 0;
   }
 }
