@@ -9,8 +9,4 @@
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import Enzyme from 'enzyme';
 
-// import * as React from 'react';
-
-// global.React = React;
-
 Enzyme.configure({ adapter: new Adapter() });
