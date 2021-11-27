@@ -7,7 +7,6 @@
 // except according to those terms.
 //
 import axios from 'axios';
-import classNames from 'classnames';
 import rehypeRaw from 'rehype-raw';
 
 import * as React from 'react';
