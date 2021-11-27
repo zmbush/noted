@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AppBody /> matches snapshot 1`] = `
+<ForwardRef(Grid)
+  container={true}
+  spacing={2}
+  sx={
+    Object {
+      "@media print": Object {
+        "display": "block",
+        "marginTop": 0,
+      },
+      "marginTop": "75px",
+    }
+  }
+>
+  <NewNote
+    newNote={false}
+    onDeleteNote={[Function]}
+    onUpdateNote={[Function]}
+    search=""
+  />
+  <Routes>
+    <Route
+      element={
+        <Memo(Connect(NoteList))
+          createFromSearch={[Function]}
+          depth={1}
+          notes={Map {}}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          parent_note_id={null}
+          search=""
+        />
+      }
+      path="/"
+    />
+    <Route
+      element={
+        <Memo(Connect(FilteredNoteList))
+          depth={1}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          search=""
+        />
+      }
+      path="/note/:ids"
+    />
+    <Route
+      element={
+        <Memo(Connect(FilteredNoteList))
+          depth={1}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          search=""
+        />
+      }
+      path="/disambiguation/:ids"
+    />
+  </Routes>
+</ForwardRef(Grid)>
+`;
+
+exports[`<AppBody /> matches snapshot 2`] = `
+<NewNote
+  newNote={false}
+  onDeleteNote={[Function]}
+  onUpdateNote={[Function]}
+  search=""
+/>
+`;
+
+exports[`<AppBody /> matches snapshot 3`] = `
+<ForwardRef(Grid)
+  container={true}
+  spacing={2}
+  sx={
+    Object {
+      "@media print": Object {
+        "display": "block",
+        "marginTop": 0,
+      },
+      "marginTop": "75px",
+    }
+  }
+>
+  <NewNote
+    newNote={true}
+    onDeleteNote={[Function]}
+    onUpdateNote={[Function]}
+    search="Search Term"
+  />
+  <Routes>
+    <Route
+      element={
+        <Memo(Connect(NoteList))
+          createFromSearch={[Function]}
+          depth={1}
+          notes={Map {}}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          parent_note_id={null}
+          search="Search Term"
+        />
+      }
+      path="/"
+    />
+    <Route
+      element={
+        <Memo(Connect(FilteredNoteList))
+          depth={1}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          search="Search Term"
+        />
+      }
+      path="/note/:ids"
+    />
+    <Route
+      element={
+        <Memo(Connect(FilteredNoteList))
+          depth={1}
+          onDeleteNote={[Function]}
+          onUpdateNote={[Function]}
+          search="Search Term"
+        />
+      }
+      path="/disambiguation/:ids"
+    />
+  </Routes>
+</ForwardRef(Grid)>
+`;
+
+exports[`<AppBody /> matches snapshot 4`] = `
+<NewNote
+  newNote={true}
+  onDeleteNote={[Function]}
+  onUpdateNote={[Function]}
+  search="Search Term"
+/>
+`;
+
+exports[`<NewNote /> matches snapshot 1`] = `""`;
+
+exports[`<NewNote /> matches snapshot 2`] = `
+<ForwardRef(Grid)
+  item={true}
+  xs={12}
+>
+  <Connect(Note)
+    depth={1}
+    new={true}
+    note={
+      Object {
+        "body": "",
+        "created_at": "",
+        "id": -1,
+        "tags": Array [],
+        "title": "Search Term",
+        "updated_at": "",
+        "user_id": 0,
+      }
+    }
+    onDeleteNote={[Function]}
+    onUpdateNote={[Function]}
+    search="Search Term"
+  />
+</ForwardRef(Grid)>
+`;
