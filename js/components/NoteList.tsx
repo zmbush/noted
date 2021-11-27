@@ -6,7 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import classNames from 'classnames';
 import Fuse from 'fuse.js';
 import memoize from 'memoize-one';
 
@@ -14,10 +13,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { Add as AddIcon } from '@mui/icons-material';
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/Note';
-import * as styles from 'components/NoteList.tsx.scss';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
 
@@ -33,6 +31,12 @@ type Props = {
   renderOnly?: Set<number>;
   width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
+
+const GridItem = styled(Grid)({
+  '@media print': {
+    padding: '0 !important',
+  },
+});
 
 class NoteList extends React.Component<Props> {
   static defaultProps = {
@@ -92,17 +96,27 @@ class NoteList extends React.Component<Props> {
 
       if (depth === 1 && (results.length === 0 || notes.get(results[0].item.id).title !== search)) {
         elements.push(
-          <Grid item key='new' className={styles.item} xs={width}>
+          <GridItem item key='new' xs={width}>
             <Button
               variant='contained'
               color='primary'
-              className={styles.newButton}
+              sx={{
+                margin: 1,
+                '@media print': {
+                  display: 'none',
+                },
+              }}
               onClick={createFromSearch}
             >
-              <AddIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+              <AddIcon
+                sx={{
+                  marginRight: 1,
+                  fontSize: 20,
+                }}
+              />
               Add {search}
             </Button>
-          </Grid>,
+          </GridItem>,
         );
       }
 
@@ -113,7 +127,7 @@ class NoteList extends React.Component<Props> {
           console.log('Note ', id, ' not found');
         } else {
           elements.push(
-            <Grid item key={id} className={styles.item} xs={width}>
+            <GridItem item key={id} xs={width}>
               <Note
                 depth={depth + 1}
                 note={notes.get(id)}
@@ -121,7 +135,7 @@ class NoteList extends React.Component<Props> {
                 onUpdateNote={onUpdateNote}
                 onDeleteNote={onDeleteNote}
               />
-            </Grid>,
+            </GridItem>,
           );
         }
       });
@@ -132,7 +146,7 @@ class NoteList extends React.Component<Props> {
       if (notes.has(id)) {
         const n = notes.get(id);
         result.push(
-          <Grid item key={n.id} className={styles.item} xs={width}>
+          <GridItem item key={n.id} xs={width}>
             <Note
               depth={depth + 1}
               note={n}
@@ -140,7 +154,7 @@ class NoteList extends React.Component<Props> {
               onDeleteNote={onDeleteNote}
               search={search}
             />
-          </Grid>,
+          </GridItem>,
         );
       }
     });
