@@ -22,10 +22,8 @@ interface Props {
 }
 
 const FilteredNoteList = (props: Props) => {
-  const params = useParams() as { ids: string };
-  // const { match } = props;
-  // const params = match.params as { ids: string };
-  const parsedIds = new Set(params.ids.split(',').map((i) => parseInt(i, 10)));
+  const { ids = '' } = useParams<'ids'>();
+  const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
 
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <NoteList parent_note_id={null} renderOnly={parsedIds} {...props} />;
