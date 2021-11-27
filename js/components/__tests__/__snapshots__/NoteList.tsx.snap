@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NoteList /> matches second snapshot 1`] = `
+<ForwardRef(Grid)
+  item={true}
+  key="new"
+  xs={12}
+>
+  <ForwardRef(Button)
+    color="primary"
+    sx={
+      Object {
+        "@media print": Object {
+          "display": "none",
+        },
+        "margin": 1,
+      }
+    }
+    variant="contained"
+  >
+    <Memo(ForwardRef(AddIcon))
+      className=""
+    />
+    Add 
+    SingleNote 2
+  </ForwardRef(Button)>
+</ForwardRef(Grid)>
+`;
+
+exports[`<NoteList /> matches snapshot 1`] = `
+Array [
+  <ForwardRef(Grid)
+    item={true}
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "body": "The Body",
+          "tags": Array [],
+          "title": "SingleNote 1",
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search=""
+    />
+  </ForwardRef(Grid)>,
+  <ForwardRef(Grid)
+    item={true}
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "body": "The Body",
+          "tags": Array [],
+          "title": "SingleNote 2",
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search=""
+    />
+  </ForwardRef(Grid)>,
+  <ForwardRef(Grid)
+    item={true}
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "body": "The Body",
+          "tags": Array [],
+          "title": "SingleNote 4",
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search=""
+    />
+  </ForwardRef(Grid)>,
+]
+`;

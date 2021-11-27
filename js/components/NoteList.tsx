@@ -153,4 +153,5 @@ const mapStateToProps = (state: AppState, props: { parent_note_id: number }) => 
   sortedIds: getSortedNoteIds(state),
 });
 
+export const Inner = NoteList;
 export default connect(mapStateToProps)(NoteList);
