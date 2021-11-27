@@ -11,16 +11,13 @@ import { Dispatch } from 'redux';
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
 
-import { Grid, styled } from '@mui/material';
+import { styled } from '@mui/material';
 
+import AppBody from 'components/AppBody';
 import BindKeyboard from 'components/BindKeyboard';
-import FilteredNoteList from 'components/FilteredNoteList';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
-import Note from 'components/Note';
-import NoteList from 'components/NoteList';
 import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { getTopLevelNotes } from 'data/selectors';
 import { NoteData, AppState } from 'data/types';
@@ -94,15 +91,6 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
     doLogOut();
   };
 
-  const filteredNoteList = (
-    <FilteredNoteList
-      depth={1}
-      search={search}
-      onUpdateNote={updateNote}
-      onDeleteNote={doDeleteNote}
-    />
-  );
-
   return (
     <AppRoot>
       <Header
@@ -111,57 +99,14 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
         onStartEdit={startEdit}
         onSignOut={signOut}
       />
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          '@media print': {
-            marginTop: 0,
-            display: 'block',
-          },
-          marginTop: '75px',
-        }}
-      >
-        {newNote ? (
-          <Grid item xs={12}>
-            <Note
-              new
-              depth={1}
-              search={search}
-              note={{
-                id: -1,
-                title: search,
-                tags: [],
-                body: '',
-                created_at: '',
-                updated_at: '',
-                user_id: 0,
-              }}
-              onUpdateNote={updateNote}
-              onDeleteNote={deleteNote}
-            />
-          </Grid>
-        ) : null}
-        <Routes>
-          <Route
-            path='/'
-            element={
-              <NoteList
-                createFromSearch={createNewShortcut}
-                parent_note_id={null}
-                depth={1}
-                notes={notes}
-                search={search}
-                onUpdateNote={updateNote}
-                onDeleteNote={doDeleteNote}
-              />
-            }
-          />
-          <Route path='/note/:ids' element={filteredNoteList} />
-          <Route path='/disambiguation/:ids' element={filteredNoteList} />
-        </Routes>
-      </Grid>
-
+      <AppBody
+        notes={notes}
+        createNewShortcut={createNewShortcut}
+        newNote={newNote}
+        search={search}
+        onDeleteNote={doDeleteNote}
+        onUpdateNote={updateNote}
+      />
       <BindKeyboard keys='/' callback={startSearch} />
       <LogIn open={!isSignedIn} />
     </AppRoot>
