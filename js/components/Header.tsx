@@ -10,7 +10,7 @@ import debounce from 'debounce-promise';
 import Mousetrap from 'mousetrap';
 
 import * as React from 'react';
-import { Route, Routes, useNavigate, NavigateFunction } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import { AccountCircle, Home as HomeIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { AppBar, Toolbar, Typography, IconButton, styled, Menu, MenuItem } from '@mui/material';
