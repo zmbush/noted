@@ -88,5 +88,8 @@
     "*.tsx.snap": "typescriptreact",
     "*.js.snap": "javascript",
     "*.jsx.snap": "javascriptreact"
-  }
+  },
+  "rust-analyzer.cargo.allFeatures": true,
+  "editor.formatOnSave": true,
+  "rust-analyzer.rustfmt.enableRangeFormatting": true
 }

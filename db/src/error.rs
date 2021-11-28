@@ -6,10 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use {
-    diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error},
-    serde_json::json,
-};
+use diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error};
+use serde_json::json;
 
 macro_rules! impl_noted_db_error {
     ($($type:ident => $inner:ty),*) =>{
@@ -60,12 +58,14 @@ pub type Result<T> = std::result::Result<T, DbError>;
 impl_noted_db_error! {
     R2D2 => r2d2::Error,
     IOError => std::io::Error,
+    SerdeJson => serde_json::Error
 }
 
 impl From<Error> for DbError {
     fn from(e: Error) -> DbError {
         match e {
             Error::DatabaseError(k, d) => DbError::DatabaseError(k, d),
+            Error::NotFound => DbError::NotFound,
             e => DbError::UnknownDiesel(e),
         }
     }
@@ -100,6 +100,7 @@ impl DbError {
             }),
             ref s => json!({
                 "code": s.code().as_u16(),
+                "error": format!("{:?}", s)
             }),
         })
         .unwrap_or_else(|_| r#"{"error": "serialize failed"}"#.to_owned())
@@ -118,7 +119,13 @@ mod test {
 
     #[test]
     fn test_to_json() {
-        assert_eq!(DbError::NotFound.to_json(), r#"{"code":404}"#.to_owned());
-        assert_eq!(DbError::NotLoggedIn.to_json(), r#"{"code":401}"#.to_owned());
+        assert_eq!(
+            DbError::NotFound.to_json(),
+            r#"{"code":404,"error":"NotFound"}"#.to_owned()
+        );
+        assert_eq!(
+            DbError::NotLoggedIn.to_json(),
+            r#"{"code":401,"error":"NotLoggedIn"}"#.to_owned()
+        );
     }
 }

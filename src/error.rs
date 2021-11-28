@@ -16,6 +16,7 @@ use {
 
 macro_rules! impl_noted_error {
     (native { $($native:ident => $native_code:path),* } $($type:ident => ($inner:ty, $code:path)),*) => {
+        #[derive(Debug)]
         pub enum NotedError {
             DbError(noted_db::error::DbError),
             $($native),*,
