@@ -37,7 +37,22 @@ const store = createStore(
   fetchData(store.dispatch);
 })();
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#311b92',
+    },
+    secondary: {
+      main: '#00897b',
+    },
+    success: {
+      main: '#43a047',
+    },
+    error: {
+      main: '#e53935',
+    },
+  },
+});
 const ThemedApp = () => (
   <StyledEngineProvider injectFirst>
     <ThemeProvider theme={theme}>

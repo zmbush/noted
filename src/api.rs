@@ -1,7 +1,3 @@
-use std::pin::Pin;
-
-use hyper::body;
-
 // Copyright 2019 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -9,6 +5,10 @@ use hyper::body;
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
+
+use diesel::r2d2::ConnectionManager;
+use r2d2::PooledConnection;
 
 use {
     diesel::prelude::*,
@@ -22,9 +22,12 @@ use {
     },
     gotham_derive::{NewMiddleware, StateData, StaticResponseExtender},
     http::{response::Response, status::StatusCode},
+    hyper::body,
     log::warn,
+    noted_db::DbConnection,
     serde_derive::{Deserialize, Serialize},
     serde_json::json,
+    std::pin::Pin,
 };
 
 #[derive(Serialize, Deserialize, Default)]
@@ -146,7 +149,7 @@ pub fn api() -> Router {
     })
 }
 
-fn parse_json<'a, D: serde::Deserialize<'a>>(s: &'a str) -> Result<D, crate::error::NotedError> {
+fn parse_json<'a, D: serde::Deserialize<'a>>(s: &'a str) -> Result<D, noted_db::error::DbError> {
     Ok(serde_json::from_str(s)?)
 }
 
@@ -202,6 +205,15 @@ where
 
 trait StateExt {
     fn current_user(&self) -> Result<noted_db::models::User, crate::error::NotedError>;
+    fn with_db<
+        R,
+        F: FnOnce(
+            &PooledConnection<ConnectionManager<PgConnection>>,
+        ) -> Result<R, noted_db::error::DbError>,
+    >(
+        &self,
+        inner: F,
+    ) -> Result<R, noted_db::error::DbError>;
 }
 
 impl StateExt for State {
@@ -214,9 +226,20 @@ impl StateExt for State {
             .ok_or(crate::error::NotedError::NotLoggedIn)?
             .current_user_id;
 
-        Ok(users::table
-            .find(current_user_id)
-            .get_result(&noted_db::db()?)?)
+        self.with_db(|db| Ok(users::table.find(current_user_id).get_result(db)?))
+            .map_err(|_| crate::error::NotedError::NotLoggedIn)
+    }
+
+    fn with_db<
+        R,
+        F: FnOnce(
+            &PooledConnection<ConnectionManager<PgConnection>>,
+        ) -> Result<R, noted_db::error::DbError>,
+    >(
+        &self,
+        inner: F,
+    ) -> Result<R, noted_db::error::DbError> {
+        self.borrow::<DbConnection>().with_db(inner)
     }
 }
 
@@ -227,43 +250,39 @@ struct IdParams {
 
 fn list_notes(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
-        json_response(state.current_user()?.list_notes(&noted_db::db()?)?)
+        let current_user = state.current_user()?;
+        json_response(state.with_db(|db| current_user.list_notes(db))?)
     })
 }
 
 fn new_note(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
-        json_response(
-            state
-                .current_user()?
-                .new_note(&parse_json(&s)?, &noted_db::db()?)?,
-        )
+        let current_user = state.current_user()?;
+        json_response(state.with_db(|db| current_user.new_note(&parse_json(&s)?, db))?)
     })
 }
 
 fn read_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
         let note_id = IdParams::borrow_from(state).id;
-        json_response(state.current_user()?.note(note_id, &noted_db::db()?)?)
+        let current_user = state.current_user()?;
+        json_response(state.with_db(|db| current_user.note(note_id, db))?)
     })
 }
 
 fn update_note(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
-        json_response(state.current_user()?.update_note(
-            IdParams::borrow_from(state).id,
-            &parse_json(&s)?,
-            &noted_db::db()?,
-        )?)
+        let current_user = state.current_user()?;
+        json_response(state.with_db(|db| {
+            current_user.update_note(IdParams::borrow_from(state).id, &parse_json(&s)?, db)
+        })?)
     })
 }
 
 fn delete_note(state: State) -> Pin<Box<HandlerFuture>> {
     handler(state, |state| {
-        if state
-            .current_user()?
-            .delete_note(IdParams::borrow_from(state).id, &noted_db::db()?)
-        {
+        let current_user = state.current_user()?;
+        if state.with_db(|db| Ok(current_user.delete_note(IdParams::borrow_from(state).id, db)))? {
             json_response(json!({
                 "status": "ok"
             }))
@@ -277,11 +296,14 @@ fn delete_note(state: State) -> Pin<Box<HandlerFuture>> {
 
 fn set_tags(state: State) -> Pin<Box<HandlerFuture>> {
     body_handler(state, move |s, state| {
-        json_response(state.current_user()?.set_note_tags(
-            IdParams::borrow_from(state).id,
-            &parse_json::<Vec<_>>(&s)?,
-            &noted_db::db()?,
-        )?)
+        let current_user = state.current_user()?;
+        json_response(state.with_db(|db| {
+            current_user.set_note_tags(
+                IdParams::borrow_from(state).id,
+                &parse_json::<Vec<_>>(&s)?,
+                db,
+            )
+        })?)
     })
 }
 
@@ -296,7 +318,7 @@ fn sign_up(state: State) -> Pin<Box<HandlerFuture>> {
     use noted_db::models::User;
 
     body_handler(state, move |s, mut state| {
-        let user = User::sign_up(parse_json(&s)?, &noted_db::db()?)?;
+        let user = state.with_db(|db| User::sign_up(parse_json(&s)?, db))?;
         log_in(&mut state, &user);
 
         json_response(user)
@@ -307,7 +329,10 @@ fn sign_in(state: State) -> Pin<Box<HandlerFuture>> {
     use noted_db::models::User;
 
     body_handler(state, move |s, mut state| {
-        match User::sign_in(&parse_json(&s)?, &noted_db::db()?) {
+        match state
+            .borrow::<DbConnection>()
+            .with_db(|db| Ok(User::sign_in(&parse_json(&s)?, db)))?
+        {
             Ok(user) => {
                 log_in(&mut state, &user);
                 json_response(user)

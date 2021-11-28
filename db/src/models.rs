@@ -20,7 +20,7 @@ use {
     std::collections::HashSet,
 };
 
-#[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
+#[derive(Identifiable, Queryable, Deserialize, Serialize, Associations, Debug)]
 #[belongs_to(User)]
 pub struct Note {
     pub id: i32,
@@ -132,7 +132,7 @@ pub struct NoteTag {
     pub tag_id: i32,
 }
 
-#[derive(Insertable, Deserialize)]
+#[derive(Insertable, Deserialize, Serialize)]
 #[table_name = "notes"]
 pub struct NewNote {
     pub title: String,
@@ -188,12 +188,12 @@ impl SignIn {
     }
 }
 
-#[derive(Identifiable, Queryable, Serialize, Associations, Debug)]
+#[derive(Identifiable, Queryable, Serialize, Deserialize, Associations, Debug)]
 pub struct User {
     pub id: i32,
     pub name: String,
     pub email: String,
-    #[serde(skip_serializing)]
+    #[serde(skip_serializing, default = "String::new")]
     pub hashed_password: String,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
@@ -330,7 +330,7 @@ impl User {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::db;
+    use crate::testing::db;
     use diesel::Connection;
 
     fn parse<'a, D: serde::Deserialize<'a>>(s: &'a str) -> D {
