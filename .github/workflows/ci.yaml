@@ -44,7 +44,7 @@ jobs:
           path: "~/.cargo/bin/\n"
           key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-cov"
       - name: Install diesel_cli
-        run: "which diesel || cargo install diesel_cli --no-default-features --features postgres \n"
+        run: "which diesel || cargo install diesel_cli --no-default-features --features postgres\n"
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
       - name: Create database
@@ -70,7 +70,11 @@ jobs:
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
         with:
+          token: "${{ secrets.CODECOV_TOKEN }}"
           files: "${{ steps.coverage.outputs.report }}"
+          fail_ci_if_error: true
+          verbose: true
+          flags: "backend,rust"
   check:
     name: Rust Build/Test/Lint
     runs-on: ubuntu-latest
@@ -94,7 +98,7 @@ jobs:
           path: "~/.cargo/bin/\n~/.cargo/registry/index/\n~/.cargo/registry/cache/\n~/.cargo/git/db/\ntarget/\n"
           key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}"
       - name: Install diesel_cli
-        run: "which diesel || cargo install diesel_cli --no-default-features --features postgres \n"
+        run: "which diesel || cargo install diesel_cli --no-default-features --features postgres\n"
       - name: Install postgres
         run: "sudo apt-get update\nsudo apt-get install -y libpq-dev postgresql\necho \"host    all             all             127.0.0.1/32            md5\" > sudo tee -a /etc/postgresql/10/main/pg_hba.conf\nsudo service postgresql restart && sleep 3\nsudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\"\nsudo service postgresql restart && sleep 3\n"
       - name: Create database
@@ -145,3 +149,9 @@ jobs:
         run: npm run test
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
+        with:
+          token: "${{ secrets.CODECOV_TOKEN }}"
+          files: coverage/coverage-final.json
+          flags: "ui,typescript"
+          fail_ci_if_error: true
+          verbose: true
