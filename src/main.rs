@@ -14,7 +14,7 @@ use std::pin::Pin;
 
 use futures::FutureExt;
 use gotham::{
-    middleware::session::{GetSessionFuture, SetSessionFuture},
+    middleware::session::{GetSessionFuture, MemoryBackend, SetSessionFuture},
     router::Router,
 };
 use noted_db::DbConnection;
@@ -55,77 +55,98 @@ lazy_static! {
 }
 
 #[derive(Clone)]
-struct RedisBackendProvider(redis::Client);
+struct RedisBackendProvider(Option<redis::Client>, MemoryBackend);
 
-struct RedisBackend(RefCell<redis::Connection>);
+struct RedisBackend(Option<RefCell<redis::Connection>>, MemoryBackend);
 
 impl RedisBackend {
     fn set_expiry(&self, identifier: &SessionIdentifier) -> Result<(), SessionError> {
-        self.0
-            .borrow_mut()
-            .expire(&identifier.value, 60 * 60 * 24 * 5) // 5 Days from last request
-            .map_err(|e| SessionError::Backend(format!("{}", e)))
+        self.0.as_ref().map_or(Ok(()), |redis| {
+            redis
+                .borrow_mut()
+                .expire(&identifier.value, 60 * 60 * 24 * 5) // 5 Days from last request
+                .map_err(|e| SessionError::Backend(format!("{}", e)))
+        })
     }
 }
 
 impl Backend for RedisBackend {
     fn persist_session(
         &self,
-        _state: &State,
+        state: &State,
         identifier: SessionIdentifier,
         content: &[u8],
     ) -> Pin<Box<SetSessionFuture>> {
-        if let Err(e) = self
-            .0
-            .borrow_mut()
-            .set::<_, _, String>(&identifier.value, content)
-            .map_err(|e| SessionError::Backend(format!("{}", e)))
-        {
-            return future::err(e).boxed();
-        }
+        match self.0 {
+            Some(ref redis) => {
+                if let Err(e) = redis
+                    .borrow_mut()
+                    .set::<_, _, String>(&identifier.value, content)
+                    .map_err(|e| SessionError::Backend(format!("{}", e)))
+                {
+                    return future::err(e).boxed();
+                }
 
-        match self.set_expiry(&identifier) {
-            Ok(_) => future::ok(()),
-            Err(e) => future::err(e),
+                match self.set_expiry(&identifier) {
+                    Ok(_) => future::ok(()),
+                    Err(e) => future::err(e),
+                }
+                .boxed()
+            }
+            None => self.1.persist_session(state, identifier, content),
         }
-        .boxed()
     }
 
     fn read_session(
         &self,
-        _state: &State,
+        state: &State,
         identifier: SessionIdentifier,
     ) -> Pin<Box<GetSessionFuture>> {
-        std::mem::drop(self.set_expiry(&identifier));
+        match self.0 {
+            Some(ref redis) => {
+                std::mem::drop(self.set_expiry(&identifier));
 
-        match self.0.borrow_mut().get(identifier.value) {
-            Ok(v) => future::ok(v),
-            Err(e) => future::err(SessionError::Backend(format!("{}", e))),
+                match redis.borrow_mut().get(identifier.value) {
+                    Ok(v) => future::ok(v),
+                    Err(e) => future::err(SessionError::Backend(format!("{}", e))),
+                }
+                .boxed()
+            }
+            None => self.1.read_session(state, identifier),
         }
-        .boxed()
     }
 
     fn drop_session(
         &self,
-        _state: &State,
+        state: &State,
         identifier: SessionIdentifier,
     ) -> Pin<Box<SetSessionFuture>> {
-        match self
-            .0
-            .borrow_mut()
-            .del::<_, String>(identifier.value)
-            .map_err(|e| SessionError::Backend(format!("{}", e)))
-        {
-            Ok(_) => future::ok(()),
-            Err(e) => future::err(e),
+        match self.0 {
+            Some(ref redis) => match redis
+                .borrow_mut()
+                .del::<_, String>(identifier.value)
+                .map_err(|e| SessionError::Backend(format!("{}", e)))
+            {
+                Ok(_) => future::ok(()),
+                Err(e) => future::err(e),
+            }
+            .boxed(),
+            None => self.1.drop_session(state, identifier),
         }
-        .boxed()
     }
 }
 
 impl RedisBackendProvider {
-    fn new<T: redis::IntoConnectionInfo>(params: T) -> redis::RedisResult<Self> {
-        Ok(Self(redis::Client::open(params)?))
+    fn new<T: redis::IntoConnectionInfo>(params: T) -> Self {
+        Self(
+            redis::Client::open(params)
+                .map_err(|e| {
+                    log::error!("Could not connect to redis client: {}", e);
+                    e
+                })
+                .ok(),
+            MemoryBackend::default(),
+        )
     }
 }
 
@@ -133,11 +154,18 @@ impl NewBackend for RedisBackendProvider {
     type Instance = RedisBackend;
 
     fn new_backend(&self) -> gotham::anyhow::Result<RedisBackend> {
-        Ok(RedisBackend(RefCell::new(
+        Ok(RedisBackend(
             self.0
-                .get_connection()
-                .map_err(|e| std::io::Error::new(std::io::ErrorKind::ConnectionRefused, e))?,
-        )))
+                .as_ref()
+                .ok_or(gotham::anyhow::anyhow!("No redis"))
+                .and_then(|c| Ok(RefCell::new(c.get_connection()?)))
+                .map_err(|e| {
+                    log::error!("Could not get connection to redis client: {}", e);
+                    e
+                })
+                .ok(),
+            self.1.new_backend()?,
+        ))
     }
 }
 
@@ -154,7 +182,6 @@ impl ResponseExtender<hyper::Body> for NotFoundHandler {
 }
 
 fn main() -> Result<(), Error> {
-    //simple_logger::init().unwrap();
     fern::Dispatch::new()
         .format(|out, message, record| {
             if record.target() == "gotham::middleware::logger" {
@@ -206,7 +233,7 @@ fn make_router(secure: bool, db: DbConnection) -> Result<Router, Error> {
     }
 
     let middleware = {
-        let mid = NewSessionMiddleware::new(RedisBackendProvider::new("redis://127.0.0.1")?)
+        let mid = NewSessionMiddleware::new(RedisBackendProvider::new("redis://127.0.0.1"))
             .with_session_type::<noted::AppData>();
 
         if secure {
@@ -286,11 +313,8 @@ mod test {
         });
 
         let db = DbConnection::new_for_testing();
-        let server = TestServer::new(move || {
-            let d = db.clone();
-            Ok(make_router(false, d).unwrap())
-        })
-        .unwrap();
+        let router = make_router(false, db).unwrap();
+        let server = TestServer::new(move || Ok(router.clone())).unwrap();
         (TestClient::new(server.client()), server)
     }
 
