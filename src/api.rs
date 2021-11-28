@@ -229,7 +229,7 @@ impl StateExt for State {
     fn db(
         &self,
     ) -> Result<PooledConnection<ConnectionManager<PgConnection>>, noted_db::error::DbError> {
-        Ok(self.borrow::<DbConnection>().db()?)
+        self.borrow::<DbConnection>().db()
     }
 }
 
