@@ -6,10 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use {
-    diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error},
-    serde_json::json,
-};
+use diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error};
+use serde_json::json;
 
 macro_rules! impl_noted_db_error {
     ($($type:ident => $inner:ty),*) =>{

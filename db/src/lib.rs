@@ -16,54 +16,19 @@ pub mod schema;
 
 use diesel::{
     pg::PgConnection,
-    r2d2::{ConnectionManager, Pool, PooledConnection},
+    r2d2::{self, ConnectionManager, CustomizeConnection, Pool, PooledConnection},
     Connection,
 };
 use dotenv::dotenv;
 use gotham::state::StateData;
-use std::env;
-use std::sync::{Arc, Mutex};
-
-trait DbBackend {
-    fn db(
-        &self,
-    ) -> Result<Arc<Mutex<PooledConnection<ConnectionManager<PgConnection>>>>, r2d2::Error>;
-}
+use std::{
+    env,
+    sync::{Arc, Mutex},
+};
 
 #[derive(StateData, Clone)]
 pub struct DbConnection {
-    pool: Arc<Mutex<Box<dyn DbBackend + Send>>>,
-}
-
-impl DbBackend for Pool<ConnectionManager<PgConnection>> {
-    fn db(
-        &self,
-    ) -> Result<Arc<Mutex<PooledConnection<ConnectionManager<PgConnection>>>>, r2d2::Error> {
-        Ok(Arc::new(Mutex::new(self.get()?)))
-    }
-}
-
-struct TestingDbBackend {
-    conn: Arc<Mutex<PooledConnection<ConnectionManager<PgConnection>>>>,
-}
-
-impl TestingDbBackend {
-    fn new(pool: Pool<ConnectionManager<PgConnection>>) -> Self {
-        let conn = pool.get().unwrap();
-        conn.begin_test_transaction()
-            .expect("Couldn't start test transaction");
-        Self {
-            conn: Arc::new(Mutex::new(conn)),
-        }
-    }
-}
-
-impl DbBackend for TestingDbBackend {
-    fn db(
-        &self,
-    ) -> Result<Arc<Mutex<PooledConnection<ConnectionManager<PgConnection>>>>, r2d2::Error> {
-        Ok(self.conn.clone())
-    }
+    pool: Arc<Mutex<Pool<ConnectionManager<PgConnection>>>>,
 }
 
 impl Default for DbConnection {
@@ -73,46 +38,48 @@ impl Default for DbConnection {
     }
 }
 
+#[derive(Debug)]
+struct TestingConnectionCustomizer;
+impl CustomizeConnection<PgConnection, r2d2::Error> for TestingConnectionCustomizer {
+    fn on_acquire(&self, conn: &mut PgConnection) -> Result<(), r2d2::Error> {
+        conn.begin_test_transaction()
+            .expect("Unable to start test transaction");
+        Ok(())
+    }
+}
+
 impl DbConnection {
     pub fn new<S: Into<String>>(url: S) -> Self {
         DbConnection {
-            pool: Arc::new(Mutex::new(Box::new(
+            pool: Arc::new(Mutex::new(
                 Pool::builder()
                     .build(ConnectionManager::new(url))
                     .expect("Unable to create db connection pool"),
-            ))),
+            )),
         }
     }
 
     pub fn new_for_testing() -> Self {
         dotenv().ok();
         DbConnection {
-            pool: Arc::new(Mutex::new(Box::new(TestingDbBackend::new(
+            pool: Arc::new(Mutex::new(
                 Pool::builder()
+                    .max_size(1)
+                    .connection_customizer(Box::new(TestingConnectionCustomizer))
                     .build(ConnectionManager::new(
                         env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
                     ))
                     .expect("Unable to create db connection pool"),
-            )))),
+            )),
         }
     }
 
-    pub fn with_db<
-        R,
-        F: FnOnce(&PooledConnection<ConnectionManager<PgConnection>>) -> Result<R, error::DbError>,
-    >(
-        &self,
-        inner: F,
-    ) -> Result<R, error::DbError> {
-        inner(
-            &self
-                .pool
-                .lock()
-                .expect("poisoned lock")
-                .db()?
-                .lock()
-                .expect("poisoned lock"),
-        )
+    pub fn db(&self) -> Result<PooledConnection<ConnectionManager<PgConnection>>, error::DbError> {
+        Ok(self
+            .pool
+            .lock()
+            .expect("Database connection pool lock poisoned. Unrecoverable.")
+            .get()?)
     }
 }
 
