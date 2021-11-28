@@ -6,19 +6,17 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use {
-    crate::{
-        error::{DbError, Result},
-        schema::{note_tags_id, notes, tags, users},
-    },
-    diesel::{
-        pg::PgConnection,
-        prelude::*,
-        r2d2::{ConnectionManager, PooledConnection},
-    },
-    serde_derive::{Deserialize, Serialize},
-    std::collections::HashSet,
+use crate::{
+    error::{DbError, Result},
+    schema::{note_tags_id, notes, tags, users},
 };
+use diesel::{
+    pg::PgConnection,
+    r2d2::{ConnectionManager, PooledConnection},
+    BelongingToDsl, Connection, ExpressionMethods, GroupedBy, QueryDsl, RunQueryDsl,
+};
+use serde_derive::{Deserialize, Serialize};
+use std::collections::HashSet;
 
 #[derive(Identifiable, Queryable, Deserialize, Serialize, Associations, Debug)]
 #[belongs_to(User)]

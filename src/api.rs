@@ -7,28 +7,24 @@
 // except according to those terms.
 //
 
-use diesel::r2d2::ConnectionManager;
-use r2d2::PooledConnection;
-
-use {
-    diesel::prelude::*,
-    futures::{future, FutureExt},
-    gotham::{
-        handler::{HandlerFuture, IntoResponse},
-        middleware::{session::SessionData, Middleware},
-        pipeline::{new_pipeline, single_pipeline},
-        router::{builder::*, response::ResponseExtender, Router},
-        state::{FromState, State},
-    },
-    gotham_derive::{NewMiddleware, StateData, StaticResponseExtender},
-    http::{response::Response, status::StatusCode},
-    hyper::body,
-    log::warn,
-    noted_db::DbConnection,
-    serde_derive::{Deserialize, Serialize},
-    serde_json::json,
-    std::pin::Pin,
+use diesel::{r2d2::ConnectionManager, PgConnection, QueryDsl, RunQueryDsl};
+use futures::{future, FutureExt};
+use gotham::{
+    handler::{HandlerFuture, IntoResponse},
+    middleware::{session::SessionData, Middleware},
+    pipeline::{new_pipeline, single_pipeline},
+    router::{builder::*, response::ResponseExtender, Router},
+    state::{FromState, State},
 };
+use gotham_derive::{NewMiddleware, StateData, StaticResponseExtender};
+use http::{response::Response, status::StatusCode};
+use hyper::body;
+use log::warn;
+use noted_db::DbConnection;
+use r2d2::PooledConnection;
+use serde_derive::{Deserialize, Serialize};
+use serde_json::json;
+use std::pin::Pin;
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct UserData {

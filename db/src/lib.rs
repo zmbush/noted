@@ -85,25 +85,17 @@ impl DbConnection {
 
 #[cfg(test)]
 mod testing {
-    use std::env;
-
+    use crate::{error::DbError, DbConnection};
     use diesel::{
-        r2d2::{ConnectionManager, Pool, PooledConnection},
+        r2d2::{ConnectionManager, PooledConnection},
         PgConnection,
     };
 
     lazy_static::lazy_static! {
-        static ref DB_CONNECTION: Pool<ConnectionManager<PgConnection>> = {
-            dotenv::dotenv().ok();
-            Pool::builder()
-                .build(ConnectionManager::new(
-                    env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
-                ))
-                .expect("Unable to create db connection pool")
-        };
+        static ref DB_CONNECTION: DbConnection = DbConnection::new_for_testing();
     }
 
-    pub(crate) fn db() -> Result<PooledConnection<ConnectionManager<PgConnection>>, r2d2::Error> {
-        DB_CONNECTION.get()
+    pub(crate) fn db() -> Result<PooledConnection<ConnectionManager<PgConnection>>, DbError> {
+        DB_CONNECTION.db()
     }
 }
