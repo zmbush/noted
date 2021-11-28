@@ -88,7 +88,7 @@ impl WithTags for Note {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct NoteWithTags {
     pub id: i32,
     pub title: String,
@@ -130,7 +130,7 @@ pub struct NoteTag {
     pub tag_id: i32,
 }
 
-#[derive(Insertable, Deserialize, Serialize)]
+#[derive(Insertable, Deserialize, Serialize, Default)]
 #[table_name = "notes"]
 pub struct NewNote {
     pub title: String,
@@ -138,7 +138,7 @@ pub struct NewNote {
     pub parent_note_id: Option<i32>,
 }
 
-#[derive(AsChangeset, Deserialize)]
+#[derive(AsChangeset, Deserialize, Serialize, Default)]
 #[table_name = "notes"]
 pub struct UpdateNote {
     pub title: Option<String>,
