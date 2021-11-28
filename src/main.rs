@@ -279,7 +279,7 @@ mod test {
         test::{TestRequest, TestServer},
     };
     use http::HeaderValue;
-    use noted_db::models::{NewNote, Note, User};
+    use noted_db::models::{NewNote, NoteWithTags, UpdateNote, User};
     use serde::Deserialize;
     use serde_json::json;
     use std::sync::Once;
@@ -288,7 +288,7 @@ mod test {
 
     static INIT: Once = Once::new();
 
-    fn setup() -> (TestClient, TestServer) {
+    fn setup(already_signed_in: bool) -> (TestClient, TestServer) {
         INIT.call_once(|| {
             fern::Dispatch::new()
                 .format(|out, message, record| {
@@ -315,13 +315,18 @@ mod test {
         let db = DbConnection::new_for_testing();
         let router = make_router(false, db).unwrap();
         let server = TestServer::new(move || Ok(router.clone())).unwrap();
-        (TestClient::new(server.client()), server)
+        (TestClient::new(server.client(), already_signed_in), server)
     }
 
     #[derive(Deserialize, Debug)]
     struct ApiError {
-        code: u32,
+        code: u16,
         error: Option<String>,
+    }
+
+    #[derive(Deserialize, Debug)]
+    struct ApiStatus {
+        status: String,
     }
 
     struct TestClient {
@@ -330,11 +335,21 @@ mod test {
     }
 
     impl TestClient {
-        fn new(client: gotham::test::TestClient<TestServer, TestConnect>) -> Self {
-            TestClient {
+        fn new(
+            client: gotham::test::TestClient<TestServer, TestConnect>,
+            already_signed_in: bool,
+        ) -> Self {
+            let mut cli = TestClient {
                 client,
                 cookie_jar: CookieJar::new(),
+            };
+
+            if already_signed_in {
+                cli.sign_up("test@test.com", "Testy McTestFace")
+                    .expect("Unable to create test user");
             }
+
+            cli
         }
 
         fn handle_result<S: serde::de::DeserializeOwned>(
@@ -355,11 +370,14 @@ mod test {
                     .add_original(Cookie::parse(cookie.to_str().unwrap().to_owned()).unwrap());
             }
             println!("Status: {}", response.status());
+            let status = response.status();
             let body = response.read_utf8_body().unwrap();
             println!("Parsing result: {}", body);
             serde_json::from_str::<S>(&body).map_err(|_| {
-                serde_json::from_str::<ApiError>(&body)
-                    .unwrap_or_else(|_| panic!("could not parse api error as fallback: {}", body))
+                serde_json::from_str::<ApiError>(&body).unwrap_or_else(|_| ApiError {
+                    code: status.as_u16(),
+                    error: Some(body),
+                })
             })
         }
 
@@ -422,7 +440,7 @@ mod test {
             )
         }
 
-        fn new_note(&mut self, note: &NewNote) -> Result<Note, ApiError> {
+        fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ApiError> {
             let body = serde_json::to_string(note).unwrap();
             TestClient::handle_result(
                 &mut self.cookie_jar,
@@ -433,11 +451,54 @@ mod test {
                 ),
             )
         }
+
+        fn list_notes(&mut self) -> Result<Vec<NoteWithTags>, ApiError> {
+            TestClient::handle_result(
+                &mut self.cookie_jar,
+                self.client.get("http://localhost/api/secure/notes"),
+            )
+        }
+
+        fn delete_note(&mut self, id: i32) -> Result<ApiStatus, ApiError> {
+            TestClient::handle_result(
+                &mut self.cookie_jar,
+                self.client
+                    .delete(format!("http://localhost/api/secure/notes/{}", id)),
+            )
+        }
+
+        fn update_note(&mut self, id: i32, update: &UpdateNote) -> Result<NoteWithTags, ApiError> {
+            let body = serde_json::to_string(update).unwrap();
+            TestClient::handle_result(
+                &mut self.cookie_jar,
+                self.client.patch(
+                    format!("http://localhost/api/secure/notes/{}", id),
+                    body,
+                    gotham::mime::APPLICATION_JSON,
+                ),
+            )
+        }
+
+        fn set_tags<'a, Tags: AsRef<[&'a str]>>(
+            &mut self,
+            id: i32,
+            tags: Tags,
+        ) -> Result<NoteWithTags, ApiError> {
+            let body = serde_json::to_string(tags.as_ref()).unwrap();
+            TestClient::handle_result(
+                &mut self.cookie_jar,
+                self.client.put(
+                    format!("http://localhost/api/secure/notes/{}/tags", id),
+                    body,
+                    gotham::mime::APPLICATION_JSON,
+                ),
+            )
+        }
     }
 
     #[test]
     fn test_sign_up() {
-        let (mut client, _server) = setup();
+        let (mut client, _server) = setup(false);
 
         let get_user_err = client.get_user().err().unwrap();
         assert_eq!(get_user_err.code, 401);
@@ -454,9 +515,8 @@ mod test {
 
     #[test]
     fn test_sign_in() {
-        let (mut client, _server) = setup();
+        let (mut client, _server) = setup(true);
 
-        client.sign_up("test@test.com", "Testy McTestFace").unwrap();
         client.sign_out().unwrap();
         let user = client.sign_in("test@test.com").unwrap();
         assert_eq!(user.email, "test@test.com");
@@ -465,9 +525,8 @@ mod test {
 
     #[test]
     fn test_add_note() {
-        let (mut client, _server) = setup();
+        let (mut client, _server) = setup(true);
 
-        client.sign_up("test@test.com", "Testy McTestFace").unwrap();
         let note = client
             .new_note(&NewNote {
                 title: "Note 1".to_owned(),
@@ -478,5 +537,90 @@ mod test {
 
         assert_eq!(note.title, "Note 1");
         assert_eq!(note.body, "Simple body");
+    }
+
+    #[test]
+    fn test_list_notes() {
+        let (mut client, _server) = setup(true);
+
+        for i in 0..10 {
+            client
+                .new_note(&NewNote {
+                    title: format!("Note {}", i),
+                    ..NewNote::default()
+                })
+                .unwrap();
+        }
+
+        let notes = client.list_notes().unwrap();
+        assert_eq!(notes.len(), 10);
+    }
+
+    #[test]
+    fn test_delete_note() {
+        let (mut client, _server) = setup(true);
+
+        client
+            .new_note(&NewNote {
+                title: "The Note To Keep".to_string(),
+                ..NewNote::default()
+            })
+            .unwrap();
+        let note_id = client
+            .new_note(&NewNote {
+                title: "The Note To Delete".to_string(),
+                ..NewNote::default()
+            })
+            .unwrap()
+            .id;
+
+        assert_eq!(client.list_notes().unwrap().len(), 2);
+        assert_eq!(client.delete_note(note_id).unwrap().status, "ok");
+
+        let notes = client.list_notes().unwrap();
+        assert_eq!(notes.len(), 1);
+        assert_eq!(notes[0].title, "The Note To Keep");
+    }
+
+    #[test]
+    fn test_set_tags() {
+        let (mut client, _server) = setup(true);
+
+        let note_id = client
+            .new_note(&NewNote {
+                title: "The Note".to_string(),
+                ..NewNote::default()
+            })
+            .unwrap()
+            .id;
+
+        let note = client.set_tags(note_id, &["tag1", "tag2"]).unwrap();
+
+        assert_eq!(note.tags.len(), 2);
+        assert!(note.tags.contains(&"tag1".to_owned()));
+        assert!(note.tags.contains(&"tag2".to_owned()));
+    }
+
+    #[test]
+    fn test_update_note() {
+        let (mut client, _server) = setup(true);
+        let note = client
+            .new_note(&NewNote {
+                title: "title".into(),
+                ..NewNote::default()
+            })
+            .unwrap();
+        assert_eq!(note.title, "title");
+        let updated = client
+            .update_note(
+                note.id,
+                &UpdateNote {
+                    title: Some("Title".into()),
+                    ..UpdateNote::default()
+                },
+            )
+            .unwrap();
+
+        assert_eq!(updated.title, "Title");
     }
 }
