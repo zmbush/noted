@@ -10,195 +10,28 @@
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::all))]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy::pedantic))]
 
-use std::pin::Pin;
-
-use futures::FutureExt;
-use gotham::{
-    middleware::session::{GetSessionFuture, MemoryBackend, SetSessionFuture},
-    router::Router,
-};
+use actix_files::Files;
+use actix_redis::RedisSession;
+use actix_web::App;
+use actix_web::HttpServer;
+use clap::clap_app;
+use failure::Error;
 use noted_db::DbConnection;
 
-use {
-    clap::clap_app,
-    failure::Error,
-    futures::future,
-    gotham::{
-        self,
-        middleware::session::{
-            Backend, NewBackend, NewSessionMiddleware, SessionError, SessionIdentifier,
-        },
-        pipeline::{new_pipeline, single_pipeline},
-        router::{
-            builder::{build_router, DefineSingleRoute, DrawRoutes},
-            response::ResponseExtender,
-        },
-        state::State,
-    },
-    http::response::Response,
-    lazy_static::lazy_static,
-    redis::Commands,
-    std::cell::RefCell,
-};
-
-lazy_static! {
-    static ref BODY_404: String = {
-        use std::{fs::File, io::Read};
-
-        let mut contents = String::new();
-        let mut file = File::open("static/404.html").expect("Could not open 404 file");
-        file.read_to_string(&mut contents)
-            .expect("Could not read 404 response to string");
-
-        contents
-    };
-}
-
-#[derive(Clone)]
-struct RedisBackendProvider(Option<redis::Client>, MemoryBackend);
-
-struct RedisBackend(Option<RefCell<redis::Connection>>, MemoryBackend);
-
-impl RedisBackend {
-    fn set_expiry(&self, identifier: &SessionIdentifier) -> Result<(), SessionError> {
-        self.0.as_ref().map_or(Ok(()), |redis| {
-            redis
-                .borrow_mut()
-                .expire(&identifier.value, 60 * 60 * 24 * 5) // 5 Days from last request
-                .map_err(|e| SessionError::Backend(format!("{}", e)))
-        })
-    }
-}
-
-impl Backend for RedisBackend {
-    fn persist_session(
-        &self,
-        state: &State,
-        identifier: SessionIdentifier,
-        content: &[u8],
-    ) -> Pin<Box<SetSessionFuture>> {
-        match self.0 {
-            Some(ref redis) => {
-                if let Err(e) = redis
-                    .borrow_mut()
-                    .set::<_, _, String>(&identifier.value, content)
-                    .map_err(|e| SessionError::Backend(format!("{}", e)))
-                {
-                    return future::err(e).boxed();
-                }
-
-                match self.set_expiry(&identifier) {
-                    Ok(_) => future::ok(()),
-                    Err(e) => future::err(e),
-                }
-                .boxed()
-            }
-            None => self.1.persist_session(state, identifier, content),
-        }
-    }
-
-    fn read_session(
-        &self,
-        state: &State,
-        identifier: SessionIdentifier,
-    ) -> Pin<Box<GetSessionFuture>> {
-        match self.0 {
-            Some(ref redis) => {
-                std::mem::drop(self.set_expiry(&identifier));
-
-                match redis.borrow_mut().get(identifier.value) {
-                    Ok(v) => future::ok(v),
-                    Err(e) => future::err(SessionError::Backend(format!("{}", e))),
-                }
-                .boxed()
-            }
-            None => self.1.read_session(state, identifier),
-        }
-    }
-
-    fn drop_session(
-        &self,
-        state: &State,
-        identifier: SessionIdentifier,
-    ) -> Pin<Box<SetSessionFuture>> {
-        match self.0 {
-            Some(ref redis) => match redis
-                .borrow_mut()
-                .del::<_, String>(identifier.value)
-                .map_err(|e| SessionError::Backend(format!("{}", e)))
-            {
-                Ok(_) => future::ok(()),
-                Err(e) => future::err(e),
-            }
-            .boxed(),
-            None => self.1.drop_session(state, identifier),
-        }
-    }
-}
-
-impl RedisBackendProvider {
-    fn new<T: redis::IntoConnectionInfo>(params: T) -> Self {
-        Self(
-            redis::Client::open(params)
-                .map_err(|e| {
-                    log::error!("Could not connect to redis client: {}", e);
-                    e
-                })
-                .ok(),
-            MemoryBackend::default(),
-        )
-    }
-}
-
-impl NewBackend for RedisBackendProvider {
-    type Instance = RedisBackend;
-
-    fn new_backend(&self) -> gotham::anyhow::Result<RedisBackend> {
-        Ok(RedisBackend(
-            self.0
-                .as_ref()
-                .ok_or(gotham::anyhow::anyhow!("No redis"))
-                .and_then(|c| Ok(RefCell::new(c.get_connection()?)))
-                .map_err(|e| {
-                    log::error!("Could not get connection to redis client: {}", e);
-                    e
-                })
-                .ok(),
-            self.1.new_backend()?,
-        ))
-    }
-}
-
-struct NotFoundHandler;
-
-impl ResponseExtender<hyper::Body> for NotFoundHandler {
-    fn extend(&self, _state: &mut State, response: &mut Response<hyper::Body>) {
-        response.headers_mut().insert(
-            hyper::header::CONTENT_TYPE,
-            hyper::header::HeaderValue::from_static("text/html"),
-        );
-        *response.body_mut() = hyper::Body::from(BODY_404.as_str());
-    }
-}
-
-fn main() -> Result<(), Error> {
+#[actix_web::main]
+async fn main() -> Result<(), Error> {
     fern::Dispatch::new()
         .format(|out, message, record| {
-            if record.target() == "gotham::middleware::logger" {
-                out.finish(format_args!("{}", message));
-            } else {
-                out.finish(format_args!(
-                    "{}[{}][{}] {}",
-                    chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                    record.target(),
-                    record.level(),
-                    message
-                ));
-            }
+            out.finish(format_args!(
+                "{}[{}][{}] {}",
+                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
+                record.target(),
+                record.level(),
+                message
+            ));
         })
         .level(log::LevelFilter::Info)
         .level_for("noted", log::LevelFilter::Trace)
-        .level_for("gotham::middleware::logger", log::LevelFilter::Info)
         .chain(std::io::stdout())
         .apply()?;
 
@@ -219,103 +52,42 @@ fn main() -> Result<(), Error> {
 
     let db = DbConnection::default();
 
-    println!("Starting gotham at port {}", port);
-    Ok(gotham::start(
-        ("0.0.0.0", port),
-        make_router(matches.is_present("SECURE"), db)?,
-    )?)
-}
-
-fn make_router(secure: bool, db: DbConnection) -> Result<Router, Error> {
-    let mut favicons = Vec::new();
-    for file in std::fs::read_dir("static/favicon")? {
-        favicons.push(file?.file_name());
-    }
-
-    let middleware = {
-        let mid = NewSessionMiddleware::new(RedisBackendProvider::new("redis://127.0.0.1"))
-            .with_session_type::<noted::AppData>();
-
-        if secure {
-            mid
-        } else {
-            mid.insecure()
-        }
-    };
-
-    let (chain, pipelines) = single_pipeline(
-        new_pipeline()
-            .add(middleware)
-            .add(gotham::middleware::logger::RequestLogger::new(
-                log::Level::Info,
-            ))
-            .add(gotham::middleware::state::StateMiddleware::new(db))
-            .build(),
-    );
-
-    let router = build_router(chain, pipelines, |route| {
-        route.add_response_extender(http::status::StatusCode::NOT_FOUND, NotFoundHandler);
-        route.delegate("/api").to_router(noted::api::api());
-        route.get_or_head("/dist/*").to_dir("dist");
-
-        for favicon in favicons {
-            route
-                .get_or_head(&format!("/{}", favicon.to_string_lossy()))
-                .to_file(format!("static/favicon/{}", favicon.to_string_lossy()));
-        }
-
-        route.get_or_head("/*").to_file("dist/index.html");
-        route.get_or_head("/").to_file("dist/index.html");
-    });
-
-    Ok(router)
+    println!("Starting actix-web at port {}", port);
+    Ok(HttpServer::new(move || {
+        App::new()
+            .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
+            .service(noted::api::service(db.clone()))
+            .service(
+                Files::new("/", ".")
+                    .use_last_modified(true)
+                    .index_file("dist/index.html"),
+            )
+    })
+    .bind(("0.0.0.0", port))?
+    .run()
+    .await?)
 }
 
 #[cfg(test)]
 mod test {
+    use actix_session::CookieSession;
+    use actix_web::{client::ClientRequest, test};
     use cookie::{Cookie, CookieJar};
-    use gotham::{
-        plain::test::TestConnect,
-        test::{TestRequest, TestServer},
-    };
     use http::HeaderValue;
     use noted_db::models::{NewNote, NoteWithTags, UpdateNote, User};
     use serde::Deserialize;
     use serde_json::json;
-    use std::sync::Once;
 
     use super::*;
 
-    static INIT: Once = Once::new();
-
-    fn setup(already_signed_in: bool) -> (TestClient, TestServer) {
-        INIT.call_once(|| {
-            fern::Dispatch::new()
-                .format(|out, message, record| {
-                    if record.target() == "gotham::middleware::logger" {
-                        out.finish(format_args!("{}", message));
-                    } else {
-                        out.finish(format_args!(
-                            "{}[{}][{}] {}",
-                            chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
-                            record.target(),
-                            record.level(),
-                            message
-                        ));
-                    }
-                })
-                .level(log::LevelFilter::Info)
-                .level_for("noted", log::LevelFilter::Trace)
-                .level_for("gotham::middleware::logger", log::LevelFilter::Info)
-                .chain(std::io::stdout())
-                .apply()
-                .expect("Could not set up dispatcher");
-        });
-
+    async fn setup(already_signed_in: bool) -> TestClient {
         let db = DbConnection::new_for_testing();
-        let router = make_router(false, db).unwrap();
-        let server = TestServer::new(move || Ok(router.clone())).unwrap();
-        (TestClient::new(server.client(), already_signed_in), server)
+        let server = test::start(move || {
+            App::new()
+                .wrap(CookieSession::signed(&[0; 32]))
+                .service(noted::api::service(db.clone()))
+        });
+        TestClient::new(server, already_signed_in).await
     }
 
     #[derive(Deserialize, Debug)]
@@ -330,50 +102,49 @@ mod test {
     }
 
     struct TestClient {
-        client: gotham::test::TestClient<TestServer, TestConnect>,
+        server: actix_web::test::TestServer,
         cookie_jar: CookieJar,
     }
 
     impl TestClient {
-        fn new(
-            client: gotham::test::TestClient<TestServer, TestConnect>,
-            already_signed_in: bool,
-        ) -> Self {
+        async fn new(server: actix_web::test::TestServer, already_signed_in: bool) -> Self {
             let mut cli = TestClient {
-                client,
+                server,
                 cookie_jar: CookieJar::new(),
             };
 
             if already_signed_in {
                 cli.sign_up("test@test.com", "Testy McTestFace")
+                    .await
                     .expect("Unable to create test user");
             }
 
             cli
         }
 
-        fn handle_result<S: serde::de::DeserializeOwned>(
+        async fn handle_result<D: serde::de::DeserializeOwned, S: serde::ser::Serialize>(
             cookie_jar: &mut CookieJar,
-            mut req: TestRequest<TestServer, TestConnect>,
-        ) -> Result<S, ApiError> {
+            mut req: ClientRequest,
+            body: &S,
+        ) -> Result<D, ApiError> {
             let headers = req.headers_mut();
             for cookie in cookie_jar.iter() {
                 println!("Setting header: {}", cookie.stripped());
                 headers.append(
                     hyper::header::COOKIE,
-                    HeaderValue::from_str(&format!("{}", cookie.encoded())).unwrap(),
+                    HeaderValue::from_str(&format!("{}", cookie.stripped())).unwrap(),
                 );
             }
-            let response = req.perform().unwrap();
+            let mut response = req.send_json(body).await.unwrap();
             for cookie in response.headers().get_all(hyper::header::SET_COOKIE) {
                 cookie_jar
                     .add_original(Cookie::parse(cookie.to_str().unwrap().to_owned()).unwrap());
             }
             println!("Status: {}", response.status());
             let status = response.status();
-            let body = response.read_utf8_body().unwrap();
+            let body = String::from_utf8(response.body().await.unwrap().to_vec()).unwrap();
             println!("Parsing result: {}", body);
-            serde_json::from_str::<S>(&body).map_err(|_| {
+            serde_json::from_str::<D>(&body).map_err(|_| {
                 serde_json::from_str::<ApiError>(&body).unwrap_or_else(|_| ApiError {
                     code: status.as_u16(),
                     error: Some(body),
@@ -381,151 +152,132 @@ mod test {
             })
         }
 
-        fn get_user(&mut self) -> Result<User, ApiError> {
-            TestClient::handle_result(
-                &mut self.cookie_jar,
-                self.client.get("http://localhost/api/get_user"),
-            )
+        async fn get_user(&mut self) -> Result<User, ApiError> {
+            TestClient::handle_result(&mut self.cookie_jar, self.server.get("/api/get_user"), &"")
+                .await
         }
 
-        fn sign_up<E: AsRef<str>, N: AsRef<str>>(
+        async fn sign_up<E: AsRef<str>, N: AsRef<str>>(
             &mut self,
             email: E,
             name: N,
         ) -> Result<User, ApiError> {
-            let body = serde_json::to_string(&json!({
-                "email": email.as_ref(),
-                "password": "pass",
-                "name": name.as_ref(),
-            }))
-            .unwrap();
-
-            println!("Signing up with: {}", body);
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.put(
-                    "http://localhost/api/sign_up",
-                    body,
-                    gotham::mime::APPLICATION_JSON,
-                ),
+                self.server.put("/api/sign_up"),
+                &json!({
+                    "email": email.as_ref(),
+                    "password": "pass",
+                    "name": name.as_ref()
+                }),
             )
+            .await
         }
 
-        fn sign_in<E: AsRef<str>>(&mut self, email: E) -> Result<User, ApiError> {
-            let body = serde_json::to_string(&json!({
-                "email": email.as_ref(),
-                "password": "pass",
-            }))
-            .unwrap();
-
-            println!("Signing in with: {}", body);
+        async fn sign_in<E: AsRef<str>>(&mut self, email: E) -> Result<User, ApiError> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.post(
-                    "http://localhost/api/sign_in",
-                    body,
-                    gotham::mime::APPLICATION_JSON,
-                ),
+                self.server.post("/api/sign_in"),
+                &json!({
+                    "email": email.as_ref(),
+                    "password": "pass",
+                }),
             )
+            .await
         }
 
-        fn sign_out(&mut self) -> Result<String, ApiError> {
+        async fn sign_out(&mut self) -> Result<String, ApiError> {
+            TestClient::handle_result(&mut self.cookie_jar, self.server.post("/api/sign_out"), &"")
+                .await
+        }
+
+        async fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ApiError> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.post(
-                    "http://localhost/api/sign_out",
-                    "",
-                    gotham::mime::APPLICATION_JSON,
-                ),
+                self.server.put("/api/secure/note"),
+                note,
             )
+            .await
         }
 
-        fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ApiError> {
-            let body = serde_json::to_string(note).unwrap();
+        async fn list_notes(&mut self) -> Result<Vec<NoteWithTags>, ApiError> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.put(
-                    "http://localhost/api/secure/note",
-                    body,
-                    gotham::mime::APPLICATION_JSON,
-                ),
+                self.server.get("/api/secure/notes"),
+                &"",
             )
+            .await
         }
 
-        fn list_notes(&mut self) -> Result<Vec<NoteWithTags>, ApiError> {
+        async fn delete_note(&mut self, id: i32) -> Result<ApiStatus, ApiError> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.get("http://localhost/api/secure/notes"),
+                self.server.delete(format!("/api/secure/notes/{}", id)),
+                &"",
             )
+            .await
         }
 
-        fn delete_note(&mut self, id: i32) -> Result<ApiStatus, ApiError> {
+        async fn update_note(
+            &mut self,
+            id: i32,
+            update: &UpdateNote,
+        ) -> Result<NoteWithTags, ApiError> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client
-                    .delete(format!("http://localhost/api/secure/notes/{}", id)),
+                self.server.patch(format!("/api/secure/notes/{}", id)),
+                update,
             )
+            .await
         }
 
-        fn update_note(&mut self, id: i32, update: &UpdateNote) -> Result<NoteWithTags, ApiError> {
-            let body = serde_json::to_string(update).unwrap();
-            TestClient::handle_result(
-                &mut self.cookie_jar,
-                self.client.patch(
-                    format!("http://localhost/api/secure/notes/{}", id),
-                    body,
-                    gotham::mime::APPLICATION_JSON,
-                ),
-            )
-        }
-
-        fn set_tags<'a, Tags: AsRef<[&'a str]>>(
+        async fn set_tags<'a, Tags: AsRef<[&'a str]>>(
             &mut self,
             id: i32,
             tags: Tags,
         ) -> Result<NoteWithTags, ApiError> {
-            let body = serde_json::to_string(tags.as_ref()).unwrap();
             TestClient::handle_result(
                 &mut self.cookie_jar,
-                self.client.put(
-                    format!("http://localhost/api/secure/notes/{}/tags", id),
-                    body,
-                    gotham::mime::APPLICATION_JSON,
-                ),
+                self.server.put(format!("/api/secure/notes/{}/tags", id)),
+                &tags.as_ref(),
             )
+            .await
         }
     }
 
-    #[test]
-    fn test_sign_up() {
-        let (mut client, _server) = setup(false);
+    #[actix_rt::test]
+    async fn test_sign_up() {
+        let mut client = setup(false).await;
 
-        let get_user_err = client.get_user().err().unwrap();
+        let get_user_err = client.get_user().await.err().unwrap();
         assert_eq!(get_user_err.code, 401);
-        assert_eq!(get_user_err.error.unwrap(), "not authorized");
+        assert_eq!(get_user_err.error.unwrap(), "NotLoggedIn");
 
-        let new_user = client.sign_up("test@test.com", "Testy McTestFace").unwrap();
+        let new_user = client
+            .sign_up("test@test.com", "Testy McTestFace")
+            .await
+            .unwrap();
         assert_eq!(new_user.email, "test@test.com");
         assert_eq!(new_user.name, "Testy McTestFace");
 
-        let user = client.get_user().unwrap();
+        let user = client.get_user().await.unwrap();
         assert_eq!(user.email, "test@test.com");
         assert_eq!(user.name, "Testy McTestFace");
     }
 
-    #[test]
-    fn test_sign_in() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_sign_in() {
+        let mut client = setup(true).await;
 
-        client.sign_out().unwrap();
-        let user = client.sign_in("test@test.com").unwrap();
+        client.sign_out().await.unwrap();
+        let user = client.sign_in("test@test.com").await.unwrap();
         assert_eq!(user.email, "test@test.com");
         assert_eq!(user.name, "Testy McTestFace");
     }
 
-    #[test]
-    fn test_add_note() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_add_note() {
+        let mut client = setup(true).await;
 
         let note = client
             .new_note(&NewNote {
@@ -533,15 +285,16 @@ mod test {
                 body: "Simple body".to_owned(),
                 parent_note_id: None,
             })
+            .await
             .unwrap();
 
         assert_eq!(note.title, "Note 1");
         assert_eq!(note.body, "Simple body");
     }
 
-    #[test]
-    fn test_list_notes() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_list_notes() {
+        let mut client = setup(true).await;
 
         for i in 0..10 {
             client
@@ -549,66 +302,71 @@ mod test {
                     title: format!("Note {}", i),
                     ..NewNote::default()
                 })
+                .await
                 .unwrap();
         }
 
-        let notes = client.list_notes().unwrap();
+        let notes = client.list_notes().await.unwrap();
         assert_eq!(notes.len(), 10);
     }
 
-    #[test]
-    fn test_delete_note() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_delete_note() {
+        let mut client = setup(true).await;
 
         client
             .new_note(&NewNote {
                 title: "The Note To Keep".to_string(),
                 ..NewNote::default()
             })
+            .await
             .unwrap();
         let note_id = client
             .new_note(&NewNote {
                 title: "The Note To Delete".to_string(),
                 ..NewNote::default()
             })
+            .await
             .unwrap()
             .id;
 
-        assert_eq!(client.list_notes().unwrap().len(), 2);
-        assert_eq!(client.delete_note(note_id).unwrap().status, "ok");
+        assert_eq!(client.list_notes().await.unwrap().len(), 2);
+        assert_eq!(client.delete_note(note_id).await.unwrap().status, "ok");
 
-        let notes = client.list_notes().unwrap();
+        let notes = client.list_notes().await.unwrap();
         assert_eq!(notes.len(), 1);
         assert_eq!(notes[0].title, "The Note To Keep");
     }
 
-    #[test]
-    fn test_set_tags() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_set_tags() {
+        let mut client = setup(true).await;
 
         let note_id = client
             .new_note(&NewNote {
                 title: "The Note".to_string(),
                 ..NewNote::default()
             })
+            .await
             .unwrap()
             .id;
 
-        let note = client.set_tags(note_id, &["tag1", "tag2"]).unwrap();
+        let note = client.set_tags(note_id, &["tag1", "tag2"]).await.unwrap();
 
         assert_eq!(note.tags.len(), 2);
         assert!(note.tags.contains(&"tag1".to_owned()));
         assert!(note.tags.contains(&"tag2".to_owned()));
     }
 
-    #[test]
-    fn test_update_note() {
-        let (mut client, _server) = setup(true);
+    #[actix_rt::test]
+    async fn test_update_note() {
+        let mut client = setup(true).await;
         let note = client
             .new_note(&NewNote {
                 title: "title".into(),
                 ..NewNote::default()
             })
+            .await
             .unwrap();
         assert_eq!(note.title, "title");
         let updated = client
@@ -619,6 +377,7 @@ mod test {
                     ..UpdateNote::default()
                 },
             )
+            .await
             .unwrap();
 
         assert_eq!(updated.title, "Title");

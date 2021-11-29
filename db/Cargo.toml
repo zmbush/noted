@@ -1,19 +1,18 @@
 [package]
-name = "noted_db"
-version = "0.1.0"
 authors = ["Zach Bush <zach@zmbush.com>"]
 edition = "2018"
+name = "noted_db"
+version = "0.1.0"
 
 [dependencies]
-diesel = { version = "1.4.8", features = ["postgres", "r2d2", "chrono"] }
+chrono = {version = "0.4.19", features = ["serde"]}
+diesel = {version = "1.4.8", features = ["postgres", "r2d2", "chrono"]}
 dotenv = "0.15.0"
+hyper = "0.14.12"
 lazy_static = "1.4.0"
+log = "0.4.14"
+r2d2 = "0.8.9"
+rust-crypto = "0.2.36"
 serde = "1.0.98"
 serde_derive = "1.0.98"
-chrono = { version = "0.4.19", features = ["serde"] }
-log = "0.4.14"
-rust-crypto = "0.2.36"
-r2d2 = "0.8.9"
-gotham = "0.7.1"
-hyper = "0.14.12"
 serde_json = "1.0.72"
