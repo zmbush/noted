@@ -20,13 +20,12 @@ use diesel::{
     Connection,
 };
 use dotenv::dotenv;
-use gotham::state::StateData;
 use std::{
     env,
     sync::{Arc, Mutex},
 };
 
-#[derive(StateData, Clone)]
+#[derive(Clone)]
 pub struct DbConnection {
     pool: Arc<Mutex<Pool<ConnectionManager<PgConnection>>>>,
 }

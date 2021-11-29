@@ -6,12 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use serde_derive::{Deserialize, Serialize};
-
 pub mod api;
+mod current_user;
 pub mod error;
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct AppData {
-    pub user: Option<api::UserData>,
-}

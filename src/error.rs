@@ -6,13 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use {
-    gotham::{
-        handler::{HandlerError, IntoResponse},
-        state::State,
-    },
-    http::status::StatusCode,
-};
+use actix_web::{HttpResponse, ResponseError};
+use http::status::StatusCode;
+use serde_json::json;
+use std::fmt::Display;
 
 macro_rules! impl_noted_error {
     (native { $($native:ident => $native_code:path),* } $($type:ident => ($inner:ty, $code:path)),*) => {
@@ -35,18 +32,23 @@ macro_rules! impl_noted_error {
             }
         }
 
-        impl From<NotedError> for HandlerError {
-            fn from(error: NotedError) -> HandlerError {
-                use NotedError::*;
+        impl Display for NotedError {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.code())
+            }
+        }
 
-                let code = error.code();
+        impl ResponseError for NotedError {
+            fn status_code(&self) -> StatusCode {
+                self.code()
+            }
 
-                match error {
-                    DbError(e) => e.into(),
-                    $($native => failure::format_err!(stringify!($native)).compat().into()),*,
-                    $($type(e) => HandlerError::from(e)),*
-                }
-                .with_status(code)
+            fn error_response(&self) -> actix_web::HttpResponse {
+                let error_json = json!({
+                    "code": self.code().as_u16(),
+                    "error": format!("{:?}", self),
+                });
+                HttpResponse::build(self.status_code()).json(error_json)
             }
         }
 
@@ -81,6 +83,7 @@ macro_rules! impl_noted_error {
 impl_noted_error! {
     native {
         NotLoggedIn => StatusCode::UNAUTHORIZED,
+        SessionError => StatusCode::SERVICE_UNAVAILABLE,
     }
     SerdeJson => (serde_json::Error, StatusCode::BAD_REQUEST),
     DieselResult => (diesel::result::Error, StatusCode::BAD_REQUEST),
@@ -94,18 +97,5 @@ impl_noted_error! {
 impl From<noted_db::error::DbError> for NotedError {
     fn from(e: noted_db::error::DbError) -> Self {
         NotedError::DbError(e)
-    }
-}
-
-impl NotedError {
-    pub fn into_json_response(self, state: &State) -> hyper::http::Response<hyper::Body> {
-        match self {
-            NotedError::DbError(inner_error) => {
-                let mut resp = hyper::Response::new(hyper::Body::from(inner_error.to_json()));
-                *resp.status_mut() = inner_error.code();
-                resp
-            }
-            e => HandlerError::from(e).into_response(state),
-        }
     }
 }
