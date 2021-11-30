@@ -18,7 +18,6 @@ import NoteEditor from '../NoteEditor';
 
 const editor = (
   <NoteEditor
-    open={false}
     note={{
       id: 1,
       title: 'note title',
@@ -88,28 +87,6 @@ describe('<NoteEditor />', () => {
     toastEditor.props().events.change('wysiwyg');
 
     expect(wrapper.state('body')).toEqual('new body');
-  });
-
-  test('switching to open works', () => {
-    let focusCalled = false;
-    let moveCursorToEndCalled = false;
-    const wrapper = shallow(editor);
-    (wrapper.instance() as any).editor = {
-      current: {
-        getInstance: () => ({
-          focus() {
-            focusCalled = true;
-          },
-
-          moveCursorToEnd() {
-            moveCursorToEndCalled = true;
-          },
-        }),
-      },
-    };
-    wrapper.setProps({ open: true });
-    expect(focusCalled).toBeTruthy();
-    expect(moveCursorToEndCalled).toBeTruthy();
   });
 
   test('submitting works', () => {

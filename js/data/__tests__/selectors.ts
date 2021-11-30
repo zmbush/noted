@@ -5,6 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
+import { NoteWithTags } from 'data/types';
+
 import { notesFetched } from '../actions';
 import rootReducer from '../reducers';
 import {
@@ -16,6 +19,19 @@ import {
   getSortedNoteIds,
 } from '../selectors';
 
+const baseNote: NoteWithTags = {
+  id: 0,
+  user_id: 0,
+  title: '',
+  body: 'body',
+  tags: [],
+  parent_note_id: 0,
+  updated_at: '',
+  archived: false,
+  created_at: '',
+  pinned: false,
+};
+
 describe('getLinkIds()', () => {
   test('returns empty map for empty notes map', () => {
     expect(getLinkIds(rootReducer(undefined, { type: '' }))).toEqual(new Map());
@@ -25,10 +41,10 @@ describe('getLinkIds()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 0 },
+        { ...baseNote, id: 1, title: 'Test 1' },
+        { ...baseNote, id: 2, title: 'Test 2' },
+        { ...baseNote, id: 3, title: 'Test 3' },
+        { ...baseNote, id: 4, title: 'Test 4' },
       ]),
     );
 
@@ -52,27 +68,23 @@ describe('getTopLevelNotes()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
+        { ...baseNote, id: 1, title: 'Test 1' },
+        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+        { ...baseNote, id: 3, title: 'Test 3' },
+        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
       ]),
     );
 
     const expected = new Map();
     expected.set(1, {
+      ...baseNote,
       id: 1,
       title: 'Test 1',
-      body: 'body',
-      tags: [],
-      parent_note_id: 0,
     });
     expected.set(3, {
+      ...baseNote,
       id: 3,
       title: 'Test 3',
-      body: 'body',
-      tags: [],
-      parent_note_id: 0,
     });
 
     expect(getTopLevelNotes(state)).toEqual(expected);
@@ -92,26 +104,24 @@ describe('getSubNotes()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
+        { ...baseNote, id: 1, title: 'Test 1' },
+        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+        { ...baseNote, id: 3, title: 'Test 3' },
+        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
       ]),
     );
 
     const expected = new Map();
     expected.set(2, {
+      ...baseNote,
       id: 2,
       title: 'Test 2',
-      body: 'body',
-      tags: [],
       parent_note_id: 3,
     });
     expected.set(4, {
+      ...baseNote,
       id: 4,
       title: 'Test 4',
-      body: 'body',
-      tags: [],
       parent_note_id: 3,
     });
 
@@ -128,43 +138,38 @@ describe('getSearchIndex()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
+        { ...baseNote, id: 1, title: 'Test 1' },
+        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+        { ...baseNote, id: 3, title: 'Test 3' },
+        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
       ]),
     );
 
     const expected = new Map();
     expected.set(1, {
+      ...baseNote,
       id: 1,
       title: 'Test 1',
-      body: 'body',
-      tags: [],
-      parent_note_id: 0,
     });
 
     expected.set(2, {
+      ...baseNote,
       id: 2,
       title: 'Test 2',
-      body: 'body',
-      tags: [],
       parent_note_id: 3,
     });
 
     expected.set(3, {
+      ...baseNote,
       id: 3,
       title: 'Test 3 Test 2 Test 4',
       body: 'body body body',
-      tags: [],
-      parent_note_id: 0,
     });
 
     expected.set(4, {
+      ...baseNote,
       id: 4,
       title: 'Test 4',
-      body: 'body',
-      tags: [],
       parent_note_id: 3,
     });
 
@@ -185,27 +190,26 @@ describe('getFilteredSearchIndex()', () => {
     const state = rootReducer(
       undefined,
       notesFetched([
-        { id: 1, title: 'Test 1', body: 'body', tags: [], parent_note_id: 2 },
-        { id: 2, title: 'Test 2', body: 'body', tags: [], parent_note_id: 3 },
-        { id: 3, title: 'Test 3', body: 'body', tags: [], parent_note_id: 0 },
-        { id: 4, title: 'Test 4', body: 'body', tags: [], parent_note_id: 3 },
+        { ...baseNote, id: 1, title: 'Test 1', parent_note_id: 2 },
+        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+        { ...baseNote, id: 3, title: 'Test 3' },
+        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
       ]),
     );
 
     const expected = new Map();
     expected.set(2, {
+      ...baseNote,
       id: 2,
       title: 'Test 2 Test 1',
       body: 'body body',
-      tags: [],
       parent_note_id: 3,
     });
 
     expected.set(4, {
+      ...baseNote,
       id: 4,
       title: 'Test 4',
-      body: 'body',
-      tags: [],
       parent_note_id: 3,
     });
 
@@ -213,11 +217,10 @@ describe('getFilteredSearchIndex()', () => {
 
     const expected2 = new Map();
     expected2.set(3, {
+      ...baseNote,
       id: 3,
       title: 'Test 3 Test 2 Test 1 Test 4',
       body: 'body body body body',
-      tags: [],
-      parent_note_id: 0,
     });
 
     expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected2);
@@ -234,34 +237,29 @@ describe('getSortedNoteIds()', () => {
       undefined,
       notesFetched([
         {
+          ...baseNote,
           id: 1,
           title: 'Test 1',
-          body: 'body',
-          tags: [],
           parent_note_id: 4,
           updated_at: '3',
         },
         {
+          ...baseNote,
           id: 2,
           title: 'Test 2',
-          body: 'body',
-          tags: [],
           parent_note_id: 3,
           updated_at: '2',
         },
         {
+          ...baseNote,
           id: 3,
           title: 'Test 3',
-          body: 'body',
-          tags: [],
-          parent_note_id: 0,
           updated_at: '1',
         },
         {
+          ...baseNote,
           id: 4,
           title: 'Test 4',
-          body: 'body',
-          tags: [],
           parent_note_id: 3,
           updated_at: '2',
         },

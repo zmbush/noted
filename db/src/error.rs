@@ -7,7 +7,25 @@
 // except according to those terms.
 
 use diesel::result::{DatabaseErrorInformation, DatabaseErrorKind, Error};
-use serde_json::json;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Default)]
+#[schemars(deny_unknown_fields)]
+pub struct ErrorData<'a> {
+    pub code: u16,
+    pub error: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub details: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hint: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub table_name: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub column_name: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub constraint_name: Option<&'a str>,
+}
 
 macro_rules! impl_noted_db_error {
     ($($type:ident => $inner:ty),*) =>{
@@ -89,19 +107,20 @@ impl DbError {
 
     pub fn to_json(&self) -> String {
         serde_json::to_string(&match *self {
-            DbError::DatabaseError(_, ref info) => json!({
-                "code": self.code().as_u16(),
-                "message": info.message(),
-                "details": info.details(),
-                "hint": info.hint(),
-                "table_name": info.table_name(),
-                "column_name": info.column_name(),
-                "constraint_name": info.constraint_name(),
-            }),
-            ref s => json!({
-                "code": s.code().as_u16(),
-                "error": format!("{:?}", s)
-            }),
+            DbError::DatabaseError(_, ref info) => ErrorData {
+                code: self.code().as_u16(),
+                error: info.message().into(),
+                details: info.details(),
+                hint: info.hint(),
+                table_name: info.table_name(),
+                column_name: info.column_name(),
+                constraint_name: info.constraint_name(),
+            },
+            ref s => ErrorData {
+                code: s.code().as_u16(),
+                error: format!("{:?}", s),
+                ..ErrorData::default()
+            },
         })
         .unwrap_or_else(|_| r#"{"error": "serialize failed"}"#.to_owned())
     }

@@ -15,6 +15,7 @@ use diesel::{
     r2d2::{ConnectionManager, PooledConnection},
     BelongingToDsl, Connection, ExpressionMethods, GroupedBy, QueryDsl, RunQueryDsl,
 };
+use schemars::JsonSchema;
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -88,7 +89,8 @@ impl WithTags for Note {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 pub struct NoteWithTags {
     pub id: i32,
     pub title: String,
@@ -130,7 +132,8 @@ pub struct NoteTag {
     pub tag_id: i32,
 }
 
-#[derive(Insertable, Deserialize, Serialize, Default)]
+#[derive(Insertable, Deserialize, Serialize, Default, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 #[table_name = "notes"]
 pub struct NewNote {
     pub title: String,
@@ -138,7 +141,8 @@ pub struct NewNote {
     pub parent_note_id: Option<i32>,
 }
 
-#[derive(AsChangeset, Deserialize, Serialize, Default)]
+#[derive(AsChangeset, Deserialize, Serialize, Default, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 #[table_name = "notes"]
 pub struct UpdateNote {
     pub title: Option<String>,
@@ -148,7 +152,8 @@ pub struct UpdateNote {
     pub pinned: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 pub struct NewUserRequest {
     pub email: String,
     pub name: String,
@@ -174,7 +179,8 @@ pub struct NewUser {
     pub hashed_password: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 pub struct SignIn {
     pub email: String,
     pub password: String,
@@ -186,12 +192,14 @@ impl SignIn {
     }
 }
 
-#[derive(Identifiable, Queryable, Serialize, Deserialize, Associations, Debug)]
+#[derive(Identifiable, Queryable, Serialize, Deserialize, Associations, Debug, JsonSchema)]
+#[schemars(deny_unknown_fields)]
 pub struct User {
     pub id: i32,
     pub name: String,
     pub email: String,
     #[serde(skip_serializing, default = "String::new")]
+    #[schemars(skip_deserializing)]
     pub hashed_password: String,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,

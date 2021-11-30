@@ -19,20 +19,14 @@ import { Save as SaveIcon } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
 import BindKeyboard from 'components/BindKeyboard';
-import { NoteData } from 'data/types';
+import { NoteWithTags, NewNote, UpdateNote } from 'data/types';
 
 type Props = {
-  note: NoteData;
-  open: boolean;
-  onSave: (note: { title: string; body: string; tags: string[] }) => void;
+  note: NewNote | NoteWithTags;
+  onSave: (note: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => void;
 };
 
-type State = {
-  title: string;
-  body: string;
-  tags: string[];
-  parent_note_id?: number;
-};
+type State = Omit<NewNote, 'parent_note_id'> & Pick<NoteWithTags, 'tags'>;
 
 export default class NoteEditor extends React.Component<Props, State> {
   editor: React.RefObject<any>;
@@ -40,27 +34,20 @@ export default class NoteEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { note } = this.props;
-    const { title, body, tags, parent_note_id: parentNoteId } = note;
-    this.state = { title, body, tags, parent_note_id: parentNoteId };
-    this.editor = React.createRef();
-  }
-
-  componentDidUpdate(oldProps: Props) {
-    const { open } = this.props;
-    if (open && open !== oldProps.open) {
-      const e = this.editor.current;
-      if (e) {
-        const inst = e.getInstance();
-        inst.focus();
-        inst.moveCursorToEnd();
-      }
+    const { title, body } = note;
+    let tags: string[] = [];
+    if ('tags' in note) {
+      tags = note.tags;
     }
+    this.state = { title, body, tags };
+    this.editor = React.createRef();
   }
 
   save = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
-    const { onSave } = this.props;
-    onSave(this.state);
+    const { onSave, note } = this.props;
+    const { title, body, tags } = this.state;
+    onSave({ title, body, tags, parent_note_id: note.parent_note_id });
   };
 
   addTag = (tag: string) => {

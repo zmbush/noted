@@ -16,16 +16,17 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/Note';
+import { AppState } from 'data/reducers';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
-import { NoteData, AppState } from 'data/types';
+import { NoteWithTags } from 'data/types';
 
 type Props = {
-  notes: Map<number, NoteData>;
-  searchIndex: Map<number, NoteData>;
+  notes: Map<number, NoteWithTags>;
+  searchIndex: Map<number, NoteWithTags>;
   sortedIds: number[];
   search: string;
   depth: number;
-  onUpdateNote: (note?: NoteData) => void;
+  onUpdateNote: (note?: NoteWithTags) => void;
   onDeleteNote: (id: number) => void;
   createFromSearch?: (e: React.SyntheticEvent) => void;
   renderOnly?: Set<number>;
@@ -50,7 +51,7 @@ class NoteList extends React.Component<Props> {
   }
 
   getFuse = memoize(
-    (index: Map<number, NoteData>) =>
+    (index: Map<number, NoteWithTags>) =>
       new Fuse(Array.from(index.values()), {
         distance: 100,
         keys: [

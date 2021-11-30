@@ -16,12 +16,12 @@ import { Grid } from '@mui/material';
 import FilteredNoteList from 'components/FilteredNoteList';
 import Note from 'components/Note';
 import NoteList from 'components/NoteList';
-import { NoteData } from 'data/types';
+import { NoteWithTags } from 'data/types';
 
 type NewNoteProps = {
   newNote: boolean;
   search: string;
-  onUpdateNote: (note?: NoteData) => void;
+  onUpdateNote: (note?: NoteWithTags) => void;
   onDeleteNote: (id: number) => void;
 };
 
@@ -32,17 +32,11 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
   return (
     <Grid item xs={12}>
       <Note
-        new
         depth={1}
         search={search}
         note={{
-          id: -1,
           title: search,
-          tags: [],
           body: '',
-          created_at: '',
-          updated_at: '',
-          user_id: 0,
         }}
         onUpdateNote={onUpdateNote}
         onDeleteNote={onDeleteNote}
@@ -52,7 +46,7 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
 };
 
 type Props = {
-  notes: Map<number, NoteData>;
+  notes: Map<number, NoteWithTags>;
   createNewShortcut: (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     combo?: string,

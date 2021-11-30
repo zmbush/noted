@@ -3,9 +3,12 @@
 exports[`reducers::notes() responds to events 1`] = `
 Map {
   1 => Object {
+    "archived": false,
     "body": "body",
     "created_at": "",
     "id": 1,
+    "parent_note_id": 0,
+    "pinned": false,
     "tags": Array [],
     "title": "title",
     "updated_at": "",
@@ -17,9 +20,12 @@ Map {
 exports[`reducers::notes() responds to events 2`] = `
 Map {
   1 => Object {
+    "archived": false,
     "body": "body",
     "created_at": "",
     "id": 1,
+    "parent_note_id": 0,
+    "pinned": false,
     "tags": Array [],
     "title": "title 3",
     "updated_at": "",
@@ -31,18 +37,24 @@ Map {
 exports[`reducers::notes() responds to events 3`] = `
 Map {
   1 => Object {
+    "archived": false,
     "body": "body",
     "created_at": "",
     "id": 1,
+    "parent_note_id": 0,
+    "pinned": false,
     "tags": Array [],
     "title": "title 3",
     "updated_at": "",
     "user_id": 1,
   },
   2 => Object {
+    "archived": false,
     "body": "body",
     "created_at": "",
     "id": 2,
+    "parent_note_id": 0,
+    "pinned": false,
     "tags": Array [],
     "title": "title 4",
     "updated_at": "",
@@ -54,9 +66,12 @@ Map {
 exports[`reducers::notes() responds to events 4`] = `
 Map {
   1 => Object {
+    "archived": false,
     "body": "body",
     "created_at": "",
     "id": 1,
+    "parent_note_id": 0,
+    "pinned": false,
     "tags": Array [],
     "title": "title 3",
     "updated_at": "",

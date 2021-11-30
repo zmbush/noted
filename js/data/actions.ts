@@ -5,10 +5,11 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import axios from 'axios';
+//
 import { Dispatch } from 'redux';
 
-import { NoteData, ErrorData, UserData } from 'data/types';
+import api from 'api';
+import { NoteWithTags, User, ErrorData } from 'data/types';
 
 export enum NotedEvent {
   NotesFetchStart = 'NOTES_FETCH_START',
@@ -23,37 +24,37 @@ export enum NotedEvent {
 }
 
 export function notesFetchStart() {
-  return { type: NotedEvent.NotesFetchStart };
+  return { type: NotedEvent.NotesFetchStart } as const;
 }
 
-export function notesFetched(notes: NoteData[]) {
-  return { type: NotedEvent.NotesFetched, notes };
+export function notesFetched(notes: NoteWithTags[]) {
+  return { type: NotedEvent.NotesFetched, notes } as const;
 }
 
-export function updateNote(note: NoteData) {
-  return { type: NotedEvent.NotesUpdateNote, note };
+export function updateNote(note: NoteWithTags) {
+  return { type: NotedEvent.NotesUpdateNote, note } as const;
 }
 
 export function deleteNote(id: number) {
-  return { type: NotedEvent.NotesDeleteNote, id };
+  return { type: NotedEvent.NotesDeleteNote, id } as const;
 }
 
 export function apiError(error: ErrorData) {
-  return { type: NotedEvent.ApiError, error };
+  return { type: NotedEvent.ApiError, error } as const;
 }
 
-export function logIn(user: UserData) {
-  return { type: NotedEvent.UserSignedIn, user };
+export function logIn(user: User) {
+  return { type: NotedEvent.UserSignedIn, user } as const;
 }
 
 export function logOut() {
-  return { type: NotedEvent.UserSignedOut };
+  return { type: NotedEvent.UserSignedOut } as const;
 }
 
 export async function fetchData(dispatch: Dispatch) {
   dispatch(notesFetchStart());
   try {
-    dispatch(notesFetched((await axios.get('/api/secure/notes')).data));
+    dispatch(notesFetched(await api.note.list()));
   } catch (e) {
     if (e.response) {
       dispatch(apiError(e.response.data));

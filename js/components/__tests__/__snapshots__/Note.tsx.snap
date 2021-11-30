@@ -1,6 +1,142 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Note /> matches snapshot 1`] = `
+<Fragment>
+  <NoteContents
+    note={
+      Object {
+        "body": "note body",
+        "created_at": "",
+        "id": 1,
+        "tags": Array [
+          "tag1",
+        ],
+        "title": "note title",
+        "updated_at": "",
+        "user_id": 2,
+      }
+    }
+    onDeleteNote={[Function]}
+    onUpdateNote={[Function]}
+    search=""
+    setCreatingSubNote={[Function]}
+    setEdit={[Function]}
+    subNotes={Map {}}
+    titles={Map {}}
+  />
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <ForwardRef(Dialog)
+    classes={
+      Object {
+        "root": undefined,
+      }
+    }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
+  >
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
+        />
+      }
+    />
+  </ForwardRef(Dialog)>
+</Fragment>
+`;
+
+exports[`<Note /> matches snapshot 2`] = `
+<Fragment>
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <ForwardRef(Dialog)
+    classes={
+      Object {
+        "root": undefined,
+      }
+    }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
+  >
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
+        />
+      }
+    />
+  </ForwardRef(Dialog)>
+</Fragment>
+`;
+
+exports[`<Note /> matches snapshot 3`] = `
+<Fragment>
+  <ConfirmationDialog
+    message="Are you sure?"
+    negative="No"
+    onNegative={[Function]}
+    onPositive={[Function]}
+    open={false}
+    positive="Yes"
+    title="If you close this editor, you will lose your changes."
+  />
+  <ForwardRef(Dialog)
+    classes={
+      Object {
+        "root": undefined,
+      }
+    }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
+  >
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
+        />
+      }
+    />
+  </ForwardRef(Dialog)>
+</Fragment>
+`;
+
+exports[`<NoteContents /> matches snapshot 1`] = `
 <ForwardRef(Card)
   raised={true}
   sx={
@@ -125,15 +261,6 @@ exports[`<Note /> matches snapshot 1`] = `
     positive="Yes"
     title="You are about to delete note: note title"
   />
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="If you close this editor, you will lose your changes."
-  />
   <ForwardRef(CardContent)
     sx={
       Object {
@@ -141,42 +268,6 @@ exports[`<Note /> matches snapshot 1`] = `
       }
     }
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": 1,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
-        />
-      </Suspense>
-    </ForwardRef(Dialog)>
     <Tags
       tags={
         Array [
@@ -223,7 +314,7 @@ exports[`<Note /> matches snapshot 1`] = `
 </ForwardRef(Card)>
 `;
 
-exports[`<Note /> matches snapshot 2`] = `
+exports[`<NoteContents /> matches snapshot 2`] = `
 <ForwardRef(Card)
   raised={true}
   sx={
@@ -347,15 +438,6 @@ exports[`<Note /> matches snapshot 2`] = `
     positive="Yes"
     title="You are about to delete note: undefined"
   />
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="If you close this editor, you will lose your changes."
-  />
   <ForwardRef(CardContent)
     sx={
       Object {
@@ -363,42 +445,6 @@ exports[`<Note /> matches snapshot 2`] = `
       }
     }
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": undefined,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
-        />
-      </Suspense>
-    </ForwardRef(Dialog)>
     <Tags />
     <default_1
       components={
@@ -436,7 +482,7 @@ exports[`<Note /> matches snapshot 2`] = `
 </ForwardRef(Card)>
 `;
 
-exports[`<Note /> matches snapshot 3`] = `
+exports[`<NoteContents /> matches snapshot 3`] = `
 <ForwardRef(Card)
   raised={true}
   sx={
@@ -565,15 +611,6 @@ exports[`<Note /> matches snapshot 3`] = `
     positive="Yes"
     title="You are about to delete note: undefined"
   />
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="If you close this editor, you will lose your changes."
-  />
   <ForwardRef(CardContent)
     sx={
       Object {
@@ -581,42 +618,6 @@ exports[`<Note /> matches snapshot 3`] = `
       }
     }
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": undefined,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
-        />
-      </Suspense>
-    </ForwardRef(Dialog)>
     <Tags />
     <default_1
       components={

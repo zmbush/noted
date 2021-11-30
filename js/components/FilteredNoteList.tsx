@@ -11,13 +11,14 @@ import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import NoteList from 'components/NoteList';
-import { NoteData, AppState } from 'data/types';
+import { AppState } from 'data/reducers';
+import { NoteWithTags } from 'data/types';
 
 interface Props {
-  notes: Map<number, NoteData>;
+  notes: Map<number, NoteWithTags>;
   search: string;
   depth: number;
-  onUpdateNote: (note: NoteData) => void;
+  onUpdateNote: (note: NoteWithTags) => void;
   onDeleteNote: (id: number) => void;
 }
 

@@ -23,6 +23,7 @@
     "RUSTDOCFLAGS",
     "RUSTFLAGS",
     "rustfmt",
+    "schemars",
     "toastui",
     "tojson",
     "wojtekmaj",

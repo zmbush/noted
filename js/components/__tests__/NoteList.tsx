@@ -11,7 +11,22 @@ import { shallow } from 'enzyme';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { NoteWithTags } from 'data/types';
+
 import { Inner as NoteList } from '../NoteList';
+
+const emptyNote: NoteWithTags = {
+  id: -1,
+  user_id: -1,
+  title: '',
+  body: '',
+  tags: [],
+  archived: false,
+  pinned: false,
+  parent_note_id: 0,
+  created_at: '',
+  updated_at: '',
+};
 
 describe('<NoteList />', () => {
   test('matches snapshot', () => {
@@ -25,25 +40,25 @@ describe('<NoteList />', () => {
             [
               1,
               {
+                ...emptyNote,
                 title: 'SingleNote 1',
                 body: 'The Body',
-                tags: [],
               },
             ],
             [
               4,
               {
+                ...emptyNote,
                 title: 'SingleNote 4',
                 body: 'The Body',
-                tags: [],
               },
             ],
             [
               2,
               {
+                ...emptyNote,
                 title: 'SingleNote 2',
                 body: 'The Body',
-                tags: [],
               },
             ],
           ])
@@ -69,25 +84,25 @@ describe('<NoteList />', () => {
             [
               1,
               {
+                ...emptyNote,
                 title: 'SingleNote 1',
                 body: 'The Body',
-                tags: [],
               },
             ],
             [
               4,
               {
+                ...emptyNote,
                 title: 'SingleNote 4',
                 body: 'The Body',
-                tags: [],
               },
             ],
             [
               2,
               {
+                ...emptyNote,
                 title: 'SingleNote 2',
                 body: 'The Body',
-                tags: [],
               },
             ],
           ])

@@ -149,16 +149,10 @@ exports[`<NewNote /> matches snapshot 2`] = `
 >
   <Connect(Note)
     depth={1}
-    new={true}
     note={
       Object {
         "body": "",
-        "created_at": "",
-        "id": -1,
-        "tags": Array [],
         "title": "Search Term",
-        "updated_at": "",
-        "user_id": 0,
       }
     }
     onDeleteNote={[Function]}
