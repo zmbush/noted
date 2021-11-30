@@ -3,18 +3,18 @@
 
 export interface ErrorData {
   code: number;
-  column_name?: string | null;
-  constraint_name?: string | null;
-  details?: string | null;
   error: string;
+  details?: string | null;
   hint?: string | null;
   table_name?: string | null;
+  column_name?: string | null;
+  constraint_name?: string | null;
 }
 
 export interface NewNote {
+  title: string;
   body: string;
   parent_note_id?: number | null;
-  title: string;
 }
 
 export interface NewUserRequest {
@@ -24,16 +24,16 @@ export interface NewUserRequest {
 }
 
 export interface NoteWithTags {
-  archived: boolean;
-  body: string;
-  created_at: string;
   id: number;
-  parent_note_id: number;
-  pinned: boolean;
-  tags: string[];
   title: string;
+  body: string;
+  tags: string[];
+  created_at: string;
   updated_at: string;
   user_id: number;
+  parent_note_id: number;
+  archived: boolean;
+  pinned: boolean;
 }
 
 export interface SignIn {
@@ -42,17 +42,17 @@ export interface SignIn {
 }
 
 export interface UpdateNote {
-  archived?: boolean | null;
+  title?: string | null;
   body?: string | null;
   parent_note_id?: number | null;
+  archived?: boolean | null;
   pinned?: boolean | null;
-  title?: string | null;
 }
 
 export interface User {
-  created_at: string;
-  email: string;
   id: number;
   name: string;
+  email: string;
+  created_at: string;
   updated_at: string;
 }
