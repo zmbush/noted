@@ -12,8 +12,7 @@
 
 use actix_files::Files;
 use actix_redis::RedisSession;
-use actix_web::App;
-use actix_web::HttpServer;
+use actix_web::{App, HttpServer};
 use clap::clap_app;
 use failure::Error;
 use noted_db::DbConnection;
@@ -58,9 +57,9 @@ async fn main() -> Result<(), Error> {
             .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
             .service(noted::api::service(db.clone()))
             .service(
-                Files::new("/", ".")
+                Files::new("/", "dist")
                     .use_last_modified(true)
-                    .index_file("dist/index.html"),
+                    .index_file("index.html"),
             )
     })
     .bind(("0.0.0.0", port))?
