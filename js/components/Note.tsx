@@ -260,7 +260,7 @@ type Props = {
 };
 
 const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNote }: Props) => {
-  const [edit, setEdit] = React.useState(false);
+  const [edit, setEdit] = React.useState(!('id' in note)); // If note has no 'id', it must be a NewNote
   const [creatingSubNote, setCreatingSubNote] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
   const noteEditor = React.useRef<any>();
@@ -285,14 +285,14 @@ const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNot
   const save = async (noteData: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => {
     const { title, body, tags, parent_note_id: parentNoteId } = noteData;
     let result;
-    if ('id' in note) {
-      result = await api.note.update(note.id, {
+    if (creatingSubNote || !('id' in note)) {
+      result = await api.note.create({
         title,
         body,
         parent_note_id: parentNoteId,
       });
     } else {
-      result = await api.note.create({
+      result = await api.note.update(note.id, {
         title,
         body,
         parent_note_id: parentNoteId,
@@ -338,15 +338,17 @@ const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNot
         <Suspense
           fallback={<ReactLoading type='spin' className={styles.loadingSpinner} color='#000000' />}
         >
-          <NoteEditor
-            onSave={save}
-            ref={noteEditor}
-            note={
-              'id' in note && creatingSubNote
-                ? { title: '', body: '', parent_note_id: note.id }
-                : note
-            }
-          />
+          {edit || creatingSubNote ? (
+            <NoteEditor
+              onSave={save}
+              ref={noteEditor}
+              note={
+                'id' in note && creatingSubNote
+                  ? { title: '', body: '', parent_note_id: note.id }
+                  : note
+              }
+            />
+          ) : null}
         </Suspense>
       </Dialog>
     </>

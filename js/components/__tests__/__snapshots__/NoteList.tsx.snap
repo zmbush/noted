@@ -36,15 +36,23 @@ exports[`<NoteList /> matches snapshot 1`] = `
 Array [
   <Styled(ForwardRef(Grid))
     item={true}
+    key="-1"
     xs={12}
   >
     <Connect(Note)
       depth={2}
       note={
         Object {
+          "archived": false,
           "body": "The Body",
+          "created_at": "",
+          "id": -1,
+          "parent_note_id": 0,
+          "pinned": false,
           "tags": Array [],
           "title": "SingleNote 1",
+          "updated_at": "",
+          "user_id": -1,
         }
       }
       onDeleteNote={[Function]}
@@ -54,15 +62,23 @@ Array [
   </Styled(ForwardRef(Grid))>,
   <Styled(ForwardRef(Grid))
     item={true}
+    key="-1"
     xs={12}
   >
     <Connect(Note)
       depth={2}
       note={
         Object {
+          "archived": false,
           "body": "The Body",
+          "created_at": "",
+          "id": -1,
+          "parent_note_id": 0,
+          "pinned": false,
           "tags": Array [],
           "title": "SingleNote 2",
+          "updated_at": "",
+          "user_id": -1,
         }
       }
       onDeleteNote={[Function]}
@@ -72,15 +88,23 @@ Array [
   </Styled(ForwardRef(Grid))>,
   <Styled(ForwardRef(Grid))
     item={true}
+    key="-1"
     xs={12}
   >
     <Connect(Note)
       depth={2}
       note={
         Object {
+          "archived": false,
           "body": "The Body",
+          "created_at": "",
+          "id": -1,
+          "parent_note_id": 0,
+          "pinned": false,
           "tags": Array [],
           "title": "SingleNote 4",
+          "updated_at": "",
+          "user_id": -1,
         }
       }
       onDeleteNote={[Function]}

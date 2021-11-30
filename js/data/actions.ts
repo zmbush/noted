@@ -25,31 +25,31 @@ export enum NotedEvent {
 }
 
 export function notesFetchStart() {
-  return { type: NotedEvent.NotesFetchStart };
+  return { type: NotedEvent.NotesFetchStart } as const;
 }
 
 export function notesFetched(notes: NoteWithTags[]) {
-  return { type: NotedEvent.NotesFetched, notes };
+  return { type: NotedEvent.NotesFetched, notes } as const;
 }
 
 export function updateNote(note: NoteWithTags) {
-  return { type: NotedEvent.NotesUpdateNote, note };
+  return { type: NotedEvent.NotesUpdateNote, note } as const;
 }
 
 export function deleteNote(id: number) {
-  return { type: NotedEvent.NotesDeleteNote, id };
+  return { type: NotedEvent.NotesDeleteNote, id } as const;
 }
 
 export function apiError(error: ErrorData) {
-  return { type: NotedEvent.ApiError, error };
+  return { type: NotedEvent.ApiError, error } as const;
 }
 
 export function logIn(user: User) {
-  return { type: NotedEvent.UserSignedIn, user };
+  return { type: NotedEvent.UserSignedIn, user } as const;
 }
 
 export function logOut() {
-  return { type: NotedEvent.UserSignedOut };
+  return { type: NotedEvent.UserSignedOut } as const;
 }
 
 export async function fetchData(dispatch: Dispatch) {

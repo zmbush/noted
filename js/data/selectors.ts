@@ -62,7 +62,7 @@ export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, no
   const subNotes = new Map();
 
   [...notes.values()].forEach((note) => {
-    if (note.parent_note_id === noteId) {
+    if (note.parent_note_id === noteId && note.id !== noteId) {
       subNotes.set(note.id, note);
     }
   });

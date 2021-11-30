@@ -1,129 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Note /> matches snapshot 1`] = `
-<ForwardRef(Card)
-  raised={true}
-  sx={
-    Array [
+<Fragment>
+  <NoteContents
+    note={
       Object {
-        "@media print": Object {
-          "border": "none",
-          "boxShadow": "none",
-        },
-        "marginBottom": 1,
-      },
-      Object {},
-      Object {},
-    ]
-  }
->
-  <ForwardRef(CardHeader)
-    action={
-      <React.Fragment>
-        <ForwardRef(IconButton)
-          aria-label="Add SubNote"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="Edit Note"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="More Options"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-      </React.Fragment>
-    }
-    avatar={null}
-    sx={
-      Object {
-        "@media print": Object {
-          "& span": Object {
-            "color": "#58180d",
-            "fontSize": "0.987cm",
-          },
-          "paddingBottom": 0,
-          "paddingTop": 0,
-        },
+        "body": "note body",
+        "created_at": "",
+        "id": 1,
+        "tags": Array [
+          "tag1",
+        ],
+        "title": "note title",
+        "updated_at": "",
+        "user_id": 2,
       }
     }
-    title="note title"
-  />
-  <ForwardRef(Menu)
-    anchorEl={null}
-    anchorOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "bottom",
-      }
-    }
-    id="more-menu"
-    onClose={[Function]}
-    open={false}
-    transformOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "top",
-      }
-    }
-  >
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(DeleteIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Delete Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(DoneIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Pin Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(ArchiveIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Archive Note
-    </ForwardRef(MenuItem)>
-  </ForwardRef(Menu)>
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="You are about to delete note: note title"
+    onDeleteNote={[Function]}
+    onUpdateNote={[Function]}
+    search=""
+    setCreatingSubNote={[Function]}
+    setEdit={[Function]}
+    subNotes={Map {}}
+    titles={Map {}}
   />
   <ConfirmationDialog
     message="Are you sure?"
@@ -134,219 +33,35 @@ exports[`<Note /> matches snapshot 1`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)
-    sx={
+  <ForwardRef(Dialog)
+    classes={
       Object {
-        "paddingTop": 0,
+        "root": undefined,
       }
     }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": 1,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
         />
-      </Suspense>
-    </ForwardRef(Dialog)>
-    <Tags
-      tags={
-        Array [
-          "tag1",
-        ]
       }
     />
-    <default_1
-      components={
-        Object {
-          "p": [Function],
-        }
-      }
-      rehypePlugins={
-        Array [
-          [Function],
-        ]
-      }
-    >
-      note body
-    </default_1>
-    <ForwardRef(Grid)
-      container={true}
-      sx={
-        Object {
-          "@media print": Object {
-            "display": "block",
-            "marginTop": 0,
-          },
-          "marginTop": "75px",
-        }
-      }
-    >
-      <Connect(NoteList)
-        depth={1}
-        notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
-        parent_note_id={1}
-        search=""
-      />
-    </ForwardRef(Grid)>
-  </ForwardRef(CardContent)>
-</ForwardRef(Card)>
+  </ForwardRef(Dialog)>
+</Fragment>
 `;
 
 exports[`<Note /> matches snapshot 2`] = `
-<ForwardRef(Card)
-  raised={true}
-  sx={
-    Array [
-      Object {
-        "@media print": Object {
-          "border": "none",
-          "boxShadow": "none",
-        },
-        "marginBottom": 1,
-      },
-      Object {},
-      Object {},
-    ]
-  }
->
-  <ForwardRef(CardHeader)
-    action={
-      <React.Fragment>
-        <ForwardRef(IconButton)
-          aria-label="Add SubNote"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="Edit Note"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="More Options"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-      </React.Fragment>
-    }
-    avatar={<Memo />}
-    sx={
-      Object {
-        "@media print": Object {
-          "& span": Object {
-            "color": "#58180d",
-            "fontSize": "0.987cm",
-          },
-          "paddingBottom": 0,
-          "paddingTop": 0,
-        },
-      }
-    }
-  />
-  <ForwardRef(Menu)
-    anchorEl={null}
-    anchorOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "bottom",
-      }
-    }
-    id="more-menu"
-    onClose={[Function]}
-    open={false}
-    transformOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "top",
-      }
-    }
-  >
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(DeleteIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Delete Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(ClearIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Unpin Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(ArchiveIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Archive Note
-    </ForwardRef(MenuItem)>
-  </ForwardRef(Menu)>
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="You are about to delete note: undefined"
-  />
+<Fragment>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -356,215 +71,35 @@ exports[`<Note /> matches snapshot 2`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)
-    sx={
+  <ForwardRef(Dialog)
+    classes={
       Object {
-        "paddingTop": 0,
+        "root": undefined,
       }
     }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": undefined,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
         />
-      </Suspense>
-    </ForwardRef(Dialog)>
-    <Tags />
-    <default_1
-      components={
-        Object {
-          "p": [Function],
-        }
-      }
-      rehypePlugins={
-        Array [
-          [Function],
-        ]
       }
     />
-    <ForwardRef(Grid)
-      container={true}
-      sx={
-        Object {
-          "@media print": Object {
-            "display": "block",
-            "marginTop": 0,
-          },
-          "marginTop": "75px",
-        }
-      }
-    >
-      <Connect(NoteList)
-        depth={1}
-        notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
-        search=""
-      />
-    </ForwardRef(Grid)>
-  </ForwardRef(CardContent)>
-</ForwardRef(Card)>
+  </ForwardRef(Dialog)>
+</Fragment>
 `;
 
 exports[`<Note /> matches snapshot 3`] = `
-<ForwardRef(Card)
-  raised={true}
-  sx={
-    Array [
-      Object {
-        "@media print": Object {
-          "border": "none",
-          "boxShadow": "none",
-        },
-        "marginBottom": 1,
-      },
-      Object {},
-      Object {
-        "@media print": Object {
-          "display": "none",
-        },
-        "opacity": 0.4,
-      },
-    ]
-  }
->
-  <ForwardRef(CardHeader)
-    action={
-      <React.Fragment>
-        <ForwardRef(IconButton)
-          aria-label="Add SubNote"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="Edit Note"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-        <ForwardRef(IconButton)
-          aria-label="More Options"
-          onClick={[Function]}
-          size="large"
-          sx={
-            Object {
-              "displayPrint": "none",
-            }
-          }
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-      </React.Fragment>
-    }
-    avatar={null}
-    sx={
-      Object {
-        "@media print": Object {
-          "& span": Object {
-            "color": "#58180d",
-            "fontSize": "0.987cm",
-          },
-          "paddingBottom": 0,
-          "paddingTop": 0,
-        },
-      }
-    }
-  />
-  <ForwardRef(Menu)
-    anchorEl={null}
-    anchorOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "bottom",
-      }
-    }
-    id="more-menu"
-    onClose={[Function]}
-    open={false}
-    transformOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "top",
-      }
-    }
-  >
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(DeleteIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Delete Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(DoneIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Pin Note
-    </ForwardRef(MenuItem)>
-    <ForwardRef(MenuItem)
-      onClick={[Function]}
-    >
-      <ForwardRef(ListItemIcon)>
-        <Memo(ForwardRef(UnarchiveIcon)) />
-      </ForwardRef(ListItemIcon)>
-      Unarchive Note
-    </ForwardRef(MenuItem)>
-  </ForwardRef(Menu)>
-  <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
-    onNegative={[Function]}
-    onPositive={[Function]}
-    open={false}
-    positive="Yes"
-    title="You are about to delete note: undefined"
-  />
+<Fragment>
   <ConfirmationDialog
     message="Are you sure?"
     negative="No"
@@ -574,82 +109,29 @@ exports[`<Note /> matches snapshot 3`] = `
     positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
-  <ForwardRef(CardContent)
-    sx={
+  <ForwardRef(Dialog)
+    classes={
       Object {
-        "paddingTop": 0,
+        "root": undefined,
       }
     }
+    fullScreen={false}
+    fullWidth={true}
+    maxWidth="lg"
+    onClose={[Function]}
+    open={false}
   >
-    <ForwardRef(Dialog)
-      classes={
-        Object {
-          "root": undefined,
-        }
-      }
-      fullScreen={false}
-      fullWidth={true}
-      maxWidth="lg"
-      onClose={[Function]}
-      open={false}
-    >
-      <Suspense
-        fallback={
-          <Loading
-            color="#000000"
-            delay={0}
-            height={64}
-            type="spin"
-            width={64}
-          />
-        }
-      >
-        <lazy
-          note={
-            Object {
-              "body": "",
-              "parent_note_id": undefined,
-              "tags": Array [],
-              "title": "",
-            }
-          }
-          onSave={[Function]}
+    <Suspense
+      fallback={
+        <Loading
+          color="#000000"
+          delay={0}
+          height={64}
+          type="spin"
+          width={64}
         />
-      </Suspense>
-    </ForwardRef(Dialog)>
-    <Tags />
-    <default_1
-      components={
-        Object {
-          "p": [Function],
-        }
-      }
-      rehypePlugins={
-        Array [
-          [Function],
-        ]
       }
     />
-    <ForwardRef(Grid)
-      container={true}
-      sx={
-        Object {
-          "@media print": Object {
-            "display": "block",
-            "marginTop": 0,
-          },
-          "marginTop": "75px",
-        }
-      }
-    >
-      <Connect(NoteList)
-        depth={1}
-        notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
-        search=""
-      />
-    </ForwardRef(Grid)>
-  </ForwardRef(CardContent)>
-</ForwardRef(Card)>
+  </ForwardRef(Dialog)>
+</Fragment>
 `;
