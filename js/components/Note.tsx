@@ -6,7 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import axios from 'axios';
 import rehypeRaw from 'rehype-raw';
 
 import * as React from 'react';
@@ -40,127 +39,65 @@ import {
   useTheme,
 } from '@mui/material';
 
+import api from 'api';
 import AutoLink from 'components/AutoLink';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
+import { NewNote, UpdateNote, NoteWithTags } from 'data/api_types';
 import { getLinkIds, getSubNotes } from 'data/selectors';
-import { NoteData, AppState } from 'data/types';
+import { AppState } from 'data/types';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
 );
 
-type Props = {
-  new?: boolean;
-  note: NoteData;
-  search: string;
+type NoteContentsProps = {
+  note: NoteWithTags;
   titles: Map<string, Set<number>>;
-  subNotes: Map<number, NoteData>;
-  onUpdateNote: (note?: NoteData) => void;
   onDeleteNote: (id: number) => void;
+  onUpdateNote: (note?: NoteWithTags) => void;
+  setEdit: (edit: boolean) => void;
+  setCreatingSubNote: (creatingSubNote: boolean) => void;
+  search: string;
+  subNotes: Map<number, NoteWithTags>;
   depth?: number;
 };
 
-const Note = ({
+const NoteContents = ({
   note,
-  titles,
-  depth,
-  new: isNew,
-  subNotes,
-  search,
-  onUpdateNote,
   onDeleteNote,
-}: Props) => {
-  const [edit, setEdit] = React.useState(isNew);
-  const [creatingSubNote, setCreatingSubNote] = React.useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
-  const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
+  onUpdateNote,
+  setEdit,
+  setCreatingSubNote,
+  titles,
+  search,
+  subNotes,
+  depth,
+}: NoteContentsProps) => {
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
-  const noteEditor = React.useRef<any>();
-  const theme = useTheme();
-  const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
-
-  const cancelEdit = () => {
-    setEdit(false);
-    setCreatingSubNote(false);
-    setConfirmCancelEditOpen(false);
-    onUpdateNote(null);
-  };
-
-  const tryCancelEdit = () => {
-    if (!noteEditor.current || !noteEditor.current.hasChanges()) {
-      cancelEdit();
-    } else {
-      setConfirmCancelEditOpen(true);
-    }
-  };
-
-  const save = async (noteData: {
-    title: string;
-    body: string;
-    tags: string[];
-    parent_note_id?: number;
-  }) => {
-    const { title, body, tags, parent_note_id: parentNoteId } = noteData;
-    let result;
-    if (isNew || creatingSubNote) {
-      result = await axios.put('/api/secure/note', {
-        title,
-        body,
-        parent_note_id: parentNoteId,
-      });
-    } else {
-      result = await axios.patch(`/api/secure/notes/${note.id}`, {
-        title,
-        body,
-        parent_note_id: parentNoteId,
-      });
-    }
-
-    result = await axios.put(`/api/secure/notes/${result.data.id}/tags`, tags);
-
-    setEdit(false);
-    setCreatingSubNote(false);
-    onUpdateNote(result.data);
-  };
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
 
   const doDelete = async () => {
-    const _ = await axios.delete(`/api/secure/notes/${note.id}`);
+    await api.note.delete(note.id);
     onDeleteNote(note.id);
   };
 
   const archiveNote = async () => {
     setMoreMenuEl(null);
 
-    // What even does archiving a new note mean?
-    if (isNew) {
-      return;
-    }
-
     const { id, archived } = note;
-    const result = await axios.patch(`/api/secure/notes/${id}`, {
-      archived: !archived,
-    });
-
-    onUpdateNote(result.data);
+    const result = await api.note.update(id, { archived: !archived });
+    onUpdateNote(result);
   };
 
   const pinNote = async () => {
     setMoreMenuEl(null);
 
-    // What even does pinning a new note mean?
-    if (isNew) {
-      return;
-    }
-
     const { id, pinned } = note;
-    const result = await axios.patch(`/api/secure/notes/${id}`, {
-      pinned: !pinned,
-    });
-
-    onUpdateNote(result.data);
+    const result = await api.note.update(id, { pinned: !pinned });
+    onUpdateNote(result);
   };
 
   const startEdit = () => {
@@ -179,7 +116,6 @@ const Note = ({
       </p>
     ),
   };
-
   return (
     <Card
       raised
@@ -222,35 +158,33 @@ const Note = ({
         avatar={note.pinned ? <PinIcon /> : null}
         title={note.title}
         action={
-          edit ? null : (
-            <>
-              <IconButton
-                onClick={startSubNoteCreate}
-                sx={{ displayPrint: 'none' }}
-                aria-label='Add SubNote'
-                size='large'
-              >
-                <LibraryAddIcon />
-              </IconButton>
-              <IconButton
-                onClick={startEdit}
-                sx={{ displayPrint: 'none' }}
-                aria-label='Edit Note'
-                size='large'
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={(e) => setMoreMenuEl(e.currentTarget)}
-                sx={{ displayPrint: 'none' }}
-                aria-owns={moreMenuEl ? 'more-menu' : undefined}
-                aria-label='More Options'
-                size='large'
-              >
-                <MoreVertIcon />
-              </IconButton>
-            </>
-          )
+          <>
+            <IconButton
+              onClick={startSubNoteCreate}
+              sx={{ displayPrint: 'none' }}
+              aria-label='Add SubNote'
+              size='large'
+            >
+              <LibraryAddIcon />
+            </IconButton>
+            <IconButton
+              onClick={startEdit}
+              sx={{ displayPrint: 'none' }}
+              aria-label='Edit Note'
+              size='large'
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              onClick={(e) => setMoreMenuEl(e.currentTarget)}
+              sx={{ displayPrint: 'none' }}
+              aria-owns={moreMenuEl ? 'more-menu' : undefined}
+              aria-label='More Options'
+              size='large'
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </>
         }
       />
       <Menu
@@ -282,43 +216,7 @@ const Note = ({
         onPositive={doDelete}
         onNegative={() => setConfirmDeleteOpen(false)}
       />
-      <ConfirmationDialog
-        open={confirmCancelEditOpen}
-        title='If you close this editor, you will lose your changes.'
-        onPositive={cancelEdit}
-        onNegative={() => setConfirmCancelEditOpen(false)}
-      />
       <CardContent sx={{ paddingTop: 0 }}>
-        <Dialog
-          classes={{ root: styles.markdown }}
-          open={edit || creatingSubNote}
-          fullWidth
-          maxWidth='lg'
-          fullScreen={editorFullscreen}
-          onClose={tryCancelEdit}
-        >
-          <Suspense
-            fallback={
-              <ReactLoading type='spin' className={styles.loadingSpinner} color='#000000' />
-            }
-          >
-            <NoteEditor
-              open={edit}
-              onSave={save}
-              ref={noteEditor}
-              note={
-                edit
-                  ? note
-                  : {
-                      title: '',
-                      body: '',
-                      tags: [],
-                      parent_note_id: note.id,
-                    }
-              }
-            />
-          </Suspense>
-        </Dialog>
         <Tags tags={note.tags} />
         <ReactMarkdown
           className={styles.markdown}
@@ -327,7 +225,6 @@ const Note = ({
         >
           {note.body}
         </ReactMarkdown>
-
         <Grid
           container
           sx={{
@@ -352,11 +249,115 @@ const Note = ({
   );
 };
 
+type Props = {
+  note: NewNote | NoteWithTags;
+  search: string;
+  titles: Map<string, Set<number>>;
+  subNotes: Map<number, NoteWithTags>;
+  onUpdateNote: (note?: NoteWithTags) => void;
+  onDeleteNote: (id: number) => void;
+  depth?: number;
+};
+
+const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNote }: Props) => {
+  const [edit, setEdit] = React.useState(false);
+  const [creatingSubNote, setCreatingSubNote] = React.useState(false);
+  const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
+  const noteEditor = React.useRef<any>();
+  const theme = useTheme();
+  const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
+
+  const cancelEdit = () => {
+    setEdit(false);
+    setCreatingSubNote(false);
+    setConfirmCancelEditOpen(false);
+    onUpdateNote(null);
+  };
+
+  const tryCancelEdit = () => {
+    if (!noteEditor.current || !noteEditor.current.hasChanges()) {
+      cancelEdit();
+    } else {
+      setConfirmCancelEditOpen(true);
+    }
+  };
+
+  const save = async (noteData: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => {
+    const { title, body, tags, parent_note_id: parentNoteId } = noteData;
+    let result;
+    if ('id' in note) {
+      result = await api.note.update(note.id, {
+        title,
+        body,
+        parent_note_id: parentNoteId,
+      });
+    } else {
+      result = await api.note.create({
+        title,
+        body,
+        parent_note_id: parentNoteId,
+      });
+    }
+
+    result = await api.note.setTags(result.id, tags);
+
+    setEdit(false);
+    setCreatingSubNote(false);
+    onUpdateNote(result);
+  };
+
+  return (
+    <>
+      {'id' in note ? (
+        <NoteContents
+          titles={titles}
+          search={search}
+          subNotes={subNotes}
+          depth={depth}
+          onDeleteNote={onDeleteNote}
+          onUpdateNote={onUpdateNote}
+          setEdit={setEdit}
+          setCreatingSubNote={setCreatingSubNote}
+          note={note}
+        />
+      ) : null}
+      <ConfirmationDialog
+        open={confirmCancelEditOpen}
+        title='If you close this editor, you will lose your changes.'
+        onPositive={cancelEdit}
+        onNegative={() => setConfirmCancelEditOpen(false)}
+      />
+      <Dialog
+        classes={{ root: styles.markdown }}
+        open={edit || creatingSubNote}
+        fullWidth
+        maxWidth='lg'
+        fullScreen={editorFullscreen}
+        onClose={tryCancelEdit}
+      >
+        <Suspense
+          fallback={<ReactLoading type='spin' className={styles.loadingSpinner} color='#000000' />}
+        >
+          <NoteEditor
+            onSave={save}
+            ref={noteEditor}
+            note={
+              'id' in note && creatingSubNote
+                ? { title: '', body: '', parent_note_id: note.id }
+                : note
+            }
+          />
+        </Suspense>
+      </Dialog>
+    </>
+  );
+};
+
 export const Inner = Note;
 
-const mapStateToProps = (state: AppState, props: { note: NoteData }) => ({
+const mapStateToProps = (state: AppState, { note }: { note: NewNote | NoteWithTags }) => ({
   titles: getLinkIds(state),
-  subNotes: getSubNotes(state, { note_id: props.note.id }),
+  subNotes: 'id' in note ? getSubNotes(state, { note_id: note.id }) : new Map(),
 });
 
 export default connect(mapStateToProps)(Note);

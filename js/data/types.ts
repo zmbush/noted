@@ -7,7 +7,7 @@
 // except according to those terms.
 
 export type { AppState } from 'data/reducers';
-export type { NoteWithTags as NoteData, User as UserData } from 'data/api_types';
+export type { NoteWithTags, User as UserData } from 'data/api_types';
 
 export type ErrorData = {
   code: number;

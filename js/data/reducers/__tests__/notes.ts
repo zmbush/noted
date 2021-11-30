@@ -7,14 +7,14 @@
 // except according to those terms.
 //
 import { notesFetched, updateNote, apiError, deleteNote, logOut } from 'data/actions';
-import { NoteData } from 'data/types';
+import { NoteWithTags } from 'data/types';
 
 import notes from '../notes';
 
 describe('reducers::notes()', () => {
   let id = 1;
   const getInitial = () => notes(undefined, {});
-  const makeNote = (title: string, body = 'Body', tags: string[] = []): NoteData => {
+  const makeNote = (title: string, body = 'Body', tags: string[] = []): NoteWithTags => {
     const d = {
       id,
       title,
@@ -23,6 +23,9 @@ describe('reducers::notes()', () => {
       created_at: '',
       updated_at: '',
       user_id: 1,
+      archived: false,
+      parent_note_id: 0,
+      pinned: false,
     };
     id += 1;
     return d;

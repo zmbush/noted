@@ -5,7 +5,6 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import axios from 'axios';
 import Mousetrap from 'mousetrap';
 import { Dispatch } from 'redux';
 
@@ -14,13 +13,14 @@ import { connect } from 'react-redux';
 
 import { styled } from '@mui/material';
 
+import api from 'api';
 import AppBody from 'components/AppBody';
 import BindKeyboard from 'components/BindKeyboard';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
 import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { getTopLevelNotes } from 'data/selectors';
-import { NoteData, AppState } from 'data/types';
+import { NoteWithTags, AppState } from 'data/types';
 
 const AppRoot = styled('div')({
   width: '100%',
@@ -32,9 +32,9 @@ const AppRoot = styled('div')({
 });
 
 type Props = {
-  notes: Map<number, NoteData>;
+  notes: Map<number, NoteWithTags>;
   isSignedIn: boolean;
-  doUpdateNote: (note: NoteData) => void;
+  doUpdateNote: (note: NoteWithTags) => void;
   doDeleteNote: (id: number) => void;
   doLogOut: () => void;
 };
@@ -71,7 +71,7 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
     // }
   };
 
-  const updateNote = (note?: NoteData) => {
+  const updateNote = (note?: NoteWithTags) => {
     if (note) {
       doUpdateNote(note);
     }
@@ -87,7 +87,7 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
   };
 
   const signOut = async (_e: React.SyntheticEvent) => {
-    await axios.post('/api/sign_out');
+    await api.user.signOut();
     doLogOut();
   };
 
@@ -119,7 +119,7 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  doUpdateNote(data: NoteData) {
+  doUpdateNote(data: NoteWithTags) {
     dispatch(updateNoteAction(data));
   },
 

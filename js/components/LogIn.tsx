@@ -5,7 +5,6 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import axios from 'axios';
 import { Dispatch } from 'redux';
 
 import * as React from 'react';
@@ -21,6 +20,7 @@ import {
   TextField,
 } from '@mui/material';
 
+import api from 'api';
 import { logIn, fetchData } from 'data/actions';
 import { UserData, AppState } from 'data/types';
 
@@ -52,20 +52,13 @@ class LogIn extends React.Component<LogInProps, LogInState> {
 
     let result;
     if (signingIn) {
-      result = await axios.post('/api/sign_in', {
-        email,
-        password,
-      });
+      result = await api.user.signIn({ email, password });
     } else {
-      result = await axios.put('/api/sign_up', {
-        email,
-        password,
-        name,
-      });
+      result = await api.user.signUp({ email, password, name });
     }
 
     this.setState(initialState);
-    doLogIn(result.data);
+    doLogIn(result);
   };
 
   render() {

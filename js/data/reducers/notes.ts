@@ -7,9 +7,9 @@
 // except according to those terms.
 //
 import { NotedEvent } from 'data/actions';
-import { NoteData, ErrorData } from 'data/types';
+import { NoteWithTags, ErrorData } from 'data/types';
 
-const initialState = new Map<number, NoteData>();
+const initialState = new Map<number, NoteWithTags>();
 type State = typeof initialState;
 
 export default function notes(
@@ -17,8 +17,8 @@ export default function notes(
   state = initialState,
   action: {
     type?: NotedEvent;
-    notes?: NoteData[];
-    note?: NoteData;
+    notes?: NoteWithTags[];
+    note?: NoteWithTags;
     error?: ErrorData;
     id?: number;
   },

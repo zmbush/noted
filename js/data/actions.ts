@@ -5,10 +5,12 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import axios from 'axios';
+//
 import { Dispatch } from 'redux';
 
-import { NoteData, ErrorData, UserData } from 'data/types';
+import api from 'api';
+import { NoteWithTags, User } from 'data/api_types';
+import { ErrorData } from 'data/types';
 
 export enum NotedEvent {
   NotesFetchStart = 'NOTES_FETCH_START',
@@ -26,11 +28,11 @@ export function notesFetchStart() {
   return { type: NotedEvent.NotesFetchStart };
 }
 
-export function notesFetched(notes: NoteData[]) {
+export function notesFetched(notes: NoteWithTags[]) {
   return { type: NotedEvent.NotesFetched, notes };
 }
 
-export function updateNote(note: NoteData) {
+export function updateNote(note: NoteWithTags) {
   return { type: NotedEvent.NotesUpdateNote, note };
 }
 
@@ -42,7 +44,7 @@ export function apiError(error: ErrorData) {
   return { type: NotedEvent.ApiError, error };
 }
 
-export function logIn(user: UserData) {
+export function logIn(user: User) {
   return { type: NotedEvent.UserSignedIn, user };
 }
 
@@ -53,7 +55,7 @@ export function logOut() {
 export async function fetchData(dispatch: Dispatch) {
   dispatch(notesFetchStart());
   try {
-    dispatch(notesFetched((await axios.get('/api/secure/notes')).data));
+    dispatch(notesFetched(await api.note.list()));
   } catch (e) {
     if (e.response) {
       dispatch(apiError(e.response.data));

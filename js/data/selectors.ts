@@ -8,16 +8,16 @@
 import createCachedSelector from 're-reselect';
 import { createSelector } from 'reselect';
 
-import { NoteData, AppState } from 'data/types';
+import { NoteWithTags, AppState } from 'data/types';
 
 const getNotes = (state: AppState) => state.notes;
 const getNoteId = (_: any, props: { note_id: number }) => props.note_id;
 
-const listNotes = createSelector(getNotes, (notes: Map<number, NoteData>) =>
+const listNotes = createSelector(getNotes, (notes: Map<number, NoteWithTags>) =>
   Array.from(notes.values()),
 );
 
-const validParent = (note: NoteData) => !!note.parent_note_id;
+const validParent = (note: NoteWithTags) => !!note.parent_note_id;
 
 const listAllTitles = createSelector(listNotes, (notes) =>
   notes.map((note) => [note.id, note.title]),
@@ -72,7 +72,10 @@ export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, no
 
 export type SubNoteMap = ReturnType<typeof getSubNotes>;
 
-const calculateMergedNote = (note: NoteData, notes: Map<number, NoteData>): NoteData => {
+const calculateMergedNote = (
+  note: NoteWithTags,
+  notes: Map<number, NoteWithTags>,
+): NoteWithTags => {
   const newNote = { ...note };
   const subNotes = getSubNotes({ notes }, { note_id: note.id });
 

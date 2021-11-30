@@ -5,7 +5,6 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import axios from 'axios';
 import 'core-js/stable';
 import { createStore } from 'redux';
 import 'regenerator-runtime/runtime';
@@ -17,6 +16,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 
+import api from 'api';
 import App from 'components/App';
 import { logIn, fetchData } from 'data/actions';
 import reducers from 'data/reducers';
@@ -33,7 +33,7 @@ const store = createStore(
 );
 
 (async () => {
-  store.dispatch(logIn((await axios.get('/api/get_user')).data));
+  store.dispatch(logIn(await api.user.get()));
   fetchData(store.dispatch);
 })();
 

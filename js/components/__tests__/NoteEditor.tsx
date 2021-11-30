@@ -18,7 +18,6 @@ import NoteEditor from '../NoteEditor';
 
 const editor = (
   <NoteEditor
-    open={false}
     note={{
       id: 1,
       title: 'note title',
