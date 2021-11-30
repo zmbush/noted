@@ -15,6 +15,7 @@ use diesel::{
     r2d2::{ConnectionManager, PooledConnection},
     BelongingToDsl, Connection, ExpressionMethods, GroupedBy, QueryDsl, RunQueryDsl,
 };
+use schemars::JsonSchema;
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -88,7 +89,7 @@ impl WithTags for Note {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct NoteWithTags {
     pub id: i32,
     pub title: String,
@@ -186,12 +187,13 @@ impl SignIn {
     }
 }
 
-#[derive(Identifiable, Queryable, Serialize, Deserialize, Associations, Debug)]
+#[derive(Identifiable, Queryable, Serialize, Deserialize, Associations, Debug, JsonSchema)]
 pub struct User {
     pub id: i32,
     pub name: String,
     pub email: String,
     #[serde(skip_serializing, default = "String::new")]
+    #[schemars(skip_deserializing)]
     pub hashed_password: String,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,

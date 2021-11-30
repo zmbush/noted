@@ -8,9 +8,9 @@
     "test": "jest --coverage --ci",
     "build": "webpack --config webpack.prod.js --color",
     "pretty": "pretty-quick --staged",
-    "expand-yaml-anchors": "cargo run --manifest-path expand-yaml-anchors/Cargo.toml -- generate $PWD && git add .github/workflows",
     "lint": "eslint --ext ts --ext tsx --ext js --ext jsx js",
-    "lint-fix": "eslint --fix --ext ts --ext tsx --ext js --ext jsx js"
+    "lint-fix": "eslint --fix --ext ts --ext tsx --ext js --ext jsx js",
+    "generate-api-types": "cargo run --quiet --bin export-api-types && node tools/generate_api_types.js"
   },
   "husky": {
     "hooks": {
@@ -119,6 +119,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
     "husky": "^7.0.4",
+    "json-schema-to-typescript": "^10.1.5",
+    "node-emoji": "^1.11.0",
     "sass": "^1.43.5",
     "typed-scss-modules": "^4.1.1"
   }

@@ -20,7 +20,6 @@
     "enforceHeader": true,
     "include": [
       "javascript",
-      "shellscript",
       "javascriptreact",
       "typescriptreact",
       "typescript",

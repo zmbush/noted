@@ -7,29 +7,9 @@
 // except according to those terms.
 
 export type { AppState } from 'data/reducers';
-
-export type NoteData = {
-  id?: number;
-  title: string;
-  body: string;
-  tags: string[];
-  created_at?: string;
-  updated_at?: string;
-  user_id?: number;
-  parent_note_id?: number;
-  archived?: boolean;
-  pinned?: boolean;
-};
+export type { NoteWithTags as NoteData, User as UserData } from 'data/api_types';
 
 export type ErrorData = {
   code: number;
   error: string;
-};
-
-export type UserData = {
-  id: number;
-  name: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
 };
