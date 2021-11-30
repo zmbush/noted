@@ -9,6 +9,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './js/index.tsx',
@@ -16,7 +17,6 @@ module.exports = {
     filename: 'js/[name].[chunkhash].js',
     chunkFilename: 'js/[name].[chunkhash].js',
 
-    publicPath: '/dist/',
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
@@ -70,6 +70,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'static/favicon', to: '.' }],
+    }),
     new HtmlWebpackPlugin({
       template: 'js/index.ejs',
     }),
