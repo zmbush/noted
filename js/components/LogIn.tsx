@@ -22,8 +22,8 @@ import {
 
 import api from 'api';
 import { logIn, fetchData } from 'data/actions';
-import { User } from 'data/api_types';
 import { AppState } from 'data/reducers';
+import { User } from 'data/types';
 
 type LogInProps = {
   open: boolean;

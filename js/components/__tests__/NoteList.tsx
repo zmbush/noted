@@ -11,7 +11,7 @@ import { shallow } from 'enzyme';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { NoteWithTags } from 'data/api_types';
+import { NoteWithTags } from 'data/types';
 
 import { Inner as NoteList } from '../NoteList';
 

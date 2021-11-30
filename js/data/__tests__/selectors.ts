@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { NoteWithTags } from 'data/api_types';
+import { NoteWithTags } from 'data/types';
 
 import { notesFetched } from '../actions';
 import rootReducer from '../reducers';

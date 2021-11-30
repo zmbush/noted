@@ -8,8 +8,8 @@
 import createCachedSelector from 're-reselect';
 import { createSelector } from 'reselect';
 
-import { NoteWithTags } from 'data/api_types';
 import { AppState } from 'data/reducers';
+import { NoteWithTags } from 'data/types';
 
 const getNotes = (state: AppState) => state.notes;
 const getNoteId = (_: any, props: { note_id: number }) => props.note_id;

@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import NoteList from 'components/NoteList';
-import { NoteWithTags } from 'data/api_types';
 import { AppState } from 'data/reducers';
+import { NoteWithTags } from 'data/types';
 
 interface Props {
   notes: Map<number, NoteWithTags>;

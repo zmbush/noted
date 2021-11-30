@@ -45,9 +45,9 @@ import ConfirmationDialog from 'components/ConfirmationDialog';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
-import { NewNote, UpdateNote, NoteWithTags } from 'data/api_types';
 import { AppState } from 'data/reducers';
 import { getLinkIds, getSubNotes } from 'data/selectors';
+import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),

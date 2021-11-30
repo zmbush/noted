@@ -8,7 +8,7 @@
 import update from 'immutability-helper';
 
 import { NotedEvent } from 'data/actions';
-import { User, ErrorData } from 'data/api_types';
+import { User, ErrorData } from 'data/types';
 
 const initialState = { is_signed_in: false, user: null as null | User };
 

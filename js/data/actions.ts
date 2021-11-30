@@ -9,8 +9,8 @@
 import { Dispatch } from 'redux';
 
 import api from 'api';
-import { NoteWithTags, User } from 'data/api_types';
-import { ErrorData } from 'data/api_types';
+import { NoteWithTags, User } from 'data/types';
+import { ErrorData } from 'data/types';
 
 export enum NotedEvent {
   NotesFetchStart = 'NOTES_FETCH_START',

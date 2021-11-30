@@ -8,7 +8,7 @@
 //
 import axios from 'axios';
 
-import { UpdateNote, NewNote, NoteWithTags, User, SignIn, NewUserRequest } from 'data/api_types';
+import { UpdateNote, NewNote, NoteWithTags, User, SignIn, NewUserRequest } from 'data/types';
 
 const api = '/api';
 const noteRoot = `${api}/secure/note`;
