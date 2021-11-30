@@ -16,7 +16,7 @@ import { Grid } from '@mui/material';
 import FilteredNoteList from 'components/FilteredNoteList';
 import Note from 'components/Note';
 import NoteList from 'components/NoteList';
-import { NoteWithTags } from 'data/types';
+import { NoteWithTags } from 'data/api_types';
 
 type NewNoteProps = {
   newNote: boolean;

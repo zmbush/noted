@@ -8,9 +8,9 @@
 import update from 'immutability-helper';
 
 import { NotedEvent } from 'data/actions';
-import { UserData, ErrorData } from 'data/types';
+import { User, ErrorData } from 'data/api_types';
 
-const initialState = { is_signed_in: false, user: null as null | UserData };
+const initialState = { is_signed_in: false, user: null as null | User };
 
 type State = typeof initialState;
 
@@ -21,7 +21,7 @@ export default function user(
     type?: NotedEvent;
     error?: ErrorData;
     is_signed_in?: boolean;
-    user?: UserData;
+    user?: User;
   },
 ): State {
   switch (action.type) {

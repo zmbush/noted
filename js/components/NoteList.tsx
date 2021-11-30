@@ -16,8 +16,9 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/Note';
+import { NoteWithTags } from 'data/api_types';
+import { AppState } from 'data/reducers';
 import { getFilteredSearchIndex, getSortedNoteIds } from 'data/selectors';
-import { NoteWithTags, AppState } from 'data/types';
 
 type Props = {
   notes: Map<number, NoteWithTags>;

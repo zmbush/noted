@@ -7,7 +7,7 @@
 // except according to those terms.
 //
 import { notesFetched, updateNote, apiError, deleteNote, logOut } from 'data/actions';
-import { NoteWithTags } from 'data/types';
+import { NoteWithTags } from 'data/api_types';
 
 import notes from '../notes';
 

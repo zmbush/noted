@@ -7,7 +7,10 @@
 // except according to those terms.
 //
 
-use noted_db::models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User};
+use noted_db::{
+    error::ErrorData,
+    models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User},
+};
 use schemars::schema_for;
 
 macro_rules! write_schema {
@@ -39,6 +42,7 @@ fn main() -> Result<(), anyhow::Error> {
     write_schema!(dir, NewUserRequest);
     write_schema!(dir, SignIn);
     write_schema!(dir, User);
+    write_schema!(dir, ErrorData);
 
     Ok(())
 }

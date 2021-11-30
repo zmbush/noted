@@ -8,7 +8,7 @@
 
 use actix_web::{HttpResponse, ResponseError};
 use http::status::StatusCode;
-use serde_json::json;
+use noted_db::error::ErrorData;
 use std::fmt::Display;
 
 macro_rules! impl_noted_error {
@@ -44,11 +44,18 @@ macro_rules! impl_noted_error {
             }
 
             fn error_response(&self) -> actix_web::HttpResponse {
-                let error_json = json!({
-                    "code": self.code().as_u16(),
-                    "error": format!("{:?}", self),
-                });
-                HttpResponse::build(self.status_code()).json(error_json)
+                use NotedError::*;
+
+                match *self {
+                    DbError(ref d) => HttpResponse::build(self.status_code()).body(d.to_json()),
+                    _ => {
+                        HttpResponse::build(self.status_code()).json(&ErrorData {
+                            code: self.code().as_u16(),
+                            error: format!("{:?}", self),
+                            ..ErrorData::default()
+                        })
+                    }
+                }
             }
         }
 

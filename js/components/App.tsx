@@ -19,8 +19,9 @@ import BindKeyboard from 'components/BindKeyboard';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
 import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
+import { NoteWithTags } from 'data/api_types';
+import { AppState } from 'data/reducers';
 import { getTopLevelNotes } from 'data/selectors';
-import { NoteWithTags, AppState } from 'data/types';
 
 const AppRoot = styled('div')({
   width: '100%',

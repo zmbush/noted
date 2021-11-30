@@ -22,11 +22,12 @@ import {
 
 import api from 'api';
 import { logIn, fetchData } from 'data/actions';
-import { UserData, AppState } from 'data/types';
+import { User } from 'data/api_types';
+import { AppState } from 'data/reducers';
 
 type LogInProps = {
   open: boolean;
-  logIn: (user: UserData) => void;
+  logIn: (user: User) => void;
 };
 
 const initialState = {
@@ -128,7 +129,7 @@ class LogIn extends React.Component<LogInProps, LogInState> {
 const mapStateToProps = (_state: AppState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  logIn(user: UserData) {
+  logIn(user: User) {
     dispatch(logIn(user));
     fetchData(dispatch);
   },
