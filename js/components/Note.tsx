@@ -65,7 +65,7 @@ type NoteContentsProps = {
   depth?: number;
 };
 
-const NoteContents = ({
+export const NoteContents = ({
   note,
   onDeleteNote,
   onUpdateNote,

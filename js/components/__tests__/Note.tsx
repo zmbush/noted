@@ -9,9 +9,9 @@ import { shallow } from 'enzyme';
 
 import * as React from 'react';
 
-import { Inner as Note } from '../Note';
+import { Inner as Note, NoteContents } from '../Note';
 
-const editor = (
+const note = (
   <Note
     search=''
     titles={new Map()}
@@ -30,9 +30,58 @@ const editor = (
   />
 );
 
+const noteContents = (
+  <NoteContents
+    search=''
+    titles={new Map()}
+    subNotes={new Map()}
+    onUpdateNote={() => {}}
+    onDeleteNote={() => {}}
+    setEdit={() => {}}
+    setCreatingSubNote={() => {}}
+    note={{
+      id: 1,
+      title: 'note title',
+      body: 'note body',
+      tags: ['tag1'],
+      created_at: '',
+      updated_at: '',
+      user_id: 2,
+      parent_note_id: 0,
+      archived: false,
+      pinned: false,
+    }}
+  />
+);
+
 describe('<Note />', () => {
   test('matches snapshot', () => {
-    const wrapper = shallow(editor);
+    const wrapper = shallow(note);
+
+    expect(wrapper).toMatchSnapshot();
+
+    wrapper.setProps({
+      note: {
+        pinned: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+
+    wrapper.setProps({
+      note: {
+        archived: true,
+        pinned: false,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+});
+
+describe('<NoteContents />', () => {
+  test('matches snapshot', () => {
+    const wrapper = shallow(noteContents);
 
     expect(wrapper).toMatchSnapshot();
 
