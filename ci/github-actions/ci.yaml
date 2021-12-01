@@ -49,8 +49,6 @@ on:
     branches-ignore:
       - 'dependabot/**'
   pull_request:
-    branches:
-      - '**'
 
 jobs:
   coverage:

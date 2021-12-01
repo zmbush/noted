@@ -21,9 +21,7 @@ name: CI
       - master
     branches-ignore:
       - dependabot/**
-  pull_request:
-    branches:
-      - "**"
+  pull_request: ~
 jobs:
   coverage:
     name: Rust Coverage
