@@ -18,7 +18,7 @@ use noted_db::DbConnection;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug, Clone)]
-#[structopt(name = "noted")]
+#[structopt(name = "noted", author, about)]
 struct Opts {
     /// Override the default port
     #[structopt(short, long, default_value = "8088")]
