@@ -54,8 +54,8 @@ async fn main() -> Result<(), Error> {
     println!("Starting actix-web at port {}", port);
     Ok(HttpServer::new(move || {
         App::new()
-            .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
-            .service(noted::api::service(db.clone()))
+            .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]).cookie_name("noted-session"))
+            .service(noted::api::scope(db.clone()))
             .service(
                 Files::new("/", "dist")
                     .use_last_modified(true)
@@ -84,7 +84,7 @@ mod test {
         let server = test::start(move || {
             App::new()
                 .wrap(CookieSession::signed(&[0; 32]))
-                .service(noted::api::service(db.clone()))
+                .service(noted::api::scope(db.clone()))
         });
         TestClient::new(server, already_signed_in).await
     }

@@ -7,5 +7,4 @@
 // except according to those terms.
 
 pub mod api;
-mod current_user;
 pub mod error;

@@ -16,6 +16,7 @@ macro_rules! impl_noted_error {
         #[derive(Debug)]
         pub enum NotedError {
             DbError(noted_db::error::DbError),
+            SessionError(actix_web::Error),
             $($native),*,
             $($type($inner)),*
         }
@@ -26,6 +27,7 @@ macro_rules! impl_noted_error {
 
                 match self {
                     DbError(_) => StatusCode::SERVICE_UNAVAILABLE,
+                    SessionError(_) => StatusCode::SERVICE_UNAVAILABLE,
                     $($native => $native_code),*,
                     $($type(_) => $code),*
                 }
@@ -89,8 +91,7 @@ macro_rules! impl_noted_error {
 
 impl_noted_error! {
     native {
-        NotLoggedIn => StatusCode::UNAUTHORIZED,
-        SessionError => StatusCode::SERVICE_UNAVAILABLE,
+        NotLoggedIn => StatusCode::UNAUTHORIZED
     }
     SerdeJson => (serde_json::Error, StatusCode::BAD_REQUEST),
     DieselResult => (diesel::result::Error, StatusCode::BAD_REQUEST),
