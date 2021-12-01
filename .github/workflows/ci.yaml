@@ -17,14 +17,17 @@
 name: CI
 "on":
   push:
+    branches:
+      - master
     branches-ignore:
       - dependabot/**
-  pull_request: ~
+  pull_request:
+    branches:
+      - "**"
 jobs:
   coverage:
     name: Rust Coverage
     runs-on: ubuntu-latest
-    if: "github.event_name == 'push'"
     env:
       RUSTFLAGS: "-C link-dead-code"
       DATABASE_URL: "postgres://postgres:postgres@localhost/noted"
@@ -150,7 +153,6 @@ jobs:
         run: npm run test
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
-        if: "github.event_name == 'push'"
         with:
           token: "${{ secrets.CODECOV_TOKEN }}"
           files: coverage/coverage-final.json

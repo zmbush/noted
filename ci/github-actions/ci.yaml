@@ -44,15 +44,18 @@ x--expand-yaml-anchors--remove:
 name: CI
 on:
   push:
+    branches:
+      - master
     branches-ignore:
       - 'dependabot/**'
   pull_request:
+    branches:
+      - '**'
 
 jobs:
   coverage:
     name: Rust Coverage
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     env: *rust-env
     steps:
       - *checkout
@@ -174,7 +177,6 @@ jobs:
         run: npm run test
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
-        if: github.event_name == 'push'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
