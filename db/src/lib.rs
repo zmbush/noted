@@ -19,22 +19,11 @@ use diesel::{
     r2d2::{self, ConnectionManager, CustomizeConnection, Pool, PooledConnection},
     Connection,
 };
-use dotenv::dotenv;
-use std::{
-    env,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub struct DbConnection {
     pool: Arc<Mutex<Pool<ConnectionManager<PgConnection>>>>,
-}
-
-impl Default for DbConnection {
-    fn default() -> Self {
-        dotenv().ok();
-        DbConnection::new(env::var("DATABASE_URL").expect("DATABASE_URL must be set"))
-    }
 }
 
 #[derive(Debug)]
@@ -59,14 +48,14 @@ impl DbConnection {
     }
 
     pub fn new_for_testing() -> Self {
-        dotenv().ok();
+        dotenv::dotenv().ok();
         DbConnection {
             pool: Arc::new(Mutex::new(
                 Pool::builder()
                     .max_size(1)
                     .connection_customizer(Box::new(TestingConnectionCustomizer))
                     .build(ConnectionManager::new(
-                        env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
+                        std::env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
                     ))
                     .expect("Unable to create db connection pool"),
             )),

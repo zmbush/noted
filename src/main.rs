@@ -13,12 +13,34 @@
 use actix_files::Files;
 use actix_redis::RedisSession;
 use actix_web::{App, HttpServer};
-use clap::clap_app;
 use failure::Error;
 use noted_db::DbConnection;
+use structopt::StructOpt;
+
+#[derive(StructOpt, Debug, Clone)]
+#[structopt(name = "noted", author, about)]
+struct Opts {
+    /// Override the default port
+    #[structopt(short, long, default_value = "8088")]
+    port: u16,
+
+    /// Should cookies be served securely
+    #[structopt(short, long)]
+    secure: bool,
+
+    /// Enable verbose logging
+    #[structopt(short, long)]
+    verbose: bool,
+
+    /// Database URL
+    #[structopt(long, env = "DATABASE_URL")]
+    db: String,
+}
 
 #[actix_web::main]
 async fn main() -> Result<(), Error> {
+    dotenv::dotenv().ok();
+    let opt = Opts::from_args();
     fern::Dispatch::new()
         .format(|out, message, record| {
             out.finish(format_args!(
@@ -29,33 +51,27 @@ async fn main() -> Result<(), Error> {
                 message
             ));
         })
-        .level(log::LevelFilter::Info)
+        .level(if opt.verbose {
+            log::LevelFilter::Trace
+        } else {
+            log::LevelFilter::Info
+        })
         .level_for("noted", log::LevelFilter::Trace)
         .chain(std::io::stdout())
         .apply()?;
 
-    let matches = clap_app! {
-        noted =>
-            (version: env!("CARGO_PKG_VERSION"))
-            (author: env!("CARGO_PKG_AUTHORS"))
-            (about: env!("CARGO_PKG_DESCRIPTION"))
-            (@arg PORT: -p --port +takes_value "The port")
-            (@arg SECURE: -s --secure "If the session should be secure")
-    }
-    .get_matches();
-
-    let port = matches
-        .value_of("PORT")
-        .and_then(|p| p.parse().ok())
-        .unwrap_or(8088);
-
-    let db = DbConnection::default();
+    let db = DbConnection::new(&opt.db);
+    let port = opt.port;
 
     println!("Starting actix-web at port {}", port);
     Ok(HttpServer::new(move || {
         App::new()
-            .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
-            .service(noted::api::service(db.clone()))
+            .wrap(
+                RedisSession::new("127.0.0.1:6379", &[0; 32])
+                    .cookie_name("noted-session")
+                    .cookie_secure(opt.secure),
+            )
+            .service(noted::api::scope(db.clone()))
             .service(
                 Files::new("/", "dist")
                     .use_last_modified(true)
@@ -84,7 +100,7 @@ mod test {
         let server = test::start(move || {
             App::new()
                 .wrap(CookieSession::signed(&[0; 32]))
-                .service(noted::api::service(db.clone()))
+                .service(noted::api::scope(db.clone()))
         });
         TestClient::new(server, already_signed_in).await
     }

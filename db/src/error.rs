@@ -27,6 +27,30 @@ pub struct ErrorData<'a> {
     pub constraint_name: Option<&'a str>,
 }
 
+impl<'a> ErrorData<'a> {
+    pub fn to_owned(&'a self) -> ErrorDataOwned {
+        ErrorDataOwned {
+            code: self.code,
+            error: self.error.to_owned(),
+            details: self.details.map(String::from),
+            hint: self.hint.map(String::from),
+            table_name: self.table_name.map(String::from),
+            column_name: self.column_name.map(String::from),
+            constraint_name: self.constraint_name.map(String::from),
+        }
+    }
+}
+#[derive(Debug, Default, Deserialize)]
+pub struct ErrorDataOwned {
+    pub code: u16,
+    pub error: String,
+    pub details: Option<String>,
+    pub hint: Option<String>,
+    pub table_name: Option<String>,
+    pub column_name: Option<String>,
+    pub constraint_name: Option<String>,
+}
+
 macro_rules! impl_noted_db_error {
     ($($type:ident => $inner:ty),*) =>{
         #[derive(Debug)]

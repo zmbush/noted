@@ -24,9 +24,11 @@
     "RUSTFLAGS",
     "rustfmt",
     "schemars",
+    "structopt",
     "toastui",
     "tojson",
     "wojtekmaj",
+    "zmbush",
     "Zpanic"
   ],
   "ignorePaths": ["db/src/schema.rs"]

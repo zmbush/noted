@@ -7,139 +7,21 @@
 // except according to those terms.
 //
 
-use crate::{current_user::CurrentUser, error::NotedError};
-use actix_session::Session;
-use actix_web::{delete, get, patch, post, put, web, HttpResponse};
-use noted_db::{
-    models::{NewNote, NewUserRequest, SignIn, UpdateNote},
-    DbConnection,
-};
-use serde_derive::Deserialize;
-use serde_json::json;
+use actix_web::web;
+use noted_db::DbConnection;
 
-pub fn service(db: DbConnection) -> actix_web::Scope {
+mod current_user;
+mod notes;
+mod user;
+
+use notes::NoteScopeExt;
+use user::UserScopeExt;
+
+pub fn scope(db: DbConnection) -> actix_web::Scope {
     web::scope("/api")
         .data(db)
-        .service(sign_in)
-        .service(sign_up)
-        .service(sign_out)
-        .service(get_user)
-        .service(
-            web::scope("/secure")
-                .service(new_note)
-                .service(list_notes)
-                .service(get_note)
-                .service(update_note)
-                .service(delete_note)
-                .service(set_tags),
-        )
-}
-
-#[get("/notes")]
-async fn list_notes(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(user.list_notes(&db_pool.db()?)?))
-}
-
-#[put("/note")]
-async fn new_note(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-    new_note: web::Json<NewNote>,
-) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(&user.new_note(&*new_note, &db_pool.db()?)?))
-}
-
-#[derive(Deserialize)]
-struct NoteId {
-    id: i32,
-}
-
-#[get("/notes/{id}")]
-async fn get_note(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-    note_id: web::Path<NoteId>,
-) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(user.note(note_id.id, &db_pool.db()?)?))
-}
-
-#[patch("/notes/{id}")]
-async fn update_note(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-    note_id: web::Path<NoteId>,
-    update_note: web::Json<UpdateNote>,
-) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(user.update_note(note_id.id, &*update_note, &db_pool.db()?)?))
-}
-
-#[delete("/notes/{id}")]
-async fn delete_note(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-    note_id: web::Path<NoteId>,
-) -> Result<HttpResponse, NotedError> {
-    user.delete_note(note_id.id, &db_pool.db()?);
-    Ok(HttpResponse::Ok().json(&json!({"status": "ok"})))
-}
-
-#[put("/notes/{id}/tags")]
-async fn set_tags(
-    user: CurrentUser,
-    db_pool: web::Data<DbConnection>,
-    note_id: web::Path<NoteId>,
-    tags: web::Json<Vec<String>>,
-) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(user.set_note_tags(note_id.id, &*tags, &db_pool.db()?)?))
-}
-
-#[put("/sign_up")]
-async fn sign_up(
-    sign_up: web::Json<NewUserRequest>,
-    db_pool: web::Data<DbConnection>,
-    session: Session,
-) -> Result<HttpResponse, NotedError> {
-    use noted_db::models::User;
-
-    let user = User::sign_up(sign_up.into_inner(), &db_pool.db()?)?;
-    CurrentUser::set(&session, Some(&user)).map_err(|_| NotedError::SessionError)?;
-
-    Ok(HttpResponse::Ok().json(user))
-}
-
-#[post("/sign_in")]
-async fn sign_in(
-    sign_in: web::Json<SignIn>,
-    db_pool: web::Data<DbConnection>,
-    session: Session,
-) -> Result<HttpResponse, NotedError> {
-    use noted_db::models::User;
-
-    match User::sign_in(&*sign_in, &db_pool.db()?) {
-        Ok(user) => {
-            CurrentUser::set(&session, Some(&user)).map_err(|_| NotedError::SessionError)?;
-            Ok(HttpResponse::Ok().json(user))
-        }
-        Err(noted_db::error::DbError::NotLoggedIn) => {
-            CurrentUser::set(&session, None).map_err(|_| NotedError::SessionError)?;
-            Err(crate::error::NotedError::NotLoggedIn)
-        }
-        Err(e) => Err(e.into()),
-    }
-}
-
-#[get("/get_user")]
-async fn get_user(user: CurrentUser) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(&*user))
-}
-
-#[post("/sign_out")]
-async fn sign_out(session: Session) -> Result<HttpResponse, NotedError> {
-    CurrentUser::set(&session, None).map_err(|_| NotedError::SessionError)?;
-    Ok(HttpResponse::Ok().json("ok"))
+        .add_user_routes()
+        .service(web::scope("/secure").add_note_routes())
 }
 
 #[cfg(test)]
@@ -157,6 +39,7 @@ mod test {
     use cookie::{Cookie, CookieJar};
     use http::HeaderValue;
     use noted_db::{
+        error::{ErrorData, ErrorDataOwned},
         models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User},
         DbConnection,
     };
@@ -185,17 +68,11 @@ mod test {
             test::init_service(
                 App::new()
                     .wrap(CookieSession::signed(&[0; 32]))
-                    .service(service(db)),
+                    .service(scope(db)),
             )
             .await,
             CookieJar::default(),
         )
-    }
-
-    #[derive(Deserialize, Debug)]
-    struct ApiError {
-        code: u16,
-        error: Option<String>,
     }
 
     #[derive(Deserialize, Debug)]
@@ -207,7 +84,7 @@ mod test {
         svc: &mut S,
         cookies: &mut cookie::CookieJar,
         mut req: test::TestRequest,
-    ) -> Result<O, ApiError>
+    ) -> Result<O, ErrorDataOwned>
     where
         S: Service<Request = Request, Response = ServiceResponse<B>, Error = E>,
         B: MessageBody + Unpin,
@@ -228,13 +105,11 @@ mod test {
             println!("Saving cookie: {:?}", cookie);
             cookies.add_original(Cookie::parse(cookie.to_str().unwrap().to_owned()).unwrap());
         }
-        let status = resp.status();
         let body = String::from_utf8(test::read_body(resp).await.to_vec()).unwrap();
         serde_json::from_str::<O>(&body).map_err(|_| {
-            serde_json::from_str::<ApiError>(&body).unwrap_or_else(|_| ApiError {
-                code: status.as_u16(),
-                error: Some(body),
-            })
+            serde_json::from_str::<ErrorData>(&body)
+                .expect("Could not parse data or error")
+                .to_owned()
         })
     }
 
