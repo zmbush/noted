@@ -96,7 +96,7 @@ jobs:
           files: ${{ steps.coverage.outputs.report }}
           fail_ci_if_error: true
           verbose: true
-          flags: backend,rust
+          flags: backend
 
   check:
     name: Rust Build/Test/Lint
@@ -176,6 +176,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/coverage-final.json
-          flags: ui,typescript
+          flags: ui
           fail_ci_if_error: true
           verbose: true
