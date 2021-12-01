@@ -24,6 +24,7 @@ jobs:
   coverage:
     name: Rust Coverage
     runs-on: ubuntu-latest
+    if: "github.event_name == 'push'"
     env:
       RUSTFLAGS: "-C link-dead-code"
       DATABASE_URL: "postgres://postgres:postgres@localhost/noted"
@@ -69,7 +70,6 @@ jobs:
         uses: actions-rs/grcov@v0.1
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
-        if: "github.event_name == 'push'"
         with:
           token: "${{ secrets.CODECOV_TOKEN }}"
           files: "${{ steps.coverage.outputs.report }}"
