@@ -27,21 +27,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(t|j)sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-        },
-      },
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            configFile: 'tsconfig.webpack.json',
-            transpileOnly: true,
-          },
         },
       },
       {
