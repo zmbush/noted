@@ -107,3 +107,66 @@ impl From<noted_db::error::DbError> for NotedError {
         NotedError::DbError(e)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use actix_http::{body::MessageBody, Error, Request};
+    use actix_web::{
+        dev::{Service, ServiceResponse},
+        test, web, App,
+    };
+    use noted_db::error::ErrorDataOwned;
+
+    use super::*;
+
+    async fn get<S, B>(app: &mut S, p: &str) -> ErrorDataOwned
+    where
+        S: Service<Request = Request, Response = ServiceResponse<B>, Error = Error>,
+        B: MessageBody + Unpin,
+    {
+        let req = test::TestRequest::with_uri(p).to_request();
+        test::read_response_json(app, req).await
+    }
+
+    #[actix_rt::test]
+    async fn test_http_response() {
+        let mut app = test::init_service(
+            App::new()
+                .service(
+                    web::resource("/NotLoggedIn")
+                        .to(|| async { NotedError::NotLoggedIn.error_response().await }),
+                )
+                .service(web::resource("/SerdeJson").to(|| async {
+                    NotedError::from(serde_json::from_str::<i32>("notnum").unwrap_err())
+                        .error_response()
+                        .await
+                }))
+                .service(web::resource("/SessionError").to(|| async {
+                    NotedError::SessionError(Error::from(
+                        serde_json::from_str::<i32>("notnum").unwrap_err(),
+                    ))
+                    .error_response()
+                    .await
+                })),
+        )
+        .await;
+
+        let resp = get(&mut app, "/NotLoggedIn").await;
+        assert_eq!(resp.code, 401);
+        assert_eq!(resp.error, "NotLoggedIn");
+
+        let resp = get(&mut app, "/SerdeJson").await;
+        assert_eq!(resp.code, 400);
+        assert_eq!(
+            resp.error,
+            r#"SerdeJson(Error("expected ident", line: 1, column: 2))"#
+        );
+
+        let resp = get(&mut app, "/SessionError").await;
+        assert_eq!(resp.code, 503);
+        assert_eq!(
+            resp.error,
+            r#"SessionError(Error("expected ident", line: 1, column: 2))"#
+        );
+    }
+}
