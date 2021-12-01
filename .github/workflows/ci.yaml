@@ -69,7 +69,7 @@ jobs:
         uses: actions-rs/grcov@v0.1
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
-        if: "github.event.type == 'PushEvent'"
+        if: "github.event_name == 'push'"
         with:
           token: "${{ secrets.CODECOV_TOKEN }}"
           files: "${{ steps.coverage.outputs.report }}"
@@ -150,7 +150,7 @@ jobs:
         run: npm run test
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
-        if: "github.event.type == 'PushEvent'"
+        if: "github.event_name == 'push'"
         with:
           token: "${{ secrets.CODECOV_TOKEN }}"
           files: coverage/coverage-final.json
