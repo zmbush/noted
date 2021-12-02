@@ -32,6 +32,7 @@ describe('<NoteList />', () => {
   test('matches snapshot', () => {
     const node = shallow(
       <NoteList
+        noteViewFilter={null}
         searchIndex={new Map()}
         sortedIds={[1, 2, 4]}
         depth={1}
@@ -76,6 +77,7 @@ describe('<NoteList />', () => {
   test('matches second snapshot', () => {
     const node = shallow(
       <NoteList
+        noteViewFilter={null}
         searchIndex={new Map()}
         sortedIds={[1, 2, 4]}
         depth={1}

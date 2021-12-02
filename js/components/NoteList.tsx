@@ -31,6 +31,7 @@ type Props = {
   createFromSearch?: (e: React.SyntheticEvent) => void;
   renderOnly?: Set<number>;
   width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  noteViewFilter: Map<number, boolean> | null;
 };
 
 const GridItem = styled(Grid)({
@@ -85,6 +86,7 @@ class NoteList extends React.Component<Props> {
       createFromSearch,
       onUpdateNote,
       onDeleteNote,
+      noteViewFilter,
     } = this.props;
     let { notes } = this.props;
 
@@ -136,6 +138,7 @@ class NoteList extends React.Component<Props> {
                 search={search}
                 onUpdateNote={onUpdateNote}
                 onDeleteNote={onDeleteNote}
+                noteViewFilter={noteViewFilter}
               />
             </GridItem>,
           );
@@ -143,21 +146,25 @@ class NoteList extends React.Component<Props> {
       });
       return elements;
     }
+
     const result: any[] = [];
     sortedIds.forEach((id) => {
       if (notes.has(id)) {
         const n = notes.get(id);
-        result.push(
-          <GridItem item key={n.id} xs={width}>
-            <Note
-              depth={depth + 1}
-              note={n}
-              onUpdateNote={onUpdateNote}
-              onDeleteNote={onDeleteNote}
-              search={search}
-            />
-          </GridItem>,
-        );
+        if (!noteViewFilter || noteViewFilter.get(id)) {
+          result.push(
+            <GridItem item key={n.id} xs={width}>
+              <Note
+                depth={depth + 1}
+                note={n}
+                onUpdateNote={onUpdateNote}
+                onDeleteNote={onDeleteNote}
+                search={search}
+                noteViewFilter={noteViewFilter}
+              />
+            </GridItem>,
+          );
+        }
       }
     });
     return result;

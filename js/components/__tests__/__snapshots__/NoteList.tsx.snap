@@ -55,6 +55,7 @@ Array [
           "user_id": -1,
         }
       }
+      noteViewFilter={null}
       onDeleteNote={[Function]}
       onUpdateNote={[Function]}
       search=""
@@ -81,6 +82,7 @@ Array [
           "user_id": -1,
         }
       }
+      noteViewFilter={null}
       onDeleteNote={[Function]}
       onUpdateNote={[Function]}
       search=""
@@ -107,6 +109,7 @@ Array [
           "user_id": -1,
         }
       }
+      noteViewFilter={null}
       onDeleteNote={[Function]}
       onUpdateNote={[Function]}
       search=""

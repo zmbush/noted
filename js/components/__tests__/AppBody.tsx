@@ -16,6 +16,7 @@ describe('<AppBody />', () => {
   test('matches snapshot', () => {
     const wrapper = shallow(
       <AppBody
+        noteViewFilter={null}
         createNewShortcut={() => {}}
         notes={new Map()}
         newNote={false}

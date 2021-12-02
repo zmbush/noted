@@ -3,6 +3,7 @@
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
 <Connect(NoteList)
   depth={1}
+  noteViewFilter={null}
   notes={Map {}}
   onDeleteNote={[Function]}
   onUpdateNote={[Function]}

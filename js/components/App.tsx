@@ -9,18 +9,18 @@ import Mousetrap from 'mousetrap';
 import { Dispatch } from 'redux';
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
+import { useMatch } from 'react-router-dom';
 
 import { styled } from '@mui/material';
 
-import api from 'api';
 import AppBody from 'components/AppBody';
 import BindKeyboard from 'components/BindKeyboard';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
-import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
+import { updateNote as updateNoteAction, deleteNote } from 'data/actions';
 import { AppState } from 'data/reducers';
-import { getTopLevelNotes } from 'data/selectors';
+import { getHasArchivedChild, getIsNotArchived, getTopLevelNotes } from 'data/selectors';
 import { NoteWithTags } from 'data/types';
 
 const AppRoot = styled('div')({
@@ -37,13 +37,16 @@ type Props = {
   isSignedIn: boolean;
   doUpdateNote: (note: NoteWithTags) => void;
   doDeleteNote: (id: number) => void;
-  doLogOut: () => void;
 };
 
-const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props) => {
+const App = ({ doDeleteNote, doUpdateNote, isSignedIn, notes }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
+  const isViewingArchive = useMatch({ path: '/archive', end: true });
+  const noteViewFilter = useSelector<AppState, Map<number, boolean>>(
+    isViewingArchive ? getHasArchivedChild : getIsNotArchived,
+  );
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
@@ -87,23 +90,14 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
     create();
   };
 
-  const signOut = async (_e: React.SyntheticEvent) => {
-    await api.user.signOut();
-    doLogOut();
-  };
-
   return (
     <AppRoot>
-      <Header
-        createNewShortcut={createNewShortcut}
-        setSearch={setSearch}
-        onStartEdit={startEdit}
-        onSignOut={signOut}
-      />
+      <Header createNewShortcut={createNewShortcut} setSearch={setSearch} onStartEdit={startEdit} />
       <AppBody
         notes={notes}
         createNewShortcut={createNewShortcut}
         newNote={newNote}
+        noteViewFilter={noteViewFilter}
         search={search}
         onDeleteNote={doDeleteNote}
         onUpdateNote={updateNote}
@@ -126,10 +120,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
   doDeleteNote(id: number) {
     dispatch(deleteNote(id));
-  },
-
-  doLogOut() {
-    dispatch(logOut());
   },
 });
 

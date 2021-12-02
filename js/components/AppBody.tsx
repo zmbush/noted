@@ -40,6 +40,7 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
         }}
         onUpdateNote={onUpdateNote}
         onDeleteNote={onDeleteNote}
+        noteViewFilter={null}
       />
     </Grid>
   );
@@ -47,6 +48,7 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
 
 type Props = {
   notes: Map<number, NoteWithTags>;
+  noteViewFilter: Map<number, boolean> | null;
   createNewShortcut: (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     combo?: string,
@@ -55,6 +57,7 @@ type Props = {
 
 const AppBody = ({
   notes,
+  noteViewFilter,
   createNewShortcut,
   newNote,
   search,
@@ -64,6 +67,19 @@ const AppBody = ({
   const filteredNoteList = (
     <FilteredNoteList
       depth={1}
+      search={search}
+      onUpdateNote={onUpdateNote}
+      onDeleteNote={onDeleteNote}
+    />
+  );
+
+  const mainNoteList = (
+    <NoteList
+      createFromSearch={createNewShortcut}
+      noteViewFilter={noteViewFilter}
+      parent_note_id={null}
+      depth={1}
+      notes={notes}
       search={search}
       onUpdateNote={onUpdateNote}
       onDeleteNote={onDeleteNote}
@@ -89,20 +105,8 @@ const AppBody = ({
         onDeleteNote={onDeleteNote}
       />
       <Routes>
-        <Route
-          path='/'
-          element={
-            <NoteList
-              createFromSearch={createNewShortcut}
-              parent_note_id={null}
-              depth={1}
-              notes={notes}
-              search={search}
-              onUpdateNote={onUpdateNote}
-              onDeleteNote={onDeleteNote}
-            />
-          }
-        />
+        <Route path='/' element={mainNoteList} />
+        <Route path='/archive' element={mainNoteList} />
         <Route path='/note/:ids' element={filteredNoteList} />
         <Route path='/disambiguation/:ids' element={filteredNoteList} />
       </Routes>

@@ -16,6 +16,7 @@ exports[`<Note /> matches snapshot 1`] = `
         "user_id": 2,
       }
     }
+    noteViewFilter={null}
     onDeleteNote={[Function]}
     onUpdateNote={[Function]}
     search=""
@@ -303,6 +304,7 @@ exports[`<NoteContents /> matches snapshot 1`] = `
     >
       <Connect(NoteList)
         depth={1}
+        noteViewFilter={null}
         notes={Map {}}
         onDeleteNote={[Function]}
         onUpdateNote={[Function]}
@@ -472,6 +474,7 @@ exports[`<NoteContents /> matches snapshot 2`] = `
     >
       <Connect(NoteList)
         depth={1}
+        noteViewFilter={null}
         notes={Map {}}
         onDeleteNote={[Function]}
         onUpdateNote={[Function]}
@@ -645,6 +648,7 @@ exports[`<NoteContents /> matches snapshot 3`] = `
     >
       <Connect(NoteList)
         depth={1}
+        noteViewFilter={null}
         notes={Map {}}
         onDeleteNote={[Function]}
         onUpdateNote={[Function]}

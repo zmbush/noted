@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { notesFetched, updateNote, apiError, deleteNote, logOut } from 'data/actions';
+import { notesFetched, updateNote, apiError, deleteNote, signOut } from 'data/actions';
 import { NoteWithTags } from 'data/types';
 
 import notes from '../notes';
@@ -55,6 +55,6 @@ describe('reducers::notes()', () => {
     expect(state).toMatchSnapshot();
 
     expect(notes(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();
-    expect(notes(state, logOut())).toMatchSnapshot();
+    expect(notes(state, signOut())).toMatchSnapshot();
   });
 });
