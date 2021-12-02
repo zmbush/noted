@@ -1,7 +1,7 @@
 {
   "name": "noted",
   "version": "1.0.0",
-  "description": "",
+  "description": "Frontend for noted.zmbush.com",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
@@ -12,18 +12,6 @@
     "lint-fix": "eslint --fix --ext ts --ext tsx --ext js --ext jsx js",
     "generate-api-types": "cargo run --quiet --bin export-api-types && node tools/generate_api_types.js"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pretty && npm run expand-yaml-anchors",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "browserslist": [
-    "> 0.25%",
-    "last 2 versions",
-    "firefox ESR",
-    "not dead"
-  ],
   "keywords": [],
   "author": "",
   "license": "(MIT or Apache-2.0)",
@@ -39,6 +27,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.0",
     "@mui/material": "^5.2.2",
+    "@mui/system": "^5.2.2",
     "@toast-ui/editor": "^3.1.1",
     "@toast-ui/editor-plugin-color-syntax": "^3.0.2",
     "@toast-ui/react-editor": "^3.1.1",
@@ -57,7 +46,7 @@
     "babel-plugin-direct-import": "^1.0.0",
     "cli": ">=1.0.0",
     "codemirror": "^5.48.4",
-    "core-js": "^3.19.1",
+    "core-js": "^3.19.2",
     "css-loader": "^6.5.1",
     "debounce-promise": "^3.1.2",
     "enzyme": "^3.11.0",

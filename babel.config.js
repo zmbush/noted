@@ -10,19 +10,14 @@
 module.exports = {
   presets: [
     [
-      '@babel/preset-env',
-      {
-        useBuiltIns: 'entry',
-        targets: {
-          node: 'current',
-        },
-      },
+      '@babel/env',
+      { useBuiltIns: 'usage', targets: '> 0.25%', corejs: { version: '3.0', proposals: true } },
     ],
-    '@babel/preset-react',
-    '@babel/typescript',
+    '@babel/react',
+    ['@babel/typescript', { allExtensions: true, isTSX: true }],
   ],
   plugins: [
-    '@babel/plugin-proposal-class-properties',
+    '@babel/proposal-class-properties',
     ['babel-plugin-direct-import', { modules: ['@mui/material', '@mui/icons-material'] }],
   ],
 };

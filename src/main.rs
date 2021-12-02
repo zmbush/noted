@@ -69,7 +69,8 @@ async fn main() -> Result<(), Error> {
             .wrap(
                 RedisSession::new("127.0.0.1:6379", &[0; 32])
                     .cookie_name("noted-session")
-                    .cookie_secure(opt.secure),
+                    .cookie_secure(opt.secure)
+                    .cookie_same_site(actix_redis::SameSite::Strict),
             )
             .service(noted::api::scope(db.clone()))
             .service(
