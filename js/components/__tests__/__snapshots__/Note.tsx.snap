@@ -5,9 +5,12 @@ exports[`<Note /> matches snapshot 1`] = `
   <NoteContents
     note={
       Object {
+        "archived": false,
         "body": "note body",
         "created_at": "",
         "id": 1,
+        "parent_note_id": 0,
+        "pinned": false,
         "tags": Array [
           "tag1",
         ],
@@ -16,13 +19,9 @@ exports[`<Note /> matches snapshot 1`] = `
         "user_id": 2,
       }
     }
-    onDeleteNote={[Function]}
-    onUpdateNote={[Function]}
     search=""
     setCreatingSubNote={[Function]}
     setEdit={[Function]}
-    subNotes={Map {}}
-    titles={Map {}}
   />
   <ConfirmationDialog
     message="Are you sure?"
@@ -301,11 +300,9 @@ exports[`<NoteContents /> matches snapshot 1`] = `
         }
       }
     >
-      <Connect(NoteList)
+      <NoteList
         depth={1}
         notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
         parent_note_id={1}
         search=""
       />
@@ -470,11 +467,9 @@ exports[`<NoteContents /> matches snapshot 2`] = `
         }
       }
     >
-      <Connect(NoteList)
+      <NoteList
         depth={1}
         notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
         search=""
       />
     </ForwardRef(Grid)>
@@ -643,11 +638,9 @@ exports[`<NoteContents /> matches snapshot 3`] = `
         }
       }
     >
-      <Connect(NoteList)
+      <NoteList
         depth={1}
         notes={Map {}}
-        onDeleteNote={[Function]}
-        onUpdateNote={[Function]}
         search=""
       />
     </ForwardRef(Grid)>

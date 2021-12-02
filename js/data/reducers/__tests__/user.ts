@@ -5,7 +5,7 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import { logIn, logOut, apiError } from 'data/actions';
+import { logIn, signOut, apiError } from 'data/actions';
 
 import user from '../user';
 
@@ -28,7 +28,7 @@ describe('reducers::user()', () => {
     state = user(state, logIn(u));
 
     expect(state).toMatchSnapshot();
-    expect(user(state, logOut())).toMatchSnapshot();
+    expect(user(state, signOut())).toMatchSnapshot();
     expect(user(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();
   });
 });

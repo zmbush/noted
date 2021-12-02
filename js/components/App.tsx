@@ -6,22 +6,18 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 import Mousetrap from 'mousetrap';
-import { Dispatch } from 'redux';
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { styled } from '@mui/material';
 
-import api from 'api';
 import AppBody from 'components/AppBody';
 import BindKeyboard from 'components/BindKeyboard';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
-import { updateNote as updateNoteAction, deleteNote, logOut } from 'data/actions';
 import { AppState } from 'data/reducers';
 import { getTopLevelNotes } from 'data/selectors';
-import { NoteWithTags } from 'data/types';
 
 const AppRoot = styled('div')({
   width: '100%',
@@ -32,18 +28,12 @@ const AppRoot = styled('div')({
   },
 });
 
-type Props = {
-  notes: Map<number, NoteWithTags>;
-  isSignedIn: boolean;
-  doUpdateNote: (note: NoteWithTags) => void;
-  doDeleteNote: (id: number) => void;
-  doLogOut: () => void;
-};
-
-const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props) => {
+const App = () => {
   const searchInput = React.useRef<HTMLInputElement>();
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
+  const notes = useSelector(getTopLevelNotes);
+  const isSignedIn = useSelector<AppState>((state) => state.user.is_signed_in);
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
@@ -72,13 +62,6 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
     // }
   };
 
-  const updateNote = (note?: NoteWithTags) => {
-    if (note) {
-      doUpdateNote(note);
-    }
-    setNewNote(false);
-  };
-
   const createNewShortcut = (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     _combo?: string,
@@ -87,26 +70,15 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
     create();
   };
 
-  const signOut = async (_e: React.SyntheticEvent) => {
-    await api.user.signOut();
-    doLogOut();
-  };
-
   return (
     <AppRoot>
-      <Header
-        createNewShortcut={createNewShortcut}
-        setSearch={setSearch}
-        onStartEdit={startEdit}
-        onSignOut={signOut}
-      />
+      <Header createNewShortcut={createNewShortcut} setSearch={setSearch} onStartEdit={startEdit} />
       <AppBody
         notes={notes}
         createNewShortcut={createNewShortcut}
         newNote={newNote}
         search={search}
-        onDeleteNote={doDeleteNote}
-        onUpdateNote={updateNote}
+        onNewNoteCancel={() => setNewNote(false)}
       />
       <BindKeyboard keys='/' callback={startSearch} />
       <LogIn open={!isSignedIn} />
@@ -114,23 +86,4 @@ const App = ({ doDeleteNote, doUpdateNote, doLogOut, isSignedIn, notes }: Props)
   );
 };
 
-const mapStateToProps = (state: AppState) => ({
-  notes: getTopLevelNotes(state),
-  isSignedIn: state.user.is_signed_in,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  doUpdateNote(data: NoteWithTags) {
-    dispatch(updateNoteAction(data));
-  },
-
-  doDeleteNote(id: number) {
-    dispatch(deleteNote(id));
-  },
-
-  doLogOut() {
-    dispatch(logOut());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

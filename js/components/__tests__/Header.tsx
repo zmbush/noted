@@ -9,9 +9,19 @@
 import { mount, shallow } from 'enzyme';
 
 import * as React from 'react';
+import * as ReactReduxOriginal from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
+import { Menu } from '@mui/material';
+
+import { NotedEvent } from 'data/actions';
+
 import Header from '../Header';
+
+jest.mock('react-redux');
+const ReactRedux = ReactReduxOriginal as jest.Mocked<typeof ReactReduxOriginal>;
+
+jest.mock('axios');
 
 const sleep = (milliseconds: number) =>
   new Promise((resolve) => {
@@ -23,7 +33,6 @@ const search = (
     createNewShortcut={() => {}}
     setSearch={() => {}}
     onStartEdit={() => {}}
-    onSignOut={() => {}}
     debounceInterval={10}
   />
 );
@@ -59,6 +68,28 @@ describe('<Header />', () => {
     await sleep(10);
     expect(setSearch.mock.calls.length).toEqual(2);
     expect(setSearch.mock.calls[1][0]).toEqual('written words');
+  });
+
+  test('handles user menu and sign out', async () => {
+    const wrapper = shallow(search, {
+      wrappingComponent: MemoryRouter,
+    });
+    const dispatchMock = jest.fn();
+    ReactRedux.useDispatch.mockReturnValue(dispatchMock);
+
+    const menu = wrapper.find('[aria-label="User Menu"]').first();
+    menu.simulate('click');
+
+    wrapper.setProps({});
+    wrapper.update();
+
+    expect(wrapper.find(Menu).first().props().open).toBeTruthy();
+    const signOut = wrapper.find('[aria-label="Sign Out"]').first();
+    signOut.simulate('click', { preventDefault: () => {} });
+    await sleep(10);
+
+    expect(dispatchMock.mock.calls).toHaveLength(1);
+    expect(dispatchMock.mock.calls[0][0]).toEqual({ type: NotedEvent.UserSignedOut });
   });
 
   // test('::onChange()', () => {

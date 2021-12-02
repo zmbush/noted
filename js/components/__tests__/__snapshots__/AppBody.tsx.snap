@@ -16,19 +16,16 @@ exports[`<AppBody /> matches snapshot 1`] = `
 >
   <NewNote
     newNote={false}
-    onDeleteNote={[Function]}
-    onUpdateNote={[Function]}
+    onNewNoteCancel={[Function]}
     search=""
   />
   <Routes>
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
           notes={Map {}}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           parent_note_id={null}
           search=""
         />
@@ -37,10 +34,20 @@ exports[`<AppBody /> matches snapshot 1`] = `
     />
     <Route
       element={
+        <NoteList
+          createFromSearch={[Function]}
+          depth={1}
+          notes={Map {}}
+          parent_note_id={null}
+          search=""
+        />
+      }
+      path="/archive"
+    />
+    <Route
+      element={
         <Memo(Connect(FilteredNoteList))
           depth={1}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           search=""
         />
       }
@@ -50,8 +57,6 @@ exports[`<AppBody /> matches snapshot 1`] = `
       element={
         <Memo(Connect(FilteredNoteList))
           depth={1}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           search=""
         />
       }
@@ -64,8 +69,7 @@ exports[`<AppBody /> matches snapshot 1`] = `
 exports[`<AppBody /> matches snapshot 2`] = `
 <NewNote
   newNote={false}
-  onDeleteNote={[Function]}
-  onUpdateNote={[Function]}
+  onNewNoteCancel={[Function]}
   search=""
 />
 `;
@@ -86,19 +90,16 @@ exports[`<AppBody /> matches snapshot 3`] = `
 >
   <NewNote
     newNote={true}
-    onDeleteNote={[Function]}
-    onUpdateNote={[Function]}
+    onNewNoteCancel={[Function]}
     search="Search Term"
   />
   <Routes>
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
           notes={Map {}}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           parent_note_id={null}
           search="Search Term"
         />
@@ -107,10 +108,20 @@ exports[`<AppBody /> matches snapshot 3`] = `
     />
     <Route
       element={
+        <NoteList
+          createFromSearch={[Function]}
+          depth={1}
+          notes={Map {}}
+          parent_note_id={null}
+          search="Search Term"
+        />
+      }
+      path="/archive"
+    />
+    <Route
+      element={
         <Memo(Connect(FilteredNoteList))
           depth={1}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           search="Search Term"
         />
       }
@@ -120,8 +131,6 @@ exports[`<AppBody /> matches snapshot 3`] = `
       element={
         <Memo(Connect(FilteredNoteList))
           depth={1}
-          onDeleteNote={[Function]}
-          onUpdateNote={[Function]}
           search="Search Term"
         />
       }
@@ -134,8 +143,7 @@ exports[`<AppBody /> matches snapshot 3`] = `
 exports[`<AppBody /> matches snapshot 4`] = `
 <NewNote
   newNote={true}
-  onDeleteNote={[Function]}
-  onUpdateNote={[Function]}
+  onNewNoteCancel={[Function]}
   search="Search Term"
 />
 `;
@@ -147,7 +155,7 @@ exports[`<NewNote /> matches snapshot 2`] = `
   item={true}
   xs={12}
 >
-  <Connect(Note)
+  <Note
     depth={1}
     note={
       Object {
@@ -155,8 +163,7 @@ exports[`<NewNote /> matches snapshot 2`] = `
         "title": "Search Term",
       }
     }
-    onDeleteNote={[Function]}
-    onUpdateNote={[Function]}
+    onNewNoteCancel={[Function]}
     search="Search Term"
   />
 </ForwardRef(Grid)>

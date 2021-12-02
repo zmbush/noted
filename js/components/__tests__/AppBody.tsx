@@ -20,8 +20,7 @@ describe('<AppBody />', () => {
         notes={new Map()}
         newNote={false}
         search=''
-        onDeleteNote={() => {}}
-        onUpdateNote={() => {}}
+        onNewNoteCancel={() => {}}
       />,
     );
     expect(wrapper).toMatchSnapshot();
@@ -38,9 +37,7 @@ describe('<AppBody />', () => {
 
 describe('<NewNote />', () => {
   test('matches snapshot', () => {
-    const wrapper = shallow(
-      <NewNote newNote={false} search='' onDeleteNote={() => {}} onUpdateNote={() => {}} />,
-    );
+    const wrapper = shallow(<NewNote newNote={false} search='' onNewNoteCancel={() => {}} />);
     expect(wrapper).toMatchSnapshot();
 
     wrapper.setProps({

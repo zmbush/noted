@@ -60,7 +60,7 @@ export const getTopLevelNotes = createSelector(listNotes, (notes) => {
 });
 
 export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, noteId) => {
-  const subNotes = new Map();
+  const subNotes: Map<number, NoteWithTags> = new Map();
 
   [...notes.values()].forEach((note) => {
     if (note.parent_note_id === noteId && note.id !== noteId) {
@@ -72,6 +72,28 @@ export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, no
 })((state, props: { note_id: number }) => props.note_id);
 
 export type SubNoteMap = ReturnType<typeof getSubNotes>;
+
+export const getIsNotArchived = createSelector(getNotes, (notes) => {
+  const isNotArchived = new Map();
+  [...notes.values()].forEach((note) => {
+    isNotArchived.set(note.id, !note.archived);
+  });
+  return isNotArchived;
+});
+
+export const getHasArchivedChild = createSelector(getNotes, (notes) => {
+  const hasArchivedChild = new Map();
+  [...notes.values()].forEach((note) => {
+    const arch = note.archived;
+    hasArchivedChild.set(note.id, hasArchivedChild.get(note.id) || arch);
+    let currentNote = note;
+    while (validParent(currentNote)) {
+      currentNote = notes.get(currentNote.parent_note_id);
+      hasArchivedChild.set(currentNote.id, hasArchivedChild.get(currentNote.id) || arch);
+    }
+  });
+  return hasArchivedChild;
+});
 
 const calculateMergedNote = (
   note: NoteWithTags,

@@ -15,16 +15,9 @@ import { Inner as FilteredNoteList } from '../FilteredNoteList';
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    const node = shallow(
-      <FilteredNoteList
-        depth={1}
-        notes={new Map()}
-        search=''
-        onUpdateNote={() => {}}
-        onDeleteNote={() => {}}
-      />,
-      { wrappingComponent: MemoryRouter },
-    );
+    const node = shallow(<FilteredNoteList depth={1} notes={new Map()} search='' />, {
+      wrappingComponent: MemoryRouter,
+    });
 
     expect(node).toMatchSnapshot();
   });

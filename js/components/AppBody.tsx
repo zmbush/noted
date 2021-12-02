@@ -21,11 +21,10 @@ import { NoteWithTags } from 'data/types';
 type NewNoteProps = {
   newNote: boolean;
   search: string;
-  onUpdateNote: (note?: NoteWithTags) => void;
-  onDeleteNote: (id: number) => void;
+  onNewNoteCancel: () => void;
 };
 
-export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNoteProps) => {
+export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
   if (!newNote) {
     return null;
   }
@@ -38,8 +37,7 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
           title: search,
           body: '',
         }}
-        onUpdateNote={onUpdateNote}
-        onDeleteNote={onDeleteNote}
+        onNewNoteCancel={onNewNoteCancel}
       />
     </Grid>
   );
@@ -53,20 +51,16 @@ type Props = {
   ) => void;
 } & NewNoteProps;
 
-const AppBody = ({
-  notes,
-  createNewShortcut,
-  newNote,
-  search,
-  onDeleteNote,
-  onUpdateNote,
-}: Props) => {
-  const filteredNoteList = (
-    <FilteredNoteList
+const AppBody = ({ notes, createNewShortcut, newNote, search, onNewNoteCancel }: Props) => {
+  const filteredNoteList = <FilteredNoteList depth={1} search={search} />;
+
+  const mainNoteList = (
+    <NoteList
+      createFromSearch={createNewShortcut}
+      parent_note_id={null}
       depth={1}
+      notes={notes}
       search={search}
-      onUpdateNote={onUpdateNote}
-      onDeleteNote={onDeleteNote}
     />
   );
 
@@ -82,27 +76,10 @@ const AppBody = ({
         marginTop: '75px',
       }}
     >
-      <NewNote
-        newNote={newNote}
-        search={search}
-        onUpdateNote={onUpdateNote}
-        onDeleteNote={onDeleteNote}
-      />
+      <NewNote newNote={newNote} search={search} onNewNoteCancel={onNewNoteCancel} />
       <Routes>
-        <Route
-          path='/'
-          element={
-            <NoteList
-              createFromSearch={createNewShortcut}
-              parent_note_id={null}
-              depth={1}
-              notes={notes}
-              search={search}
-              onUpdateNote={onUpdateNote}
-              onDeleteNote={onDeleteNote}
-            />
-          }
-        />
+        <Route path='/' element={mainNoteList} />
+        <Route path='/archive' element={mainNoteList} />
         <Route path='/note/:ids' element={filteredNoteList} />
         <Route path='/disambiguation/:ids' element={filteredNoteList} />
       </Routes>

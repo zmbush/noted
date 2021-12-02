@@ -9,23 +9,24 @@ import { shallow } from 'enzyme';
 
 import * as React from 'react';
 
-import { Inner as Note, NoteContents } from '../Note';
+import Note, { NoteContents } from '../Note';
+
+jest.mock('react-redux');
 
 const note = (
   <Note
     search=''
-    titles={new Map()}
-    subNotes={new Map()}
-    onUpdateNote={() => {}}
-    onDeleteNote={() => {}}
     note={{
       id: 1,
+      parent_note_id: 0,
       title: 'note title',
       body: 'note body',
       tags: ['tag1'],
       created_at: '',
       updated_at: '',
       user_id: 2,
+      archived: false,
+      pinned: false,
     }}
   />
 );
@@ -35,8 +36,6 @@ const noteContents = (
     search=''
     titles={new Map()}
     subNotes={new Map()}
-    onUpdateNote={() => {}}
-    onDeleteNote={() => {}}
     setEdit={() => {}}
     setCreatingSubNote={() => {}}
     note={{

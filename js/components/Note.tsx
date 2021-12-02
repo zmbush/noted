@@ -13,7 +13,7 @@ import { Suspense } from 'react';
 import ReactLoading from 'react-loading';
 import ReactMarkdown from 'react-markdown';
 import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Archive as ArchiveIcon,
@@ -45,6 +45,7 @@ import ConfirmationDialog from 'components/ConfirmationDialog';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
+import { deleteNote, updateNote } from 'data/actions';
 import { AppState } from 'data/reducers';
 import { getLinkIds, getSubNotes } from 'data/selectors';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
@@ -56,8 +57,6 @@ const NoteEditor = React.lazy(
 type NoteContentsProps = {
   note: NoteWithTags;
   titles: Map<string, Set<number>>;
-  onDeleteNote: (id: number) => void;
-  onUpdateNote: (note?: NoteWithTags) => void;
   setEdit: (edit: boolean) => void;
   setCreatingSubNote: (creatingSubNote: boolean) => void;
   search: string;
@@ -67,8 +66,6 @@ type NoteContentsProps = {
 
 export const NoteContents = ({
   note,
-  onDeleteNote,
-  onUpdateNote,
   setEdit,
   setCreatingSubNote,
   titles,
@@ -78,10 +75,11 @@ export const NoteContents = ({
 }: NoteContentsProps) => {
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
+  const dispatch = useDispatch();
 
   const doDelete = async () => {
     await api.note.delete(note.id);
-    onDeleteNote(note.id);
+    dispatch(deleteNote(note.id));
   };
 
   const archiveNote = async () => {
@@ -89,7 +87,7 @@ export const NoteContents = ({
 
     const { id, archived } = note;
     const result = await api.note.update(id, { archived: !archived });
-    onUpdateNote(result);
+    dispatch(updateNote(result));
   };
 
   const pinNote = async () => {
@@ -97,7 +95,7 @@ export const NoteContents = ({
 
     const { id, pinned } = note;
     const result = await api.note.update(id, { pinned: !pinned });
-    onUpdateNote(result);
+    dispatch(updateNote(result));
   };
 
   const startEdit = () => {
@@ -240,8 +238,6 @@ export const NoteContents = ({
             depth={(depth || 0) + 1}
             notes={subNotes}
             search={search}
-            onUpdateNote={onUpdateNote}
-            onDeleteNote={onDeleteNote}
           />
         </Grid>
       </CardContent>
@@ -250,28 +246,33 @@ export const NoteContents = ({
 };
 
 type Props = {
-  note: NewNote | NoteWithTags;
   search: string;
-  titles: Map<string, Set<number>>;
-  subNotes: Map<number, NoteWithTags>;
-  onUpdateNote: (note?: NoteWithTags) => void;
-  onDeleteNote: (id: number) => void;
   depth?: number;
-};
+} & (
+  | { note: NewNote; onNewNoteCancel: () => void }
+  | { note: NoteWithTags; onNewNoteCancel?: never }
+);
 
-const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNote }: Props) => {
+const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
   const [edit, setEdit] = React.useState(!('id' in note)); // If note has no 'id', it must be a NewNote
   const [creatingSubNote, setCreatingSubNote] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
   const noteEditor = React.useRef<any>();
   const theme = useTheme();
   const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
+  const dispatch = useDispatch();
+  const titles = useSelector(getLinkIds);
+  const subNotes = useSelector((state: AppState) =>
+    'id' in note ? getSubNotes(state, { note_id: note.id }) : new Map(),
+  );
 
   const cancelEdit = () => {
     setEdit(false);
     setCreatingSubNote(false);
     setConfirmCancelEditOpen(false);
-    onUpdateNote(null);
+    if (onNewNoteCancel) {
+      onNewNoteCancel();
+    }
   };
 
   const tryCancelEdit = () => {
@@ -303,7 +304,7 @@ const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNot
 
     setEdit(false);
     setCreatingSubNote(false);
-    onUpdateNote(result);
+    dispatch(updateNote(result));
   };
 
   return (
@@ -314,8 +315,6 @@ const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNot
           search={search}
           subNotes={subNotes}
           depth={depth}
-          onDeleteNote={onDeleteNote}
-          onUpdateNote={onUpdateNote}
           setEdit={setEdit}
           setCreatingSubNote={setCreatingSubNote}
           note={note}
@@ -355,11 +354,4 @@ const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNot
   );
 };
 
-export const Inner = Note;
-
-const mapStateToProps = (state: AppState, { note }: { note: NewNote | NoteWithTags }) => ({
-  titles: getLinkIds(state),
-  subNotes: 'id' in note ? getSubNotes(state, { note_id: note.id }) : new Map(),
-});
-
-export default connect(mapStateToProps)(Note);
+export default Note;

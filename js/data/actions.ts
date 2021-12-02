@@ -47,7 +47,7 @@ export function logIn(user: User) {
   return { type: NotedEvent.UserSignedIn, user } as const;
 }
 
-export function logOut() {
+export function signOut() {
   return { type: NotedEvent.UserSignedOut } as const;
 }
 
