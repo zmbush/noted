@@ -30,8 +30,6 @@ type Props = {
   notes: Map<number, NoteWithTags>;
   search: string;
   depth: number;
-  onUpdateNote: (note?: NoteWithTags) => void;
-  onDeleteNote: (id: number) => void;
   createFromSearch?: (e: React.SyntheticEvent) => void;
   renderOnly?: Set<number>;
   parent_note_id: number;
@@ -73,8 +71,6 @@ const NoteList = ({
   notes: notesIn,
   search,
   depth,
-  onUpdateNote,
-  onDeleteNote,
   createFromSearch,
   renderOnly,
   width = 12,
@@ -132,13 +128,7 @@ const NoteList = ({
       } else {
         elements.push(
           <GridItem item key={id} xs={width}>
-            <Note
-              depth={depth + 1}
-              note={notes.get(id)}
-              search={search}
-              onUpdateNote={onUpdateNote}
-              onDeleteNote={onDeleteNote}
-            />
+            <Note depth={depth + 1} note={notes.get(id)} search={search} />
           </GridItem>,
         );
       }
@@ -155,13 +145,7 @@ const NoteList = ({
           if (!noteViewFilter || noteViewFilter.get(id)) {
             return (
               <GridItem item key={n.id} xs={width}>
-                <Note
-                  depth={depth + 1}
-                  note={n}
-                  onUpdateNote={onUpdateNote}
-                  onDeleteNote={onDeleteNote}
-                  search={search}
-                />
+                <Note depth={depth + 1} note={n} search={search} />
               </GridItem>
             );
           }

@@ -18,8 +18,6 @@ interface Props {
   notes: Map<number, NoteWithTags>;
   search: string;
   depth: number;
-  onUpdateNote: (note: NoteWithTags) => void;
-  onDeleteNote: (id: number) => void;
 }
 
 const FilteredNoteList = (props: Props) => {

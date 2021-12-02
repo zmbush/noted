@@ -48,30 +48,14 @@ jest.spyOn(ReactRedux, 'useSelector').mockImplementation((r) => r(state));
 
 describe('<NoteList />', () => {
   test('matches snapshot', () => {
-    const node = shallow(
-      <NoteList
-        parent_note_id={0}
-        depth={1}
-        notes={state.notes}
-        search=''
-        onUpdateNote={() => {}}
-        onDeleteNote={() => {}}
-      />,
-    );
+    const node = shallow(<NoteList parent_note_id={0} depth={1} notes={state.notes} search='' />);
 
     expect(node).toMatchSnapshot();
   });
 
   test('matches second snapshot', () => {
     const node = shallow(
-      <NoteList
-        parent_note_id={0}
-        depth={1}
-        notes={state.notes}
-        search='SingleNote 2'
-        onUpdateNote={() => {}}
-        onDeleteNote={() => {}}
-      />,
+      <NoteList parent_note_id={0} depth={1} notes={state.notes} search='SingleNote 2' />,
     );
     expect(node).toMatchSnapshot();
   });

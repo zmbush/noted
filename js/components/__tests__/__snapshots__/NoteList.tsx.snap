@@ -7,7 +7,7 @@ exports[`<NoteList /> matches second snapshot 1`] = `
     key="2"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -23,8 +23,6 @@ exports[`<NoteList /> matches second snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search="SingleNote 2"
     />
   </Styled(ForwardRef(Grid))>
@@ -33,7 +31,7 @@ exports[`<NoteList /> matches second snapshot 1`] = `
     key="1"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -49,8 +47,6 @@ exports[`<NoteList /> matches second snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search="SingleNote 2"
     />
   </Styled(ForwardRef(Grid))>
@@ -59,7 +55,7 @@ exports[`<NoteList /> matches second snapshot 1`] = `
     key="4"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -75,8 +71,6 @@ exports[`<NoteList /> matches second snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search="SingleNote 2"
     />
   </Styled(ForwardRef(Grid))>
@@ -90,7 +84,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
     key="1"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -106,8 +100,6 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search=""
     />
   </Styled(ForwardRef(Grid))>
@@ -116,7 +108,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
     key="4"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -132,8 +124,6 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search=""
     />
   </Styled(ForwardRef(Grid))>
@@ -142,7 +132,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
     key="2"
     xs={12}
   >
-    <Connect(Note)
+    <Note
       depth={2}
       note={
         Object {
@@ -158,8 +148,6 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "user_id": -1,
         }
       }
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
       search=""
     />
   </Styled(ForwardRef(Grid))>
