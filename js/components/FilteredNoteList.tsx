@@ -27,7 +27,7 @@ const FilteredNoteList = (props: Props) => {
   const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
 
   // eslint-disable-next-line react/jsx-props-no-spreading
-  return <NoteList parent_note_id={null} renderOnly={parsedIds} noteViewFilter={null} {...props} />;
+  return <NoteList parent_note_id={null} renderOnly={parsedIds} {...props} />;
 };
 
 export const Inner = FilteredNoteList;

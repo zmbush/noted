@@ -9,8 +9,7 @@ import Mousetrap from 'mousetrap';
 import { Dispatch } from 'redux';
 
 import * as React from 'react';
-import { connect, useSelector } from 'react-redux';
-import { useMatch } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { styled } from '@mui/material';
 
@@ -20,7 +19,7 @@ import Header from 'components/Header';
 import LogIn from 'components/LogIn';
 import { updateNote as updateNoteAction, deleteNote } from 'data/actions';
 import { AppState } from 'data/reducers';
-import { getHasArchivedChild, getIsNotArchived, getTopLevelNotes } from 'data/selectors';
+import { getTopLevelNotes } from 'data/selectors';
 import { NoteWithTags } from 'data/types';
 
 const AppRoot = styled('div')({
@@ -43,10 +42,6 @@ const App = ({ doDeleteNote, doUpdateNote, isSignedIn, notes }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
-  const isViewingArchive = useMatch({ path: '/archive', end: true });
-  const noteViewFilter = useSelector<AppState, Map<number, boolean>>(
-    isViewingArchive ? getHasArchivedChild : getIsNotArchived,
-  );
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
@@ -97,7 +92,6 @@ const App = ({ doDeleteNote, doUpdateNote, isSignedIn, notes }: Props) => {
         notes={notes}
         createNewShortcut={createNewShortcut}
         newNote={newNote}
-        noteViewFilter={noteViewFilter}
         search={search}
         onDeleteNote={doDeleteNote}
         onUpdateNote={updateNote}

@@ -63,7 +63,6 @@ type NoteContentsProps = {
   search: string;
   subNotes: Map<number, NoteWithTags>;
   depth?: number;
-  noteViewFilter: Map<number, boolean> | null;
 };
 
 export const NoteContents = ({
@@ -76,7 +75,6 @@ export const NoteContents = ({
   search,
   subNotes,
   depth,
-  noteViewFilter,
 }: NoteContentsProps) => {
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
@@ -238,7 +236,6 @@ export const NoteContents = ({
           }}
         >
           <NoteList
-            noteViewFilter={noteViewFilter}
             parent_note_id={note.id}
             depth={(depth || 0) + 1}
             notes={subNotes}
@@ -260,19 +257,9 @@ type Props = {
   onUpdateNote: (note?: NoteWithTags) => void;
   onDeleteNote: (id: number) => void;
   depth?: number;
-  noteViewFilter: Map<number, boolean> | null;
 };
 
-const Note = ({
-  note,
-  titles,
-  depth,
-  subNotes,
-  search,
-  onUpdateNote,
-  onDeleteNote,
-  noteViewFilter,
-}: Props) => {
+const Note = ({ note, titles, depth, subNotes, search, onUpdateNote, onDeleteNote }: Props) => {
   const [edit, setEdit] = React.useState(!('id' in note)); // If note has no 'id', it must be a NewNote
   const [creatingSubNote, setCreatingSubNote] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
@@ -332,7 +319,6 @@ const Note = ({
           setEdit={setEdit}
           setCreatingSubNote={setCreatingSubNote}
           note={note}
-          noteViewFilter={noteViewFilter}
         />
       ) : null}
       <ConfirmationDialog

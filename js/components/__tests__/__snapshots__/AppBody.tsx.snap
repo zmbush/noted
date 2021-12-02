@@ -23,10 +23,9 @@ exports[`<AppBody /> matches snapshot 1`] = `
   <Routes>
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
-          noteViewFilter={null}
           notes={Map {}}
           onDeleteNote={[Function]}
           onUpdateNote={[Function]}
@@ -38,10 +37,9 @@ exports[`<AppBody /> matches snapshot 1`] = `
     />
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
-          noteViewFilter={null}
           notes={Map {}}
           onDeleteNote={[Function]}
           onUpdateNote={[Function]}
@@ -109,10 +107,9 @@ exports[`<AppBody /> matches snapshot 3`] = `
   <Routes>
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
-          noteViewFilter={null}
           notes={Map {}}
           onDeleteNote={[Function]}
           onUpdateNote={[Function]}
@@ -124,10 +121,9 @@ exports[`<AppBody /> matches snapshot 3`] = `
     />
     <Route
       element={
-        <Memo(Connect(NoteList))
+        <NoteList
           createFromSearch={[Function]}
           depth={1}
-          noteViewFilter={null}
           notes={Map {}}
           onDeleteNote={[Function]}
           onUpdateNote={[Function]}
@@ -187,7 +183,6 @@ exports[`<NewNote /> matches snapshot 2`] = `
         "title": "Search Term",
       }
     }
-    noteViewFilter={null}
     onDeleteNote={[Function]}
     onUpdateNote={[Function]}
     search="Search Term"

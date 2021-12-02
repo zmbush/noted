@@ -1,9 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
-<Connect(NoteList)
+<NoteList
   depth={1}
-  noteViewFilter={null}
   notes={Map {}}
   onDeleteNote={[Function]}
   onUpdateNote={[Function]}

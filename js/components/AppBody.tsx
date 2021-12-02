@@ -40,7 +40,6 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
         }}
         onUpdateNote={onUpdateNote}
         onDeleteNote={onDeleteNote}
-        noteViewFilter={null}
       />
     </Grid>
   );
@@ -48,7 +47,6 @@ export const NewNote = ({ newNote, search, onUpdateNote, onDeleteNote }: NewNote
 
 type Props = {
   notes: Map<number, NoteWithTags>;
-  noteViewFilter: Map<number, boolean> | null;
   createNewShortcut: (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     combo?: string,
@@ -57,7 +55,6 @@ type Props = {
 
 const AppBody = ({
   notes,
-  noteViewFilter,
   createNewShortcut,
   newNote,
   search,
@@ -76,7 +73,6 @@ const AppBody = ({
   const mainNoteList = (
     <NoteList
       createFromSearch={createNewShortcut}
-      noteViewFilter={noteViewFilter}
       parent_note_id={null}
       depth={1}
       notes={notes}

@@ -13,7 +13,6 @@ import { Inner as Note, NoteContents } from '../Note';
 
 const note = (
   <Note
-    noteViewFilter={null}
     search=''
     titles={new Map()}
     subNotes={new Map()}
@@ -33,7 +32,6 @@ const note = (
 
 const noteContents = (
   <NoteContents
-    noteViewFilter={null}
     search=''
     titles={new Map()}
     subNotes={new Map()}

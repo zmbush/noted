@@ -1,42 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<NoteList /> matches second snapshot 1`] = `
-<Styled(ForwardRef(Grid))
-  item={true}
-  key="new"
-  xs={12}
->
-  <ForwardRef(Button)
-    color="primary"
-    sx={
-      Object {
-        "@media print": Object {
-          "display": "none",
-        },
-        "margin": 1,
-      }
-    }
-    variant="contained"
-  >
-    <Memo(ForwardRef(AddIcon))
-      sx={
-        Object {
-          "fontSize": 20,
-          "marginRight": 1,
-        }
-      }
-    />
-    Add 
-    SingleNote 2
-  </ForwardRef(Button)>
-</Styled(ForwardRef(Grid))>
-`;
-
-exports[`<NoteList /> matches snapshot 1`] = `
-Array [
+<Fragment>
   <Styled(ForwardRef(Grid))
     item={true}
-    key="-1"
+    key="2"
     xs={12}
   >
     <Connect(Note)
@@ -46,34 +14,7 @@ Array [
           "archived": false,
           "body": "The Body",
           "created_at": "",
-          "id": -1,
-          "parent_note_id": 0,
-          "pinned": false,
-          "tags": Array [],
-          "title": "SingleNote 1",
-          "updated_at": "",
-          "user_id": -1,
-        }
-      }
-      noteViewFilter={null}
-      onDeleteNote={[Function]}
-      onUpdateNote={[Function]}
-      search=""
-    />
-  </Styled(ForwardRef(Grid))>,
-  <Styled(ForwardRef(Grid))
-    item={true}
-    key="-1"
-    xs={12}
-  >
-    <Connect(Note)
-      depth={2}
-      note={
-        Object {
-          "archived": false,
-          "body": "The Body",
-          "created_at": "",
-          "id": -1,
+          "id": 2,
           "parent_note_id": 0,
           "pinned": false,
           "tags": Array [],
@@ -82,15 +23,14 @@ Array [
           "user_id": -1,
         }
       }
-      noteViewFilter={null}
       onDeleteNote={[Function]}
       onUpdateNote={[Function]}
-      search=""
+      search="SingleNote 2"
     />
-  </Styled(ForwardRef(Grid))>,
+  </Styled(ForwardRef(Grid))>
   <Styled(ForwardRef(Grid))
     item={true}
-    key="-1"
+    key="1"
     xs={12}
   >
     <Connect(Note)
@@ -100,7 +40,33 @@ Array [
           "archived": false,
           "body": "The Body",
           "created_at": "",
-          "id": -1,
+          "id": 1,
+          "parent_note_id": 0,
+          "pinned": false,
+          "tags": Array [],
+          "title": "SingleNote 1",
+          "updated_at": "",
+          "user_id": -1,
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search="SingleNote 2"
+    />
+  </Styled(ForwardRef(Grid))>
+  <Styled(ForwardRef(Grid))
+    item={true}
+    key="4"
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "archived": false,
+          "body": "The Body",
+          "created_at": "",
+          "id": 4,
           "parent_note_id": 0,
           "pinned": false,
           "tags": Array [],
@@ -109,11 +75,93 @@ Array [
           "user_id": -1,
         }
       }
-      noteViewFilter={null}
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search="SingleNote 2"
+    />
+  </Styled(ForwardRef(Grid))>
+</Fragment>
+`;
+
+exports[`<NoteList /> matches snapshot 1`] = `
+<Fragment>
+  <Styled(ForwardRef(Grid))
+    item={true}
+    key="1"
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "archived": false,
+          "body": "The Body",
+          "created_at": "",
+          "id": 1,
+          "parent_note_id": 0,
+          "pinned": false,
+          "tags": Array [],
+          "title": "SingleNote 1",
+          "updated_at": "",
+          "user_id": -1,
+        }
+      }
       onDeleteNote={[Function]}
       onUpdateNote={[Function]}
       search=""
     />
-  </Styled(ForwardRef(Grid))>,
-]
+  </Styled(ForwardRef(Grid))>
+  <Styled(ForwardRef(Grid))
+    item={true}
+    key="4"
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "archived": false,
+          "body": "The Body",
+          "created_at": "",
+          "id": 4,
+          "parent_note_id": 0,
+          "pinned": false,
+          "tags": Array [],
+          "title": "SingleNote 4",
+          "updated_at": "",
+          "user_id": -1,
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search=""
+    />
+  </Styled(ForwardRef(Grid))>
+  <Styled(ForwardRef(Grid))
+    item={true}
+    key="2"
+    xs={12}
+  >
+    <Connect(Note)
+      depth={2}
+      note={
+        Object {
+          "archived": false,
+          "body": "The Body",
+          "created_at": "",
+          "id": 2,
+          "parent_note_id": 0,
+          "pinned": false,
+          "tags": Array [],
+          "title": "SingleNote 2",
+          "updated_at": "",
+          "user_id": -1,
+        }
+      }
+      onDeleteNote={[Function]}
+      onUpdateNote={[Function]}
+      search=""
+    />
+  </Styled(ForwardRef(Grid))>
+</Fragment>
 `;
