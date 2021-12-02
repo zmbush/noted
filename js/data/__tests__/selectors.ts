@@ -17,6 +17,8 @@ import {
   getSearchIndex,
   getFilteredSearchIndex,
   getSortedNoteIds,
+  getIsNotArchived,
+  getHasArchivedChild,
 } from '../selectors';
 
 const baseNote: NoteWithTags = {
@@ -126,6 +128,60 @@ describe('getSubNotes()', () => {
     });
 
     expect(getSubNotes(state, { note_id: 3 })).toEqual(expected);
+  });
+});
+
+describe('getIsNotArchived()', () => {
+  test('returns an empty map for empty notes map', () => {
+    expect(getIsNotArchived(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+  });
+
+  test('works with several notes', () => {
+    const state = rootReducer(
+      undefined,
+      notesFetched([
+        { ...baseNote, id: 1 },
+        { ...baseNote, id: 2, archived: true },
+        { ...baseNote, id: 3, archived: true },
+        { ...baseNote, id: 4 },
+      ]),
+    );
+    const expected = new Map();
+    expected.set(1, true);
+    expected.set(2, false);
+    expected.set(3, false);
+    expected.set(4, true);
+
+    expect(getIsNotArchived(state)).toEqual(expected);
+  });
+});
+
+describe('getHasArchivedChild()', () => {
+  test('returns an empty map for empty notes map', () => {
+    expect(getHasArchivedChild(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+  });
+
+  test('works with several notes', () => {
+    const state = rootReducer(
+      undefined,
+      notesFetched([
+        { ...baseNote, id: 1 },
+        { ...baseNote, id: 2, archived: true },
+        { ...baseNote, id: 3, archived: true },
+        { ...baseNote, id: 4 },
+        { ...baseNote, id: 5, parent_note_id: 4 },
+        { ...baseNote, id: 6, parent_note_id: 5, archived: true },
+      ]),
+    );
+    const expected = new Map();
+    expected.set(1, false);
+    expected.set(2, true);
+    expected.set(3, true);
+    expected.set(4, true);
+    expected.set(5, true);
+    expected.set(6, true);
+
+    expect(getHasArchivedChild(state)).toEqual(expected);
   });
 });
 
