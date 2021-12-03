@@ -5,10 +5,10 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import reducers from '../reducers';
+import { rootReducer } from '../store';
 
 describe('data::reducers()', () => {
   test('matches snapshot', () => {
-    expect(reducers(undefined, { type: null })).toMatchSnapshot();
+    expect(rootReducer(undefined, { type: null })).toMatchSnapshot();
   });
 });

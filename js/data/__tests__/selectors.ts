@@ -6,10 +6,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+import { getNotes } from 'data/notes/api';
 import { NoteWithTags } from 'data/types';
 
-import { notesFetched } from '../actions';
-import rootReducer from '../reducers';
 import {
   getTopLevelNotes,
   getLinkIds,
@@ -20,6 +19,7 @@ import {
   getIsNotArchived,
   getHasArchivedChild,
 } from '../selectors';
+import { rootReducer } from '../store';
 
 const baseNote: NoteWithTags = {
   id: 0,
@@ -36,26 +36,32 @@ const baseNote: NoteWithTags = {
 
 describe('getLinkIds()', () => {
   test('returns empty map for empty notes map', () => {
-    expect(getLinkIds(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+    expect(getLinkIds(rootReducer(undefined, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1, title: 'Test 1' },
-        { ...baseNote, id: 2, title: 'Test 2' },
-        { ...baseNote, id: 3, title: 'Test 3' },
-        { ...baseNote, id: 4, title: 'Test 4' },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1, title: 'Test 1' },
+          { ...baseNote, id: 2, title: 'Test 2' },
+          { ...baseNote, id: 3, title: 'Test 3' },
+          { ...baseNote, id: 4, title: 'Test 4' },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
-    const expected = new Map();
-    expected.set('Test 1', new Set([1]));
-    expected.set('Test 2', new Set([2]));
-    expected.set('Test 3', new Set([3]));
-    expected.set('Test 4', new Set([4]));
-    expected.set('Test', new Set([1, 2, 3, 4]));
+    const expected = {
+      'Test 1': new Set([1]),
+      'Test 2': new Set([2]),
+      'Test 3': new Set([3]),
+      'Test 4': new Set([4]),
+      Test: new Set([1, 2, 3, 4]),
+    };
 
     expect(getLinkIds(state)).toEqual(expected);
   });
@@ -63,31 +69,37 @@ describe('getLinkIds()', () => {
 
 describe('getTopLevelNotes()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getTopLevelNotes(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+    expect(getTopLevelNotes(rootReducer(undefined, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1, title: 'Test 1' },
-        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-        { ...baseNote, id: 3, title: 'Test 3' },
-        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1, title: 'Test 1' },
+          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+          { ...baseNote, id: 3, title: 'Test 3' },
+          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
-    const expected = new Map();
-    expected.set(1, {
-      ...baseNote,
-      id: 1,
-      title: 'Test 1',
-    });
-    expected.set(3, {
-      ...baseNote,
-      id: 3,
-      title: 'Test 3',
-    });
+    const expected = {
+      1: {
+        ...baseNote,
+        id: 1,
+        title: 'Test 1',
+      },
+      3: {
+        ...baseNote,
+        id: 3,
+        title: 'Test 3',
+      },
+    };
 
     expect(getTopLevelNotes(state)).toEqual(expected);
   });
@@ -99,33 +111,39 @@ describe('getSubNotes()', () => {
       getSubNotes(rootReducer(undefined, { type: '' }), {
         note_id: 0,
       }),
-    ).toEqual(new Map());
+    ).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1, title: 'Test 1' },
-        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-        { ...baseNote, id: 3, title: 'Test 3' },
-        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1, title: 'Test 1' },
+          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+          { ...baseNote, id: 3, title: 'Test 3' },
+          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
-    const expected = new Map();
-    expected.set(2, {
-      ...baseNote,
-      id: 2,
-      title: 'Test 2',
-      parent_note_id: 3,
-    });
-    expected.set(4, {
-      ...baseNote,
-      id: 4,
-      title: 'Test 4',
-      parent_note_id: 3,
-    });
+    const expected = {
+      2: {
+        ...baseNote,
+        id: 2,
+        title: 'Test 2',
+        parent_note_id: 3,
+      },
+      4: {
+        ...baseNote,
+        id: 4,
+        title: 'Test 4',
+        parent_note_id: 3,
+      },
+    };
 
     expect(getSubNotes(state, { note_id: 3 })).toEqual(expected);
   });
@@ -133,24 +151,30 @@ describe('getSubNotes()', () => {
 
 describe('getIsNotArchived()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getIsNotArchived(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+    expect(getIsNotArchived(rootReducer(undefined, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1 },
-        { ...baseNote, id: 2, archived: true },
-        { ...baseNote, id: 3, archived: true },
-        { ...baseNote, id: 4 },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1 },
+          { ...baseNote, id: 2, archived: true },
+          { ...baseNote, id: 3, archived: true },
+          { ...baseNote, id: 4 },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
-    const expected = new Map();
-    expected.set(1, true);
-    expected.set(2, false);
-    expected.set(3, false);
-    expected.set(4, true);
+    const expected = {
+      1: true,
+      2: false,
+      3: false,
+      4: true,
+    };
 
     expect(getIsNotArchived(state)).toEqual(expected);
   });
@@ -158,28 +182,33 @@ describe('getIsNotArchived()', () => {
 
 describe('getHasArchivedChild()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getHasArchivedChild(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+    expect(getHasArchivedChild(rootReducer(undefined, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1 },
-        { ...baseNote, id: 2, archived: true },
-        { ...baseNote, id: 3, archived: true },
-        { ...baseNote, id: 4 },
-        { ...baseNote, id: 5, parent_note_id: 4 },
-        { ...baseNote, id: 6, parent_note_id: 5, archived: true },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1 },
+          { ...baseNote, id: 2, archived: true },
+          { ...baseNote, id: 3, archived: true },
+          { ...baseNote, id: 4 },
+          { ...baseNote, id: 5, parent_note_id: 4 },
+          { ...baseNote, id: 6, parent_note_id: 5, archived: true },
+        ],
+        '',
+        undefined,
+      ),
     );
-    const expected = new Map();
-    expected.set(1, false);
-    expected.set(2, true);
-    expected.set(3, true);
-    expected.set(4, true);
-    expected.set(5, true);
-    expected.set(6, true);
+    const expected = {
+      1: false,
+      2: true,
+      3: true,
+      4: true,
+      5: true,
+      6: true,
+    };
 
     expect(getHasArchivedChild(state)).toEqual(expected);
   });
@@ -187,47 +216,50 @@ describe('getHasArchivedChild()', () => {
 
 describe('getSearchIndex()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getSearchIndex(rootReducer(undefined, { type: '' }))).toEqual(new Map());
+    expect(getSearchIndex(rootReducer(undefined, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1, title: 'Test 1' },
-        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-        { ...baseNote, id: 3, title: 'Test 3' },
-        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1, title: 'Test 1' },
+          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+          { ...baseNote, id: 3, title: 'Test 3' },
+          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
-    const expected = new Map();
-    expected.set(1, {
-      ...baseNote,
-      id: 1,
-      title: 'Test 1',
-    });
-
-    expected.set(2, {
-      ...baseNote,
-      id: 2,
-      title: 'Test 2',
-      parent_note_id: 3,
-    });
-
-    expected.set(3, {
-      ...baseNote,
-      id: 3,
-      title: 'Test 3 Test 2 Test 4',
-      body: 'body body body',
-    });
-
-    expected.set(4, {
-      ...baseNote,
-      id: 4,
-      title: 'Test 4',
-      parent_note_id: 3,
-    });
+    const expected = {
+      1: {
+        ...baseNote,
+        id: 1,
+        title: 'Test 1',
+      },
+      2: {
+        ...baseNote,
+        id: 2,
+        title: 'Test 2',
+        parent_note_id: 3,
+      },
+      3: {
+        ...baseNote,
+        id: 3,
+        title: 'Test 3 Test 2 Test 4',
+        body: 'body body body',
+      },
+      4: {
+        ...baseNote,
+        id: 4,
+        title: 'Test 4',
+        parent_note_id: 3,
+      },
+    };
 
     expect(getSearchIndex(state)).toEqual(expected);
   });
@@ -239,45 +271,51 @@ describe('getFilteredSearchIndex()', () => {
       getFilteredSearchIndex(rootReducer(undefined, { type: '' }), {
         note_id: null,
       }),
-    ).toEqual(new Map());
+    ).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        { ...baseNote, id: 1, title: 'Test 1', parent_note_id: 2 },
-        { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-        { ...baseNote, id: 3, title: 'Test 3' },
-        { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-      ]),
+      getNotes.fulfilled(
+        [
+          { ...baseNote, id: 1, title: 'Test 1', parent_note_id: 2 },
+          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
+          { ...baseNote, id: 3, title: 'Test 3' },
+          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
-    const expected = new Map();
-    expected.set(2, {
-      ...baseNote,
-      id: 2,
-      title: 'Test 2 Test 1',
-      body: 'body body',
-      parent_note_id: 3,
-    });
-
-    expected.set(4, {
-      ...baseNote,
-      id: 4,
-      title: 'Test 4',
-      parent_note_id: 3,
-    });
+    const expected = {
+      2: {
+        ...baseNote,
+        id: 2,
+        title: 'Test 2 Test 1',
+        body: 'body body',
+        parent_note_id: 3,
+      },
+      4: {
+        ...baseNote,
+        id: 4,
+        title: 'Test 4',
+        parent_note_id: 3,
+      },
+    };
 
     expect(getFilteredSearchIndex(state, { note_id: 3 })).toEqual(expected);
 
-    const expected2 = new Map();
-    expected2.set(3, {
-      ...baseNote,
-      id: 3,
-      title: 'Test 3 Test 2 Test 1 Test 4',
-      body: 'body body body body',
-    });
+    const expected2 = {
+      3: {
+        ...baseNote,
+        id: 3,
+        title: 'Test 3 Test 2 Test 1 Test 4',
+        body: 'body body body body',
+      },
+    };
 
     expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected2);
   });
@@ -291,35 +329,40 @@ describe('getSortedNoteIds()', () => {
   test('works with several notes', () => {
     const state = rootReducer(
       undefined,
-      notesFetched([
-        {
-          ...baseNote,
-          id: 1,
-          title: 'Test 1',
-          parent_note_id: 4,
-          updated_at: '3',
-        },
-        {
-          ...baseNote,
-          id: 2,
-          title: 'Test 2',
-          parent_note_id: 3,
-          updated_at: '2',
-        },
-        {
-          ...baseNote,
-          id: 3,
-          title: 'Test 3',
-          updated_at: '1',
-        },
-        {
-          ...baseNote,
-          id: 4,
-          title: 'Test 4',
-          parent_note_id: 3,
-          updated_at: '2',
-        },
-      ]),
+      getNotes.fulfilled(
+        [
+          {
+            ...baseNote,
+            id: 1,
+            title: 'Test 1',
+            parent_note_id: 4,
+            updated_at: '3',
+          },
+          {
+            ...baseNote,
+            id: 2,
+            title: 'Test 2',
+            parent_note_id: 3,
+            updated_at: '2',
+          },
+          {
+            ...baseNote,
+            id: 3,
+            title: 'Test 3',
+            updated_at: '1',
+          },
+          {
+            ...baseNote,
+            id: 4,
+            title: 'Test 4',
+            parent_note_id: 3,
+            updated_at: '2',
+          },
+        ],
+        '',
+        undefined,
+        undefined,
+      ),
     );
 
     expect(getSortedNoteIds(state)).toEqual([1, 4, 2, 3]);

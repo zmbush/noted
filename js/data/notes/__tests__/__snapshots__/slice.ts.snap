@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reducers::notes() responds to events 1`] = `
+Object {
+  "entities": Object {
+    "4": Object {
+      "archived": false,
+      "body": "body",
+      "created_at": "",
+      "id": 4,
+      "parent_note_id": 0,
+      "pinned": false,
+      "tags": Array [],
+      "title": "title",
+      "updated_at": "",
+      "user_id": -1,
+    },
+  },
+  "ids": Array [
+    4,
+  ],
+}
+`;
+
+exports[`reducers::notes() responds to events 2`] = `
+Object {
+  "entities": Object {
+    "4": Object {
+      "archived": false,
+      "body": "body",
+      "created_at": "",
+      "id": 4,
+      "parent_note_id": 0,
+      "pinned": false,
+      "tags": Array [],
+      "title": "title 3",
+      "updated_at": "",
+      "user_id": -1,
+    },
+  },
+  "ids": Array [
+    4,
+  ],
+}
+`;
+
+exports[`reducers::notes() responds to events 3`] = `
+Object {
+  "entities": Object {
+    "4": Object {
+      "archived": false,
+      "body": "body",
+      "created_at": "",
+      "id": 4,
+      "parent_note_id": 0,
+      "pinned": false,
+      "tags": Array [],
+      "title": "title 3",
+      "updated_at": "",
+      "user_id": -1,
+    },
+    "5": Object {
+      "archived": false,
+      "body": "body",
+      "created_at": "",
+      "id": 5,
+      "parent_note_id": 0,
+      "pinned": false,
+      "tags": Array [],
+      "title": "title 4",
+      "updated_at": "",
+      "user_id": -1,
+    },
+  },
+  "ids": Array [
+    4,
+    5,
+  ],
+}
+`;
+
+exports[`reducers::notes() responds to events 4`] = `
+Object {
+  "entities": Object {
+    "4": Object {
+      "archived": false,
+      "body": "body",
+      "created_at": "",
+      "id": 4,
+      "parent_note_id": 0,
+      "pinned": false,
+      "tags": Array [],
+      "title": "title 3",
+      "updated_at": "",
+      "user_id": -1,
+    },
+  },
+  "ids": Array [
+    4,
+  ],
+}
+`;
+
+exports[`reducers::notes() responds to events 5`] = `
+Object {
+  "entities": Object {},
+  "ids": Array [],
+}
+`;

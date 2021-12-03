@@ -17,7 +17,7 @@ describe('<AppBody />', () => {
     const wrapper = shallow(
       <AppBody
         createNewShortcut={() => {}}
-        notes={new Map()}
+        notes={{}}
         newNote={false}
         search=''
         onNewNoteCancel={() => {}}

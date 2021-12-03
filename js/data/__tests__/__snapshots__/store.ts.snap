@@ -2,12 +2,12 @@
 
 exports[`data::reducers() matches snapshot 1`] = `
 Object {
-  "notes": Map {},
-  "ui": Object {
-    "loading_notes": false,
+  "notes": Object {
+    "entities": Object {},
+    "ids": Array [],
   },
   "user": Object {
-    "is_signed_in": false,
+    "isSignedIn": false,
     "user": null,
   },
 }

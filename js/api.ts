@@ -13,44 +13,52 @@ import { UpdateNote, NewNote, NoteWithTags, User, SignIn, NewUserRequest } from 
 const api = '/api';
 const noteRoot = `${api}/secure/note`;
 
+const mapErr = async <V>(promise: Promise<V>) => {
+  try {
+    return await promise;
+  } catch (e) {
+    throw e.response.data;
+  }
+};
+
 export default {
   note: {
     async create(note: NewNote): Promise<NoteWithTags> {
-      return (await axios.put(noteRoot, note)).data;
+      return (await mapErr(axios.put(noteRoot, note))).data;
     },
 
     async update(noteId: number, note: UpdateNote): Promise<NoteWithTags> {
-      return (await axios.patch(`${noteRoot}s/${noteId}`, note)).data;
+      return (await mapErr(axios.patch(`${noteRoot}s/${noteId}`, note))).data;
     },
 
     async delete(noteId: number) {
-      return axios.delete(`${noteRoot}s/${noteId}`);
+      return mapErr(axios.delete(`${noteRoot}s/${noteId}`));
     },
 
     async setTags(noteId: number, tags: string[]): Promise<NoteWithTags> {
-      return (await axios.put(`${noteRoot}s/${noteId}/tags`, tags)).data;
+      return (await mapErr(axios.put(`${noteRoot}s/${noteId}/tags`, tags))).data;
     },
 
     async list(): Promise<NoteWithTags[]> {
-      return (await axios.get('/api/secure/notes')).data;
+      return (await mapErr(axios.get('/api/secure/notes'))).data;
     },
   },
 
   user: {
     async get(): Promise<User> {
-      return (await axios.get(`${api}/get_user`)).data;
+      return (await mapErr(axios.get(`${api}/get_user`))).data;
     },
 
-    async signOut() {
-      axios.delete(`${api}/sign_out`);
+    async signOut(): Promise<void> {
+      return mapErr(axios.delete(`${api}/sign_out`));
     },
 
     async signIn(signIn: SignIn): Promise<User> {
-      return (await axios.post(`${api}/sign_in`, signIn)).data;
+      return (await mapErr(axios.post(`${api}/sign_in`, signIn))).data;
     },
 
     async signUp(signUp: NewUserRequest): Promise<User> {
-      return (await axios.put(`${api}/sign_up`, signUp)).data;
+      return (await mapErr(axios.put(`${api}/sign_up`, signUp))).data;
     },
   },
 };

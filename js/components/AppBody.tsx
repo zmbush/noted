@@ -44,7 +44,7 @@ export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
 };
 
 type Props = {
-  notes: Map<number, NoteWithTags>;
+  notes: { [id: number]: NoteWithTags };
   createNewShortcut: (
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     combo?: string,

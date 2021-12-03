@@ -35,10 +35,9 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import api from 'api';
 import BindKeyboard from 'components/BindKeyboard';
 import SearchInput from 'components/SearchInput';
-import { signOut } from 'data/actions';
+import { signOutUser } from 'data/user/api';
 
 const FillSpace = styled('div')({ flexGrow: 1 });
 
@@ -91,8 +90,7 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
     setUserMenuEl(null);
     setUserMenuOpen(false);
     e.preventDefault();
-    await api.user.signOut();
-    dispatch(signOut());
+    dispatch(signOutUser());
   };
 
   const startSearch = (e: Event) => {

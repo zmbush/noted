@@ -62,30 +62,6 @@ exports[`<NoteList /> matches snapshot 1`] = `
   </Styled(ForwardRef(Grid))>
   <Styled(ForwardRef(Grid))
     item={true}
-    key="4"
-    xs={12}
-  >
-    <Note
-      depth={2}
-      note={
-        Object {
-          "archived": false,
-          "body": "The Body",
-          "created_at": "",
-          "id": 4,
-          "parent_note_id": 0,
-          "pinned": false,
-          "tags": Array [],
-          "title": "Note 4",
-          "updated_at": "",
-          "user_id": -1,
-        }
-      }
-      search=""
-    />
-  </Styled(ForwardRef(Grid))>
-  <Styled(ForwardRef(Grid))
-    item={true}
     key="2"
     xs={12}
   >
@@ -101,6 +77,30 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "pinned": false,
           "tags": Array [],
           "title": "Note 2",
+          "updated_at": "",
+          "user_id": -1,
+        }
+      }
+      search=""
+    />
+  </Styled(ForwardRef(Grid))>
+  <Styled(ForwardRef(Grid))
+    item={true}
+    key="4"
+    xs={12}
+  >
+    <Note
+      depth={2}
+      note={
+        Object {
+          "archived": false,
+          "body": "The Body",
+          "created_at": "",
+          "id": 4,
+          "parent_note_id": 0,
+          "pinned": false,
+          "tags": Array [],
+          "title": "Note 4",
           "updated_at": "",
           "user_id": -1,
         }

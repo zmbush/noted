@@ -290,7 +290,7 @@ exports[`<NoteContents /> matches snapshot 1`] = `
     >
       <NoteList
         depth={1}
-        notes={Map {}}
+        notes={Object {}}
         parent_note_id={1}
         search=""
       />
@@ -454,7 +454,7 @@ exports[`<NoteContents /> matches snapshot 2`] = `
     >
       <NoteList
         depth={1}
-        notes={Map {}}
+        notes={Object {}}
         search=""
       />
     </ForwardRef(Grid)>
@@ -622,7 +622,7 @@ exports[`<NoteContents /> matches snapshot 3`] = `
     >
       <NoteList
         depth={1}
-        notes={Map {}}
+        notes={Object {}}
         search=""
       />
     </ForwardRef(Grid)>
