@@ -9,13 +9,19 @@
 import { shallow } from 'enzyme';
 
 import * as React from 'react';
+import * as ReactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
-import { Inner as FilteredNoteList } from '../FilteredNoteList';
+import { testState } from 'data/utils.forTesting';
+
+import FilteredNoteList from '../FilteredNoteList';
+
+// eslint-disable-next-line no-import-assign
+jest.spyOn(ReactRedux, 'useSelector').mockImplementation((r) => r(testState));
 
 describe('<FilteredNoteList />', () => {
   test('matches snapshot', () => {
-    const node = shallow(<FilteredNoteList depth={1} notes={new Map()} search='' />, {
+    const node = shallow(<FilteredNoteList depth={1} search='' />, {
       wrappingComponent: MemoryRouter,
     });
 

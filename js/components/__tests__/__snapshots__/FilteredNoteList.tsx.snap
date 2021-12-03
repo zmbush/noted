@@ -3,7 +3,46 @@
 exports[`<FilteredNoteList /> matches snapshot 1`] = `
 <NoteList
   depth={1}
-  notes={Map {}}
+  notes={
+    Map {
+      1 => Object {
+        "archived": false,
+        "body": "The Body",
+        "created_at": "",
+        "id": 1,
+        "parent_note_id": 0,
+        "pinned": false,
+        "tags": Array [],
+        "title": "Note 1",
+        "updated_at": "",
+        "user_id": -1,
+      },
+      4 => Object {
+        "archived": false,
+        "body": "The Body",
+        "created_at": "",
+        "id": 4,
+        "parent_note_id": 0,
+        "pinned": false,
+        "tags": Array [],
+        "title": "Note 4",
+        "updated_at": "",
+        "user_id": -1,
+      },
+      2 => Object {
+        "archived": false,
+        "body": "The Body",
+        "created_at": "",
+        "id": 2,
+        "parent_note_id": 0,
+        "pinned": false,
+        "tags": Array [],
+        "title": "Note 2",
+        "updated_at": "",
+        "user_id": -1,
+      },
+    }
+  }
   parent_note_id={null}
   renderOnly={
     Set {

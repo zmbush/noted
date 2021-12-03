@@ -16,13 +16,4 @@ describe('<ConfirmationDialog />', () => {
     const wrapper = shallow(<ConfirmationDialog open />);
     expect(wrapper).toMatchSnapshot();
   });
-
-  test('defaultProps', () => {
-    ConfirmationDialog.defaultProps.onNegative();
-    ConfirmationDialog.defaultProps.onPositive();
-
-    expect(ConfirmationDialog.defaultProps.message).toEqual('Are you sure?');
-    expect(ConfirmationDialog.defaultProps.negative).toEqual('No');
-    expect(ConfirmationDialog.defaultProps.positive).toEqual('Yes');
-  });
 });

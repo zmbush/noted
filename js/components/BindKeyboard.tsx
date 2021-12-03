@@ -13,40 +13,39 @@ type Props = {
   keys: string;
   action?: string;
   callback: (e: Mousetrap.ExtendedKeyboardEvent, combo: string) => void;
+  children?: React.ReactNode | React.ReactNode[];
 };
 
-export default class BindKeyboard extends React.Component<Props> {
-  main: React.RefObject<HTMLDivElement>;
+const BindKeyboard = ({ keys, action, callback, children }: Props) => {
+  const mainRef = React.useRef<HTMLDivElement>();
+  const mousetrapRef = React.useRef<Mousetrap.MousetrapInstance | Mousetrap.MousetrapStatic>(null);
 
-  mousetrap: Mousetrap.MousetrapInstance | Mousetrap.MousetrapStatic;
+  React.useEffect(() => {
+    if (mainRef.current || !children) {
+      if (mousetrapRef.current) {
+        mousetrapRef.current.unbind(keys, action);
+      }
 
-  constructor(props: Props) {
-    super(props);
+      if (children) {
+        mousetrapRef.current = new Mousetrap(mainRef.current);
+      } else {
+        mousetrapRef.current = Mousetrap;
+      }
 
-    this.main = React.createRef();
-  }
-
-  componentDidMount() {
-    const { children, keys, callback, action } = this.props;
-    if (children) {
-      this.mousetrap = new Mousetrap(this.main.current);
-    } else {
-      this.mousetrap = Mousetrap;
+      mousetrapRef.current.bind(keys, callback, action);
     }
 
-    this.mousetrap.bind(keys, callback, action);
-  }
+    return () => {
+      if (mousetrapRef.current) {
+        mousetrapRef.current.unbind(keys, action);
+      }
+    };
+  }, [mainRef.current, children, callback]);
 
-  componentWillUnmount() {
-    const { keys, action } = this.props;
-    this.mousetrap.unbind(keys, action);
+  if (children) {
+    return <div ref={mainRef}>{children}</div>;
   }
+  return null;
+};
 
-  render() {
-    const { children } = this.props;
-    if (children) {
-      return <div ref={this.main}>{children}</div>;
-    }
-    return null;
-  }
-}
+export default BindKeyboard;

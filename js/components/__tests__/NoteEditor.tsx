@@ -10,11 +10,23 @@ import { Editor } from '@toast-ui/react-editor';
 import { shallow } from 'enzyme';
 import ChipInput from 'material-ui-chip-input';
 
-import * as React from 'react';
+import React from 'react';
 
 import { CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
 import NoteEditor from '../NoteEditor';
+
+jest.spyOn(React, 'useRef').mockReturnValue({
+  current: {
+    getInstance() {
+      return {
+        getMarkdown() {
+          return 'new body';
+        },
+      };
+    },
+  },
+});
 
 const editor = (
   <NoteEditor
@@ -28,6 +40,7 @@ const editor = (
       user_id: 2,
     }}
     onSave={() => {}}
+    onModified={() => {}}
   />
 );
 
@@ -51,16 +64,17 @@ describe('<NoteEditor />', () => {
   test('tag input works', () => {
     const wrapper = shallow(editor);
 
-    const input = wrapper.find(ChipInput);
+    wrapper.find(ChipInput).props().onAdd('test');
+    expect(wrapper.find(ChipInput).props().value).toContain('test');
 
-    input.props().onAdd('test');
-    expect((wrapper.state() as any).tags).toContain('test');
-    input.props().onDelete('test', 1);
-    expect((wrapper.state() as any).tags).not.toContain('test');
+    wrapper.find(ChipInput).props().onDelete('test', 1);
+    expect(wrapper.find(ChipInput).props().value).not.toContain('test');
   });
 
   test('title change works', () => {
     const wrapper = shallow(editor);
+    const onSave = jest.fn();
+    wrapper.setProps({ onSave });
     wrapper
       .find(CardHeader)
       .dive()
@@ -68,25 +82,25 @@ describe('<NoteEditor />', () => {
       .find(Input)
       .simulate('change', { target: { value: 'new title' } });
 
-    expect(wrapper.state('title')).toEqual('new title');
+    expect(wrapper.find(CardHeader).dive().dive().find(Input).props().value).toEqual('new title');
 
     const toastEditor = wrapper.find(CardContent).dive().dive().find(Editor);
-
-    (wrapper.instance() as any).editor = {
-      current: {
-        getInstance() {
-          return {
-            getMarkdown() {
-              return 'new body';
-            },
-          };
-        },
-      },
-    };
-
     toastEditor.props().events.change('wysiwyg');
 
-    expect(wrapper.state('body')).toEqual('new body');
+    wrapper
+      .find(CardHeader)
+      .dive()
+      .dive()
+      .find('[aria-label="Save Note"]')
+      .first()
+      .simulate('click', { preventDefault: () => {} });
+
+    expect(onSave).toHaveBeenCalledWith({
+      title: 'new title',
+      body: 'new body',
+      parent_note_id: undefined,
+      tags: ['tag1'],
+    });
   });
 
   test('submitting works', () => {

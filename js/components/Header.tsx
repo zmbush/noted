@@ -53,6 +53,7 @@ type Props = {
 };
 
 const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 100 }: Props) => {
+  const searchInput = React.useRef<HTMLInputElement>();
   const [searchInputValue, setSearchInputValue] = React.useState('');
   const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement>(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
@@ -94,8 +95,14 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
     dispatch(signOut());
   };
 
+  const startSearch = (e: Event) => {
+    e.preventDefault();
+    searchInput.current.focus();
+  };
+
   return (
     <>
+      <BindKeyboard keys='/' callback={startSearch} />
       <AppBar sx={{ displayPrint: 'none' }}>
         <Toolbar>
           <Routes>
@@ -156,6 +163,7 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
               value={searchInputValue}
               onChange={doSearch}
               onSubmit={onStartEdit}
+              ref={searchInput}
             />
           </BindKeyboard>
           <IconButton

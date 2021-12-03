@@ -4,75 +4,32 @@ exports[`<NoteList /> matches second snapshot 1`] = `
 <Fragment>
   <Styled(ForwardRef(Grid))
     item={true}
-    key="2"
+    key="new"
     xs={12}
   >
-    <Note
-      depth={2}
-      note={
+    <ForwardRef(Button)
+      color="primary"
+      sx={
         Object {
-          "archived": false,
-          "body": "The Body",
-          "created_at": "",
-          "id": 2,
-          "parent_note_id": 0,
-          "pinned": false,
-          "tags": Array [],
-          "title": "SingleNote 2",
-          "updated_at": "",
-          "user_id": -1,
+          "@media print": Object {
+            "display": "none",
+          },
+          "margin": 1,
         }
       }
-      search="SingleNote 2"
-    />
-  </Styled(ForwardRef(Grid))>
-  <Styled(ForwardRef(Grid))
-    item={true}
-    key="1"
-    xs={12}
-  >
-    <Note
-      depth={2}
-      note={
-        Object {
-          "archived": false,
-          "body": "The Body",
-          "created_at": "",
-          "id": 1,
-          "parent_note_id": 0,
-          "pinned": false,
-          "tags": Array [],
-          "title": "SingleNote 1",
-          "updated_at": "",
-          "user_id": -1,
+      variant="contained"
+    >
+      <Memo(ForwardRef(AddIcon))
+        sx={
+          Object {
+            "fontSize": 20,
+            "marginRight": 1,
+          }
         }
-      }
-      search="SingleNote 2"
-    />
-  </Styled(ForwardRef(Grid))>
-  <Styled(ForwardRef(Grid))
-    item={true}
-    key="4"
-    xs={12}
-  >
-    <Note
-      depth={2}
-      note={
-        Object {
-          "archived": false,
-          "body": "The Body",
-          "created_at": "",
-          "id": 4,
-          "parent_note_id": 0,
-          "pinned": false,
-          "tags": Array [],
-          "title": "SingleNote 4",
-          "updated_at": "",
-          "user_id": -1,
-        }
-      }
-      search="SingleNote 2"
-    />
+      />
+      Add 
+      SingleNote 2
+    </ForwardRef(Button)>
   </Styled(ForwardRef(Grid))>
 </Fragment>
 `;
@@ -95,7 +52,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "parent_note_id": 0,
           "pinned": false,
           "tags": Array [],
-          "title": "SingleNote 1",
+          "title": "Note 1",
           "updated_at": "",
           "user_id": -1,
         }
@@ -119,7 +76,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "parent_note_id": 0,
           "pinned": false,
           "tags": Array [],
-          "title": "SingleNote 4",
+          "title": "Note 4",
           "updated_at": "",
           "user_id": -1,
         }
@@ -143,7 +100,7 @@ exports[`<NoteList /> matches snapshot 1`] = `
           "parent_note_id": 0,
           "pinned": false,
           "tags": Array [],
-          "title": "SingleNote 2",
+          "title": "Note 2",
           "updated_at": "",
           "user_id": -1,
         }

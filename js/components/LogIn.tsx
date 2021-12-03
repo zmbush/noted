@@ -5,10 +5,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import { Dispatch } from 'redux';
-
+//
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import {
   Button,
@@ -22,33 +21,19 @@ import {
 
 import api from 'api';
 import { logIn, fetchData } from 'data/actions';
-import { AppState } from 'data/reducers';
-import { User } from 'data/types';
 
 type LogInProps = {
   open: boolean;
-  logIn: (user: User) => void;
 };
 
-const initialState = {
-  signing_in: true,
-  email: '',
-  password: '',
-  name: '',
-};
+const LogIn = ({ open }: LogInProps) => {
+  const dispatch = useDispatch();
+  const [signingIn, setSigningIn] = React.useState(true);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [name, setName] = React.useState('');
 
-type LogInState = typeof initialState;
-
-class LogIn extends React.Component<LogInProps, LogInState> {
-  constructor(props: LogInProps) {
-    super(props);
-
-    this.state = initialState;
-  }
-
-  signInOrUp = async (e: React.SyntheticEvent) => {
-    const { logIn: doLogIn } = this.props;
-    const { signing_in: signingIn, email, password, name } = this.state;
+  const signInOrUp = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     let result;
@@ -58,81 +43,71 @@ class LogIn extends React.Component<LogInProps, LogInState> {
       result = await api.user.signUp({ email, password, name });
     }
 
-    this.setState(initialState);
-    doLogIn(result);
+    setSigningIn(true);
+    setEmail('');
+    setPassword('');
+    setName('');
+    dispatch(logIn(result));
+    await fetchData(dispatch);
   };
 
-  render() {
-    const { open } = this.props;
-    const { signing_in: signingIn, name, email, password } = this.state;
-    return (
-      <Dialog open={open}>
-        <DialogTitle>{signingIn ? 'Sign In' : 'Sign Up'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To use Noted, you must sign in.{' '}
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a
-              href='#'
-              onClick={(e) => {
-                e.preventDefault();
-                this.setState({ signing_in: !signingIn });
-              }}
-            >
-              {signingIn ? 'Sign Up' : 'Sign In'}
-            </a>{' '}
-            instead.
-          </DialogContentText>
-          <form onSubmit={this.signInOrUp}>
-            {signingIn ? null : (
-              <TextField
-                margin='dense'
-                id='name'
-                label='Name'
-                type='text'
-                value={name}
-                onChange={(e) => this.setState({ name: e.target.value })}
-                fullWidth
-              />
-            )}
+  return (
+    <Dialog open={open}>
+      <DialogTitle>{signingIn ? 'Sign In' : 'Sign Up'}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          To use Noted, you must sign in. {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a
+            href='#'
+            onClick={(e) => {
+              e.preventDefault();
+              setSigningIn(!signingIn);
+            }}
+          >
+            {signingIn ? 'Sign Up' : 'Sign In'}
+          </a>{' '}
+          instead.
+        </DialogContentText>
+        <form onSubmit={signInOrUp}>
+          {signingIn ? null : (
             <TextField
               margin='dense'
               id='name'
-              label='Email Address'
-              type='email'
-              value={email}
-              onChange={(e) => this.setState({ email: e.target.value })}
+              label='Name'
+              type='text'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               fullWidth
             />
-            <TextField
-              margin='dense'
-              id='name'
-              label='Password'
-              type='password'
-              value={password}
-              onChange={(e) => this.setState({ password: e.target.value })}
-              fullWidth
-            />
-            <input type='submit' value='Submit' style={{ visibility: 'hidden' }} />
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.signInOrUp} color='primary'>
-            {signingIn ? 'Sign In' : 'Sign Up'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+          )}
+          <TextField
+            margin='dense'
+            id='name'
+            label='Email Address'
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+          />
+          <TextField
+            margin='dense'
+            id='name'
+            label='Password'
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+          />
+          <input type='submit' value='Submit' style={{ visibility: 'hidden' }} />
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={signInOrUp} color='primary'>
+          {signingIn ? 'Sign In' : 'Sign Up'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
-const mapStateToProps = (_state: AppState) => ({});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  logIn(user: User) {
-    dispatch(logIn(user));
-    fetchData(dispatch);
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(LogIn);
+export default LogIn;
