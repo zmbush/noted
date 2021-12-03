@@ -13,7 +13,6 @@ import { useSelector } from 'react-redux';
 import { styled } from '@mui/material';
 
 import AppBody from 'components/AppBody';
-import BindKeyboard from 'components/BindKeyboard';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
 import { AppState } from 'data/reducers';
@@ -29,7 +28,6 @@ const AppRoot = styled('div')({
 });
 
 const App = () => {
-  const searchInput = React.useRef<HTMLInputElement>();
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const notes = useSelector(getTopLevelNotes);
@@ -37,11 +35,6 @@ const App = () => {
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
-
-  const startSearch = (e: Event) => {
-    e.preventDefault();
-    searchInput.current.focus();
-  };
 
   const create = () => {
     setNewNote(true);
@@ -80,7 +73,6 @@ const App = () => {
         search={search}
         onNewNoteCancel={() => setNewNote(false)}
       />
-      <BindKeyboard keys='/' callback={startSearch} />
       <LogIn open={!isSignedIn} />
     </AppRoot>
   );

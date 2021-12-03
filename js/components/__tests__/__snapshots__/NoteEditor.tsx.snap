@@ -11,6 +11,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
     <ForwardRef(CardHeader)
       action={
         <ForwardRef(IconButton)
+          aria-label="Save Note"
           onClick={[Function]}
           size="large"
         >
@@ -96,6 +97,7 @@ exports[`<NoteEditor /> matches snapshot 2`] = `
     <ForwardRef(CardHeader)
       action={
         <ForwardRef(IconButton)
+          aria-label="Save Note"
           onClick={[Function]}
           size="large"
         >

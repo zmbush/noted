@@ -33,35 +33,37 @@ type Props = {
   children: (React.ReactNode & React.ReactNode[]) | string;
 };
 
-export default class AutoLink extends React.Component<Props> {
-  render() {
-    const { children, titles } = this.props;
-    let body: any[] = children as any[];
-    if (!(children instanceof Array)) {
-      body = [children];
-    }
-    let keyIx = 1;
-
-    titles.forEach((value, key) => {
-      let newBody: any[] = [];
-      body.forEach((part) => {
-        if (typeof part === 'string' || part instanceof String) {
-          const elements = part.split(new RegExp(key, 'i')).reduce((r, a, ix, arr) => {
-            r.push(a);
-            if (ix + 1 < arr.length) {
-              r.push(<LinkedText key={`linked-text-${keyIx}`} text={key} ids={value} />);
-              keyIx += 1;
-            }
-            return r;
-          }, []);
-          newBody = newBody.concat(elements);
-        } else {
-          newBody.push(part);
-        }
-      });
-      body = newBody;
-    });
-
-    return body;
+const AutoLink = ({ children, titles }: Props) => {
+  let body: React.ReactNode[] = [];
+  if (!(children instanceof Array)) {
+    body = [children];
+  } else {
+    body = children;
   }
-}
+  let keyIx = 1;
+
+  titles.forEach((value, key) => {
+    let newBody: any[] = [];
+    body.forEach((part) => {
+      if (typeof part === 'string' || part instanceof String) {
+        const elements = part.split(new RegExp(key, 'i')).reduce((r, a, ix, arr) => {
+          r.push(a);
+          if (ix + 1 < arr.length) {
+            r.push(<LinkedText key={`linked-text-${keyIx}`} text={key} ids={value} />);
+            keyIx += 1;
+          }
+          return r;
+        }, []);
+        newBody = newBody.concat(elements);
+      } else {
+        newBody.push(part);
+      }
+    });
+    body = newBody;
+  });
+
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{body}</>;
+};
+
+export default AutoLink;

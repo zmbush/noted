@@ -3,7 +3,7 @@
 exports[`<AppBody /> matches snapshot 1`] = `
 <ForwardRef(Grid)
   container={true}
-  spacing={2}
+  spacing={1}
   sx={
     Object {
       "@media print": Object {
@@ -46,7 +46,7 @@ exports[`<AppBody /> matches snapshot 1`] = `
     />
     <Route
       element={
-        <Memo(Connect(FilteredNoteList))
+        <FilteredNoteList
           depth={1}
           search=""
         />
@@ -55,7 +55,7 @@ exports[`<AppBody /> matches snapshot 1`] = `
     />
     <Route
       element={
-        <Memo(Connect(FilteredNoteList))
+        <FilteredNoteList
           depth={1}
           search=""
         />
@@ -77,7 +77,7 @@ exports[`<AppBody /> matches snapshot 2`] = `
 exports[`<AppBody /> matches snapshot 3`] = `
 <ForwardRef(Grid)
   container={true}
-  spacing={2}
+  spacing={1}
   sx={
     Object {
       "@media print": Object {
@@ -120,7 +120,7 @@ exports[`<AppBody /> matches snapshot 3`] = `
     />
     <Route
       element={
-        <Memo(Connect(FilteredNoteList))
+        <FilteredNoteList
           depth={1}
           search="Search Term"
         />
@@ -129,7 +129,7 @@ exports[`<AppBody /> matches snapshot 3`] = `
     />
     <Route
       element={
-        <Memo(Connect(FilteredNoteList))
+        <FilteredNoteList
           depth={1}
           search="Search Term"
         />

@@ -7,7 +7,7 @@
 // except according to those terms.
 //
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import NoteList from 'components/NoteList';
@@ -15,23 +15,24 @@ import { AppState } from 'data/reducers';
 import { NoteWithTags } from 'data/types';
 
 interface Props {
-  notes: Map<number, NoteWithTags>;
   search: string;
   depth: number;
 }
 
-const FilteredNoteList = (props: Props) => {
+const FilteredNoteList = ({ search, depth }: Props) => {
   const { ids = '' } = useParams<'ids'>();
   const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
+  const notes = useSelector<AppState, Map<number, NoteWithTags>>((state) => state.notes);
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  return <NoteList parent_note_id={null} renderOnly={parsedIds} {...props} />;
+  return (
+    <NoteList
+      parent_note_id={null}
+      renderOnly={parsedIds}
+      notes={notes}
+      search={search}
+      depth={depth}
+    />
+  );
 };
 
-export const Inner = FilteredNoteList;
-
-const mapStateToProps = (state: AppState) => ({
-  notes: state.notes,
-});
-
-export default connect(mapStateToProps)(FilteredNoteList);
+export default FilteredNoteList;

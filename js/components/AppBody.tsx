@@ -67,7 +67,7 @@ const AppBody = ({ notes, createNewShortcut, newNote, search, onNewNoteCancel }:
   return (
     <Grid
       container
-      spacing={2}
+      spacing={1}
       sx={{
         '@media print': {
           marginTop: 0,

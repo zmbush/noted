@@ -226,7 +226,7 @@ export const NoteContents = ({
         <Grid
           container
           sx={{
-            marginTop: '75px',
+            marginTop: 4,
             '@media print': {
               marginTop: 0,
               display: 'block',
@@ -257,7 +257,7 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
   const [edit, setEdit] = React.useState(!('id' in note)); // If note has no 'id', it must be a NewNote
   const [creatingSubNote, setCreatingSubNote] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
-  const noteEditor = React.useRef<any>();
+  const [noteIsModified, setNoteIsModified] = React.useState(false);
   const theme = useTheme();
   const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
   const dispatch = useDispatch();
@@ -276,10 +276,10 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
   };
 
   const tryCancelEdit = () => {
-    if (!noteEditor.current || !noteEditor.current.hasChanges()) {
-      cancelEdit();
-    } else {
+    if (noteIsModified) {
       setConfirmCancelEditOpen(true);
+    } else {
+      cancelEdit();
     }
   };
 
@@ -340,7 +340,7 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
           {edit || creatingSubNote ? (
             <NoteEditor
               onSave={save}
-              ref={noteEditor}
+              onModified={setNoteIsModified}
               note={
                 'id' in note && creatingSubNote
                   ? { title: '', body: '', parent_note_id: note.id }

@@ -24,37 +24,33 @@ interface Props extends DialogProps {
   onPositive?: () => void;
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
-export default class ConfirmationDialog extends React.Component<Props> {
-  static defaultProps = {
-    message: 'Are you sure?',
-    negative: 'No',
-    positive: 'Yes',
-    onNegative: () => {},
-    onPositive: () => {},
-  };
+const ConfirmationDialog = ({
+  title,
+  message = 'Are you sure?',
+  negative = 'No',
+  positive = 'Yes',
+  onNegative = () => {},
+  onPositive = () => {},
+  ...other
+}: Props) => (
+  <Dialog
+    onClose={() => false}
+    maxWidth='xs'
+    aria-labelledby='confirmation-dialog-title'
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...other}
+  >
+    <DialogTitle id='confirmation-dialog-title'>{title}</DialogTitle>
+    <DialogContent>{message}</DialogContent>
+    <DialogActions>
+      <Button onClick={onNegative} color='primary'>
+        {negative}
+      </Button>
+      <Button onClick={onPositive} color='primary'>
+        {positive}
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
 
-  render() {
-    const { title, message, negative, onNegative, positive, onPositive, ...other } = this.props;
-    return (
-      <Dialog
-        onClose={() => false}
-        maxWidth='xs'
-        aria-labelledby='confirmation-dialog-title'
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...other}
-      >
-        <DialogTitle id='confirmation-dialog-title'>{title}</DialogTitle>
-        <DialogContent>{message}</DialogContent>
-        <DialogActions>
-          <Button onClick={onNegative} color='primary'>
-            {negative}
-          </Button>
-          <Button onClick={onPositive} color='primary'>
-            {positive}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+export default ConfirmationDialog;

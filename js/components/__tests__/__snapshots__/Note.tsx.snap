@@ -24,12 +24,9 @@ exports[`<Note /> matches snapshot 1`] = `
     setEdit={[Function]}
   />
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
   <ForwardRef(Dialog)
@@ -62,12 +59,9 @@ exports[`<Note /> matches snapshot 1`] = `
 exports[`<Note /> matches snapshot 2`] = `
 <Fragment>
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
   <ForwardRef(Dialog)
@@ -100,12 +94,9 @@ exports[`<Note /> matches snapshot 2`] = `
 exports[`<Note /> matches snapshot 3`] = `
 <Fragment>
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="If you close this editor, you will lose your changes."
   />
   <ForwardRef(Dialog)
@@ -252,12 +243,9 @@ exports[`<NoteContents /> matches snapshot 1`] = `
     </ForwardRef(MenuItem)>
   </ForwardRef(Menu)>
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="You are about to delete note: note title"
   />
   <ForwardRef(CardContent)
@@ -296,7 +284,7 @@ exports[`<NoteContents /> matches snapshot 1`] = `
             "display": "block",
             "marginTop": 0,
           },
-          "marginTop": "75px",
+          "marginTop": 4,
         }
       }
     >
@@ -427,12 +415,9 @@ exports[`<NoteContents /> matches snapshot 2`] = `
     </ForwardRef(MenuItem)>
   </ForwardRef(Menu)>
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="You are about to delete note: undefined"
   />
   <ForwardRef(CardContent)
@@ -463,7 +448,7 @@ exports[`<NoteContents /> matches snapshot 2`] = `
             "display": "block",
             "marginTop": 0,
           },
-          "marginTop": "75px",
+          "marginTop": 4,
         }
       }
     >
@@ -598,12 +583,9 @@ exports[`<NoteContents /> matches snapshot 3`] = `
     </ForwardRef(MenuItem)>
   </ForwardRef(Menu)>
   <ConfirmationDialog
-    message="Are you sure?"
-    negative="No"
     onNegative={[Function]}
     onPositive={[Function]}
     open={false}
-    positive="Yes"
     title="You are about to delete note: undefined"
   />
   <ForwardRef(CardContent)
@@ -634,7 +616,7 @@ exports[`<NoteContents /> matches snapshot 3`] = `
             "display": "block",
             "marginTop": 0,
           },
-          "marginTop": "75px",
+          "marginTop": 4,
         }
       }
     >

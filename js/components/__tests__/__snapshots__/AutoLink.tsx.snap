@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<AutoLink /> matches snapshot 1`] = `
-Array [
-  "This ",
+<Fragment>
+  This 
   <LinkedText
     ids={
       Set {
@@ -11,8 +11,8 @@ Array [
     }
     key="linked-text-1"
     text="Goat"
-  />,
-  " is here. It also has ",
+  />
+   is here. It also has 
   <LinkedText
     ids={
       Set {
@@ -22,9 +22,9 @@ Array [
     }
     key="linked-text-2"
     text="Boat"
-  />,
-  "s galore.",
-]
+  />
+  s galore.
+</Fragment>
 `;
 
 exports[`<LinkedText /> matches snapshot 1`] = `"Link"`;
