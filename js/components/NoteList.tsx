@@ -22,7 +22,7 @@ import {
   getHasArchivedChild,
   getIsNotArchived,
   getSortedNoteIds,
-} from 'data/selectors';
+} from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NoteWithTags } from 'data/types';
 

@@ -50,7 +50,7 @@ export default {
     },
 
     async signOut(): Promise<void> {
-      return mapErr(axios.delete(`${api}/sign_out`));
+      return mapErr(axios.post(`${api}/sign_out`));
     },
 
     async signIn(signIn: SignIn): Promise<User> {

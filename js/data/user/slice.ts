@@ -9,8 +9,9 @@
 
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { WritableDraft } from 'immer/dist/types/types-external';
+import { Draft } from 'immer';
 
+import { getNotes } from 'data/notes/api';
 import { User } from 'data/types';
 import { getCurrentUser, signInUser, signOutUser, signUpUser } from 'data/user/api';
 
@@ -29,11 +30,11 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    const setSignedIn = (state: WritableDraft<UserState>, { payload }: { payload: User }) => {
+    const setSignedIn = (state: Draft<UserState>, { payload }: { payload: User }) => {
       state.isSignedIn = true;
       state.user = payload;
     };
-    const setSignedOut = (state: WritableDraft<UserState>) => {
+    const setSignedOut = (state: Draft<UserState>) => {
       state.isSignedIn = false;
       state.user = null;
     };
@@ -47,7 +48,8 @@ export const userSlice = createSlice({
       .addCase(signInUser.rejected, setSignedOut)
       .addCase(signOutUser.fulfilled, setSignedOut)
       .addCase(signOutUser.rejected, setSignedOut)
-      .addCase(signUpUser.rejected, setSignedOut);
+      .addCase(signUpUser.rejected, setSignedOut)
+      .addCase(getNotes.rejected, setSignedOut);
   },
 });
 

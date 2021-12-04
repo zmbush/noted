@@ -9,6 +9,7 @@
 import { getNotes } from 'data/notes/api';
 import { NoteWithTags } from 'data/types';
 
+import { rootReducer } from '../../store';
 import {
   getTopLevelNotes,
   getLinkIds,
@@ -19,7 +20,6 @@ import {
   getIsNotArchived,
   getHasArchivedChild,
 } from '../selectors';
-import { rootReducer } from '../store';
 
 const baseNote: NoteWithTags = {
   id: 0,

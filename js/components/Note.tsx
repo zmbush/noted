@@ -45,7 +45,7 @@ import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
-import { getLinkIds, getSubNotes } from 'data/selectors';
+import { getLinkIds, getSubNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 

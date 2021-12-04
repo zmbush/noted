@@ -51,4 +51,13 @@ export const signUpUser = createAsyncThunk(
   },
 );
 
-export const signOutUser = createAsyncThunk('user/signOut', (_: void) => api.user.signOut());
+export const signOutUser = createAsyncThunk(
+  'user/signOut',
+  async (_: void, { rejectWithValue }) => {
+    try {
+      await api.user.signOut();
+    } catch (e) {
+      throw rejectWithValue(e);
+    }
+  },
+);

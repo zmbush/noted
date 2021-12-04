@@ -6,6 +6,10 @@ Object {
     "entities": Object {},
     "ids": Array [],
   },
+  "ui": Object {
+    "inProgress": Array [],
+    "lastError": null,
+  },
   "user": Object {
     "isSignedIn": false,
     "user": null,

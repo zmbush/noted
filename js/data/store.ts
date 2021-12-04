@@ -6,12 +6,20 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { AnyAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import notes from 'data/notes/slice';
+import ui from 'data/ui/slice';
 import user from 'data/user/slice';
 
-export const rootReducer = combineReducers({ user, notes });
+export const appReducer = combineReducers({ user, notes, ui });
+
+export const rootReducer = (state: ReturnType<typeof appReducer>, action: AnyAction) => {
+  if (action.type === 'RESET') {
+    return appReducer(undefined, action);
+  }
+  return appReducer(state, action);
+};
 export const store = configureStore({
   reducer: rootReducer,
   devTools: true,

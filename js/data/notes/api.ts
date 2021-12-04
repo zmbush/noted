@@ -12,33 +12,59 @@ import api from 'api';
 
 import { NewNote, NoteWithTags, UpdateNote } from '../types';
 
-export const getNotes = createAsyncThunk('notes/getList', (_: void) => api.note.list());
+export const getNotes = createAsyncThunk('notes/getList', async (_: void, { rejectWithValue }) => {
+  try {
+    return await api.note.list();
+  } catch (e) {
+    throw rejectWithValue(e);
+  }
+});
+
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
-  async ({
-    noteId,
-    note: noteIn,
-  }: {
-    noteId: number;
-    note: UpdateNote & Partial<Pick<NoteWithTags, 'tags'>>;
-  }) => {
-    const { tags, ...note } = noteIn;
-    let result = await api.note.update(noteId, note);
-    if (tags) {
-      result = await api.note.setTags(result.id, tags);
+  async (
+    {
+      noteId,
+      note: noteIn,
+    }: {
+      noteId: number;
+      note: UpdateNote & Partial<Pick<NoteWithTags, 'tags'>>;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { tags, ...note } = noteIn;
+      let result = await api.note.update(noteId, note);
+      if (tags) {
+        result = await api.note.setTags(result.id, tags);
+      }
+      return result;
+    } catch (e) {
+      throw rejectWithValue(e);
     }
-    return result;
   },
 );
 export const createNote = createAsyncThunk(
   'notes/createNote',
-  async (noteIn: NewNote & Pick<NoteWithTags, 'tags'>) => {
-    const { tags, ...note } = noteIn;
-    const result = await api.note.create(note);
-    return api.note.setTags(result.id, tags);
+  async (noteIn: NewNote & Pick<NoteWithTags, 'tags'>, { rejectWithValue }) => {
+    try {
+      const { tags, ...note } = noteIn;
+      const result = await api.note.create(note);
+      return await api.note.setTags(result.id, tags);
+    } catch (e) {
+      throw rejectWithValue(e);
+    }
   },
 );
-export const deleteNote = createAsyncThunk('notes/deleteNote', async (noteId: number) => {
-  await api.note.delete(noteId);
-  return noteId;
-});
+
+export const deleteNote = createAsyncThunk(
+  'notes/deleteNote',
+  async (noteId: number, { rejectWithValue }) => {
+    try {
+      await api.note.delete(noteId);
+      return noteId;
+    } catch (e) {
+      throw rejectWithValue(e);
+    }
+  },
+);

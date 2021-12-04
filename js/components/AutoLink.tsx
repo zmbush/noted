@@ -8,8 +8,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { LinkIdMap } from 'data/selectors';
-
 type LinkProps = {
   text: string;
   ids: Set<number>;
