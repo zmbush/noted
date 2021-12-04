@@ -13,7 +13,7 @@ module.exports = {
       isolatedModules: true,
     },
   },
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
   roots: ['<rootDir>/js'],
   moduleNameMapper: {
     '^core-js/.*': 'identity-obj-proxy',
