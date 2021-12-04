@@ -8,8 +8,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { LinkIdMap } from 'data/selectors';
-
 type LinkProps = {
   text: string;
   ids: Set<number>;
@@ -29,7 +27,7 @@ export const LinkedText = ({ ids, text }: LinkProps) => {
 LinkedText.displayName = 'LinkedText';
 
 type Props = {
-  titles: LinkIdMap;
+  titles: { [title: string]: Set<number> };
   children: (React.ReactNode & React.ReactNode[]) | string;
 };
 
@@ -42,7 +40,7 @@ const AutoLink = ({ children, titles }: Props) => {
   }
   let keyIx = 1;
 
-  titles.forEach((value, key) => {
+  Object.entries(titles).forEach(([key, value]) => {
     let newBody: any[] = [];
     body.forEach((part) => {
       if (typeof part === 'string' || part instanceof String) {

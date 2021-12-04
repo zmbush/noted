@@ -5,15 +5,15 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import { logIn, signOut, apiError } from 'data/actions';
-
-import user from '../user';
+//
+import { getCurrentUser, signInUser, signOutUser } from '../api';
+import user from '../slice';
 
 describe('reducers::user()', () => {
-  const getInitial = () => user(undefined, {});
+  const getInitial = () => user(undefined, getCurrentUser.rejected({ name: '', message: '' }, ''));
 
   test('returns initial state', () => {
-    expect(getInitial()).toEqual({ is_signed_in: false, user: null });
+    expect(getInitial()).toEqual({ isSignedIn: false, user: null });
   });
 
   test('responds to events', () => {
@@ -25,10 +25,9 @@ describe('reducers::user()', () => {
       created_at: '',
       updated_at: '',
     };
-    state = user(state, logIn(u));
+    state = user(state, signInUser.fulfilled(u, '', { email: '', password: '' }));
 
     expect(state).toMatchSnapshot();
-    expect(user(state, signOut())).toMatchSnapshot();
-    expect(user(state, apiError({ code: 401, error: '' }))).toMatchSnapshot();
+    expect(user(state, signOutUser.fulfilled(undefined, '', undefined))).toMatchSnapshot();
   });
 });

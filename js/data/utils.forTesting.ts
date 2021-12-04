@@ -6,9 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { notesFetched } from 'data/actions';
-import rootReducer from 'data/reducers';
+import { rootReducer } from 'data/store';
 import { NoteWithTags } from 'data/types';
+
+import { getNotes } from './notes/api';
 
 export const emptyTestNote: NoteWithTags = {
   id: -1,
@@ -43,5 +44,10 @@ export const makeTestNote = (
 
 export const testState = rootReducer(
   undefined,
-  notesFetched([makeTestNote(), makeTestNote({ id: 4 }), makeTestNote({ id: 2 })]),
+  getNotes.fulfilled(
+    [makeTestNote(), makeTestNote({ id: 4 }), makeTestNote({ id: 2 })],
+    '',
+    undefined,
+    undefined,
+  ),
 );

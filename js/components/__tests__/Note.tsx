@@ -34,8 +34,8 @@ const note = (
 const noteContents = (
   <NoteContents
     search=''
-    titles={new Map()}
-    subNotes={new Map()}
+    titles={{}}
+    subNotes={{}}
     setEdit={() => {}}
     setCreatingSubNote={() => {}}
     note={{

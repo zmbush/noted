@@ -15,8 +15,8 @@ import { styled } from '@mui/material';
 import AppBody from 'components/AppBody';
 import Header from 'components/Header';
 import LogIn from 'components/LogIn';
-import { AppState } from 'data/reducers';
-import { getTopLevelNotes } from 'data/selectors';
+import { getTopLevelNotes } from 'data/notes/selectors';
+import { AppState } from 'data/store';
 
 const AppRoot = styled('div')({
   width: '100%',
@@ -31,7 +31,7 @@ const App = () => {
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const notes = useSelector(getTopLevelNotes);
-  const isSignedIn = useSelector<AppState>((state) => state.user.is_signed_in);
+  const isSignedIn = useSelector<AppState>((state) => state.user.isSignedIn);
   React.useEffect(() => {
     document.title = `noted`;
   }, []);

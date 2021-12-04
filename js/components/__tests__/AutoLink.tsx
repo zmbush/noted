@@ -14,9 +14,10 @@ import AutoLink, { LinkedText } from '../AutoLink';
 
 describe('<AutoLink />', () => {
   test('matches snapshot', () => {
-    const titles = new Map();
-    titles.set('Goat', new Set([1]));
-    titles.set('Boat', new Set([1, 2]));
+    const titles = {
+      Goat: new Set([1]),
+      Boat: new Set([1, 2]),
+    };
 
     const wrapper = shallow(
       <AutoLink titles={titles}>This goat is here. It also has boats galore.</AutoLink>,
@@ -25,14 +26,15 @@ describe('<AutoLink />', () => {
   });
 
   test('works with no titles', () => {
-    const wrapper = shallow(<AutoLink titles={new Map()}>Test</AutoLink>);
+    const wrapper = shallow(<AutoLink titles={{}}>Test</AutoLink>);
     expect(wrapper.contains('Test')).toBeTruthy();
   });
 
   test('works with some titles', () => {
-    const titles = new Map();
-    titles.set('Goat', new Set([1]));
-    titles.set('Boat', new Set([1, 2]));
+    const titles = {
+      Goat: new Set([1]),
+      Boat: new Set([1, 2]),
+    };
 
     const wrapper = shallow(
       <AutoLink titles={titles}>This goat is here. It also has boats galore.</AutoLink>,

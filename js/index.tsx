@@ -5,8 +5,8 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
 import 'core-js/stable';
-import { createStore } from 'redux';
 import 'regenerator-runtime/runtime';
 
 import * as React from 'react';
@@ -16,25 +16,16 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 
-import api from 'api';
 import App from 'components/App';
-import { logIn, fetchData } from 'data/actions';
-import reducers from 'data/reducers';
+import { store } from 'data/store';
+import { getCurrentUser } from 'data/user/api';
 
 if (process.env.NODE_ENV !== 'production') {
   import('map.prototype.tojson');
 }
 
-const w = window as any;
-const store = createStore(
-  reducers,
-  // eslint-disable-next-line no-underscore-dangle
-  w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__(),
-);
-
 (async () => {
-  store.dispatch(logIn(await api.user.get()));
-  fetchData(store.dispatch);
+  await store.dispatch(getCurrentUser());
 })();
 
 const theme = createTheme({

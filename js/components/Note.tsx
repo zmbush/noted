@@ -39,15 +39,14 @@ import {
   useTheme,
 } from '@mui/material';
 
-import api from 'api';
 import AutoLink from 'components/AutoLink';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
-import { deleteNote, updateNote } from 'data/actions';
-import { AppState } from 'data/reducers';
-import { getLinkIds, getSubNotes } from 'data/selectors';
+import { createNote, deleteNote, updateNote } from 'data/notes/api';
+import { getLinkIds, getSubNotes } from 'data/notes/selectors';
+import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 
 const NoteEditor = React.lazy(
@@ -56,11 +55,11 @@ const NoteEditor = React.lazy(
 
 type NoteContentsProps = {
   note: NoteWithTags;
-  titles: Map<string, Set<number>>;
+  titles: { [title: string]: Set<number> };
   setEdit: (edit: boolean) => void;
   setCreatingSubNote: (creatingSubNote: boolean) => void;
   search: string;
-  subNotes: Map<number, NoteWithTags>;
+  subNotes: { [id: number]: NoteWithTags };
   depth?: number;
 };
 
@@ -77,25 +76,20 @@ export const NoteContents = ({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
   const dispatch = useDispatch();
 
-  const doDelete = async () => {
-    await api.note.delete(note.id);
-    dispatch(deleteNote(note.id));
-  };
+  const doDelete = () => dispatch(deleteNote(note.id));
 
   const archiveNote = async () => {
     setMoreMenuEl(null);
 
     const { id, archived } = note;
-    const result = await api.note.update(id, { archived: !archived });
-    dispatch(updateNote(result));
+    await dispatch(updateNote({ noteId: id, note: { archived: !archived } }));
   };
 
   const pinNote = async () => {
     setMoreMenuEl(null);
 
     const { id, pinned } = note;
-    const result = await api.note.update(id, { pinned: !pinned });
-    dispatch(updateNote(result));
+    await dispatch(updateNote({ noteId: id, note: { pinned: !pinned } }));
   };
 
   const startEdit = () => {
@@ -263,7 +257,7 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
   const dispatch = useDispatch();
   const titles = useSelector(getLinkIds);
   const subNotes = useSelector((state: AppState) =>
-    'id' in note ? getSubNotes(state, { note_id: note.id }) : new Map(),
+    'id' in note ? getSubNotes(state, { note_id: note.id }) : {},
   );
 
   const cancelEdit = () => {
@@ -285,26 +279,32 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
 
   const save = async (noteData: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => {
     const { title, body, tags, parent_note_id: parentNoteId } = noteData;
-    let result;
-    if (creatingSubNote || !('id' in note)) {
-      result = await api.note.create({
-        title,
-        body,
-        parent_note_id: parentNoteId,
-      });
-    } else {
-      result = await api.note.update(note.id, {
-        title,
-        body,
-        parent_note_id: parentNoteId,
-      });
-    }
 
-    result = await api.note.setTags(result.id, tags);
+    if (creatingSubNote || !('id' in note)) {
+      await dispatch(
+        createNote({
+          title,
+          body,
+          tags,
+          parent_note_id: parentNoteId,
+        }),
+      );
+    } else {
+      await dispatch(
+        updateNote({
+          noteId: note.id,
+          note: {
+            title,
+            body,
+            parent_note_id: parentNoteId,
+            tags,
+          },
+        }),
+      );
+    }
 
     setEdit(false);
     setCreatingSubNote(false);
-    dispatch(updateNote(result));
   };
 
   return (

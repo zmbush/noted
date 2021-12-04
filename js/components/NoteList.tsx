@@ -17,17 +17,17 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/Note';
-import { AppState } from 'data/reducers';
 import {
   getFilteredSearchIndex,
   getHasArchivedChild,
   getIsNotArchived,
   getSortedNoteIds,
-} from 'data/selectors';
+} from 'data/notes/selectors';
+import { AppState } from 'data/store';
 import { NoteWithTags } from 'data/types';
 
 type Props = {
-  notes: Map<number, NoteWithTags>;
+  notes: { [id: number]: NoteWithTags };
   search: string;
   depth: number;
   createFromSearch?: (e: React.SyntheticEvent) => void;
@@ -44,8 +44,8 @@ const GridItem = styled(Grid)({
 });
 
 const getFuse = memoize(
-  (index: Map<number, NoteWithTags>) =>
-    new Fuse(Array.from(index.values()), {
+  (index: { [id: string]: NoteWithTags }) =>
+    new Fuse(Object.values(index), {
       distance: 100,
       keys: [
         {
@@ -77,7 +77,7 @@ const NoteList = ({
   parent_note_id: parentNoteId,
 }: Props) => {
   const isViewingArchive = useMatch({ path: '/archive', end: true });
-  const noteViewFilter = useSelector<AppState, Map<number, boolean>>(
+  const noteViewFilter = useSelector<AppState, { [id: number]: boolean }>(
     isViewingArchive ? getHasArchivedChild : getIsNotArchived,
   );
   const searchIndex = useSelector((state) =>
@@ -87,14 +87,16 @@ const NoteList = ({
 
   let notes = notesIn;
   if (renderOnly) {
-    notes = new Map(Array.from(notes.entries()).filter(([id, _note]) => renderOnly.has(id)));
+    notes = Object.fromEntries(
+      Object.entries(notes).filter(([id, _note]) => renderOnly.has(parseInt(id, 10))),
+    );
   }
 
   if (search !== '') {
     const elements = [];
     const results = getFuse(searchIndex).search(search);
 
-    if (depth === 1 && (results.length === 0 || notes.get(results[0].item.id).title !== search)) {
+    if (depth === 1 && (results.length === 0 || notes[results[0].item.id].title !== search)) {
       elements.push(
         <GridItem item key='new' xs={width}>
           <Button
@@ -122,13 +124,13 @@ const NoteList = ({
 
     results.forEach((result) => {
       const { id } = result.item;
-      if (!notes.has(id)) {
+      if (!(id in notes)) {
         // eslint-disable-next-line no-console
         console.log('Note ', id, ' not found');
       } else {
         elements.push(
           <GridItem item key={id} xs={width}>
-            <Note depth={depth + 1} note={notes.get(id)} search={search} />
+            <Note depth={depth + 1} note={notes[id]} search={search} />
           </GridItem>,
         );
       }
@@ -140,9 +142,9 @@ const NoteList = ({
   return (
     <>
       {sortedIds.map((id) => {
-        if (notes.has(id)) {
-          const n = notes.get(id);
-          if (!noteViewFilter || noteViewFilter.get(id)) {
+        if (id in notes) {
+          const n = notes[id];
+          if (!noteViewFilter || noteViewFilter[id]) {
             return (
               <GridItem item key={n.id} xs={width}>
                 <Note depth={depth + 1} note={n} search={search} />

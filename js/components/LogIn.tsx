@@ -19,8 +19,7 @@ import {
   TextField,
 } from '@mui/material';
 
-import api from 'api';
-import { logIn, fetchData } from 'data/actions';
+import { signInUser, signUpUser } from 'data/user/api';
 
 type LogInProps = {
   open: boolean;
@@ -36,19 +35,16 @@ const LogIn = ({ open }: LogInProps) => {
   const signInOrUp = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    let result;
     if (signingIn) {
-      result = await api.user.signIn({ email, password });
+      await dispatch(signInUser({ email, password }));
     } else {
-      result = await api.user.signUp({ email, password, name });
+      await dispatch(signUpUser({ email, password, name }));
     }
 
     setSigningIn(true);
     setEmail('');
     setPassword('');
     setName('');
-    dispatch(logIn(result));
-    await fetchData(dispatch);
   };
 
   return (
