@@ -6,110 +6,129 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { mount, shallow } from 'enzyme';
+import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
-import * as ReactReduxOriginal from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
 
-import { Menu } from '@mui/material';
+import { render } from 'components/test-utils';
+import { signInUser } from 'data/user/api';
 
 import Header from '../Header';
-
-jest.mock('react-redux');
-const ReactRedux = ReactReduxOriginal as jest.Mocked<typeof ReactReduxOriginal>;
-
-jest.mock('axios');
 
 const sleep = (milliseconds: number) =>
   new Promise((resolve) => {
     setTimeout(resolve, milliseconds);
   });
 
-const search = (
-  <Header
-    createNewShortcut={() => {}}
-    setSearch={() => {}}
-    onStartEdit={() => {}}
-    debounceInterval={10}
-  />
-);
 describe('<Header />', () => {
   test('matches snapshot', () => {
-    const wrapper = shallow(search, {
-      wrappingComponent: MemoryRouter,
-    });
-    expect(wrapper.find(Header)).toMatchSnapshot();
+    expect(
+      render(
+        <Header
+          createNewShortcut={() => {}}
+          setSearch={() => {}}
+          onStartEdit={() => {}}
+          debounceInterval={10}
+        />,
+      ).container,
+    ).toMatchSnapshot();
   });
 
-  test('::setSearch()', async () => {
+  test('::setSearch', async () => {
     const setSearch = jest.fn();
-    const wrapper = mount(search, {
-      wrappingComponent: MemoryRouter,
-    });
-    wrapper.setProps({ setSearch });
+    const { findByRole } = render(
+      <Header
+        createNewShortcut={() => {}}
+        setSearch={setSearch}
+        onStartEdit={() => {}}
+        debounceInterval={5}
+      />,
+    );
 
-    wrapper
-      .find('input')
-      .first()
-      .simulate('change', { target: { value: 'written word' } });
+    const input = await findByRole('textbox');
+    userEvent.type(input, 'written word');
 
     await sleep(10);
-    expect(setSearch.mock.calls.length).toEqual(1);
+    expect(setSearch.mock.calls).toHaveLength(1);
     expect(setSearch.mock.calls[0][0]).toEqual('written word');
 
-    wrapper
-      .find('input')
-      .first()
-      .simulate('change', { target: { value: 'written words' } });
-
+    userEvent.type(input, 's');
     await sleep(10);
-    expect(setSearch.mock.calls.length).toEqual(2);
+    expect(setSearch.mock.calls).toHaveLength(2);
     expect(setSearch.mock.calls[1][0]).toEqual('written words');
   });
 
   test('handles user menu and sign out', async () => {
-    const wrapper = shallow(search, {
-      wrappingComponent: MemoryRouter,
-    });
-    const dispatchMock = jest.fn();
-    ReactRedux.useDispatch.mockReturnValue(dispatchMock);
+    const { findByTestId, findByText, store } = render(
+      <Header
+        createNewShortcut={() => {}}
+        setSearch={() => {}}
+        onStartEdit={() => {}}
+        debounceInterval={10}
+      />,
+    );
 
-    const menu = wrapper.find('[aria-label="User Menu"]').first();
-    menu.simulate('click');
+    await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
 
-    wrapper.setProps({});
-    wrapper.update();
+    const menuButton = await findByTestId('AccountCircleIcon');
+    userEvent.click(menuButton);
 
-    expect(wrapper.find(Menu).first().props().open).toBeTruthy();
-    const signOut = wrapper.find('[aria-label="Sign Out"]').first();
-    signOut.simulate('click', { preventDefault: () => {} });
+    const signOutButton = await findByText('Sign Out');
+    userEvent.click(signOutButton);
+
     await sleep(10);
 
-    expect(dispatchMock.mock.calls).toHaveLength(1);
-    // expect(dispatchMock.mock.calls[0][0]).toEqual({ type: NotedEvent.UserSignedOut });
+    expect(store.getState()).toMatchInlineSnapshot(`
+      Object {
+        "notes": Object {
+          "entities": Object {},
+          "ids": Array [],
+        },
+        "ui": Object {
+          "inProgress": Array [],
+          "lastError": null,
+        },
+        "user": Object {
+          "isSignedIn": false,
+          "user": null,
+        },
+      }
+    `);
   });
 
-  // test('::onChange()', () => {
-  //   const onChange = jest.fn();
-  //   const wrapper = mount(search);
-  //   wrapper.setProps({ onChange });
+  test('::onStartEdit', async () => {
+    const onStartEdit = jest.fn();
+    const { findByRole } = render(
+      <Header
+        createNewShortcut={() => {}}
+        setSearch={() => {}}
+        onStartEdit={onStartEdit}
+        debounceInterval={5}
+      />,
+    );
 
-  //   wrapper
-  //     .find('input')
-  //     .first()
-  //     .simulate('change', { target: { value: 'written word' } });
+    const input = await findByRole('textbox');
+    userEvent.type(input, 'written word{enter}');
+    expect(onStartEdit.mock.calls).toHaveLength(1);
+  });
 
-  //   expect(onChange.mock.calls.length).toEqual(1);
-  //   expect(onChange.mock.calls[0][0].target.value).toEqual('written word');
-  // });
+  test('opens side menu', async () => {
+    const { findByTestId, queryByText, findByText } = render(
+      <Header
+        createNewShortcut={() => {}}
+        setSearch={() => {}}
+        onStartEdit={() => {}}
+        debounceInterval={5}
+      />,
+    );
 
-  // test('::onSubmit()', () => {
-  //   const onSubmit = jest.fn();
-  //   const wrapper = mount(search);
-  //   wrapper.setProps({ onSubmit });
+    // Side menu shouldn't be visible.
+    expect(await queryByText('Archive')).toEqual(null);
 
-  //   wrapper.find('form').first().simulate('submit');
-  //   expect(onSubmit.mock.calls.length).toEqual(1);
-  // });
+    const mainMenu = await findByTestId('MenuIcon');
+    userEvent.click(mainMenu);
+
+    // Side menu should now be visible.
+    await findByText('Archive');
+  });
 });

@@ -58,14 +58,16 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const [mainMenuOpen, setMainMenuOpen] = React.useState(false);
   const navigate = useNavigate();
-  const [debouncedSearch, _] = React.useState<(v: string) => Promise<string>>(() =>
-    debounce(async (v) => v, debounceInterval),
+  const [debouncedSearch, _] = React.useState<(v: string) => void>(() =>
+    debounce(async (v) => {
+      setSearch(v);
+    }, debounceInterval),
   );
   const dispatch = useDispatch();
 
   const doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(e.target.value);
-    setSearch(await debouncedSearch(e.target.value));
+    debouncedSearch(e.target.value);
   };
 
   const cancelSearch = (e: Mousetrap.ExtendedKeyboardEvent, _combo?: string) => {
@@ -108,7 +110,6 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
               path='/'
               element={
                 <IconButton
-                  aria-label='Menu'
                   onClick={() => setMainMenuOpen(true)}
                   color='inherit'
                   size='large'
@@ -164,13 +165,7 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
               ref={searchInput}
             />
           </BindKeyboard>
-          <IconButton
-            aria-label='User Menu'
-            aria-haspopup='true'
-            onClick={openUserMenu}
-            color='inherit'
-            size='large'
-          >
+          <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit' size='large'>
             <AccountCircle />
           </IconButton>
         </Toolbar>
