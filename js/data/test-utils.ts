@@ -42,12 +42,13 @@ export const makeTestNote = (
   return { ...emptyTestNote, ...defaultFields, ...overrides, ...parentOverride };
 };
 
-export const testState = rootReducer(
-  undefined,
-  getNotes.fulfilled(
-    [makeTestNote(), makeTestNote({ id: 4 }), makeTestNote({ id: 2 })],
-    '',
+export const makeTestState = () =>
+  rootReducer(
     undefined,
-    undefined,
-  ),
-);
+    getNotes.fulfilled(
+      [makeTestNote(), makeTestNote({ id: 4 }), makeTestNote({ id: 2 })],
+      '',
+      undefined,
+      undefined,
+    ),
+  );

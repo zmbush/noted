@@ -6,46 +6,62 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { mount, shallow } from 'enzyme';
+import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
+import { render } from 'components//test-utils';
+
 import SearchInput from '../SearchInput';
 
-const search = (
-  <SearchInput onCancelSearch={() => {}} onChange={() => {}} onSubmit={() => {}} value='' />
-);
 describe('<SearchInput />', () => {
-  test('matches snapshot', () => {
-    const wrapper = shallow(search);
-    expect(wrapper).toMatchSnapshot();
+  test('matches snapshot', async () => {
+    const { findByRole, rerender } = render(
+      <SearchInput onCancelSearch={() => {}} onChange={() => {}} onSubmit={() => {}} value='' />,
+    );
+    expect(await findByRole('textbox')).toMatchInlineSnapshot(`
+      <input
+        class="MuiInputBase-input css-yz9k0d-MuiInputBase-input"
+        placeholder="Search..."
+        type="text"
+        value=""
+      />
+    `);
 
-    wrapper.setProps({
-      value: 'Search Input',
-    });
-    expect(wrapper).toMatchSnapshot();
+    rerender(
+      <SearchInput
+        onCancelSearch={() => {}}
+        onChange={() => {}}
+        onSubmit={() => {}}
+        value='Search Input'
+      />,
+    );
+    expect(await findByRole('textbox')).toMatchInlineSnapshot(`
+      <input
+        class="MuiInputBase-input css-yz9k0d-MuiInputBase-input"
+        placeholder="Search..."
+        type="text"
+        value="Search Input"
+      />
+    `);
   });
 
-  test('::onChange()', () => {
+  test('::onChange()', async () => {
     const onChange = jest.fn();
-    const wrapper = mount(search);
-    wrapper.setProps({ onChange });
-
-    wrapper
-      .find('input')
-      .first()
-      .simulate('change', { target: { value: 'written word' } });
-
-    expect(onChange.mock.calls.length).toEqual(1);
-    expect(onChange.mock.calls[0][0].target.value).toEqual('written word');
+    const { findByRole } = render(
+      <SearchInput onChange={onChange} onSubmit={() => {}} onCancelSearch={() => {}} value='' />,
+    );
+    const input = 'written word';
+    await userEvent.type(await findByRole('textbox'), input);
+    expect(onChange.mock.calls).toHaveLength(input.length);
   });
 
-  test('::onSubmit()', () => {
+  test('::onSubmit()', async () => {
     const onSubmit = jest.fn();
-    const wrapper = mount(search);
-    wrapper.setProps({ onSubmit });
-
-    wrapper.find('form').first().simulate('submit');
+    const { findByRole } = render(
+      <SearchInput onChange={() => {}} onSubmit={onSubmit} onCancelSearch={() => {}} value='' />,
+    );
+    await userEvent.type(await findByRole('textbox'), 'search{enter}');
     expect(onSubmit.mock.calls.length).toEqual(1);
   });
 });

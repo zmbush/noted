@@ -6,41 +6,91 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { shallow } from 'enzyme';
-
 import * as React from 'react';
-import * as ReactRedux from 'react-redux';
-import * as ReactRouterDomOriginal from 'react-router-dom';
 
-import { testState } from 'data/utils.forTesting';
+import { render } from 'components/test-utils';
+import { createNote } from 'data/notes/api';
+import { createStore } from 'data/store';
+import { signInUser } from 'data/user/api';
 
 import NoteList from '../NoteList';
 
-jest.mock('react-router');
-const ReactRouterDom = ReactRouterDomOriginal as jest.Mocked<typeof ReactRouterDomOriginal>;
-
-ReactRouterDom.useMatch.mockReturnValue(null);
-// eslint-disable-next-line no-import-assign
-jest.spyOn(ReactRedux, 'useSelector').mockImplementation((r) => r(testState));
-
 describe('<NoteList />', () => {
-  test('matches snapshot', () => {
-    const node = shallow(
-      <NoteList parent_note_id={0} depth={1} notes={testState.notes.entities} search='' />,
+  test('matches snapshot', async () => {
+    const store = createStore();
+    await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
+    expect(store.getState().notes.ids).toHaveLength(4);
+    const { getByText } = render(
+      <NoteList parent_note_id={0} depth={1} notes={store.getState().notes.entities} search='' />,
+      { store },
     );
 
-    expect(node).toMatchSnapshot();
+    const notes = store.getState().notes.entities;
+    expect(getByText(notes[1].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Note 1
+      </span>
+    `);
+    expect(getByText(notes[2].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Note 2
+      </span>
+    `);
+    expect(getByText(notes[3].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Note 3
+      </span>
+    `);
+    expect(getByText(notes[4].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Note 4
+      </span>
+    `);
   });
 
-  test('matches second snapshot', () => {
-    const node = shallow(
+  test('matches second snapshot', async () => {
+    const store = createStore();
+    await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
+    await store.dispatch(
+      createNote({ title: 'Something Different', body: '', parent_note_id: 3, tags: [] }),
+    );
+    expect(store.getState().notes.ids).toHaveLength(5);
+    const { getByText, queryByText } = render(
       <NoteList
         parent_note_id={0}
         depth={1}
-        notes={testState.notes.entities}
-        search='SingleNote 2'
+        notes={store.getState().notes.entities}
+        search='Something Different'
       />,
+      { store },
     );
-    expect(node).toMatchSnapshot();
+
+    const notes = store.getState().notes.entities;
+    expect(queryByText(notes[1].title)).toBeNull();
+    expect(queryByText(notes[2].title)).toBeNull();
+    // 3 is a parent of 5, and should be rendered even if the search doesn't match.
+    expect(getByText(notes[3].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Note 3
+      </span>
+    `);
+    expect(queryByText(notes[4].title)).toBeNull();
+    expect(getByText(notes[5].title)).toMatchInlineSnapshot(`
+      <span
+        class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+      >
+        Something Different
+      </span>
+    `);
   });
 });

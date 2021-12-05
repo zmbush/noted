@@ -1,173 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<NoteEditor /> matches snapshot 1`] = `
-<BindKeyboard
-  callback={[Function]}
-  keys="ctrl+s"
->
-  <ForwardRef(Card)
-    sx={[Function]}
-  >
-    <ForwardRef(CardHeader)
-      action={
-        <ForwardRef(IconButton)
-          aria-label="Save Note"
-          onClick={[Function]}
-          size="large"
-        >
-          <Memo />
-        </ForwardRef(IconButton)>
-      }
-      title={
-        <ForwardRef(Input)
-          onChange={[Function]}
-          style={
-            Object {
-              "fontSize": "inherit",
-            }
-          }
-          sx={
-            Object {
-              "width": "100%",
-            }
-          }
-          value="note title"
-        />
-      }
-    />
-    <ForwardRef(CardContent)
-      sx={
-        Object {
-          "bottom": 0,
-          "left": 0,
-          "position": "absolute",
-          "right": 0,
-          "top": "50px",
-        }
-      }
+<div>
+  <div>
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-9y0u9w-MuiPaper-root-MuiCard-root"
     >
-      <WithStyles(ChipInput)
-        classes={Object {}}
-        dataSource={
-          Array [
-            "type:Location",
-            "type:Character",
-          ]
-        }
-        fullWidth={true}
-        onAdd={[Function]}
-        onDelete={[Function]}
-        placeholder="Tags"
-        value={
-          Array [
-            "tag1",
-          ]
-        }
-      />
-      <e
-        events={
-          Object {
-            "change": [Function],
-          }
-        }
-        height="calc(100% - 40px)"
-        initialEditType="wysiwyg"
-        initialValue="note body"
-        plugins={
-          Array [
-            [Function],
-          ]
-        }
-        usageStatistics={false}
-        useCommandShortcut={false}
-      />
-    </ForwardRef(CardContent)>
-  </ForwardRef(Card)>
-</BindKeyboard>
-`;
-
-exports[`<NoteEditor /> matches snapshot 2`] = `
-<BindKeyboard
-  callback={[Function]}
-  keys="ctrl+s"
->
-  <ForwardRef(Card)
-    sx={[Function]}
-  >
-    <ForwardRef(CardHeader)
-      action={
-        <ForwardRef(IconButton)
-          aria-label="Save Note"
-          onClick={[Function]}
-          size="large"
+      <div
+        class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
+      >
+        <div
+          class="MuiCardHeader-content css-1qbkelo-MuiCardHeader-content"
         >
-          <Memo />
-        </ForwardRef(IconButton)>
-      }
-      title={
-        <ForwardRef(Input)
-          onChange={[Function]}
-          style={
-            Object {
-              "fontSize": "inherit",
-            }
-          }
-          sx={
-            Object {
-              "width": "100%",
-            }
-          }
-          value="note title"
+          <span
+            class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
+          >
+            <div
+              class="MuiInput-root MuiInput-underline MuiInputBase-root MuiInputBase-colorPrimary css-ueb0lb-MuiInputBase-root-MuiInput-root"
+            >
+              <input
+                class="MuiInput-input MuiInputBase-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+                type="text"
+                value="note title"
+              />
+            </div>
+          </span>
+        </div>
+        <div
+          class="MuiCardHeader-action css-sgoict-MuiCardHeader-action"
+        >
+          <button
+            aria-label="Save Note"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+              data-testid="SaveIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
+              />
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        class="MuiCardContent-root css-1nplhv6-MuiCardContent-root"
+      >
+        <div
+          class="MuiFormControl-root WAMuiChipInput-root-1 MuiFormControl-fullWidth"
+          data-testid="tags-input"
+        >
+          <div
+            class="WAMuiChipInput-standard-6 WAMuiChipInput-chipContainer-4 WAMuiChipInput-underline-14"
+          >
+            <div
+              class="MuiInputBase-root MuiInput-root WAMuiChipInput-inputRoot-2 WAMuiChipInput-standard-6 MuiInputBase-formControl MuiInput-formControl"
+            >
+              <input
+                aria-invalid="false"
+                class="MuiInputBase-input MuiInput-input WAMuiChipInput-input-3 WAMuiChipInput-standard-6"
+                placeholder="Tags"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <input
+          value="note body"
         />
-      }
-    />
-    <ForwardRef(CardContent)
-      sx={
-        Object {
-          "bottom": 0,
-          "left": 0,
-          "position": "absolute",
-          "right": 0,
-          "top": "50px",
-        }
-      }
-    >
-      <WithStyles(ChipInput)
-        classes={Object {}}
-        dataSource={
-          Array [
-            "type:Location",
-            "type:Character",
-          ]
-        }
-        fullWidth={true}
-        onAdd={[Function]}
-        onDelete={[Function]}
-        placeholder="Tags"
-        value={
-          Array [
-            "tag1",
-          ]
-        }
-      />
-      <e
-        events={
-          Object {
-            "change": [Function],
-          }
-        }
-        height="calc(100% - 40px)"
-        initialEditType="wysiwyg"
-        initialValue="note body"
-        plugins={
-          Array [
-            [Function],
-          ]
-        }
-        usageStatistics={false}
-        useCommandShortcut={false}
-      />
-    </ForwardRef(CardContent)>
-  </ForwardRef(Card)>
-</BindKeyboard>
+      </div>
+    </div>
+  </div>
+</div>
 `;

@@ -57,8 +57,9 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
   };
 
   const deleteTag = (tag: string, index: number) => {
-    tags.splice(index, 1);
-    setTags(tags);
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
     notifyChanges();
   };
 
@@ -102,6 +103,7 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
           }}
         >
           <ChipInput
+            data-testid='tags-input'
             classes={{}}
             placeholder='Tags'
             fullWidth

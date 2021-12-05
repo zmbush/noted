@@ -20,10 +20,14 @@ export const rootReducer = (state: ReturnType<typeof appReducer>, action: AnyAct
   }
   return appReducer(state, action);
 };
-export const store = configureStore({
-  reducer: rootReducer,
-  devTools: true,
-});
+
+export const createStore = () =>
+  configureStore({
+    reducer: rootReducer,
+    devTools: true,
+  });
+
+export const store = createStore();
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

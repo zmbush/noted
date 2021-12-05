@@ -17,6 +17,12 @@ const mapErr = async <V>(promise: Promise<V>) => {
   try {
     return await promise;
   } catch (e) {
+    if (!('response' in e)) {
+      throw e;
+    }
+    if (!('data' in e.response)) {
+      throw e.response;
+    }
     throw e.response.data;
   }
 };

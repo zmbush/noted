@@ -16,5 +16,5 @@
       "*": ["js/*"]
     }
   },
-  "include": ["./js/**/*"]
+  "include": ["./js/**/*", "./js/setupTests.ts"]
 }

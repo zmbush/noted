@@ -5,100 +5,59 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import { shallow } from 'enzyme';
+import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import Note, { NoteContents } from '../Note';
+import { render, sleep } from 'components/test-utils';
+import { createStore } from 'data/store';
+import { signInUser } from 'data/user/api';
 
-jest.mock('react-redux');
-
-const note = (
-  <Note
-    search=''
-    note={{
-      id: 1,
-      parent_note_id: 0,
-      title: 'note title',
-      body: 'note body',
-      tags: ['tag1'],
-      created_at: '',
-      updated_at: '',
-      user_id: 2,
-      archived: false,
-      pinned: false,
-    }}
-  />
-);
-
-const noteContents = (
-  <NoteContents
-    search=''
-    titles={{}}
-    subNotes={{}}
-    setEdit={() => {}}
-    setCreatingSubNote={() => {}}
-    note={{
-      id: 1,
-      title: 'note title',
-      body: 'note body',
-      tags: ['tag1'],
-      created_at: '',
-      updated_at: '',
-      user_id: 2,
-      parent_note_id: 0,
-      archived: false,
-      pinned: false,
-    }}
-  />
-);
+import Note from '../Note';
 
 describe('<Note />', () => {
-  test('matches snapshot', () => {
-    const wrapper = shallow(note);
+  test('allows pinning and archiving', async () => {
+    const store = createStore();
+    await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
+    expect(store.getState().notes.entities[1]).toMatchInlineSnapshot(`
+      Object {
+        "archived": false,
+        "body": "The Body",
+        "created_at": "",
+        "id": 1,
+        "parent_note_id": 0,
+        "pinned": false,
+        "tags": Array [],
+        "title": "Note 1",
+        "updated_at": "",
+        "user_id": -1,
+      }
+    `);
+    const { rerender, findByTestId, findByText } = render(
+      <Note search='' note={store.getState().notes.entities[1]} />,
+      { store },
+    );
 
-    expect(wrapper).toMatchSnapshot();
+    const clickMenu = async (menuItem: string) => {
+      userEvent.click(await findByTestId('MoreVertIcon'));
+      userEvent.click(await findByText(menuItem));
+      await sleep(1);
+    };
 
-    wrapper.setProps({
-      note: {
-        pinned: true,
-      },
-    });
+    await clickMenu('Archive Note');
 
-    expect(wrapper).toMatchSnapshot();
+    expect(store.getState().notes.entities[1].archived).toBeTruthy();
+    rerender(<Note search='' note={store.getState().notes.entities[1]} />);
+    await clickMenu('Unarchive Note');
 
-    wrapper.setProps({
-      note: {
-        archived: true,
-        pinned: false,
-      },
-    });
+    expect(store.getState().notes.entities[1].archived).toBeFalsy();
+    rerender(<Note search='' note={store.getState().notes.entities[1]} />);
+    await clickMenu('Pin Note');
 
-    expect(wrapper).toMatchSnapshot();
-  });
-});
+    expect(store.getState().notes.entities[1].pinned).toBeTruthy();
+    rerender(<Note search='' note={store.getState().notes.entities[1]} />);
+    await clickMenu('Unpin Note');
 
-describe('<NoteContents />', () => {
-  test('matches snapshot', () => {
-    const wrapper = shallow(noteContents);
-
-    expect(wrapper).toMatchSnapshot();
-
-    wrapper.setProps({
-      note: {
-        pinned: true,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-
-    wrapper.setProps({
-      note: {
-        archived: true,
-        pinned: false,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
+    expect(store.getState().notes.entities[1].pinned).toBeFalsy();
   });
 });
