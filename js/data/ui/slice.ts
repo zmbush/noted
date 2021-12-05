@@ -12,10 +12,11 @@ import { AsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { ErrorData } from 'data/types';
 
-export type UIState = {
+export interface UIState {
   lastError: ErrorData | null;
   inProgress: { [slice: string]: { [type: string]: string[] } };
-};
+}
+
 const initialState: UIState = {
   lastError: null,
   inProgress: {},
