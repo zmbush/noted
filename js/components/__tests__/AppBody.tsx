@@ -6,44 +6,81 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { shallow } from 'enzyme';
 
+/* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 
-import AppBody, { NewNote } from '../AppBody';
+import { render, findAllByRole } from 'components/test-utils';
+
+import AppBody from '../AppBody';
+
+const defaultAppBodyProps = {
+  createNewShortcut: jest.fn(),
+  notes: {},
+  newNote: false,
+  search: '',
+  onNewNoteCancel: jest.fn(),
+};
 
 describe('<AppBody />', () => {
-  test('matches snapshot', () => {
-    const wrapper = shallow(
-      <AppBody
-        createNewShortcut={() => {}}
-        notes={{}}
-        newNote={false}
-        search=''
-        onNewNoteCancel={() => {}}
-      />,
+  test('matches snapshot', async () => {
+    const { container, rerender, findByText, findByTestId } = render(
+      <AppBody {...defaultAppBodyProps} />,
     );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find(NewNote)).toMatchSnapshot();
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1r1w6xa-MuiGrid-root"
+        />
+      </div>
+    `);
 
-    wrapper.setProps({
-      search: 'Search Term',
-      newNote: true,
-    });
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find(NewNote)).toMatchSnapshot();
-  });
-});
+    rerender(<AppBody {...defaultAppBodyProps} search='A New Note' newNote />);
+    expect(await findByText('Add A New Note')).toMatchInlineSnapshot(`
+      <button
+        class="MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButtonBase-root  css-opgcq6-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4guzyp-MuiSvgIcon-root"
+          data-testid="AddIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+          />
+        </svg>
+        Add 
+        A New Note
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    `);
 
-describe('<NewNote />', () => {
-  test('matches snapshot', () => {
-    const wrapper = shallow(<NewNote newNote={false} search='' onNewNoteCancel={() => {}} />);
-    expect(wrapper).toMatchSnapshot();
-
-    wrapper.setProps({
-      search: 'Search Term',
-      newNote: true,
-    });
-    expect(wrapper).toMatchSnapshot();
+    // Edit note dialog is visible!
+    const editNoteDialog = await findByTestId('edit-note-dialog');
+    expect(await findAllByRole(editNoteDialog, 'textbox')).toMatchInlineSnapshot(`
+      Array [
+        <input
+          class="MuiInput-input MuiInputBase-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+          type="text"
+          value="A New Note"
+        />,
+        <input
+          aria-invalid="false"
+          class="MuiInputBase-input MuiInput-input WAMuiChipInput-input-3 WAMuiChipInput-standard-6"
+          placeholder="Tags"
+          type="text"
+          value=""
+        />,
+        <textarea
+          class="toastui-editor-pseudo-clipboard"
+        />,
+      ]
+    `);
   });
 });

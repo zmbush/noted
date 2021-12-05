@@ -333,6 +333,7 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
         maxWidth='lg'
         fullScreen={editorFullscreen}
         onClose={tryCancelEdit}
+        data-testid='edit-note-dialog'
       >
         <Suspense
           fallback={<ReactLoading type='spin' className={styles.loadingSpinner} color='#000000' />}
