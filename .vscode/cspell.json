@@ -27,6 +27,7 @@
     "rustfmt",
     "schemars",
     "structopt",
+    "testid",
     "toastui",
     "tojson",
     "wojtekmaj",

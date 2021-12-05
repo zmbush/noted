@@ -82,14 +82,14 @@ export const NoteContents = ({
     setMoreMenuEl(null);
 
     const { id, archived } = note;
-    await dispatch(updateNote({ noteId: id, note: { archived: !archived } }));
+    await dispatch(updateNote({ id, archived: !archived }));
   };
 
   const pinNote = async () => {
     setMoreMenuEl(null);
 
     const { id, pinned } = note;
-    await dispatch(updateNote({ noteId: id, note: { pinned: !pinned } }));
+    await dispatch(updateNote({ id, pinned: !pinned }));
   };
 
   const startEdit = () => {
@@ -292,13 +292,11 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
     } else {
       await dispatch(
         updateNote({
-          noteId: note.id,
-          note: {
-            title,
-            body,
-            parent_note_id: parentNoteId,
-            tags,
-          },
+          id: note.id,
+          title,
+          body,
+          parent_note_id: parentNoteId,
+          tags,
         }),
       );
     }

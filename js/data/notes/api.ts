@@ -26,16 +26,13 @@ export const updateNote = createAsyncThunk(
   name('update'),
   async (
     {
-      noteId,
-      note: noteIn,
-    }: {
-      noteId: number;
-      note: UpdateNote & Partial<Pick<NoteWithTags, `tags`>>;
-    },
+      id: noteId,
+      tags,
+      ...note
+    }: UpdateNote & Partial<Pick<NoteWithTags, 'tags'>> & { id: number },
     { rejectWithValue },
   ) => {
     try {
-      const { tags, ...note } = noteIn;
       let result = await api.note.update(noteId, note);
       if (tags) {
         result = await api.note.setTags(result.id, tags);
@@ -48,9 +45,8 @@ export const updateNote = createAsyncThunk(
 );
 export const createNote = createAsyncThunk(
   name('create'),
-  async (noteIn: NewNote & Pick<NoteWithTags, `tags`>, { rejectWithValue }) => {
+  async ({ tags, ...note }: NewNote & Pick<NoteWithTags, 'tags'>, { rejectWithValue }) => {
     try {
-      const { tags, ...note } = noteIn;
       const result = await api.note.create(note);
       return await api.note.setTags(result.id, tags);
     } catch (e) {

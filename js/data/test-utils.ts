@@ -6,10 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { rootReducer } from 'data/store';
 import { NoteWithTags } from 'data/types';
-
-import { getNotes } from './notes/api';
 
 export const emptyTestNote: NoteWithTags = {
   id: -1,
