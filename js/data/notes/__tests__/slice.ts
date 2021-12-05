@@ -6,8 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+import { makeTestNote } from 'data/test-utils';
 import { signOutUser } from 'data/user/api';
-import { makeTestNote } from 'data/utils.forTesting';
 
 import { deleteNote, getNotes, updateNote } from '../api';
 import notes from '../slice';
@@ -20,26 +20,124 @@ describe('reducers::notes()', () => {
   });
 
   test('responds to events', () => {
-    let noteOne = makeTestNote({ title: 'title', body: 'body' });
-    let noteTwo = makeTestNote({ title: 'title 2', body: 'body' });
+    let noteOne = makeTestNote({ id: 1, title: 'title', body: 'body' });
+    let noteTwo = makeTestNote({ id: 2, title: 'title 2', body: 'body' });
     let state = getInitial();
 
     state = notes(state, getNotes.fulfilled([noteOne], ''));
-    expect(state).toMatchSnapshot();
+    expect(state).toMatchInlineSnapshot(`
+      Object {
+        "entities": Object {
+          "1": Object {
+            "archived": false,
+            "body": "body",
+            "created_at": "",
+            "id": 1,
+            "parent_note_id": 0,
+            "pinned": false,
+            "tags": Array [],
+            "title": "title",
+            "updated_at": "",
+            "user_id": -1,
+          },
+        },
+        "ids": Array [
+          1,
+        ],
+      }
+    `);
 
     noteOne = { ...noteOne, title: 'title 3' };
     state = notes(state, updateNote.fulfilled(noteOne, '', { noteId: noteOne.id, note: noteOne }));
-    expect(state).toMatchSnapshot();
+    expect(state).toMatchInlineSnapshot(`
+      Object {
+        "entities": Object {
+          "1": Object {
+            "archived": false,
+            "body": "body",
+            "created_at": "",
+            "id": 1,
+            "parent_note_id": 0,
+            "pinned": false,
+            "tags": Array [],
+            "title": "title 3",
+            "updated_at": "",
+            "user_id": -1,
+          },
+        },
+        "ids": Array [
+          1,
+        ],
+      }
+    `);
 
     noteTwo = { ...noteTwo, title: 'title 4' };
     state = notes(state, updateNote.fulfilled(noteTwo, '', { noteId: noteTwo.id, note: noteTwo }));
-    expect(state).toMatchSnapshot();
+    expect(state).toMatchInlineSnapshot(`
+      Object {
+        "entities": Object {
+          "1": Object {
+            "archived": false,
+            "body": "body",
+            "created_at": "",
+            "id": 1,
+            "parent_note_id": 0,
+            "pinned": false,
+            "tags": Array [],
+            "title": "title 3",
+            "updated_at": "",
+            "user_id": -1,
+          },
+          "2": Object {
+            "archived": false,
+            "body": "body",
+            "created_at": "",
+            "id": 2,
+            "parent_note_id": 0,
+            "pinned": false,
+            "tags": Array [],
+            "title": "title 4",
+            "updated_at": "",
+            "user_id": -1,
+          },
+        },
+        "ids": Array [
+          1,
+          2,
+        ],
+      }
+    `);
 
     state = notes(state, deleteNote.fulfilled(noteTwo.id, '', noteTwo.id));
-    expect(state).toMatchSnapshot();
+    expect(state).toMatchInlineSnapshot(`
+      Object {
+        "entities": Object {
+          "1": Object {
+            "archived": false,
+            "body": "body",
+            "created_at": "",
+            "id": 1,
+            "parent_note_id": 0,
+            "pinned": false,
+            "tags": Array [],
+            "title": "title 3",
+            "updated_at": "",
+            "user_id": -1,
+          },
+        },
+        "ids": Array [
+          1,
+        ],
+      }
+    `);
 
     state = notes(state, signOutUser.fulfilled(undefined, '', undefined));
     expect(state.ids).toHaveLength(0);
-    expect(state).toMatchSnapshot();
+    expect(state).toMatchInlineSnapshot(`
+      Object {
+        "entities": Object {},
+        "ids": Array [],
+      }
+    `);
   });
 });

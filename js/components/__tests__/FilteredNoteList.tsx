@@ -12,9 +12,11 @@ import * as React from 'react';
 import * as ReactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
-import { testState } from 'data/utils.forTesting';
+import { makeTestState } from 'data/test-utils';
 
 import FilteredNoteList from '../FilteredNoteList';
+
+const testState = makeTestState();
 
 // eslint-disable-next-line no-import-assign
 jest.spyOn(ReactRedux, 'useSelector').mockImplementation((r) => r(testState));

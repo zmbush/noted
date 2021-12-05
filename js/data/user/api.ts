@@ -17,7 +17,7 @@ export const getCurrentUser = createAsyncThunk(
   async (_: void, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.get();
-      dispatch(getNotes());
+      await dispatch(getNotes());
       return user;
     } catch (e) {
       throw rejectWithValue(e);
@@ -30,7 +30,7 @@ export const signInUser = createAsyncThunk(
   async (signIn: SignIn, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signIn(signIn);
-      dispatch(getNotes());
+      await dispatch(getNotes());
       return user;
     } catch (e) {
       throw rejectWithValue(e);
@@ -43,7 +43,7 @@ export const signUpUser = createAsyncThunk(
   async (signUp: NewUserRequest, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signUp(signUp);
-      dispatch(getNotes());
+      await dispatch(getNotes());
       return user;
     } catch (e) {
       throw rejectWithValue(e);

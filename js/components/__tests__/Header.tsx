@@ -10,15 +10,10 @@ import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import { render } from 'components/test-utils';
+import { render, sleep } from 'components/test-utils';
 import { signInUser } from 'data/user/api';
 
 import Header from '../Header';
-
-const sleep = (milliseconds: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
 
 describe('<Header />', () => {
   test('matches snapshot', () => {

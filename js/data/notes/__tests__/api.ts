@@ -8,7 +8,7 @@
 //
 import api from 'api';
 import { store } from 'data/store';
-import { makeTestNote } from 'data/utils.forTesting';
+import { makeTestNote } from 'data/test-utils';
 
 import * as notesApi from '../api';
 

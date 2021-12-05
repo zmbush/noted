@@ -12,9 +12,11 @@ import * as React from 'react';
 import * as ReactRedux from 'react-redux';
 import * as ReactRouterDomOriginal from 'react-router-dom';
 
-import { testState } from 'data/utils.forTesting';
+import { makeTestState } from 'data/test-utils';
 
 import NoteList from '../NoteList';
+
+const testState = makeTestState();
 
 jest.mock('react-router');
 const ReactRouterDom = ReactRouterDomOriginal as jest.Mocked<typeof ReactRouterDomOriginal>;

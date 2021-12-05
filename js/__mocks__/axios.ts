@@ -10,7 +10,7 @@
 /* eslint-disable no-throw-literal */
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ErrorData, NoteWithTags, SignIn, User } from 'data/types';
+import { ErrorData, NoteWithTags, SignIn, UpdateNote, User } from 'data/types';
 
 const testUser: User = {
   id: 1,
@@ -51,12 +51,14 @@ export const makeTestNote = (
   return { ...emptyTestNote, ...defaultFields, ...overrides, ...parentOverride };
 };
 
-const testUserNotes: NoteWithTags[] = [
-  makeTestNote(),
-  makeTestNote(),
-  makeTestNote(),
-  makeTestNote(),
-];
+const noteDb: { [user_id: number]: { [note_id: number]: NoteWithTags } } = {
+  [testUser.id]: {
+    1: makeTestNote({ id: 1 }),
+    2: makeTestNote({ id: 2 }),
+    3: makeTestNote({ id: 3 }),
+    4: makeTestNote({ id: 4 }),
+  },
+};
 
 let currentUser: User | null = null;
 
@@ -74,15 +76,17 @@ const makeError = (code: number, error: string): { response: { data: ErrorData }
   },
 });
 
+const noteEndpoint = /\/api\/secure\/notes\/(?<note_id>\d+)/;
+
 export default {
   async get(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     if (url.endsWith('/api/secure/notes')) {
-      if (currentUser === testUser) {
-        return makeResponse(testUserNotes, config);
+      if (currentUser && currentUser.id in noteDb) {
+        return makeResponse(Object.values(noteDb[currentUser.id]), config);
       }
       throw makeError(401, 'NotSignedIn');
     }
-    throw 'Unhandled API Endpoint';
+    throw makeError(500, 'Not Implemented');
   },
 
   async post(url: string, data: any, config: AxiosRequestConfig): Promise<AxiosResponse> {
@@ -98,6 +102,23 @@ export default {
       currentUser = testUser;
       return makeResponse('ok', config);
     }
-    throw 'Unhandled API Endpoint';
+    throw makeError(500, 'Not Implemented');
+  },
+
+  async patch(url: string, data: any, config: AxiosRequestConfig): Promise<AxiosResponse> {
+    const urlMatch = url.match(noteEndpoint);
+    if (urlMatch.groups) {
+      const noteId = parseInt(urlMatch.groups.note_id, 10);
+      const updateNote = data as UpdateNote;
+      if (currentUser && currentUser.id in noteDb) {
+        const notes = noteDb[currentUser.id];
+        if (noteId in notes) {
+          notes[noteId] = { ...notes[noteId], ...updateNote };
+          return makeResponse(notes[noteId], config);
+        }
+      }
+      throw makeError(404, 'NotFound');
+    }
+    throw makeError(500, 'Not Implemented');
   },
 };
