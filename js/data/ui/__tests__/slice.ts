@@ -13,7 +13,7 @@ describe('ui::slice()', () => {
 
   test('returns initial state', () => {
     expect(getInitial()).toEqual({
-      inProgress: [],
+      inProgress: {},
       lastError: null,
     });
   });
@@ -21,33 +21,43 @@ describe('ui::slice()', () => {
   test('responds to arbitrary events', () => {
     let state = getInitial();
 
-    state = ui(state, { type: 'fake/pending', meta: { requestId: 'one' } });
+    state = ui(state, { type: 'fake/event/pending', meta: { requestId: 'one' } });
     expect(state).toEqual({
-      inProgress: ['one'],
+      inProgress: {
+        fake: { event: ['one'] },
+      },
       lastError: null,
     });
 
-    state = ui(state, { type: 'fake/pending', meta: { requestId: 'two' } });
+    state = ui(state, { type: 'fake/event/pending', meta: { requestId: 'two' } });
     expect(state).toEqual({
-      inProgress: ['one', 'two'],
+      inProgress: {
+        fake: { event: ['one', 'two'] },
+      },
       lastError: null,
     });
 
-    state = ui(state, { type: 'fake/rejected', meta: { requestId: 'one' }, payload: 'an error' });
+    state = ui(state, {
+      type: 'fake/event/rejected',
+      meta: { requestId: 'one' },
+      payload: 'an error',
+    });
     expect(state).toEqual({
-      inProgress: ['two'],
+      inProgress: {
+        fake: { event: ['two'] },
+      },
       lastError: 'an error',
     });
 
-    state = ui(state, { type: 'fake/fulfilled', meta: { requestId: 'two' } });
+    state = ui(state, { type: 'fake/event/fulfilled', meta: { requestId: 'two' } });
     expect(state).toEqual({
-      inProgress: [],
+      inProgress: {},
       lastError: 'an error',
     });
 
     state = ui(state, clearLastError());
     expect(state).toEqual({
-      inProgress: [],
+      inProgress: {},
       lastError: null,
     });
   });

@@ -80,7 +80,7 @@ describe('<Header />', () => {
           "ids": Array [],
         },
         "ui": Object {
-          "inProgress": Array [],
+          "inProgress": Object {},
           "lastError": null,
         },
         "user": Object {

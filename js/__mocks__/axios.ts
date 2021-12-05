@@ -116,17 +116,11 @@ const createNote = withUser((user: User, newNote: NewNote): NoteWithTags => {
     Object.keys(notes)
       .map((v) => parseInt(v, 10))
       .reduce((a, b) => (a > b ? a : b), 0) + 1;
-  notes[newId] = {
+  notes[newId] = makeTestNote({
     id: newId,
     user_id: currentUser.id,
-    tags: [],
-    created_at: '',
-    updated_at: '',
-    archived: false,
-    pinned: false,
-    parent_note_id: newNote.parent_note_id || 0,
     ...newNote,
-  };
+  });
   return notes[newId];
 });
 

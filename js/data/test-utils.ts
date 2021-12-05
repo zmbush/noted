@@ -41,14 +41,3 @@ export const makeTestNote = (
   }
   return { ...emptyTestNote, ...defaultFields, ...overrides, ...parentOverride };
 };
-
-export const makeTestState = () =>
-  rootReducer(
-    undefined,
-    getNotes.fulfilled(
-      [makeTestNote(), makeTestNote({ id: 4 }), makeTestNote({ id: 2 })],
-      '',
-      undefined,
-      undefined,
-    ),
-  );
