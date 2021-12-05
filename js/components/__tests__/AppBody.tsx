@@ -77,8 +77,8 @@ describe('<AppBody />', () => {
           type="text"
           value=""
         />,
-        <textarea
-          class="toastui-editor-pseudo-clipboard"
+        <input
+          value=""
         />,
       ]
     `);

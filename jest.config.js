@@ -18,12 +18,9 @@ module.exports = {
   moduleNameMapper: {
     '^core-js/.*': 'identity-obj-proxy',
     '\\.(css|less|scss)$': 'identity-obj-proxy',
-    'react-markdown': '<rootDir>/js/__mocks__/react-markdown.tsx',
-    'rehype-raw': '<rootDir>/js/__mocks__/rehype-raw.ts',
   },
-  setupFiles: ['core-js', './js/setupTests.ts'],
+  setupFiles: ['core-js'],
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}', '!js/index.tsx'],
-  snapshotSerializers: ['enzyme-to-json/serializer'],
   reporters: ['default', ['jest-junit', { outputDirectory: 'test-results/jest' }]],
   moduleDirectories: ['node_modules', 'js'],
 };
