@@ -6,10 +6,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { mount, shallow } from 'enzyme';
 import * as MousetrapOriginal from 'mousetrap';
 
 import * as React from 'react';
+
+import { render } from 'components/test-utils';
 
 import BindKeyboard from '../BindKeyboard';
 
@@ -18,25 +19,33 @@ const Mousetrap = MousetrapOriginal as jest.Mocked<typeof MousetrapOriginal>;
 
 describe('<BindKeyboard />', () => {
   test('matches snapshot', () => {
-    expect(shallow(<BindKeyboard keys='key' callback={() => {}} />)).toMatchSnapshot();
+    expect(
+      render(<BindKeyboard keys='key' callback={() => {}} />).container.firstChild,
+    ).toMatchInlineSnapshot(`null`);
 
     expect(
-      shallow(
+      render(
         <BindKeyboard keys='key' callback={() => {}}>
           Contents
         </BindKeyboard>,
-      ),
-    ).toMatchSnapshot();
+      ).container.firstChild,
+    ).toMatchInlineSnapshot(`
+      <div>
+        Contents
+      </div>
+    `);
   });
 
   test('unmount works', () => {
-    const cb = () => {};
+    const cb = jest.fn();
+    Mousetrap.bind.mockReset();
+    Mousetrap.unbind.mockReset();
 
     {
-      const wrapper = mount(<BindKeyboard keys='a+key' callback={cb} action='toot' />);
-      expect(Mousetrap.bind).toBeCalledWith('a+key', cb, 'toot');
-      wrapper.unmount();
-      expect(Mousetrap.unbind).toBeCalledWith('a+key', 'toot');
+      const { unmount } = render(<BindKeyboard keys='a+key' callback={cb} action='test' />);
+      expect(Mousetrap.bind).toBeCalledWith('a+key', cb, 'test');
+      unmount();
+      expect(Mousetrap.unbind).toBeCalledWith('a+key', 'test');
     }
 
     {
@@ -51,14 +60,14 @@ describe('<BindKeyboard />', () => {
         reset: jest.fn(),
       }));
 
-      const wrapper = mount(
-        <BindKeyboard keys='a+key' callback={cb} action='toot'>
+      const { unmount } = render(
+        <BindKeyboard keys='a+key' callback={cb} action='test'>
           <div />
         </BindKeyboard>,
       );
-      expect(newBind).toBeCalledWith('a+key', cb, 'toot');
-      wrapper.unmount();
-      expect(newUnbind).toBeCalledWith('a+key', 'toot');
+      expect(newBind).toBeCalledWith('a+key', cb, 'test');
+      unmount();
+      expect(newUnbind).toBeCalledWith('a+key', 'test');
     }
   });
 });
