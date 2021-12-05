@@ -6,123 +6,130 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { Editor } from '@toast-ui/react-editor';
-import { shallow } from 'enzyme';
-import ChipInput from 'material-ui-chip-input';
+
+/* eslint-disable react/jsx-props-no-spreading */
+import userEvent from '@testing-library/user-event';
 
 import React from 'react';
 
-import { CardContent, CardHeader, IconButton, Input } from '@mui/material';
+import { render } from 'components/test-utils';
 
 import NoteEditor from '../NoteEditor';
 
-jest.spyOn(React, 'useRef').mockReturnValue({
-  current: {
-    getInstance() {
-      return {
-        getMarkdown() {
-          return 'new body';
-        },
-      };
-    },
+const editorProps: Parameters<typeof NoteEditor>[0] = {
+  note: {
+    id: 1,
+    title: 'note title',
+    body: 'note body',
+    tags: [],
+    created_at: '',
+    updated_at: '',
+    user_id: 2,
   },
-});
-
-const editor = (
-  <NoteEditor
-    note={{
-      id: 1,
-      title: 'note title',
-      body: 'note body',
-      tags: ['tag1'],
-      created_at: '',
-      updated_at: '',
-      user_id: 2,
-    }}
-    onSave={() => {}}
-    onModified={() => {}}
-  />
-);
+  onSave: jest.fn(),
+  onModified: jest.fn(),
+};
 
 describe('<NoteEditor />', () => {
   test('matches snapshot', () => {
-    const wrapper = shallow(editor);
-
-    expect(wrapper).toMatchSnapshot();
-
-    wrapper.setProps({
-      note: {
-        title: 'new title',
-        body: 'new body',
-        tags: ['tag2'],
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
+    const { container } = render(<NoteEditor {...editorProps} />);
+    expect(container).toMatchSnapshot();
   });
 
-  test('tag input works', () => {
-    const wrapper = shallow(editor);
+  test('tag input works', async () => {
+    const { getByTestId, getByText, queryByText } = render(<NoteEditor {...editorProps} />);
+    const tagsInput = getByTestId('tags-input');
+    userEvent.type(tagsInput, 'A Tag{enter}Another Tag{enter}A Third Tag{enter}');
+    expect(getByText('A Tag')).toMatchInlineSnapshot(`
+      <span
+        class="MuiChip-label"
+      >
+        A Tag
+      </span>
+    `);
+    expect(getByText('Another Tag')).toMatchInlineSnapshot(`
+      <span
+        class="MuiChip-label"
+      >
+        Another Tag
+      </span>
+    `);
+    expect(getByText('A Third Tag')).toMatchInlineSnapshot(`
+      <span
+        class="MuiChip-label"
+      >
+        A Third Tag
+      </span>
+    `);
 
-    wrapper.find(ChipInput).props().onAdd('test');
-    expect(wrapper.find(ChipInput).props().value).toContain('test');
+    // Click delete button
+    userEvent.click(getByText('A Third Tag').parentElement.children[1]);
+    expect(queryByText('A Third Tag')).toBeNull();
 
-    wrapper.find(ChipInput).props().onDelete('test', 1);
-    expect(wrapper.find(ChipInput).props().value).not.toContain('test');
+    getByText('A Tag');
+    userEvent.click(getByText('A Tag').parentElement.children[1]);
+    expect(queryByText('A Tag')).toBeNull();
+
+    userEvent.click(getByTestId('SaveIcon'));
+    expect(editorProps.onSave).toHaveBeenLastCalledWith({
+      body: 'note body',
+      parent_note_id: undefined,
+      tags: ['Another Tag'],
+      title: 'note title',
+    });
   });
 
   test('title change works', () => {
-    const wrapper = shallow(editor);
-    const onSave = jest.fn();
-    wrapper.setProps({ onSave });
-    wrapper
-      .find(CardHeader)
-      .dive()
-      .dive()
-      .find(Input)
-      .simulate('change', { target: { value: 'new title' } });
+    const { getByDisplayValue, getByTestId } = render(<NoteEditor {...editorProps} />);
+    const titleInput = getByDisplayValue(editorProps.note.title);
 
-    expect(wrapper.find(CardHeader).dive().dive().find(Input).props().value).toEqual('new title');
+    expect(titleInput).toMatchInlineSnapshot(`
+      <input
+        class="MuiInput-input MuiInputBase-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+        type="text"
+        value="note title"
+      />
+    `);
+    userEvent.type(titleInput, ' More Title');
+    expect(titleInput).toMatchInlineSnapshot(`
+      <input
+        class="MuiInput-input MuiInputBase-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+        type="text"
+        value="note title More Title"
+      />
+    `);
 
-    const toastEditor = wrapper.find(CardContent).dive().dive().find(Editor);
-    toastEditor.props().events.change('wysiwyg');
-
-    wrapper
-      .find(CardHeader)
-      .dive()
-      .dive()
-      .find('[aria-label="Save Note"]')
-      .first()
-      .simulate('click', { preventDefault: () => {} });
-
-    expect(onSave).toHaveBeenCalledWith({
-      title: 'new title',
-      body: 'new body',
+    userEvent.click(getByTestId('SaveIcon'));
+    expect(editorProps.onSave).toHaveBeenLastCalledWith({
+      body: 'note body',
       parent_note_id: undefined,
-      tags: ['tag1'],
+      tags: [],
+      title: 'note title More Title',
     });
   });
 
-  test('submitting works', () => {
-    let noteSaved;
-    const wrapper = shallow(editor);
-    wrapper.setProps({
-      onSave: (note: any) => {
-        noteSaved = note;
-      },
-    });
+  test('body change works', () => {
+    const { getByDisplayValue, getByTestId } = render(<NoteEditor {...editorProps} />);
+    const bodyInput = getByDisplayValue(editorProps.note.body);
 
-    wrapper
-      .find(CardHeader)
-      .dive()
-      .dive()
-      .find(IconButton)
-      .simulate('click', { preventDefault() {} });
+    expect(bodyInput).toMatchInlineSnapshot(`
+      <input
+        value="note body"
+      />
+    `);
+    userEvent.type(bodyInput, ' More Body');
+    expect(bodyInput).toMatchInlineSnapshot(`
+      <input
+        value="note body More Body"
+      />
+    `);
 
-    expect(noteSaved).toEqual({
+    userEvent.click(getByTestId('SaveIcon'));
+    expect(editorProps.onSave).toHaveBeenLastCalledWith({
+      body: 'note body More Body',
+      parent_note_id: undefined,
+      tags: [],
       title: 'note title',
-      body: 'note body',
-      tags: ['tag1'],
     });
   });
 });
