@@ -10,7 +10,7 @@
 /* eslint-disable no-throw-literal */
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ErrorData, NoteWithTags, SignIn, UpdateNote, User } from 'data/types';
+import { ErrorData, NewNote, NoteWithTags, SignIn, UpdateNote, User } from 'data/types';
 
 const testUser: User = {
   id: 1,
@@ -77,6 +77,7 @@ const makeError = (code: number, error: string): { response: { data: ErrorData }
 });
 
 const noteEndpoint = /\/api\/secure\/notes\/(?<note_id>\d+)/;
+const tagsEndpoint = /\/api\/secure\/notes\/(?<note_id>\d+)\/tags/;
 
 export default {
   async get(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
@@ -118,6 +119,50 @@ export default {
         }
       }
       throw makeError(404, 'NotFound');
+    }
+    throw makeError(500, 'Not Implemented');
+  },
+
+  async put(url: string, data: any, config: AxiosRequestConfig): Promise<AxiosResponse> {
+    if (url.endsWith('/api/secure/note')) {
+      const newNote = data as NewNote;
+      if (currentUser) {
+        if (!(currentUser.id in noteDb)) {
+          noteDb[currentUser.id] = {};
+        }
+        const userDb = noteDb[currentUser.id];
+        const newId =
+          Object.keys(userDb)
+            .map((v) => parseInt(v, 10))
+            .reduce((a, b) => (a > b ? a : b), 0) + 1;
+        userDb[newId] = {
+          id: newId,
+          user_id: currentUser.id,
+          tags: [],
+          created_at: '',
+          updated_at: '',
+          archived: false,
+          pinned: false,
+          parent_note_id: newNote.parent_note_id || 0,
+          ...newNote,
+        };
+        return makeResponse(userDb[newId], config);
+      }
+      throw makeError(401, 'NotSignedIn');
+    }
+    const urlMatch = url.match(tagsEndpoint);
+    if (urlMatch.groups) {
+      const noteId = parseInt(urlMatch.groups.note_id, 10);
+      const tags = data as string[];
+      if (currentUser && currentUser.id in noteDb) {
+        const notes = noteDb[currentUser.id];
+        if (noteId in notes) {
+          notes[noteId].tags = tags;
+          return makeResponse(notes[noteId], config);
+        }
+        throw makeError(404, 'NotFound');
+      }
+      throw makeError(401, 'NotSignedIn');
     }
     throw makeError(500, 'Not Implemented');
   },
