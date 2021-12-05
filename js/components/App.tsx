@@ -17,6 +17,7 @@ import Header from 'components/Header';
 import LogIn from 'components/LogIn';
 import { getTopLevelNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
+import { getUserLoading } from 'data/ui/selectors';
 
 const AppRoot = styled('div')({
   width: '100%',
@@ -32,6 +33,7 @@ const App = () => {
   const [search, setSearch] = React.useState('');
   const notes = useSelector(getTopLevelNotes);
   const isSignedIn = useSelector<AppState>((state) => state.user.isSignedIn);
+  const isLoading = useSelector(getUserLoading);
   React.useEffect(() => {
     document.title = `noted`;
   }, []);
@@ -66,14 +68,18 @@ const App = () => {
   return (
     <AppRoot>
       <Header createNewShortcut={createNewShortcut} setSearch={setSearch} onStartEdit={startEdit} />
-      <AppBody
-        notes={notes}
-        createNewShortcut={createNewShortcut}
-        newNote={newNote}
-        search={search}
-        onNewNoteCancel={() => setNewNote(false)}
-      />
-      <LogIn open={!isSignedIn} />
+      {isLoading ? null : (
+        <>
+          <AppBody
+            notes={notes}
+            createNewShortcut={createNewShortcut}
+            newNote={newNote}
+            search={search}
+            onNewNoteCancel={() => setNewNote(false)}
+          />
+          <LogIn open={!isSignedIn} />
+        </>
+      )}
     </AppRoot>
   );
 };

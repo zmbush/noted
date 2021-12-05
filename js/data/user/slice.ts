@@ -13,7 +13,7 @@ import { Draft } from 'immer';
 
 import { getNotes } from 'data/notes/api';
 import { User } from 'data/types';
-import { getCurrentUser, signInUser, signOutUser, signUpUser } from 'data/user/api';
+import { getCurrentUser, prefix, signInUser, signOutUser, signUpUser } from 'data/user/api';
 
 export interface UserState {
   isSignedIn: boolean;
@@ -26,7 +26,7 @@ const initialState: UserState = {
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: prefix,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

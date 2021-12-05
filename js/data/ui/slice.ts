@@ -14,11 +14,11 @@ import { ErrorData } from 'data/types';
 
 export type UIState = {
   lastError: ErrorData | null;
-  inProgress: string[];
+  inProgress: { [slice: string]: { [type: string]: string[] } };
 };
 const initialState: UIState = {
   lastError: null,
-  inProgress: [],
+  inProgress: {},
 };
 
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
@@ -26,8 +26,19 @@ type PendingAction = ReturnType<GenericAsyncThunk['pending']>;
 type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>;
 type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>;
 
+const ensureInProgress = (state: UIState, slice: string, type: string) => {
+  if (!(slice in state.inProgress)) {
+    state.inProgress[slice] = {};
+  }
+  if (!(type in state.inProgress[slice])) {
+    state.inProgress[slice][type] = [];
+  }
+};
+
+export const prefix = 'ui';
+
 export const uiSlice = createSlice({
-  name: 'ui',
+  name: prefix,
   initialState,
   reducers: {
     clearLastError(state) {
@@ -48,16 +59,31 @@ export const uiSlice = createSlice({
       .addMatcher(
         (action): action is PendingAction => action?.type?.endsWith('/pending'),
         (state, action) => {
-          state.inProgress = [...new Set([...state.inProgress, action.meta.requestId])];
+          const [slice, type, ..._] = action.type.split('/', 3);
+          ensureInProgress(state, slice, type);
+          state.inProgress[slice][type] = [
+            ...new Set([...state.inProgress[slice][type], action.meta.requestId]),
+          ];
         },
       )
       .addMatcher(
         (action): action is FulfilledAction | RejectedAction =>
           action?.type?.endsWith('/fulfilled') || action?.type?.endsWith('/rejected'),
         (state, action) => {
-          const inProgress = new Set(state.inProgress);
+          const [slice, type, ..._] = action.type.split('/', 3);
+          ensureInProgress(state, slice, type);
+          const inProgress = new Set(state.inProgress[slice][type]);
           inProgress.delete(action.meta.requestId);
-          state.inProgress = [...inProgress];
+
+          if (inProgress.size > 0) {
+            state.inProgress[slice][type] = [...inProgress];
+          } else {
+            delete state.inProgress[slice][type];
+          }
+
+          if (Object.entries(state.inProgress[slice]).length === 0) {
+            delete state.inProgress[slice];
+          }
         },
       );
   },

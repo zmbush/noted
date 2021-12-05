@@ -8,14 +8,14 @@
 //
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { getNotes, updateNote, createNote, deleteNote } from 'data/notes/api';
+import { getNotes, updateNote, createNote, deleteNote, prefix } from 'data/notes/api';
 import { NoteWithTags } from 'data/types';
 import { signOutUser } from 'data/user/api';
 
 export const notesAdapter = createEntityAdapter<NoteWithTags>();
 
 export const notesSlice = createSlice({
-  name: 'notes',
+  name: prefix,
   initialState: notesAdapter.getInitialState(),
   reducers: {},
   extraReducers: (builder) => {

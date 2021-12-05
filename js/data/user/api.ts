@@ -12,8 +12,11 @@ import api from 'api';
 import { getNotes } from 'data/notes/api';
 import { NewUserRequest, SignIn } from 'data/types';
 
+export const prefix = 'user';
+const name = (n: string) => `${prefix}/${n}`;
+
 export const getCurrentUser = createAsyncThunk(
-  'users/getCurrentUser',
+  name('get'),
   async (_: void, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.get();
@@ -26,7 +29,7 @@ export const getCurrentUser = createAsyncThunk(
 );
 
 export const signInUser = createAsyncThunk(
-  'user/signIn',
+  name('signIn'),
   async (signIn: SignIn, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signIn(signIn);
@@ -39,7 +42,7 @@ export const signInUser = createAsyncThunk(
 );
 
 export const signUpUser = createAsyncThunk(
-  'user/signUp',
+  name('signUp'),
   async (signUp: NewUserRequest, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signUp(signUp);
@@ -52,7 +55,7 @@ export const signUpUser = createAsyncThunk(
 );
 
 export const signOutUser = createAsyncThunk(
-  'user/signOut',
+  name('signOut'),
   async (_: void, { rejectWithValue }) => {
     try {
       await api.user.signOut();
