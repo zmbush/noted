@@ -6,12 +6,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 
 import { createStore, store as defaultStore } from 'data/store';
 
@@ -23,17 +23,56 @@ type Config = {
 } & Omit<Parameters<typeof render>[1], 'wrapper'>;
 const customRender = (
   ui: ComponentToRender,
-  { route = '/', store = createStore(), ...renderOptions }: Config = {},
+  {
+    route = '/',
+    history = createMemoryHistory({ initialEntries: [route] }),
+    store = createStore(),
+    ...renderOptions
+  }: Config = {},
 ) => {
-  const Wrapper = ({ children }: any) => (
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
-    </Provider>
-  );
+  const Wrapper = ({ children }: any) => {
+    const [state, setState] = React.useState({
+      action: history.action,
+      location: history.location,
+    });
+
+    React.useLayoutEffect(() => history.listen(setState), [history]);
+
+    return (
+      <Provider store={store}>
+        <Router location={state.location} navigationType={state.action} navigator={history}>
+          {children}
+        </Router>
+      </Provider>
+    );
+  };
+
+  const historyActions = {
+    replace(path: string, state?: any) {
+      act(() => history.replace(path, state));
+    },
+
+    push(path: string, state?: any) {
+      act(() => history.push(path, state));
+    },
+
+    go(delta: number) {
+      act(() => history.go(delta));
+    },
+
+    forward() {
+      act(() => history.forward());
+    },
+
+    back() {
+      act(() => history.back());
+    },
+  };
 
   return {
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
     store,
+    history: historyActions,
   };
 };
 
