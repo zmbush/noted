@@ -14,6 +14,7 @@ import { styled } from '@mui/material';
 
 import AppBody from 'components/AppBody';
 import Header from 'components/Header';
+import Loading from 'components/Loading';
 import LogIn from 'components/LogIn';
 import { getTopLevelNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
@@ -68,7 +69,9 @@ const App = () => {
   return (
     <AppRoot>
       <Header createNewShortcut={createNewShortcut} setSearch={setSearch} onStartEdit={startEdit} />
-      {isLoading ? null : (
+      {isLoading ? (
+        <Loading />
+      ) : (
         <>
           <AppBody
             notes={notes}

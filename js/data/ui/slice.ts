@@ -8,18 +8,21 @@
 //
 
 /* eslint-disable no-param-reassign */
-import { AsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { AsyncThunk, createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 
+import { updateNote, createNote } from 'data/notes/api';
 import { ErrorData } from 'data/types';
 
 export interface UIState {
   lastError: ErrorData | null;
   inProgress: { [slice: string]: { [type: string]: string[] } };
+  noteChanging: { [note_id: number]: string[] };
 }
 
 const initialState: UIState = {
   lastError: null,
   inProgress: {},
+  noteChanging: {},
 };
 
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
@@ -47,7 +50,61 @@ export const uiSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    const noteStartEditing = <
+      V,
+      Ty extends string,
+      T extends { id: number } | { parent_note_id?: number },
+    >(
+      state: Draft<UIState>,
+      action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
+    ) => {
+      let id;
+      if ('id' in action.meta.arg) {
+        id = action.meta.arg.id;
+      } else if ('parent_note_id' in action.meta.arg) {
+        id = action.meta.arg.parent_note_id;
+      } else {
+        // We can't track it.
+        return;
+      }
+      state.noteChanging[id] = [
+        ...new Set([...(state.noteChanging[id] || []), action.meta.requestId]),
+      ];
+    };
+
+    const noteDoneEditing = <
+      V,
+      Ty extends string,
+      T extends { id: number } | { parent_note_id?: number },
+    >(
+      state: Draft<UIState>,
+      action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
+    ) => {
+      let id;
+      if ('id' in action.meta.arg) {
+        id = action.meta.arg.id;
+      } else if ('parent_note_id' in action.meta.arg) {
+        id = action.meta.arg.parent_note_id;
+      } else {
+        // We can't track it.
+        return;
+      }
+      const changing = new Set(state.noteChanging[id] || []);
+      changing.delete(action.meta.requestId);
+      if (changing.size > 0) {
+        state.noteChanging[id] = [...changing];
+      } else {
+        delete state.noteChanging[id];
+      }
+    };
     builder
+      .addCase(updateNote.pending, noteStartEditing)
+      .addCase(createNote.pending, noteStartEditing)
+
+      .addCase(updateNote.fulfilled, noteDoneEditing)
+      .addCase(updateNote.rejected, noteDoneEditing)
+      .addCase(createNote.fulfilled, noteDoneEditing)
+      .addCase(createNote.rejected, noteDoneEditing)
       // Tracking lastError
       .addMatcher(
         (action): action is RejectedAction => action?.type?.endsWith('/rejected'),

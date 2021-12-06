@@ -6,15 +6,23 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+import createCachedSelector from 're-reselect';
 import { createSelector } from 'reselect';
 
 import { prefix as notesPrefix } from 'data/notes/api';
 import { AppState } from 'data/store';
-import { prefix as uiPrefix } from 'data/ui/slice';
+import { prefix as uiPrefix, UIState } from 'data/ui/slice';
 import { prefix as userPrefix } from 'data/user/api';
 
-const getUi = (state: AppState) => state[uiPrefix];
+const getUi = (state: AppState): UIState => state[uiPrefix];
+const noteId = (_: AppState, { id }: { id: number }) => id;
 
 export const getUserLoading = createSelector(getUi, (ui) => userPrefix in ui.inProgress);
 export const getNotesLoading = createSelector(getUi, (ui) => notesPrefix in ui.inProgress);
+export const getIsNoteChanging = createCachedSelector(
+  getUi,
+  noteId,
+  (uiState, id) => !!uiState.noteChanging[id],
+)((_, { id }) => id);
+
 export const getLastError = createSelector(getUi, (ui) => ui.lastError);
