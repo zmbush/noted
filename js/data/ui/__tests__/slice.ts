@@ -60,19 +60,31 @@ describe('ui::slice()', () => {
 
     state = ui(state, {
       type: 'notes/update/pending',
+      meta: { requestId: 'id2', arg: { id: 10 } },
+    });
+    expect(state.noteChanging).toEqual({ 10: ['id', 'id2'] });
+
+    state = ui(state, {
+      type: 'notes/update/pending',
       meta: { requestId: 'parent_note_id', arg: { parent_note_id: 11 } },
     });
-    expect(state.noteChanging).toEqual({ 10: ['id'], 11: ['parent_note_id'] });
+    expect(state.noteChanging).toEqual({ 10: ['id', 'id2'], 11: ['parent_note_id'] });
 
     state = ui(state, {
       type: 'notes/update/fulfilled',
       meta: { requestId: 'id', arg: { id: 10 } },
     });
-    expect(state.noteChanging).toEqual({ 11: ['parent_note_id'] });
+    expect(state.noteChanging).toEqual({ 10: ['id2'], 11: ['parent_note_id'] });
 
     state = ui(state, {
       type: 'notes/update/fulfilled',
       meta: { requestId: 'parent_note_id', arg: { parent_note_id: 11 } },
+    });
+    expect(state.noteChanging).toEqual({ 10: ['id2'] });
+
+    state = ui(state, {
+      type: 'notes/update/rejected',
+      meta: { requestId: 'id2', arg: { id: 10 } },
     });
     expect(state.noteChanging).toEqual({});
   });
