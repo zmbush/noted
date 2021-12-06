@@ -15,6 +15,7 @@ describe('ui::slice()', () => {
     expect(getInitial()).toEqual({
       inProgress: {},
       lastError: null,
+      noteChanging: {},
     });
   });
 
@@ -27,6 +28,7 @@ describe('ui::slice()', () => {
         fake: { event: ['one'] },
       },
       lastError: null,
+      noteChanging: {},
     });
 
     state = ui(state, { type: 'fake/event/pending', meta: { requestId: 'two' } });
@@ -35,6 +37,7 @@ describe('ui::slice()', () => {
         fake: { event: ['one', 'two'] },
       },
       lastError: null,
+      noteChanging: {},
     });
 
     state = ui(state, {
@@ -47,18 +50,21 @@ describe('ui::slice()', () => {
         fake: { event: ['two'] },
       },
       lastError: 'an error',
+      noteChanging: {},
     });
 
     state = ui(state, { type: 'fake/event/fulfilled', meta: { requestId: 'two' } });
     expect(state).toEqual({
       inProgress: {},
       lastError: 'an error',
+      noteChanging: {},
     });
 
     state = ui(state, clearLastError());
     expect(state).toEqual({
       inProgress: {},
       lastError: null,
+      noteChanging: {},
     });
   });
 });

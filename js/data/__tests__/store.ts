@@ -18,6 +18,7 @@ describe('data::reducers()', () => {
         "ui": Object {
           "inProgress": Object {},
           "lastError": null,
+          "noteChanging": Object {},
         },
         "user": Object {
           "isSignedIn": false,

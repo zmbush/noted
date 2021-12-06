@@ -82,6 +82,7 @@ describe('<Header />', () => {
         "ui": Object {
           "inProgress": Object {},
           "lastError": null,
+          "noteChanging": Object {},
         },
         "user": Object {
           "isSignedIn": false,
