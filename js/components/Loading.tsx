@@ -12,7 +12,12 @@ import Spinner from 'react-loader-spinner';
 import { Box, Fade, SxProps, Theme, useTheme } from '@mui/material';
 
 const Loading = ({
-  sx,
+  sx = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  },
   in: isIn = true,
   timeout = 200,
 }: {
@@ -23,16 +28,7 @@ const Loading = ({
   const theme = useTheme();
   return (
     <Fade in={isIn} timeout={timeout}>
-      <Box
-        sx={
-          sx || {
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }
-        }
-      >
+      <Box sx={sx}>
         <Spinner
           type='TailSpin'
           color={theme.palette.primary.main}
