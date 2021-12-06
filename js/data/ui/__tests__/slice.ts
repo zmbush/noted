@@ -23,49 +23,28 @@ describe('ui::slice()', () => {
     let state = getInitial();
 
     state = ui(state, { type: 'fake/event/pending', meta: { requestId: 'one' } });
-    expect(state).toEqual({
-      inProgress: {
-        fake: { event: ['one'] },
-      },
-      lastError: null,
-      noteChanging: {},
-    });
+    expect(state.inProgress).toEqual({ fake: { event: ['one'] } });
+    expect(state.lastError).toBeNull();
 
     state = ui(state, { type: 'fake/event/pending', meta: { requestId: 'two' } });
-    expect(state).toEqual({
-      inProgress: {
-        fake: { event: ['one', 'two'] },
-      },
-      lastError: null,
-      noteChanging: {},
-    });
+    expect(state.inProgress).toEqual({ fake: { event: ['one', 'two'] } });
+    expect(state.lastError).toBeNull();
 
     state = ui(state, {
       type: 'fake/event/rejected',
       meta: { requestId: 'one' },
       payload: 'an error',
     });
-    expect(state).toEqual({
-      inProgress: {
-        fake: { event: ['two'] },
-      },
-      lastError: 'an error',
-      noteChanging: {},
-    });
+    expect(state.inProgress).toEqual({ fake: { event: ['two'] } });
+    expect(state.lastError).toEqual('an error');
 
     state = ui(state, { type: 'fake/event/fulfilled', meta: { requestId: 'two' } });
-    expect(state).toEqual({
-      inProgress: {},
-      lastError: 'an error',
-      noteChanging: {},
-    });
+    expect(state.inProgress).toEqual({});
+    expect(state.lastError).toEqual('an error');
 
     state = ui(state, clearLastError());
-    expect(state).toEqual({
-      inProgress: {},
-      lastError: null,
-      noteChanging: {},
-    });
+    expect(state.inProgress).toEqual({});
+    expect(state.lastError).toBeNull();
   });
 
   test('tracks note loading events', () => {
