@@ -67,4 +67,34 @@ describe('ui::slice()', () => {
       noteChanging: {},
     });
   });
+
+  test('tracks note loading events', () => {
+    let state = getInitial();
+    state = ui(state, { type: 'notes/update/pending', meta: { requestId: 'noId', arg: {} } });
+    expect(state.noteChanging).toEqual({});
+
+    state = ui(state, { type: 'notes/update/rejected', meta: { requestId: 'noId', arg: {} } });
+    expect(state.noteChanging).toEqual({});
+
+    state = ui(state, { type: 'notes/update/pending', meta: { requestId: 'id', arg: { id: 10 } } });
+    expect(state.noteChanging).toEqual({ 10: ['id'] });
+
+    state = ui(state, {
+      type: 'notes/update/pending',
+      meta: { requestId: 'parent_note_id', arg: { parent_note_id: 11 } },
+    });
+    expect(state.noteChanging).toEqual({ 10: ['id'], 11: ['parent_note_id'] });
+
+    state = ui(state, {
+      type: 'notes/update/fulfilled',
+      meta: { requestId: 'id', arg: { id: 10 } },
+    });
+    expect(state.noteChanging).toEqual({ 11: ['parent_note_id'] });
+
+    state = ui(state, {
+      type: 'notes/update/fulfilled',
+      meta: { requestId: 'parent_note_id', arg: { parent_note_id: 11 } },
+    });
+    expect(state.noteChanging).toEqual({});
+  });
 });
