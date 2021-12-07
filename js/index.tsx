@@ -11,52 +11,11 @@ import 'regenerator-runtime/runtime';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
 
-import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-
-import App from 'components/App';
-import { store } from 'data/store';
-import { getCurrentUser } from 'data/user/api';
+import Init from 'components/Init';
 
 if (process.env.NODE_ENV !== 'production') {
   import('map.prototype.tojson');
 }
 
-(async () => {
-  await store.dispatch(getCurrentUser());
-})();
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#311b92',
-    },
-    secondary: {
-      main: '#00897b',
-    },
-    success: {
-      main: '#43a047',
-    },
-    error: {
-      main: '#e53935',
-    },
-  },
-});
-const ThemedApp = () => (
-  <StyledEngineProvider injectFirst>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
-  </StyledEngineProvider>
-);
-
-ReactDOM.render(
-  <Router>
-    <Provider store={store}>
-      <ThemedApp />
-    </Provider>
-  </Router>,
-  document.getElementById('root'),
-);
+ReactDOM.render(<Init />, document.getElementById('root'));

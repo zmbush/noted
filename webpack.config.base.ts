@@ -1,25 +1,13 @@
-// Copyright 2019 Zachary Bush.
+// Copyright 2021 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+//
 
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-
-module.exports = {
-  entry: './js/index.tsx',
-  output: {
-    filename: 'js/[name].[chunkhash].js',
-    chunkFilename: 'js/[name].[chunkhash].js',
-
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
-  },
+exports.default = {
   resolve: {
     fallback: { path: require.resolve('path-browserify') },
     modules: ['node_modules', 'js'],
@@ -58,20 +46,5 @@ module.exports = {
         use: ['file-loader'],
       },
     ],
-  },
-  plugins: [
-    new CopyPlugin({
-      patterns: [{ from: 'static/favicon', to: '.' }],
-    }),
-    new HtmlWebpackPlugin({
-      template: 'js/index.ejs',
-    }),
-    new ForkTsCheckerWebpackPlugin(),
-  ],
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-    runtimeChunk: true,
   },
 };

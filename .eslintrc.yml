@@ -22,7 +22,7 @@ plugins:
 settings:
   'import/resolver':
     webpack:
-      config: 'webpack.dev.js'
+      config: 'webpack.config.base.ts'
   react:
     version: 'detect'
 rules:
@@ -45,6 +45,8 @@ rules:
         - '**/*.spec.ts'
         - '**/*.spec.jsx'
         - '**/*.spec.tsx'
+        - '**/__test__/*'
+        - '**/__mocks__/*'
         - './webpack.config.ts'
   no-use-before-define: off
   '@typescript-eslint/no-use-before-define':
