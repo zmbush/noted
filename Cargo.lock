@@ -2869,9 +2869,9 @@ dependencies = [
 
 [[package]]
 name = "yaml-merge-keys"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6284ae06f1140e880ea73836ec628023d4e4810aeabe626591b15e5842963142"
+checksum = "af47d205071caaef70ebce5e04e1d88eba944833f8a6626dacdda700f86c285a"
 dependencies = [
  "lazy_static",
  "thiserror",
