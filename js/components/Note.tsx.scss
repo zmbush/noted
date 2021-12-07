@@ -68,6 +68,8 @@
   }
 
   @media print {
+    padding-left: $spacing * 2;
+
     & h1,
     & h2,
     & h3,

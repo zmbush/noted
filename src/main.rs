@@ -12,7 +12,10 @@
 
 use actix_files::Files;
 use actix_redis::RedisSession;
-use actix_web::{App, HttpServer};
+use actix_web::{
+    dev::{ServiceRequest, ServiceResponse},
+    App, HttpServer,
+};
 use failure::Error;
 use noted_db::DbConnection;
 use structopt::StructOpt;
@@ -76,7 +79,16 @@ async fn main() -> Result<(), Error> {
             .service(
                 Files::new("/", "dist")
                     .use_last_modified(true)
-                    .index_file("index.html"),
+                    .index_file("index.html")
+                    .default_handler(|req: ServiceRequest| {
+                        let (http_req, _payload) = req.into_parts();
+
+                        async {
+                            let response = actix_files::NamedFile::open("dist/index.html")?
+                                .into_response(&http_req)?;
+                            Ok(ServiceResponse::new(http_req, response))
+                        }
+                    }),
             )
     })
     .bind(("0.0.0.0", port))?

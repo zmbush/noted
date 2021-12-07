@@ -226,7 +226,17 @@ export const NoteContents = ({
           top: 40,
         }}
       />
-      <CardContent sx={{ paddingTop: 0 }}>
+      <CardContent
+        sx={{
+          paddingTop: 0,
+          '@media print': {
+            paddingLeft: 0,
+            '&:last-child': {
+              paddingBottom: 0,
+            },
+          },
+        }}
+      >
         <Tags tags={note.tags} />
         <ReactMarkdown
           className={styles.markdown}

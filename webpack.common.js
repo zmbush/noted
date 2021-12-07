@@ -18,6 +18,7 @@ module.exports = {
     chunkFilename: 'js/[name].[chunkhash].js',
 
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   resolve: {
     fallback: { path: require.resolve('path-browserify') },
