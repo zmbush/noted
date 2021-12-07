@@ -81,7 +81,9 @@ describe('<Header />', () => {
         },
         "ui": Object {
           "inProgress": Object {},
-          "lastError": null,
+          "lastError": Object {
+            "any": null,
+          },
           "noteChanging": Object {},
         },
         "user": Object {

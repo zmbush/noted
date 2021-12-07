@@ -3,7 +3,12 @@
 
 export interface ErrorData {
   code: number;
-  error: string;
+  message: string;
+  details: string;
+  db?: DbErrorDetails | null;
+}
+
+export interface DbErrorDetails {
   details?: string | null;
   hint?: string | null;
   table_name?: string | null;

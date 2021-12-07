@@ -16,6 +16,10 @@ import { prefix as userPrefix } from 'data/user/api';
 
 const getUi = (state: AppState): UIState => state[uiPrefix];
 const noteId = (_: AppState, { id }: { id: number }) => id;
+const sliceSelector = (
+  _: AppState,
+  { slice }: { slice?: 'any' | typeof notesPrefix | typeof userPrefix } = { slice: 'any' },
+) => slice;
 
 export const getUserLoading = createSelector(getUi, (ui) => userPrefix in ui.inProgress);
 export const getNotesLoading = createSelector(getUi, (ui) => notesPrefix in ui.inProgress);
@@ -25,4 +29,8 @@ export const getIsNoteChanging = createCachedSelector(
   (uiState, id) => !!uiState.noteChanging[id],
 )((_, { id }) => id);
 
-export const getLastError = createSelector(getUi, (ui) => ui.lastError);
+export const getLastError = createSelector(
+  getUi,
+  sliceSelector,
+  (ui, slice) => ui.lastError[slice],
+);

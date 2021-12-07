@@ -32,19 +32,14 @@ const LogIn = ({ open }: LogInProps) => {
   const [password, setPassword] = React.useState('');
   const [name, setName] = React.useState('');
 
-  const signInOrUp = async (e: React.SyntheticEvent) => {
+  const signInOrUp = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (signingIn) {
-      await dispatch(signInUser({ email, password }));
+      dispatch(signInUser({ email, password }));
     } else {
-      await dispatch(signUpUser({ email, password, name }));
+      dispatch(signUpUser({ email, password, name }));
     }
-
-    setSigningIn(true);
-    setEmail('');
-    setPassword('');
-    setName('');
   };
 
   return (

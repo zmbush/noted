@@ -26,6 +26,8 @@ pub fn scope(db: DbConnection) -> actix_web::Scope {
 
 #[cfg(test)]
 mod test {
+    use crate::error::ErrorData;
+
     use super::*;
     use actix_http::{
         body::{Body, MessageBody},
@@ -39,7 +41,6 @@ mod test {
     use cookie::{Cookie, CookieJar};
     use http::HeaderValue;
     use noted_db::{
-        error::{ErrorData, ErrorDataOwned},
         models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User},
         DbConnection,
     };
@@ -84,7 +85,7 @@ mod test {
         svc: &mut S,
         cookies: &mut cookie::CookieJar,
         mut req: test::TestRequest,
-    ) -> Result<O, ErrorDataOwned>
+    ) -> Result<O, ErrorData>
     where
         S: Service<Request = Request, Response = ServiceResponse<B>, Error = E>,
         B: MessageBody + Unpin,
@@ -107,9 +108,7 @@ mod test {
         }
         let body = String::from_utf8(test::read_body(resp).await.to_vec()).unwrap();
         serde_json::from_str::<O>(&body).map_err(|_| {
-            serde_json::from_str::<ErrorData>(&body)
-                .expect("Could not parse data or error")
-                .to_owned()
+            serde_json::from_str::<ErrorData>(&body).expect("Could not parse data or error")
         })
     }
 

@@ -28,7 +28,7 @@ const mapErr = async <V>(promise: Promise<V>) => {
     return await promise;
   } catch (e) {
     if (!e || !('response' in e) || !e.response || !('data' in e.response) || !e.response.data) {
-      throw err({ error: 'Unknown Error', code: 500, details: JSON.stringify(e) });
+      throw err({ message: 'Unknown Error', code: 500, details: JSON.stringify(e) });
     }
     throw e.response.data;
   }

@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { styled } from '@mui/material';
 
 import AppBody from 'components/AppBody';
+import ErrorManager from 'components/ErrorManager';
 import Header from 'components/Header';
 import Loading from 'components/Loading';
 import LogIn from 'components/LogIn';
@@ -72,17 +73,16 @@ const App = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <>
-          <AppBody
-            notes={notes}
-            createNewShortcut={createNewShortcut}
-            newNote={newNote}
-            search={search}
-            onNewNoteCancel={() => setNewNote(false)}
-          />
-          <LogIn open={!isSignedIn} />
-        </>
+        <AppBody
+          notes={notes}
+          createNewShortcut={createNewShortcut}
+          newNote={newNote}
+          search={search}
+          onNewNoteCancel={() => setNewNote(false)}
+        />
       )}
+      <LogIn open={!isSignedIn && !isLoading} />
+      <ErrorManager />
     </AppRoot>
   );
 };

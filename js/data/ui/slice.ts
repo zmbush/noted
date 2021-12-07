@@ -10,17 +10,22 @@
 /* eslint-disable no-param-reassign */
 import { AsyncThunk, createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 
-import { updateNote, createNote } from 'data/notes/api';
+import { updateNote, createNote, prefix as notePrefix } from 'data/notes/api';
 import { ErrorData } from 'data/types';
+import { prefix as userPrefix } from 'data/user/api';
 
 export interface UIState {
-  lastError: ErrorData | null;
+  lastError: {
+    any: ErrorData | null;
+    [notePrefix]?: ErrorData;
+    [userPrefix]?: ErrorData;
+  };
   inProgress: { [slice: string]: { [type: string]: string[] } };
   noteChanging: { [note_id: number]: string[] };
 }
 
 const initialState: UIState = {
-  lastError: null,
+  lastError: { any: null },
   inProgress: {},
   noteChanging: {},
 };
@@ -45,8 +50,8 @@ export const uiSlice = createSlice({
   name: prefix,
   initialState,
   reducers: {
-    clearLastError(state) {
-      state.lastError = null;
+    clearLastError(state, { payload = 'any' }: PayloadAction<keyof UIState['lastError'] | null>) {
+      state.lastError[payload] = null;
     },
   },
   extraReducers: (builder) => {
@@ -109,7 +114,11 @@ export const uiSlice = createSlice({
       .addMatcher(
         (action): action is RejectedAction => action?.type?.endsWith('/rejected'),
         (state, action) => {
-          state.lastError = action.payload as ErrorData;
+          const [slice, ..._] = action.type.split('/', 2);
+          state.lastError.any = action.payload as ErrorData;
+          if (slice === userPrefix || slice === notePrefix) {
+            state.lastError[slice] = action.payload as ErrorData;
+          }
         },
       )
 

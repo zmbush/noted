@@ -70,9 +70,9 @@ const makeResponse = (d: any, config: AxiosRequestConfig, status: number = 200):
   config,
 });
 
-const makeError = (code: number, error: string): { response: { data: ErrorData } } => ({
+const makeError = (code: number, message: string): { response: { data: ErrorData } } => ({
   response: {
-    data: { code, error },
+    data: { code, message, details: '' },
   },
 });
 

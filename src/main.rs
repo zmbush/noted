@@ -90,6 +90,7 @@ mod test {
     use actix_web::{client::ClientRequest, test};
     use cookie::{Cookie, CookieJar};
     use http::HeaderValue;
+    use noted::error::ErrorData;
     use noted_db::models::{NewNote, NoteWithTags, UpdateNote, User};
     use serde::Deserialize;
     use serde_json::json;
@@ -104,12 +105,6 @@ mod test {
                 .service(noted::api::scope(db.clone()))
         });
         TestClient::new(server, already_signed_in).await
-    }
-
-    #[derive(Deserialize, Debug)]
-    struct ApiError {
-        code: u16,
-        error: Option<String>,
     }
 
     #[derive(Deserialize, Debug)]
@@ -142,7 +137,7 @@ mod test {
             cookie_jar: &mut CookieJar,
             mut req: ClientRequest,
             body: &S,
-        ) -> Result<D, ApiError> {
+        ) -> Result<D, ErrorData> {
             let headers = req.headers_mut();
             for cookie in cookie_jar.iter() {
                 println!("Setting header: {}", cookie.stripped());
@@ -161,14 +156,16 @@ mod test {
             let body = String::from_utf8(response.body().await.unwrap().to_vec()).unwrap();
             println!("Parsing result: {}", body);
             serde_json::from_str::<D>(&body).map_err(|_| {
-                serde_json::from_str::<ApiError>(&body).unwrap_or_else(|_| ApiError {
+                serde_json::from_str::<ErrorData>(&body).unwrap_or_else(|_| ErrorData {
                     code: status.as_u16(),
-                    error: Some(body),
+                    message: "parse failed".into(),
+                    details: body,
+                    ..ErrorData::default()
                 })
             })
         }
 
-        async fn get_user(&mut self) -> Result<User, ApiError> {
+        async fn get_user(&mut self) -> Result<User, ErrorData> {
             TestClient::handle_result(&mut self.cookie_jar, self.server.get("/api/get_user"), &"")
                 .await
         }
@@ -177,7 +174,7 @@ mod test {
             &mut self,
             email: E,
             name: N,
-        ) -> Result<User, ApiError> {
+        ) -> Result<User, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.put("/api/sign_up"),
@@ -190,7 +187,7 @@ mod test {
             .await
         }
 
-        async fn sign_in<E: AsRef<str>>(&mut self, email: E) -> Result<User, ApiError> {
+        async fn sign_in<E: AsRef<str>>(&mut self, email: E) -> Result<User, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.post("/api/sign_in"),
@@ -202,12 +199,12 @@ mod test {
             .await
         }
 
-        async fn sign_out(&mut self) -> Result<String, ApiError> {
+        async fn sign_out(&mut self) -> Result<String, ErrorData> {
             TestClient::handle_result(&mut self.cookie_jar, self.server.post("/api/sign_out"), &"")
                 .await
         }
 
-        async fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ApiError> {
+        async fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.put("/api/secure/note"),
@@ -216,7 +213,7 @@ mod test {
             .await
         }
 
-        async fn list_notes(&mut self) -> Result<Vec<NoteWithTags>, ApiError> {
+        async fn list_notes(&mut self) -> Result<Vec<NoteWithTags>, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.get("/api/secure/notes"),
@@ -225,7 +222,7 @@ mod test {
             .await
         }
 
-        async fn delete_note(&mut self, id: i32) -> Result<ApiStatus, ApiError> {
+        async fn delete_note(&mut self, id: i32) -> Result<ApiStatus, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.delete(format!("/api/secure/notes/{}", id)),
@@ -238,7 +235,7 @@ mod test {
             &mut self,
             id: i32,
             update: &UpdateNote,
-        ) -> Result<NoteWithTags, ApiError> {
+        ) -> Result<NoteWithTags, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.patch(format!("/api/secure/notes/{}", id)),
@@ -251,7 +248,7 @@ mod test {
             &mut self,
             id: i32,
             tags: Tags,
-        ) -> Result<NoteWithTags, ApiError> {
+        ) -> Result<NoteWithTags, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.put(format!("/api/secure/notes/{}/tags", id)),
@@ -267,7 +264,7 @@ mod test {
 
         let get_user_err = client.get_user().await.err().unwrap();
         assert_eq!(get_user_err.code, 401);
-        assert_eq!(get_user_err.error.unwrap(), "NotLoggedIn");
+        assert_eq!(get_user_err.message, "not authorized");
 
         let new_user = client
             .sign_up("test@test.com", "Testy McTestFace")

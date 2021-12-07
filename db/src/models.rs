@@ -323,7 +323,10 @@ impl User {
 
     pub fn sign_in(sign_in: &SignIn, db: &Conn) -> Result<User> {
         use crate::schema::users::dsl::*;
-        let user = users.filter(email.eq(&sign_in.email)).get_result(db)?;
+        let user = users
+            .filter(email.eq(&sign_in.email))
+            .get_result(db)
+            .map_err(|_| DbError::NotLoggedIn)?;
 
         if sign_in.matches(&user) {
             Ok(user)
