@@ -27,6 +27,8 @@
     "rustfmt",
     "schemars",
     "structopt",
+    "testid",
+    "thiserror",
     "toastui",
     "tojson",
     "wojtekmaj",

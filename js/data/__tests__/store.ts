@@ -9,6 +9,24 @@ import { rootReducer } from '../store';
 
 describe('data::reducers()', () => {
   test('matches snapshot', () => {
-    expect(rootReducer(undefined, { type: null })).toMatchSnapshot();
+    expect(rootReducer(undefined, { type: null })).toMatchInlineSnapshot(`
+      Object {
+        "notes": Object {
+          "entities": Object {},
+          "ids": Array [],
+        },
+        "ui": Object {
+          "inProgress": Object {},
+          "lastError": Object {
+            "any": null,
+          },
+          "noteChanging": Object {},
+        },
+        "user": Object {
+          "isSignedIn": false,
+          "user": null,
+        },
+      }
+    `);
   });
 });

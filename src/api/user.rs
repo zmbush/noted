@@ -55,14 +55,12 @@ async fn sign_in(
 
     match User::sign_in(&*sign_in, &db_pool.db()?) {
         Ok(user) => {
-            session.set_user(&user)?;
+            session
+                .set_user(&user)
+                .map_err(|_| NotedError::LoginFailed)?;
             Ok(HttpResponse::Ok().json(user))
         }
-        Err(noted_db::error::DbError::NotLoggedIn) => {
-            session.clear_user();
-            Err(crate::error::NotedError::NotLoggedIn)
-        }
-        Err(e) => Err(e.into()),
+        Err(_) => Err(crate::error::NotedError::LoginFailed),
     }
 }
 

@@ -8,17 +8,26 @@
 //
 
 /* eslint-disable no-param-reassign */
-import { AsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { AsyncThunk, createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 
+import { updateNote, createNote, prefix as notePrefix } from 'data/notes/api';
 import { ErrorData } from 'data/types';
+import { prefix as userPrefix } from 'data/user/api';
 
-export type UIState = {
-  lastError: ErrorData | null;
-  inProgress: string[];
-};
+export interface UIState {
+  lastError: {
+    any: ErrorData | null;
+    [notePrefix]?: ErrorData;
+    [userPrefix]?: ErrorData;
+  };
+  inProgress: { [slice: string]: { [type: string]: string[] } };
+  noteChanging: { [note_id: number]: string[] };
+}
+
 const initialState: UIState = {
-  lastError: null,
-  inProgress: [],
+  lastError: { any: null },
+  inProgress: {},
+  noteChanging: {},
 };
 
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
@@ -26,21 +35,90 @@ type PendingAction = ReturnType<GenericAsyncThunk['pending']>;
 type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>;
 type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>;
 
+const ensureInProgress = (state: UIState, slice: string, type: string) => {
+  if (!(slice in state.inProgress)) {
+    state.inProgress[slice] = {};
+  }
+  if (!(type in state.inProgress[slice])) {
+    state.inProgress[slice][type] = [];
+  }
+};
+
+export const prefix = 'ui';
+
 export const uiSlice = createSlice({
-  name: 'ui',
+  name: prefix,
   initialState,
   reducers: {
-    clearLastError(state) {
-      state.lastError = null;
+    clearLastError(state, { payload = 'any' }: PayloadAction<keyof UIState['lastError'] | null>) {
+      state.lastError[payload] = null;
     },
   },
   extraReducers: (builder) => {
+    const noteStartEditing = <
+      V,
+      Ty extends string,
+      T extends { id: number } | { parent_note_id?: number },
+    >(
+      state: Draft<UIState>,
+      action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
+    ) => {
+      let id;
+      if ('id' in action.meta.arg) {
+        id = action.meta.arg.id;
+      } else if ('parent_note_id' in action.meta.arg) {
+        id = action.meta.arg.parent_note_id;
+      } else {
+        // We can't track it.
+        return;
+      }
+      state.noteChanging[id] = [
+        ...new Set([...(state.noteChanging[id] || []), action.meta.requestId]),
+      ];
+    };
+
+    const noteDoneEditing = <
+      V,
+      Ty extends string,
+      T extends { id: number } | { parent_note_id?: number },
+    >(
+      state: Draft<UIState>,
+      action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
+    ) => {
+      let id;
+      if ('id' in action.meta.arg) {
+        id = action.meta.arg.id;
+      } else if ('parent_note_id' in action.meta.arg) {
+        id = action.meta.arg.parent_note_id;
+      } else {
+        // We can't track it.
+        return;
+      }
+      const changing = new Set(state.noteChanging[id] || []);
+      changing.delete(action.meta.requestId);
+      if (changing.size > 0) {
+        state.noteChanging[id] = [...changing];
+      } else {
+        delete state.noteChanging[id];
+      }
+    };
     builder
+      .addCase(updateNote.pending, noteStartEditing)
+      .addCase(createNote.pending, noteStartEditing)
+
+      .addCase(updateNote.fulfilled, noteDoneEditing)
+      .addCase(updateNote.rejected, noteDoneEditing)
+      .addCase(createNote.fulfilled, noteDoneEditing)
+      .addCase(createNote.rejected, noteDoneEditing)
       // Tracking lastError
       .addMatcher(
         (action): action is RejectedAction => action?.type?.endsWith('/rejected'),
         (state, action) => {
-          state.lastError = action.payload as ErrorData;
+          const [slice, ..._] = action.type.split('/', 2);
+          state.lastError.any = action.payload as ErrorData;
+          if (slice === userPrefix || slice === notePrefix) {
+            state.lastError[slice] = action.payload as ErrorData;
+          }
         },
       )
 
@@ -48,16 +126,31 @@ export const uiSlice = createSlice({
       .addMatcher(
         (action): action is PendingAction => action?.type?.endsWith('/pending'),
         (state, action) => {
-          state.inProgress = [...new Set([...state.inProgress, action.meta.requestId])];
+          const [slice, type, ..._] = action.type.split('/', 3);
+          ensureInProgress(state, slice, type);
+          state.inProgress[slice][type] = [
+            ...new Set([...state.inProgress[slice][type], action.meta.requestId]),
+          ];
         },
       )
       .addMatcher(
         (action): action is FulfilledAction | RejectedAction =>
           action?.type?.endsWith('/fulfilled') || action?.type?.endsWith('/rejected'),
         (state, action) => {
-          const inProgress = new Set(state.inProgress);
+          const [slice, type, ..._] = action.type.split('/', 3);
+          ensureInProgress(state, slice, type);
+          const inProgress = new Set(state.inProgress[slice][type]);
           inProgress.delete(action.meta.requestId);
-          state.inProgress = [...inProgress];
+
+          if (inProgress.size > 0) {
+            state.inProgress[slice][type] = [...inProgress];
+          } else {
+            delete state.inProgress[slice][type];
+          }
+
+          if (Object.entries(state.inProgress[slice]).length === 0) {
+            delete state.inProgress[slice];
+          }
         },
       );
   },

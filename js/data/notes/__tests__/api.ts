@@ -30,7 +30,7 @@ describe('getNotes', () => {
     jest.spyOn(api.note, 'list').mockRejectedValueOnce({ code: 401, error: 'NotLoggedIn' });
     await store.dispatch(notesApi.getNotes());
     expect(store.getState().notes.entities).toEqual({});
-    expect(store.getState().ui.lastError.code).toEqual(401);
+    expect(store.getState().ui.lastError.any.code).toEqual(401);
   });
 });
 
@@ -49,7 +49,7 @@ describe('createNote', () => {
     jest.spyOn(api.note, 'create').mockRejectedValueOnce({ code: 401, error: 'NotLoggedIn' });
     await store.dispatch(notesApi.createNote(makeTestNote()));
     expect(store.getState().notes.entities).toEqual({});
-    expect(store.getState().ui.lastError.code).toEqual(401);
+    expect(store.getState().ui.lastError.any.code).toEqual(401);
   });
 });
 
@@ -58,15 +58,15 @@ describe('updateNote', () => {
     const note = makeTestNote();
     jest.spyOn(api.note, 'update').mockResolvedValue(note);
     jest.spyOn(api.note, 'setTags').mockResolvedValue(note);
-    await store.dispatch(notesApi.updateNote({ noteId: note.id, note }));
+    await store.dispatch(notesApi.updateNote(note));
     expect(store.getState().notes.entities).toEqual({ [note.id]: note });
   });
 
   it('handles failure well', async () => {
     jest.spyOn(api.note, 'update').mockRejectedValueOnce({ code: 401, error: 'NotLoggedIn' });
-    await store.dispatch(notesApi.updateNote({ noteId: 1, note: makeTestNote({ id: 1 }) }));
+    await store.dispatch(notesApi.updateNote(makeTestNote({ id: 1 })));
     expect(store.getState().notes.entities).toEqual({});
-    expect(store.getState().ui.lastError.code).toEqual(401);
+    expect(store.getState().ui.lastError.any.code).toEqual(401);
   });
 });
 
@@ -93,6 +93,6 @@ describe('deleteNotes', () => {
     expect(store.getState().notes.entities).toEqual({
       [note.id]: note,
     });
-    expect(store.getState().ui.lastError.code).toEqual(401);
+    expect(store.getState().ui.lastError.any.code).toEqual(401);
   });
 });

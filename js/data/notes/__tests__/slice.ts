@@ -48,7 +48,7 @@ describe('reducers::notes()', () => {
     `);
 
     noteOne = { ...noteOne, title: 'title 3' };
-    state = notes(state, updateNote.fulfilled(noteOne, '', { noteId: noteOne.id, note: noteOne }));
+    state = notes(state, updateNote.fulfilled(noteOne, '', noteOne));
     expect(state).toMatchInlineSnapshot(`
       Object {
         "entities": Object {
@@ -72,7 +72,7 @@ describe('reducers::notes()', () => {
     `);
 
     noteTwo = { ...noteTwo, title: 'title 4' };
-    state = notes(state, updateNote.fulfilled(noteTwo, '', { noteId: noteTwo.id, note: noteTwo }));
+    state = notes(state, updateNote.fulfilled(noteTwo, '', noteTwo));
     expect(state).toMatchInlineSnapshot(`
       Object {
         "entities": Object {

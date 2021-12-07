@@ -9,10 +9,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import api from 'api';
+import { NewNote, NoteWithTags, UpdateNote } from 'data/types';
 
-import { NewNote, NoteWithTags, UpdateNote } from '../types';
+export const prefix = 'notes';
+const name = (n: string) => `${prefix}/${n}`;
 
-export const getNotes = createAsyncThunk('notes/getList', async (_: void, { rejectWithValue }) => {
+export const getNotes = createAsyncThunk(name('list'), async (_: void, { rejectWithValue }) => {
   try {
     return await api.note.list();
   } catch (e) {
@@ -21,19 +23,16 @@ export const getNotes = createAsyncThunk('notes/getList', async (_: void, { reje
 });
 
 export const updateNote = createAsyncThunk(
-  'notes/updateNote',
+  name('update'),
   async (
     {
-      noteId,
-      note: noteIn,
-    }: {
-      noteId: number;
-      note: UpdateNote & Partial<Pick<NoteWithTags, 'tags'>>;
-    },
+      id: noteId,
+      tags,
+      ...note
+    }: UpdateNote & Partial<Pick<NoteWithTags, 'tags'>> & { id: number },
     { rejectWithValue },
   ) => {
     try {
-      const { tags, ...note } = noteIn;
       let result = await api.note.update(noteId, note);
       if (tags) {
         result = await api.note.setTags(result.id, tags);
@@ -45,10 +44,9 @@ export const updateNote = createAsyncThunk(
   },
 );
 export const createNote = createAsyncThunk(
-  'notes/createNote',
-  async (noteIn: NewNote & Pick<NoteWithTags, 'tags'>, { rejectWithValue }) => {
+  name('create'),
+  async ({ tags, ...note }: NewNote & Pick<NoteWithTags, 'tags'>, { rejectWithValue }) => {
     try {
-      const { tags, ...note } = noteIn;
       const result = await api.note.create(note);
       return await api.note.setTags(result.id, tags);
     } catch (e) {
@@ -58,7 +56,7 @@ export const createNote = createAsyncThunk(
 );
 
 export const deleteNote = createAsyncThunk(
-  'notes/deleteNote',
+  name('delete'),
   async (noteId: number, { rejectWithValue }) => {
     try {
       await api.note.delete(noteId);

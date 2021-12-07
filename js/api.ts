@@ -8,20 +8,27 @@
 //
 import axios from 'axios';
 
-import { UpdateNote, NewNote, NoteWithTags, User, SignIn, NewUserRequest } from 'data/types';
+import {
+  UpdateNote,
+  NewNote,
+  NoteWithTags,
+  User,
+  SignIn,
+  NewUserRequest,
+  ErrorData,
+} from 'data/types';
 
 const api = '/api';
 const noteRoot = `${api}/secure/note`;
+
+const err = (data: ErrorData) => data;
 
 const mapErr = async <V>(promise: Promise<V>) => {
   try {
     return await promise;
   } catch (e) {
-    if (!('response' in e)) {
-      throw e;
-    }
-    if (!('data' in e.response)) {
-      throw e.response;
+    if (!e || !('response' in e) || !e.response || !('data' in e.response) || !e.response.data) {
+      throw err({ message: 'Unknown Error', code: 500, details: JSON.stringify(e) });
     }
     throw e.response.data;
   }

@@ -41,6 +41,7 @@ import {
 
 import AutoLink from 'components/AutoLink';
 import ConfirmationDialog from 'components/ConfirmationDialog';
+import Loading from 'components/Loading';
 import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
 import Tags from 'components/Tags';
@@ -48,6 +49,7 @@ import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds, getSubNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
+import { getIsNoteChanging } from 'data/ui/selectors';
 
 const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
@@ -75,6 +77,7 @@ export const NoteContents = ({
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
   const dispatch = useDispatch();
+  const noteChanging = useSelector((state: AppState) => getIsNoteChanging(state, note));
 
   const doDelete = () => dispatch(deleteNote(note.id));
 
@@ -82,14 +85,14 @@ export const NoteContents = ({
     setMoreMenuEl(null);
 
     const { id, archived } = note;
-    await dispatch(updateNote({ noteId: id, note: { archived: !archived } }));
+    await dispatch(updateNote({ id, archived: !archived }));
   };
 
   const pinNote = async () => {
     setMoreMenuEl(null);
 
     const { id, pinned } = note;
-    await dispatch(updateNote({ noteId: id, note: { pinned: !pinned } }));
+    await dispatch(updateNote({ id, pinned: !pinned }));
   };
 
   const startEdit = () => {
@@ -108,12 +111,14 @@ export const NoteContents = ({
       </p>
     ),
   };
+
   return (
     <Card
       raised
       sx={[
         {
           marginBottom: 1,
+          position: 'relative',
           '@media print': {
             border: 'none',
             boxShadow: 'none',
@@ -208,6 +213,19 @@ export const NoteContents = ({
         onPositive={doDelete}
         onNegative={() => setConfirmDeleteOpen(false)}
       />
+      <Loading
+        in={noteChanging}
+        timeout={1000}
+        sx={{
+          position: 'absolute',
+          margin: 'auto',
+          width: 80,
+          height: 80,
+          left: 0,
+          right: 0,
+          top: 40,
+        }}
+      />
       <CardContent sx={{ paddingTop: 0 }}>
         <Tags tags={note.tags} />
         <ReactMarkdown
@@ -292,13 +310,11 @@ const Note = ({ note, depth, search, onNewNoteCancel }: Props) => {
     } else {
       await dispatch(
         updateNote({
-          noteId: note.id,
-          note: {
-            title,
-            body,
-            parent_note_id: parentNoteId,
-            tags,
-          },
+          id: note.id,
+          title,
+          body,
+          parent_note_id: parentNoteId,
+          tags,
         }),
       );
     }

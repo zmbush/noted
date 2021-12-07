@@ -7,10 +7,8 @@
 // except according to those terms.
 //
 
-use noted_db::{
-    error::ErrorData,
-    models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User},
-};
+use noted::error::ErrorData;
+use noted_db::models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User};
 use schemars::schema_for;
 
 macro_rules! write_schema {
