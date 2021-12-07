@@ -90,5 +90,12 @@
   },
   "rust-analyzer.cargo.allFeatures": true,
   "editor.formatOnSave": true,
-  "rust-analyzer.rustfmt.enableRangeFormatting": true
+  "rust-analyzer.rustfmt.enableRangeFormatting": true,
+  "files.exclude": {
+    "node_modules": true,
+    "target": true,
+    ".trigger": true,
+    "coverage": true,
+    "schemas": true
+  }
 }
