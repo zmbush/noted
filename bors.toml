@@ -1,0 +1,8 @@
+commit-title = "[chore] Merge in ${PR_REFS}"
+delete-merged-branches = true
+status = ['Rust Build/Test/Lint', 'Node Build/Test/Lint', 'Rust Coverage']
+update-base-for-deletes = true
+
+[committer]
+email = "noted-bot@noted.zmbush.com"
+name = "Noted CI"

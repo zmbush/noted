@@ -52,6 +52,9 @@ on:
     branches:
       - main
 
+env:
+  CARGO_TERM_COLORS: always
+
 jobs:
   coverage:
     name: Rust Coverage
