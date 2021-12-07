@@ -19,7 +19,11 @@ name: CI
   push:
     branches:
       - main
-  pull_request: ~
+      - staging
+      - trying
+  pull_request:
+    branches:
+      - main
 jobs:
   coverage:
     name: Rust Coverage
