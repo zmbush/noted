@@ -7,7 +7,7 @@ printWidth: 100
 importOrder:
   - '^react'
   - '^@(mui|material-ui)'
-  - '^(components|data|api)'
+  - '^(components|data|api|theme)'
   - "^\\.\\./"
   - "^\\./"
   - '^/'

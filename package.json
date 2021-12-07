@@ -6,7 +6,8 @@
   "scripts": {
     "prepare": "husky install",
     "test": "jest --coverage --ci",
-    "build": "webpack --config webpack.prod.js --color",
+    "build": "cross-env TS_NODE_PROJECT='tsconfig.webpack.json' webpack --color --node-env production",
+    "build-dev": "cross-env TS_NODE_PROJECT='tsconfig.webpack.json' webpack --color --node-env development",
     "pretty": "pretty-quick --staged",
     "lint": "eslint --ext ts --ext tsx --ext js --ext jsx js",
     "lint-fix": "eslint --fix --ext ts --ext tsx --ext js --ext jsx js",
@@ -26,7 +27,7 @@
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.1",
-    "@mui/material": "^5.2.2",
+    "@mui/material": "^5.2.3",
     "@mui/system": "^5.2.3",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/dom": "^8.11.1",
@@ -98,10 +99,12 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "@types/copy-webpack-plugin": "^8.0.1",
     "@types/mousetrap": "^1.6.8",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
-    "@typescript-eslint/parser": "^5.4.0",
+    "@typescript-eslint/parser": "^5.6.0",
     "copy-webpack-plugin": "^10.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.4.1",
     "eslint-config-airbnb": "^19.0.2",
     "eslint-config-prettier": "^8.3.0",
@@ -113,6 +116,7 @@
     "husky": "^7.0.4",
     "json-schema-to-typescript": "^10.1.5",
     "node-emoji": "^1.11.0",
+    "path": "^0.12.7",
     "sass": "^1.43.5",
     "typed-scss-modules": "^4.1.1"
   }
