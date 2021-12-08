@@ -16,7 +16,7 @@ import { useMatch } from 'react-router-dom';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
 
-import Note from 'components/Note';
+import Note from 'components/note/Note';
 import {
   getFilteredSearchIndex,
   getHasArchivedChild,

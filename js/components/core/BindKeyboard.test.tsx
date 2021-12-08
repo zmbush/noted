@@ -12,7 +12,7 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 
-import BindKeyboard from '../BindKeyboard';
+import BindKeyboard from './BindKeyboard';
 
 jest.mock('mousetrap');
 const Mousetrap = MousetrapOriginal as jest.Mocked<typeof MousetrapOriginal>;

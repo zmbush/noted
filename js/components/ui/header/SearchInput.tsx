@@ -13,7 +13,7 @@ import * as React from 'react';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { alpha, InputBase, styled } from '@mui/material';
 
-import BindKeyboard from 'components/BindKeyboard';
+import BindKeyboard from 'components/core/BindKeyboard';
 
 const SearchDiv = styled('div')(({ theme }) => ({
   position: 'relative',

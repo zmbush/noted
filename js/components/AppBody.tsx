@@ -14,8 +14,8 @@ import { Route, Routes } from 'react-router-dom';
 import { Grid } from '@mui/material';
 
 import FilteredNoteList from 'components/FilteredNoteList';
-import Note from 'components/Note';
 import NoteList from 'components/NoteList';
+import Note from 'components/note/Note';
 import { NoteWithTags } from 'data/types';
 
 type NewNoteProps = {

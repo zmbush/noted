@@ -14,7 +14,7 @@ import React from 'react';
 
 import { render } from 'components/test-utils';
 
-import NoteEditor from '../NoteEditor';
+import NoteEditor from './NoteEditor';
 
 const editorProps: Parameters<typeof NoteEditor>[0] = {
   note: {

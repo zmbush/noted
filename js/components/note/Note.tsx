@@ -39,20 +39,21 @@ import {
   useTheme,
 } from '@mui/material';
 
-import AutoLink from 'components/AutoLink';
-import ConfirmationDialog from 'components/ConfirmationDialog';
-import Loading from 'components/Loading';
-import * as styles from 'components/Note.tsx.scss';
 import NoteList from 'components/NoteList';
-import Tags from 'components/Tags';
+import ConfirmationDialog from 'components/core/ConfirmationDialog';
+import Loading from 'components/core/Loading';
+import AutoLink from 'components/note/AutoLink';
+import Tags from 'components/note/Tags';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds, getSubNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 import { getIsNoteChanging } from 'data/ui/selectors';
 
+import * as styles from './styles.scss';
+
 const NoteEditor = React.lazy(
-  () => import(/* webpackChunkName: "editor" */ 'components/NoteEditor'),
+  () => import(/* webpackChunkName: "editor" */ 'components/note/NoteEditor'),
 );
 
 type NoteContentsProps = {

@@ -12,7 +12,7 @@ import * as React from 'react';
 
 import { render } from 'components//test-utils';
 
-import SearchInput from '../SearchInput';
+import SearchInput from './SearchInput';
 
 describe('<SearchInput />', () => {
   test('matches snapshot', async () => {

@@ -13,7 +13,7 @@ import { render, sleep } from 'components/test-utils';
 import { createStore } from 'data/store';
 import { signInUser } from 'data/user/api';
 
-import Note from '../Note';
+import Note from './Note';
 
 describe('<Note />', () => {
   test('allows pinning and archiving', async () => {

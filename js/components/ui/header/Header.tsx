@@ -35,8 +35,8 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import BindKeyboard from 'components/BindKeyboard';
-import SearchInput from 'components/SearchInput';
+import BindKeyboard from 'components/core/BindKeyboard';
+import SearchInput from 'components/ui/header/SearchInput';
 import { signOutUser } from 'data/user/api';
 
 const FillSpace = styled('div')({ flexGrow: 1 });

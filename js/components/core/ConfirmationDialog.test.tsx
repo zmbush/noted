@@ -9,7 +9,7 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 
-import ConfirmationDialog from '../ConfirmationDialog';
+import ConfirmationDialog from './ConfirmationDialog';
 
 describe('<ConfirmationDialog />', () => {
   test('Renders as expected', async () => {

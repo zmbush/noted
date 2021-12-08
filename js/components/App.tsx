@@ -13,10 +13,10 @@ import { useSelector } from 'react-redux';
 import { styled } from '@mui/material';
 
 import AppBody from 'components/AppBody';
-import ErrorManager from 'components/ErrorManager';
-import Header from 'components/Header';
-import Loading from 'components/Loading';
-import LogIn from 'components/LogIn';
+import ErrorManager from 'components/core/ErrorManager';
+import Loading from 'components/core/Loading';
+import LogIn from 'components/pages/login/LogIn';
+import Header from 'components/ui/header/Header';
 import { getTopLevelNotes } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { getUserLoading } from 'data/ui/selectors';
