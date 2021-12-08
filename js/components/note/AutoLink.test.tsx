@@ -10,7 +10,7 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 
-import AutoLink, { LinkedText } from '../AutoLink';
+import AutoLink, { LinkedText } from './AutoLink';
 
 describe('<AutoLink />', () => {
   test('looks as expected', () => {

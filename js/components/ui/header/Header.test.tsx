@@ -13,7 +13,7 @@ import * as React from 'react';
 import { render, sleep } from 'components/test-utils';
 import { signInUser } from 'data/user/api';
 
-import Header from '../Header';
+import Header from './Header';
 
 describe('<Header />', () => {
   test('matches snapshot', () => {

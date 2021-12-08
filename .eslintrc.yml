@@ -33,11 +33,13 @@ rules:
       extensions:
         - .jsx
         - .tsx
-        - .css
   'react/require-default-props': off
   'import/extensions':
     - error
     - never
+    - extensions:
+      css: 'always'
+      scss: 'always'
   'import/no-extraneous-dependencies':
     - error
     - devDependencies:

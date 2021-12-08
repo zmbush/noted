@@ -18,7 +18,7 @@ import * as React from 'react';
 import { Save as SaveIcon } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
-import BindKeyboard from 'components/BindKeyboard';
+import BindKeyboard from 'components/core/BindKeyboard';
 import { NoteWithTags, NewNote, UpdateNote } from 'data/types';
 
 type Props = {

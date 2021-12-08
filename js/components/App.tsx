@@ -5,19 +5,17 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import Mousetrap from 'mousetrap';
-
+//
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { styled } from '@mui/material';
 
 import AppBody from 'components/AppBody';
-import ErrorManager from 'components/ErrorManager';
-import Header from 'components/Header';
-import Loading from 'components/Loading';
-import LogIn from 'components/LogIn';
-import { getTopLevelNotes } from 'data/notes/selectors';
+import ErrorManager from 'components/core/ErrorManager';
+import Loading from 'components/core/Loading';
+import LogIn from 'components/pages/login/LogIn';
+import Header from 'components/ui/header/Header';
 import { AppState } from 'data/store';
 import { getUserLoading } from 'data/ui/selectors';
 
@@ -33,7 +31,6 @@ const AppRoot = styled('div')({
 const App = () => {
   const [newNote, setNewNote] = React.useState(false);
   const [search, setSearch] = React.useState('');
-  const notes = useSelector(getTopLevelNotes);
   const isSignedIn = useSelector<AppState>((state) => state.user.isSignedIn);
   const isLoading = useSelector(getUserLoading);
   React.useEffect(() => {
@@ -59,10 +56,7 @@ const App = () => {
     // }
   };
 
-  const createNewShortcut = (
-    e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
-    _combo?: string,
-  ) => {
+  const createNewShortcut = (e: { preventDefault: () => void }, _combo?: string) => {
     e.preventDefault();
     create();
   };
@@ -74,7 +68,6 @@ const App = () => {
         <Loading />
       ) : (
         <AppBody
-          notes={notes}
           createNewShortcut={createNewShortcut}
           newNote={newNote}
           search={search}

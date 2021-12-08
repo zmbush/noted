@@ -9,7 +9,7 @@ import { rootReducer } from '../store';
 
 describe('data::reducers()', () => {
   test('matches snapshot', () => {
-    expect(rootReducer(undefined, { type: null })).toMatchInlineSnapshot(`
+    expect(rootReducer(undefined as any, { type: null })).toMatchInlineSnapshot(`
       Object {
         "notes": Object {
           "entities": Object {},

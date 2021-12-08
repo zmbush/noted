@@ -10,6 +10,7 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 import { createNote } from 'data/notes/api';
+import { getNoteEntities } from 'data/notes/selectors';
 import { createStore } from 'data/store';
 import { signInUser } from 'data/user/api';
 
@@ -21,33 +22,39 @@ describe('<NoteList />', () => {
     await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
     expect(store.getState().notes.ids).toHaveLength(4);
     const { getByText } = render(
-      <NoteList parent_note_id={0} depth={1} notes={store.getState().notes.entities} search='' />,
+      <NoteList
+        noteViewFilter={null}
+        parent_note_id={0}
+        depth={1}
+        notes={getNoteEntities(store.getState())}
+        search=''
+      />,
       { store },
     );
 
     const notes = store.getState().notes.entities;
-    expect(getByText(notes[1].title)).toMatchInlineSnapshot(`
+    expect(getByText(notes[1]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >
         Note 1
       </span>
     `);
-    expect(getByText(notes[2].title)).toMatchInlineSnapshot(`
+    expect(getByText(notes[2]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >
         Note 2
       </span>
     `);
-    expect(getByText(notes[3].title)).toMatchInlineSnapshot(`
+    expect(getByText(notes[3]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >
         Note 3
       </span>
     `);
-    expect(getByText(notes[4].title)).toMatchInlineSnapshot(`
+    expect(getByText(notes[4]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >
@@ -65,27 +72,28 @@ describe('<NoteList />', () => {
     expect(store.getState().notes.ids).toHaveLength(5);
     const { getByText, queryByText } = render(
       <NoteList
+        noteViewFilter={{}}
         parent_note_id={0}
         depth={1}
-        notes={store.getState().notes.entities}
+        notes={getNoteEntities(store.getState())}
         search='Something Different'
       />,
       { store },
     );
 
     const notes = store.getState().notes.entities;
-    expect(queryByText(notes[1].title)).toBeNull();
-    expect(queryByText(notes[2].title)).toBeNull();
+    expect(queryByText(notes[1]!.title)).toBeNull();
+    expect(queryByText(notes[2]!.title)).toBeNull();
     // 3 is a parent of 5, and should be rendered even if the search doesn't match.
-    expect(getByText(notes[3].title)).toMatchInlineSnapshot(`
+    expect(getByText(notes[3]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >
         Note 3
       </span>
     `);
-    expect(queryByText(notes[4].title)).toBeNull();
-    expect(getByText(notes[5].title)).toMatchInlineSnapshot(`
+    expect(queryByText(notes[4]!.title)).toBeNull();
+    expect(getByText(notes[5]!.title)).toMatchInlineSnapshot(`
       <span
         class="MuiTypography-root MuiTypography-h5 MuiCardHeader-title css-1qvr50w-MuiTypography-root"
       >

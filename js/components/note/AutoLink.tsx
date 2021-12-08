@@ -51,7 +51,7 @@ const AutoLink = ({ children, titles }: Props) => {
             keyIx += 1;
           }
           return r;
-        }, []);
+        }, [] as (string | React.ReactElement)[]);
         newBody = newBody.concat(elements);
       } else {
         newBody.push(part);

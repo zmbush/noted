@@ -1,20 +1,22 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "outDir": "./dist/js",
-    "noImplicitAny": true,
-    "sourceMap": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "target": "es5",
-    "lib": ["esnext", "dom"],
-    "jsx": "react",
     "baseUrl": ".",
     "downlevelIteration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["esnext", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "./dist/js",
     "paths": {
       "*": ["js/*"]
-    }
+    },
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "useUnknownInCatchVariables": true,
+    "target": "es5"
   },
   "include": ["./js/**/*", "./js/setupTests.ts"]
 }

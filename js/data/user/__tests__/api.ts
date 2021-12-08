@@ -35,7 +35,7 @@ describe('getCurrentUser', () => {
     await store.dispatch(userApi.getCurrentUser());
     expect(store.getState().user.isSignedIn).toBeFalsy();
     expect(store.getState().user.user).toBeNull();
-    expect(store.getState().ui.lastError.any.code).toEqual(401);
+    expect(store.getState().ui.lastError.any?.code).toEqual(401);
   });
 });
 
@@ -52,7 +52,7 @@ describe('signInUser', () => {
     await store.dispatch(userApi.signInUser({ email: 'test@test.com', password: 'pass' }));
     expect(store.getState().user.isSignedIn).toBeFalsy();
     expect(store.getState().user.user).toBeNull();
-    expect(store.getState().ui.lastError.any.code).toEqual(401);
+    expect(store.getState().ui.lastError.any?.code).toEqual(401);
   });
 });
 
@@ -73,7 +73,7 @@ describe('signUpUser', () => {
     );
     expect(store.getState().user.isSignedIn).toBeFalsy();
     expect(store.getState().user.user).toBeNull();
-    expect(store.getState().ui.lastError.any.code).toEqual(401);
+    expect(store.getState().ui.lastError.any?.code).toEqual(401);
   });
 });
 
@@ -100,6 +100,6 @@ describe('signOutUser', () => {
     await store.dispatch(userApi.signOutUser());
     expect(store.getState().user.isSignedIn).toBeFalsy();
     expect(store.getState().user.user).toBeNull();
-    expect(store.getState().ui.lastError.any.code).toEqual(401);
+    expect(store.getState().ui.lastError.any?.code).toEqual(401);
   });
 });

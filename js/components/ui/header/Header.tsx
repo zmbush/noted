@@ -35,8 +35,8 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import BindKeyboard from 'components/BindKeyboard';
-import SearchInput from 'components/SearchInput';
+import BindKeyboard from 'components/core/BindKeyboard';
+import SearchInput from 'components/ui/header/SearchInput';
 import { signOutUser } from 'data/user/api';
 
 const FillSpace = styled('div')({ flexGrow: 1 });
@@ -54,7 +54,7 @@ type Props = {
 const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 100 }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
   const [searchInputValue, setSearchInputValue] = React.useState('');
-  const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement>(null);
+  const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement | null>(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const [mainMenuOpen, setMainMenuOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -97,7 +97,7 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
 
   const startSearch = (e: Event) => {
     e.preventDefault();
-    searchInput.current.focus();
+    searchInput.current?.focus();
   };
 
   return (

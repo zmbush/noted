@@ -14,7 +14,7 @@ import React from 'react';
 
 import { render } from 'components/test-utils';
 
-import NoteEditor from '../NoteEditor';
+import NoteEditor from './NoteEditor';
 
 const editorProps: Parameters<typeof NoteEditor>[0] = {
   note: {
@@ -63,11 +63,11 @@ describe('<NoteEditor />', () => {
     `);
 
     // Click delete button
-    userEvent.click(getByText('A Third Tag').parentElement.children[1]);
+    userEvent.click(getByText('A Third Tag').parentElement!.children[1]);
     expect(queryByText('A Third Tag')).toBeNull();
 
     getByText('A Tag');
-    userEvent.click(getByText('A Tag').parentElement.children[1]);
+    userEvent.click(getByText('A Tag').parentElement!.children[1]);
     expect(queryByText('A Tag')).toBeNull();
 
     userEvent.click(getByTestId('SaveIcon'));

@@ -17,8 +17,11 @@ import { NoteWithTags } from 'data/types';
 
 export const getNotes = (state: AppState) => state[prefix];
 const noteSelectors = notesAdapter.getSelectors(getNotes);
-export const getNoteEntities = noteSelectors.selectEntities;
+export const getNoteEntities = createSelector(noteSelectors.selectEntities, (notesDict) =>
+  Object.fromEntries(Object.entries(notesDict).map(([key, note]) => [key, note!])),
+);
 const getNoteId = (_: any, props: { note_id: number }) => props.note_id;
+const maybeGetNoteId = (_: any, props: { note_id?: number | null }) => props.note_id;
 export const listNotes = noteSelectors.selectAll;
 const validParent = (note: NoteWithTags) => !!note.parent_note_id;
 
@@ -78,7 +81,7 @@ export type SubNoteMap = ReturnType<typeof getSubNotes>;
 
 export const getIsNotArchived = createSelector(getNoteEntities, (notes) => {
   const isNotArchived: { [id: number]: boolean } = {};
-  Object.values(notes).forEach((note) => {
+  Object.values(notes).forEach((note: NoteWithTags) => {
     isNotArchived[note.id] = !note.archived;
   });
   return isNotArchived;
@@ -86,12 +89,12 @@ export const getIsNotArchived = createSelector(getNoteEntities, (notes) => {
 
 export const getHasArchivedChild = createSelector(getNoteEntities, (notes) => {
   const hasArchivedChild: { [id: number]: boolean } = {};
-  Object.values(notes).forEach((note) => {
+  Object.values(notes).forEach((note: NoteWithTags) => {
     const arch = note.archived;
     hasArchivedChild[note.id] = hasArchivedChild[note.id] || arch;
     let currentNote = note;
     while (validParent(currentNote)) {
-      currentNote = notes[currentNote.parent_note_id];
+      currentNote = notes[currentNote.parent_note_id]!;
       hasArchivedChild[currentNote.id] = hasArchivedChild[currentNote.id] || arch;
     }
   });
@@ -117,7 +120,7 @@ const calculateMergedNote = (
 
 export const getSearchIndex = createSelector(getNotes, (allNotes) => {
   const result: { [id: number]: NoteWithTags } = {};
-  Object.values(allNotes.entities).forEach((note) => {
+  Object.values(allNotes.entities).forEach((note: NoteWithTags) => {
     result[note.id] = calculateMergedNote(note, allNotes);
   });
   return result;
@@ -125,7 +128,7 @@ export const getSearchIndex = createSelector(getNotes, (allNotes) => {
 
 export const getFilteredSearchIndex = createCachedSelector(
   getSearchIndex,
-  getNoteId,
+  maybeGetNoteId,
   (notes, noteId) => {
     const subNotes: { [id: number]: NoteWithTags } = {};
     if (noteId == null) {
@@ -146,24 +149,27 @@ export const getFilteredSearchIndex = createCachedSelector(
 const mostRecent = (a: string, b: string) => (a > b ? a : b);
 
 export const getSortedNoteIds = createSelector(getNoteEntities, (allNotes) => {
-  const map = new Map();
+  const map = new Map<number, string>();
 
-  Object.values(allNotes).forEach((note) => {
+  Object.values(allNotes).forEach((note: NoteWithTags) => {
     map.set(note.id, note.updated_at);
   });
 
-  Object.values(allNotes).forEach((thisNote) => {
+  Object.values(allNotes).forEach((thisNote: NoteWithTags) => {
     let note = thisNote;
     while (validParent(note)) {
-      map.set(note.parent_note_id, mostRecent(note.updated_at, map.get(note.parent_note_id)));
-      note = allNotes[note.parent_note_id];
+      map.set(
+        note.parent_note_id,
+        mostRecent(note.updated_at, map.get(note.parent_note_id || -1)!),
+      );
+      note = allNotes[note.parent_note_id]!;
     }
   });
 
   return Array.from(map.entries())
     .sort(([aid, a]: [number, string], [bid, b]: [number, string]) => {
-      const na = allNotes[aid];
-      const nb = allNotes[bid];
+      const na = allNotes[aid]!;
+      const nb = allNotes[bid]!;
 
       if (na.pinned && !nb.pinned) {
         return -1;

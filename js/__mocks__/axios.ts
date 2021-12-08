@@ -36,7 +36,7 @@ export const emptyTestNote: NoteWithTags = {
 let id = 0;
 export const makeTestNote = (
   overrides: Partial<NoteWithTags> = {},
-  parent: { id: number } = null,
+  parent: { id: number } | null = null,
 ): NoteWithTags => {
   id += 1;
   const thisId = overrides.id || id;
@@ -66,7 +66,7 @@ const makeResponse = (d: any, config: AxiosRequestConfig, status: number = 200):
   data: d,
   status,
   statusText: '',
-  headers: null,
+  headers: {},
   config,
 });
 
@@ -101,10 +101,13 @@ const withUser =
 
 const listNotes = withUser((user: User): NoteWithTags[] => Object.values(getNoteDb(user)));
 
+const filterNulls = <T extends {}>(t: T) =>
+  Object.fromEntries(Object.entries(t).filter(([_, v]) => v !== null));
+
 const updateNote = withUser((user: User, noteId: number, update: UpdateNote): NoteWithTags => {
   const notes = getNoteDb(user);
   if (noteId in notes) {
-    notes[noteId] = { ...notes[noteId], ...update };
+    notes[noteId] = { ...notes[noteId], ...filterNulls(update) };
     return notes[noteId];
   }
   throw NOT_FOUND;
@@ -118,8 +121,9 @@ const createNote = withUser((user: User, newNote: NewNote): NoteWithTags => {
       .reduce((a, b) => (a > b ? a : b), 0) + 1;
   notes[newId] = makeTestNote({
     id: newId,
-    user_id: currentUser.id,
+    user_id: user.id,
     ...newNote,
+    parent_note_id: newNote.parent_note_id || 0,
   });
   return notes[newId];
 });
@@ -170,7 +174,7 @@ export default {
 
   async patch(url: string, data: any, config: AxiosRequestConfig): Promise<AxiosResponse> {
     const urlMatch = url.match(noteEndpoint);
-    if (urlMatch.groups) {
+    if (urlMatch && urlMatch.groups) {
       const noteId = parseInt(urlMatch.groups.note_id, 10);
       return makeResponse(updateNote(noteId, data), config);
     }
@@ -185,7 +189,7 @@ export default {
       throw NOT_IMPLEMENTED;
     }
     const urlMatch = url.match(tagsEndpoint);
-    if (urlMatch.groups) {
+    if (urlMatch && urlMatch.groups) {
       const noteId = parseInt(urlMatch.groups.note_id, 10);
       return makeResponse(setTags(noteId, data), config);
     }
@@ -194,7 +198,7 @@ export default {
 
   async delete(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     const urlMatch = url.match(noteEndpoint);
-    if (urlMatch.groups) {
+    if (urlMatch && urlMatch.groups) {
       const noteId = parseInt(urlMatch.groups.note_id, 10);
       return makeResponse(deleteNote(noteId), config);
     }

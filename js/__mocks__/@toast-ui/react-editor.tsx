@@ -35,7 +35,7 @@ export const Editor = React.forwardRef(
               return { getMarkdown: () => e.target.value };
             },
           };
-          if (events.change) {
+          if (events && events.change) {
             events.change();
           }
         }}
