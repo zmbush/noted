@@ -9,9 +9,9 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import Archive from './archive/Archive';
-import Disambiguation from './disambiguation/Disambiguation';
-import Index from './index/Index';
+import Archive from './note_list/Archive';
+import Disambiguation from './note_list/Disambiguation';
+import Index from './note_list/Index';
 import SingleNote from './single_note/SingleNote';
 
 type Props = {

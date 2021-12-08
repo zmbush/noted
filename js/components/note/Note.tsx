@@ -39,13 +39,12 @@ import {
   useTheme,
 } from '@mui/material';
 
-import NoteList from 'components/NoteList';
 import ConfirmationDialog from 'components/core/ConfirmationDialog';
 import Loading from 'components/core/Loading';
 import AutoLink from 'components/note/AutoLink';
 import Tags from 'components/note/Tags';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
-import { getLinkIds, getSubNotes } from 'data/notes/selectors';
+import { getLinkIds } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 import { getIsNoteChanging } from 'data/ui/selectors';
@@ -61,10 +60,7 @@ type NoteContentsProps = {
   titles: { [title: string]: Set<number> };
   setEdit: (edit: boolean) => void;
   setCreatingSubNote: (creatingSubNote: boolean) => void;
-  search: string;
-  subNotes: { [id: number]: NoteWithTags };
-  depth?: number;
-  noteViewFilter: { [id: number]: boolean } | null;
+  children?: React.ReactElement | React.ReactElement[];
 };
 
 export const NoteContents = ({
@@ -72,10 +68,7 @@ export const NoteContents = ({
   setEdit,
   setCreatingSubNote,
   titles,
-  search,
-  subNotes,
-  depth,
-  noteViewFilter,
+  children,
 }: NoteContentsProps) => {
   const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
@@ -108,9 +101,9 @@ export const NoteContents = ({
 
   const markdownComponents: ReactMarkdownOptions['components'] = {
     // eslint-disable-next-line react/no-unstable-nested-components
-    p: ({ children }) => (
+    p: ({ children: pChildren }) => (
       <p>
-        <AutoLink titles={titles}>{children}</AutoLink>
+        <AutoLink titles={titles}>{pChildren}</AutoLink>
       </p>
     ),
   };
@@ -258,13 +251,7 @@ export const NoteContents = ({
             },
           }}
         >
-          <NoteList
-            parent_note_id={note.id}
-            noteViewFilter={noteViewFilter}
-            depth={(depth || 0) + 1}
-            notes={subNotes}
-            search={search}
-          />
+          {children}
         </Grid>
       </CardContent>
     </Card>
@@ -272,15 +259,13 @@ export const NoteContents = ({
 };
 
 type Props = {
-  search: string;
-  depth?: number;
-  noteViewFilter: { [id: number]: boolean } | null;
+  children?: React.ReactElement | React.ReactElement[];
 } & (
   | { note: NewNote; onNewNoteCancel: () => void }
   | { note: NoteWithTags; onNewNoteCancel?: never }
 );
 
-const Note = ({ note, depth, search, onNewNoteCancel, noteViewFilter }: Props) => {
+const Note = ({ note, onNewNoteCancel, children }: Props) => {
   const [edit, setEdit] = React.useState(!('id' in note)); // If note has no 'id', it must be a NewNote
   const [creatingSubNote, setCreatingSubNote] = React.useState(false);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
@@ -289,9 +274,6 @@ const Note = ({ note, depth, search, onNewNoteCancel, noteViewFilter }: Props) =
   const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
   const dispatch = useDispatch();
   const titles = useSelector(getLinkIds);
-  const subNotes = useSelector((state: AppState) =>
-    'id' in note ? getSubNotes(state, { note_id: note.id }) : {},
-  );
 
   const cancelEdit = () => {
     setEdit(false);
@@ -331,14 +313,12 @@ const Note = ({ note, depth, search, onNewNoteCancel, noteViewFilter }: Props) =
       {'id' in note ? (
         <NoteContents
           titles={titles}
-          search={search}
-          subNotes={subNotes}
-          depth={depth}
           setEdit={setEdit}
           setCreatingSubNote={setCreatingSubNote}
           note={note}
-          noteViewFilter={noteViewFilter}
-        />
+        >
+          {children}
+        </NoteContents>
       ) : null}
       <ConfirmationDialog
         open={confirmCancelEditOpen}
