@@ -20,8 +20,10 @@ const noteSelectors = notesAdapter.getSelectors(getNotes);
 export const getNoteEntities = createSelector(noteSelectors.selectEntities, (notesDict) =>
   Object.fromEntries(Object.entries(notesDict).map(([key, note]) => [key, note!])),
 );
-const getNoteId = (_: any, props: { note_id: number }) => props.note_id;
-const maybeGetNoteId = (_: any, props: { note_id?: number | null }) => props.note_id;
+// const getNoteId = (_: any, props: { noteId: number }) => props.noteId;
+const maybeGetNoteId = (_: any, props: { noteId: number | null }) => props.noteId;
+const maybeNoteIdIndex = (_: any, props: { noteId: number | null }) =>
+  props.noteId === null ? -1 : props.noteId;
 export const listNotes = noteSelectors.selectAll;
 const validParent = (note: NoteWithTags) => !!note.parent_note_id;
 
@@ -55,27 +57,35 @@ export const getLinkIds = createSelector(listAllTitleParts, (titleParts: [string
 
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
 
-export const getTopLevelNotes = createSelector(listNotes, (notes) => {
-  const topLevel: { [id: number]: NoteWithTags } = {};
-  notes.forEach((note) => {
-    if (!validParent(note)) {
-      topLevel[note.id] = note;
-    }
-  });
-  return topLevel;
-});
+// export const getTopLevelNotes = createSelector(listNotes, (notes) => {
+//   const topLevel: { [id: number]: NoteWithTags } = {};
+//   notes.forEach((note) => {
+//     if (!validParent(note)) {
+//       topLevel[note.id] = note;
+//     }
+//   });
+//   return topLevel;
+// });
 
-export const getSubNotes = createCachedSelector(listNotes, getNoteId, (notes, noteId) => {
+export const getSubNotes = createCachedSelector(listNotes, maybeGetNoteId, (notes, noteId) => {
   const subNotes: { [id: number]: NoteWithTags } = {};
 
-  notes.forEach((note) => {
-    if (note.parent_note_id === noteId && note.id !== noteId) {
-      subNotes[note.id] = note;
-    }
-  });
+  if (!noteId) {
+    notes.forEach((note) => {
+      if (!validParent(note)) {
+        subNotes[note.id] = note;
+      }
+    });
+  } else {
+    notes.forEach((note) => {
+      if (note.parent_note_id === noteId && note.id !== noteId) {
+        subNotes[note.id] = note;
+      }
+    });
+  }
 
   return subNotes;
-})((state, props: { note_id: number }) => props.note_id);
+})(maybeNoteIdIndex);
 
 export type SubNoteMap = ReturnType<typeof getSubNotes>;
 
@@ -106,7 +116,7 @@ const calculateMergedNote = (
   notes: EntityState<NoteWithTags>,
 ): NoteWithTags => {
   const newNote = { ...note };
-  const subNotes = getSubNotes({ notes }, { note_id: note.id });
+  const subNotes = getSubNotes({ notes }, { noteId: note.id });
 
   Object.values(subNotes).forEach((subNote) => {
     const mergedNote = calculateMergedNote(subNote, notes);
@@ -144,7 +154,7 @@ export const getFilteredSearchIndex = createCachedSelector(
 
     return subNotes;
   },
-)((state, props: { note_id: number }) => (props.note_id == null ? -1 : props.note_id));
+)((state, props: { noteId: number }) => (props.noteId == null ? -1 : props.noteId));
 
 const mostRecent = (a: string, b: string) => (a > b ? a : b);
 

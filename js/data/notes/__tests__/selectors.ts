@@ -11,7 +11,6 @@ import { NoteWithTags } from 'data/types';
 
 import { rootReducer } from '../../store';
 import {
-  getTopLevelNotes,
   getLinkIds,
   getSubNotes,
   getSearchIndex,
@@ -69,7 +68,7 @@ describe('getLinkIds()', () => {
 
 describe('getTopLevelNotes()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getTopLevelNotes(rootReducer(undefined as any, { type: '' }))).toEqual({});
+    expect(getSubNotes(rootReducer(undefined as any, { type: '' }), { noteId: null })).toEqual({});
   });
 
   test('works with several notes', () => {
@@ -101,7 +100,7 @@ describe('getTopLevelNotes()', () => {
       },
     };
 
-    expect(getTopLevelNotes(state)).toEqual(expected);
+    expect(getSubNotes(state, { noteId: null })).toEqual(expected);
   });
 });
 
@@ -109,7 +108,7 @@ describe('getSubNotes()', () => {
   test('returns an empty map for empty notes map', () => {
     expect(
       getSubNotes(rootReducer(undefined as any, { type: '' }), {
-        note_id: 0,
+        noteId: 0,
       }),
     ).toEqual({});
   });
@@ -145,7 +144,7 @@ describe('getSubNotes()', () => {
       },
     };
 
-    expect(getSubNotes(state, { note_id: 3 })).toEqual(expected);
+    expect(getSubNotes(state, { noteId: 3 })).toEqual(expected);
   });
 });
 
@@ -269,7 +268,7 @@ describe('getFilteredSearchIndex()', () => {
   test('returns an empty map for empty notes map', () => {
     expect(
       getFilteredSearchIndex(rootReducer(undefined as any, { type: '' }), {
-        note_id: null,
+        noteId: null,
       }),
     ).toEqual({});
   });
@@ -306,7 +305,7 @@ describe('getFilteredSearchIndex()', () => {
       },
     };
 
-    expect(getFilteredSearchIndex(state, { note_id: 3 })).toEqual(expected);
+    expect(getFilteredSearchIndex(state, { noteId: 3 })).toEqual(expected);
 
     const expected2 = {
       3: {
@@ -317,7 +316,7 @@ describe('getFilteredSearchIndex()', () => {
       },
     };
 
-    expect(getFilteredSearchIndex(state, { note_id: null })).toEqual(expected2);
+    expect(getFilteredSearchIndex(state, { noteId: null })).toEqual(expected2);
   });
 });
 

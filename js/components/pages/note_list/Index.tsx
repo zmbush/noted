@@ -9,8 +9,8 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-import NoteList from 'components/NoteList';
-import { getIsNotArchived, getTopLevelNotes } from 'data/notes/selectors';
+import NoteList from 'components/pages/note_list/NoteList';
+import { getIsNotArchived } from 'data/notes/selectors';
 
 type Props = {
   search: string;
@@ -18,7 +18,6 @@ type Props = {
 };
 
 const Index = ({ createFromSearch, search }: Props) => {
-  const notes = useSelector(getTopLevelNotes);
   const noteViewFilter = useSelector(getIsNotArchived);
   return (
     <NoteList
@@ -26,7 +25,6 @@ const Index = ({ createFromSearch, search }: Props) => {
       noteViewFilter={noteViewFilter}
       parent_note_id={null}
       depth={1}
-      notes={notes}
       search={search}
     />
   );

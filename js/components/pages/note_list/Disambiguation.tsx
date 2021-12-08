@@ -7,11 +7,9 @@
 // except according to those terms.
 //
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
-import NoteList from 'components/NoteList';
-import { getNoteEntities } from 'data/notes/selectors';
+import NoteList from 'components/pages/note_list/NoteList';
 
 type Props = {
   search: string;
@@ -20,15 +18,12 @@ type Props = {
 const Disambiguation = ({ search }: Props) => {
   const { ids = '' } = useParams<'ids'>();
   const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
-  const notes = useSelector(getNoteEntities);
-  const noteViewFilter = Object.fromEntries(Object.keys(notes).map((id) => [id, true]));
 
   return (
     <NoteList
       parent_note_id={null}
-      noteViewFilter={noteViewFilter}
+      noteViewFilter={null}
       renderOnly={parsedIds}
-      notes={notes}
       search={search}
       depth={1}
     />

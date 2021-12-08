@@ -10,11 +10,10 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 import { createNote } from 'data/notes/api';
-import { getNoteEntities } from 'data/notes/selectors';
 import { createStore } from 'data/store';
 import { signInUser } from 'data/user/api';
 
-import NoteList from '../NoteList';
+import NoteList from './NoteList';
 
 describe('<NoteList />', () => {
   test('matches snapshot', async () => {
@@ -22,13 +21,7 @@ describe('<NoteList />', () => {
     await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
     expect(store.getState().notes.ids).toHaveLength(4);
     const { getByText } = render(
-      <NoteList
-        noteViewFilter={null}
-        parent_note_id={0}
-        depth={1}
-        notes={getNoteEntities(store.getState())}
-        search=''
-      />,
+      <NoteList noteViewFilter={null} parent_note_id={0} depth={1} search='' />,
       { store },
     );
 
@@ -71,13 +64,7 @@ describe('<NoteList />', () => {
     );
     expect(store.getState().notes.ids).toHaveLength(5);
     const { getByText, queryByText } = render(
-      <NoteList
-        noteViewFilter={{}}
-        parent_note_id={0}
-        depth={1}
-        notes={getNoteEntities(store.getState())}
-        search='Something Different'
-      />,
+      <NoteList noteViewFilter={{}} parent_note_id={0} depth={1} search='Something Different' />,
       { store },
     );
 

@@ -9,27 +9,22 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-import NoteList from 'components/NoteList';
-import { getHasArchivedChild, getTopLevelNotes } from 'data/notes/selectors';
+import NoteList from 'components/pages/note_list/NoteList';
+import { getHasArchivedChild } from 'data/notes/selectors';
 
 type Props = {
   search: string;
   createFromSearch: (e: { preventDefault: () => void }) => void;
 };
 
-const Archive = ({ createFromSearch, search }: Props) => {
-  const notes = useSelector(getTopLevelNotes);
-  const noteViewFilter = useSelector(getHasArchivedChild);
-  return (
-    <NoteList
-      createFromSearch={createFromSearch}
-      noteViewFilter={noteViewFilter}
-      parent_note_id={null}
-      depth={1}
-      notes={notes}
-      search={search}
-    />
-  );
-};
+const Archive = ({ createFromSearch, search }: Props) => (
+  <NoteList
+    createFromSearch={createFromSearch}
+    noteViewFilter={useSelector(getHasArchivedChild)}
+    parent_note_id={null}
+    depth={1}
+    search={search}
+  />
+);
 
 export default Archive;

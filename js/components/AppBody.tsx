@@ -26,9 +26,6 @@ export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
   return (
     <Grid item xs={12}>
       <Note
-        noteViewFilter={{}}
-        depth={1}
-        search={search}
         note={{
           title: search,
           body: '',
