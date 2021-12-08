@@ -1,4 +1,4 @@
-// Copyright 2018 Zachary Bush.
+// Copyright 2021 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -13,25 +13,26 @@ import { useParams } from 'react-router-dom';
 import NoteList from 'components/NoteList';
 import { getNoteEntities } from 'data/notes/selectors';
 
-interface Props {
+type Props = {
   search: string;
-  depth: number;
-}
+};
 
-const FilteredNoteList = ({ search, depth }: Props) => {
+const Disambiguation = ({ search }: Props) => {
   const { ids = '' } = useParams<'ids'>();
   const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
   const notes = useSelector(getNoteEntities);
+  const noteViewFilter = Object.fromEntries(Object.keys(notes).map((id) => [id, true]));
 
   return (
     <NoteList
       parent_note_id={null}
+      noteViewFilter={noteViewFilter}
       renderOnly={parsedIds}
       notes={notes}
       search={search}
-      depth={depth}
+      depth={1}
     />
   );
 };
 
-export default FilteredNoteList;
+export default Disambiguation;

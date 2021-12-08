@@ -7,19 +7,16 @@
 // except according to those terms.
 //
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
 
 import { render } from 'components/test-utils';
 import { signInUser } from 'data/user/api';
 
-import FilteredNoteList from '../FilteredNoteList';
+import Pages from './Pages';
 
-describe('<FilteredNoteList />', () => {
+describe('<Pages />', () => {
   test('matches snapshot', async () => {
     const { store, container, findByText, history } = render(
-      <Routes>
-        <Route path='/note/:ids' element={<FilteredNoteList depth={1} search='' />} />
-      </Routes>,
+      <Pages createFromSearch={() => {}} search='' />,
       {
         route: '/note/1',
       },

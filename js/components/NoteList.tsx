@@ -11,19 +11,12 @@ import memoize from 'memoize-one';
 
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useMatch } from 'react-router-dom';
 
 import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/note/Note';
-import {
-  getFilteredSearchIndex,
-  getHasArchivedChild,
-  getIsNotArchived,
-  getSortedNoteIds,
-} from 'data/notes/selectors';
-import { AppState } from 'data/store';
+import { getFilteredSearchIndex, getSortedNoteIds } from 'data/notes/selectors';
 import { NoteWithTags } from 'data/types';
 
 type Props = {
@@ -32,6 +25,7 @@ type Props = {
   depth: number;
   createFromSearch?: (e: React.SyntheticEvent) => void;
   renderOnly?: Set<number>;
+  noteViewFilter: { [id: number]: boolean } | null;
   parent_note_id: number;
   width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
@@ -74,12 +68,9 @@ const NoteList = ({
   createFromSearch,
   renderOnly,
   width = 12,
+  noteViewFilter,
   parent_note_id: parentNoteId,
 }: Props) => {
-  const isViewingArchive = useMatch({ path: '/archive', end: true });
-  const noteViewFilter = useSelector<AppState, { [id: number]: boolean }>(
-    isViewingArchive ? getHasArchivedChild : getIsNotArchived,
-  );
   const searchIndex = useSelector((state) =>
     getFilteredSearchIndex(state, { note_id: parentNoteId }),
   );
@@ -130,7 +121,12 @@ const NoteList = ({
       } else {
         elements.push(
           <GridItem item key={id} xs={width}>
-            <Note depth={depth + 1} note={notes[id]} search={search} />
+            <Note
+              noteViewFilter={noteViewFilter}
+              depth={depth + 1}
+              note={notes[id]}
+              search={search}
+            />
           </GridItem>,
         );
       }
@@ -147,7 +143,7 @@ const NoteList = ({
           if (!noteViewFilter || noteViewFilter[id]) {
             return (
               <GridItem item key={n.id} xs={width}>
-                <Note depth={depth + 1} note={n} search={search} />
+                <Note noteViewFilter={noteViewFilter} depth={depth + 1} note={n} search={search} />
               </GridItem>
             );
           }

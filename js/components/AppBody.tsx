@@ -6,17 +6,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import Mousetrap from 'mousetrap';
-
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
 
 import { Grid } from '@mui/material';
 
-import FilteredNoteList from 'components/FilteredNoteList';
-import NoteList from 'components/NoteList';
 import Note from 'components/note/Note';
-import { NoteWithTags } from 'data/types';
+import Pages from 'components/pages/Pages';
 
 type NewNoteProps = {
   newNote: boolean;
@@ -31,6 +26,7 @@ export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
   return (
     <Grid item xs={12}>
       <Note
+        noteViewFilter={{}}
         depth={1}
         search={search}
         note={{
@@ -44,47 +40,24 @@ export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
 };
 
 type Props = {
-  notes: { [id: number]: NoteWithTags };
-  createNewShortcut: (
-    e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
-    combo?: string,
-  ) => void;
+  createNewShortcut: (e: { preventDefault: () => void }, combo?: string) => void;
 } & NewNoteProps;
 
-const AppBody = ({ notes, createNewShortcut, newNote, search, onNewNoteCancel }: Props) => {
-  const filteredNoteList = <FilteredNoteList depth={1} search={search} />;
-
-  const mainNoteList = (
-    <NoteList
-      createFromSearch={createNewShortcut}
-      parent_note_id={null}
-      depth={1}
-      notes={notes}
-      search={search}
-    />
-  );
-
-  return (
-    <Grid
-      container
-      spacing={1}
-      sx={{
-        '@media print': {
-          marginTop: 0,
-          display: 'block',
-        },
-        marginTop: '75px',
-      }}
-    >
-      <NewNote newNote={newNote} search={search} onNewNoteCancel={onNewNoteCancel} />
-      <Routes>
-        <Route path='/' element={mainNoteList} />
-        <Route path='/archive' element={mainNoteList} />
-        <Route path='/note/:ids' element={filteredNoteList} />
-        <Route path='/disambiguation/:ids' element={filteredNoteList} />
-      </Routes>
-    </Grid>
-  );
-};
+const AppBody = ({ createNewShortcut, newNote, search, onNewNoteCancel }: Props) => (
+  <Grid
+    container
+    spacing={1}
+    sx={{
+      '@media print': {
+        marginTop: 0,
+        display: 'block',
+      },
+      marginTop: '75px',
+    }}
+  >
+    <NewNote newNote={newNote} search={search} onNewNoteCancel={onNewNoteCancel} />
+    <Pages search={search} createFromSearch={createNewShortcut} />
+  </Grid>
+);
 
 export default AppBody;
