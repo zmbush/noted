@@ -18,7 +18,7 @@ const getUi = (state: AppState): UIState => state[uiPrefix];
 const noteId = (_: AppState, { id }: { id: number }) => id;
 const sliceSelector = (
   _: AppState,
-  { slice }: { slice?: 'any' | typeof notesPrefix | typeof userPrefix } = { slice: 'any' },
+  { slice }: { slice: 'any' | typeof notesPrefix | typeof userPrefix } = { slice: 'any' },
 ) => slice;
 
 export const getUserLoading = createSelector(getUi, (ui) => userPrefix in ui.inProgress);

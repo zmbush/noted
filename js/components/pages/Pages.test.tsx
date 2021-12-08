@@ -27,13 +27,13 @@ describe('<Pages />', () => {
     await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
 
     // Should be showing note 1 by default.
-    const note1 = store.getState().notes.entities[1];
+    const note1 = store.getState().notes.entities[1]!;
     await findByText(note1.title);
     await findByText(note1.body);
 
     // Navigate to /note/2
     history.replace('/note/2');
-    const note2 = store.getState().notes.entities[2];
+    const note2 = store.getState().notes.entities[2]!;
     await findByText(note2.title);
     await findByText(note2.body);
   });

@@ -50,23 +50,30 @@ export const uiSlice = createSlice({
   name: prefix,
   initialState,
   reducers: {
-    clearLastError(state, { payload = 'any' }: PayloadAction<keyof UIState['lastError'] | null>) {
-      state.lastError[payload] = null;
+    clearLastError(
+      state,
+      { payload = 'any' }: PayloadAction<keyof UIState['lastError'] | undefined>,
+    ) {
+      if (payload === 'any') {
+        state.lastError.any = null;
+      } else if (payload) {
+        delete state.lastError[payload];
+      }
     },
   },
   extraReducers: (builder) => {
     const noteStartEditing = <
       V,
       Ty extends string,
-      T extends { id: number } | { parent_note_id?: number },
+      T extends { id: number } | { parent_note_id?: number | null },
     >(
       state: Draft<UIState>,
       action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
     ) => {
-      let id;
+      let id: number;
       if ('id' in action.meta.arg) {
         id = action.meta.arg.id;
-      } else if ('parent_note_id' in action.meta.arg) {
+      } else if ('parent_note_id' in action.meta.arg && action.meta.arg.parent_note_id) {
         id = action.meta.arg.parent_note_id;
       } else {
         // We can't track it.
@@ -80,15 +87,15 @@ export const uiSlice = createSlice({
     const noteDoneEditing = <
       V,
       Ty extends string,
-      T extends { id: number } | { parent_note_id?: number },
+      T extends { id: number } | { parent_note_id?: number | null },
     >(
       state: Draft<UIState>,
       action: PayloadAction<V, Ty, { arg: T; requestId: string }>,
     ) => {
-      let id;
+      let id: number;
       if ('id' in action.meta.arg) {
         id = action.meta.arg.id;
-      } else if ('parent_note_id' in action.meta.arg) {
+      } else if ('parent_note_id' in action.meta.arg && action.meta.arg.parent_note_id) {
         id = action.meta.arg.parent_note_id;
       } else {
         // We can't track it.
@@ -102,15 +109,15 @@ export const uiSlice = createSlice({
         delete state.noteChanging[id];
       }
     };
-    builder
-      .addCase(updateNote.pending, noteStartEditing)
-      .addCase(createNote.pending, noteStartEditing)
+    builder.addCase(updateNote.pending, noteStartEditing);
+    builder.addCase(createNote.pending, noteStartEditing);
 
-      .addCase(updateNote.fulfilled, noteDoneEditing)
-      .addCase(updateNote.rejected, noteDoneEditing)
-      .addCase(createNote.fulfilled, noteDoneEditing)
-      .addCase(createNote.rejected, noteDoneEditing)
-      // Tracking lastError
+    builder.addCase(updateNote.fulfilled, noteDoneEditing);
+    builder.addCase(updateNote.rejected, noteDoneEditing);
+    builder.addCase(createNote.fulfilled, noteDoneEditing);
+    builder.addCase(createNote.rejected, noteDoneEditing);
+    // Tracking lastError
+    builder
       .addMatcher(
         (action): action is RejectedAction => action?.type?.endsWith('/rejected'),
         (state, action) => {

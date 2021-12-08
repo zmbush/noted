@@ -64,7 +64,7 @@ type NoteContentsProps = {
   search: string;
   subNotes: { [id: number]: NoteWithTags };
   depth?: number;
-  noteViewFilter: { [id: number]: boolean };
+  noteViewFilter: { [id: number]: boolean } | null;
 };
 
 export const NoteContents = ({
@@ -77,7 +77,7 @@ export const NoteContents = ({
   depth,
   noteViewFilter,
 }: NoteContentsProps) => {
-  const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement>(null);
+  const [moreMenuEl, setMoreMenuEl] = React.useState<HTMLElement | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
   const dispatch = useDispatch();
   const noteChanging = useSelector((state: AppState) => getIsNoteChanging(state, note));
@@ -311,25 +311,13 @@ const Note = ({ note, depth, search, onNewNoteCancel, noteViewFilter }: Props) =
   };
 
   const save = async (noteData: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => {
-    const { title, body, tags, parent_note_id: parentNoteId } = noteData;
-
     if (creatingSubNote || !('id' in note)) {
-      await dispatch(
-        createNote({
-          title,
-          body,
-          tags,
-          parent_note_id: parentNoteId,
-        }),
-      );
+      await dispatch(createNote(noteData as NewNote & Pick<NoteWithTags, 'tags'>));
     } else {
       await dispatch(
         updateNote({
           id: note.id,
-          title,
-          body,
-          parent_note_id: parentNoteId,
-          tags,
+          ...noteData,
         }),
       );
     }

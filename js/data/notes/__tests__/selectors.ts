@@ -36,12 +36,12 @@ const baseNote: NoteWithTags = {
 
 describe('getLinkIds()', () => {
   test('returns empty map for empty notes map', () => {
-    expect(getLinkIds(rootReducer(undefined, { type: '' }))).toEqual({});
+    expect(getLinkIds(rootReducer(undefined as any, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1, title: 'Test 1' },
@@ -50,8 +50,8 @@ describe('getLinkIds()', () => {
           { ...baseNote, id: 4, title: 'Test 4' },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 
@@ -69,12 +69,12 @@ describe('getLinkIds()', () => {
 
 describe('getTopLevelNotes()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getTopLevelNotes(rootReducer(undefined, { type: '' }))).toEqual({});
+    expect(getTopLevelNotes(rootReducer(undefined as any, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1, title: 'Test 1' },
@@ -83,8 +83,8 @@ describe('getTopLevelNotes()', () => {
           { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 
@@ -108,7 +108,7 @@ describe('getTopLevelNotes()', () => {
 describe('getSubNotes()', () => {
   test('returns an empty map for empty notes map', () => {
     expect(
-      getSubNotes(rootReducer(undefined, { type: '' }), {
+      getSubNotes(rootReducer(undefined as any, { type: '' }), {
         note_id: 0,
       }),
     ).toEqual({});
@@ -116,7 +116,7 @@ describe('getSubNotes()', () => {
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1, title: 'Test 1' },
@@ -125,8 +125,8 @@ describe('getSubNotes()', () => {
           { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 
@@ -151,12 +151,12 @@ describe('getSubNotes()', () => {
 
 describe('getIsNotArchived()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getIsNotArchived(rootReducer(undefined, { type: '' }))).toEqual({});
+    expect(getIsNotArchived(rootReducer(undefined as any, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1 },
@@ -165,8 +165,8 @@ describe('getIsNotArchived()', () => {
           { ...baseNote, id: 4 },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
     const expected = {
@@ -182,12 +182,12 @@ describe('getIsNotArchived()', () => {
 
 describe('getHasArchivedChild()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getHasArchivedChild(rootReducer(undefined, { type: '' }))).toEqual({});
+    expect(getHasArchivedChild(rootReducer(undefined as any, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1 },
@@ -198,7 +198,7 @@ describe('getHasArchivedChild()', () => {
           { ...baseNote, id: 6, parent_note_id: 5, archived: true },
         ],
         '',
-        undefined,
+        undefined as any,
       ),
     );
     const expected = {
@@ -216,12 +216,12 @@ describe('getHasArchivedChild()', () => {
 
 describe('getSearchIndex()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getSearchIndex(rootReducer(undefined, { type: '' }))).toEqual({});
+    expect(getSearchIndex(rootReducer(undefined as any, { type: '' }))).toEqual({});
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1, title: 'Test 1' },
@@ -230,8 +230,8 @@ describe('getSearchIndex()', () => {
           { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 
@@ -268,7 +268,7 @@ describe('getSearchIndex()', () => {
 describe('getFilteredSearchIndex()', () => {
   test('returns an empty map for empty notes map', () => {
     expect(
-      getFilteredSearchIndex(rootReducer(undefined, { type: '' }), {
+      getFilteredSearchIndex(rootReducer(undefined as any, { type: '' }), {
         note_id: null,
       }),
     ).toEqual({});
@@ -276,7 +276,7 @@ describe('getFilteredSearchIndex()', () => {
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           { ...baseNote, id: 1, title: 'Test 1', parent_note_id: 2 },
@@ -285,8 +285,8 @@ describe('getFilteredSearchIndex()', () => {
           { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 
@@ -323,12 +323,12 @@ describe('getFilteredSearchIndex()', () => {
 
 describe('getSortedNoteIds()', () => {
   test('returns an empty map for empty notes map', () => {
-    expect(getSortedNoteIds(rootReducer(undefined, { type: '' }))).toEqual([]);
+    expect(getSortedNoteIds(rootReducer(undefined as any, { type: '' }))).toEqual([]);
   });
 
   test('works with several notes', () => {
     const state = rootReducer(
-      undefined,
+      undefined as any,
       getNotes.fulfilled(
         [
           {
@@ -360,8 +360,8 @@ describe('getSortedNoteIds()', () => {
           },
         ],
         '',
-        undefined,
-        undefined,
+        undefined as any,
+        undefined as any,
       ),
     );
 

@@ -26,7 +26,7 @@ type Props = {
   createFromSearch?: (e: React.SyntheticEvent) => void;
   renderOnly?: Set<number>;
   noteViewFilter: { [id: number]: boolean } | null;
-  parent_note_id: number;
+  parent_note_id: number | null;
   width?: false | 'auto' | true | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 };
 

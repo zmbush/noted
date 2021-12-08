@@ -34,7 +34,7 @@ describe('<Note />', () => {
       }
     `);
     const { rerender, findByTestId, findByText } = render(
-      <Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]} />,
+      <Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]!} />,
       { store },
     );
 
@@ -46,18 +46,18 @@ describe('<Note />', () => {
 
     await clickMenu('Archive Note');
 
-    expect(store.getState().notes.entities[1].archived).toBeTruthy();
-    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]} />);
+    expect(store.getState().notes.entities[1]!.archived).toBeTruthy();
+    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]!} />);
     await clickMenu('Unarchive Note');
 
-    expect(store.getState().notes.entities[1].archived).toBeFalsy();
-    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]} />);
+    expect(store.getState().notes.entities[1]!.archived).toBeFalsy();
+    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]!} />);
     await clickMenu('Pin Note');
 
-    expect(store.getState().notes.entities[1].pinned).toBeTruthy();
-    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]} />);
+    expect(store.getState().notes.entities[1]!.pinned).toBeTruthy();
+    rerender(<Note noteViewFilter={{}} search='' note={store.getState().notes.entities[1]!} />);
     await clickMenu('Unpin Note');
 
-    expect(store.getState().notes.entities[1].pinned).toBeFalsy();
+    expect(store.getState().notes.entities[1]!.pinned).toBeFalsy();
   });
 });

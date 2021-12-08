@@ -23,14 +23,27 @@ const noteRoot = `${api}/secure/note`;
 
 const err = (data: ErrorData) => data;
 
+const propIsInObj = <X extends {}, Y extends PropertyKey>(
+  obj: X,
+  prop: Y,
+): obj is X & Record<Y, unknown> => prop in obj;
+
 const mapErr = async <V>(promise: Promise<V>) => {
   try {
     return await promise;
   } catch (e) {
-    if (!e || !('response' in e) || !e.response || !('data' in e.response) || !e.response.data) {
-      throw err({ message: 'Unknown Error', code: 500, details: JSON.stringify(e) });
+    if (
+      e &&
+      typeof e === 'object' &&
+      propIsInObj(e, 'response') &&
+      e.response &&
+      typeof e.response === 'object' &&
+      propIsInObj(e.response, 'data') &&
+      e.response.data
+    ) {
+      throw e.response.data;
     }
-    throw e.response.data;
+    throw err({ message: 'Unknown Error', code: 500, details: JSON.stringify(e) });
   }
 };
 

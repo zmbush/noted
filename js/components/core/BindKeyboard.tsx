@@ -17,8 +17,10 @@ type Props = {
 };
 
 const BindKeyboard = ({ keys, action, callback, children }: Props) => {
-  const mainRef = React.useRef<HTMLDivElement>();
-  const mousetrapRef = React.useRef<Mousetrap.MousetrapInstance | Mousetrap.MousetrapStatic>(null);
+  const mainRef = React.useRef<HTMLDivElement>(null);
+  const mousetrapRef = React.useRef<Mousetrap.MousetrapInstance | Mousetrap.MousetrapStatic | null>(
+    null,
+  );
 
   React.useEffect(() => {
     if (mainRef.current || !children) {
@@ -26,7 +28,7 @@ const BindKeyboard = ({ keys, action, callback, children }: Props) => {
         mousetrapRef.current.unbind(keys, action);
       }
 
-      if (children) {
+      if (children && mainRef.current) {
         mousetrapRef.current = new Mousetrap(mainRef.current);
       } else {
         mousetrapRef.current = Mousetrap;
