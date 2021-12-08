@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import { render, sleep } from 'components/test-utils';
+import { render, waitForElementToBeRemoved } from 'components/test-utils';
 import { createStore } from 'data/store';
 import { signInUser } from 'data/user/api';
 
@@ -33,7 +33,7 @@ describe('<Note />', () => {
         "user_id": -1,
       }
     `);
-    const { rerender, findByTestId, findByText } = render(
+    const { rerender, findByTestId, findByText, queryByText } = render(
       <Note note={store.getState().notes.entities[1]!} />,
       { store },
     );
@@ -41,7 +41,7 @@ describe('<Note />', () => {
     const clickMenu = async (menuItem: string) => {
       userEvent.click(await findByTestId('MoreVertIcon'));
       userEvent.click(await findByText(menuItem));
-      await sleep(1);
+      await waitForElementToBeRemoved(() => queryByText(menuItem));
     };
 
     await clickMenu('Archive Note');
