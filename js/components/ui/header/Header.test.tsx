@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import { render, sleep } from 'components/test-utils';
+import { render, waitFor, waitForElementToBeRemoved } from 'components/test-utils';
 import { signInUser } from 'data/user/api';
 
 import Header from './Header';
@@ -43,18 +43,16 @@ describe('<Header />', () => {
     const input = await findByRole('textbox');
     userEvent.type(input, 'written word');
 
-    await sleep(10);
-    expect(setSearch.mock.calls).toHaveLength(1);
-    expect(setSearch.mock.calls[0][0]).toEqual('written word');
+    await waitFor(() => expect(setSearch).toHaveBeenCalledTimes(1));
+    expect(setSearch).toHaveBeenLastCalledWith('written word');
 
     userEvent.type(input, 's');
-    await sleep(10);
-    expect(setSearch.mock.calls).toHaveLength(2);
-    expect(setSearch.mock.calls[1][0]).toEqual('written words');
+    await waitFor(() => expect(setSearch).toHaveBeenCalledTimes(2));
+    expect(setSearch).toHaveBeenLastCalledWith('written words');
   });
 
   test('handles user menu and sign out', async () => {
-    const { findByTestId, findByText, store } = render(
+    const { findByTestId, findByText, queryByText, store } = render(
       <Header
         createNewShortcut={() => {}}
         setSearch={() => {}}
@@ -71,7 +69,7 @@ describe('<Header />', () => {
     const signOutButton = await findByText('Sign Out');
     userEvent.click(signOutButton);
 
-    await sleep(10);
+    await waitForElementToBeRemoved(() => queryByText('Sign Out'));
 
     expect(store.getState()).toMatchInlineSnapshot(`
       Object {

@@ -76,10 +76,6 @@ const customRender = (
   };
 };
 
-export const sleep = (milliseconds: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-
 export * from '@testing-library/react';
+export { render as originalRender } from '@testing-library/react';
 export { customRender as render };

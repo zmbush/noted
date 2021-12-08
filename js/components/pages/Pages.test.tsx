@@ -10,14 +10,14 @@ import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import { render, waitFor } from 'components/test-utils';
+import { render, waitForElementToBeRemoved } from 'components/test-utils';
 import { signInUser } from 'data/user/api';
 
 import Pages from './Pages';
 
 describe('<Pages />', () => {
   test('interactions work', async () => {
-    const { store, container, findByText, queryByText, findAllByTestId, history } = render(
+    const { store, container, getByText, queryByText, getAllByTestId, history } = render(
       <Pages createFromSearch={() => {}} search='' />,
       {
         route: '/note/1',
@@ -34,18 +34,18 @@ describe('<Pages />', () => {
     const note4 = store.getState().notes.entities[4]!;
 
     // Should be showing note 1 by default.
-    await findByText(note1.title);
-    await findByText(note1.body);
+    getByText(note1.title);
+    getByText(note1.body);
 
     // Navigate to /note/2
     history.replace('/note/2');
-    await findByText(note2.title);
-    await findByText(note2.body);
+    getByText(note2.title);
+    getByText(note2.body);
 
     // Ensure disambiguation works.
     history.replace('/disambiguation/3,4');
-    await findByText(note3.title);
-    await findByText(note4.title);
+    getByText(note3.title);
+    getByText(note4.title);
 
     // Archive should be empty.
     history.replace('/archive');
@@ -56,12 +56,12 @@ describe('<Pages />', () => {
 
     // Go back to index, archive the first note.
     history.replace('/');
-    userEvent.click((await findAllByTestId('MoreVertIcon'))[0]);
-    userEvent.click(await findByText('Archive Note'));
-    await waitFor(() => expect(queryByText(note1.title)).toBeNull());
+    userEvent.click(getAllByTestId('MoreVertIcon')[0]);
+    userEvent.click(getByText('Archive Note'));
+    await waitForElementToBeRemoved(() => queryByText(note1.title));
 
     // Note 1 should now show up in the archive.
     history.replace('/archive');
-    await findByText(note1.title);
+    getByText(note1.title);
   });
 });

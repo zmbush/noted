@@ -17,11 +17,6 @@ type Props = {
   };
 };
 
-export const sleep = (milliseconds: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-
 export const Editor = React.forwardRef(
   ({ initialValue, events }: Props, ref: React.MutableRefObject<any>) => {
     const [markdown, setMarkdown] = React.useState(initialValue);
