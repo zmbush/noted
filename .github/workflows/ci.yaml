@@ -148,11 +148,11 @@ jobs:
           key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
           restore-keys: "${{ runner.os }}-node-\n"
       - name: Build Package
-        run: npm ci && npm run build
+        run: yarn install --frozen-lockfile && yarn build
       - name: Lint
-        run: npm run lint
+        run: yarn lint
       - name: Test
-        run: npm run test
+        run: yarn test
       - name: Upload Codecov
         uses: codecov/codecov-action@v2
         with:

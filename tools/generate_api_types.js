@@ -53,7 +53,7 @@ async function main() {
     if (existing.toString() === output) {
       // Skip writing if it hasn't changed, so that we don't confuse any sort of incremental builds.
       // This check isn't ideal but the script runs quickly enough and rarely enough that it doesn't matter.
-      console.log(`${emoji.get('heavy_check_mark')}  Schemas are up to date.\n`);
+      console.log(`${emoji.get('heavy_check_mark')}  Schemas are up to date.`);
       return;
     }
   } catch (e) {
@@ -64,7 +64,7 @@ async function main() {
   }
 
   await fs.writeFile(outputPath, output);
-  console.log(`${emoji.get('building_construction')}  Wrote Typescript types to ${outputPath}.\n`);
+  console.log(`${emoji.get('building_construction')}  Wrote Typescript types to ${outputPath}.`);
 }
 
 main().catch((e) => {

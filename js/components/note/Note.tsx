@@ -6,13 +6,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import rehypeRaw from 'rehype-raw';
-
 import * as React from 'react';
 import { Suspense } from 'react';
 import ReactLoading from 'react-loading';
-import ReactMarkdown from 'react-markdown';
-import { ReactMarkdownOptions } from 'react-markdown/lib/react-markdown';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -41,7 +37,7 @@ import {
 
 import ConfirmationDialog from 'components/core/ConfirmationDialog';
 import Loading from 'components/core/Loading';
-import AutoLink from 'components/note/AutoLink';
+import Markdown from 'components/core/Markdown';
 import Tags from 'components/note/Tags';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds } from 'data/notes/selectors';
@@ -97,15 +93,6 @@ export const NoteContents = ({
 
   const startSubNoteCreate = () => {
     setCreatingSubNote(true);
-  };
-
-  const markdownComponents: ReactMarkdownOptions['components'] = {
-    // eslint-disable-next-line react/no-unstable-nested-components
-    p: ({ children: pChildren }) => (
-      <p>
-        <AutoLink titles={titles}>{pChildren}</AutoLink>
-      </p>
-    ),
   };
 
   return (
@@ -234,13 +221,9 @@ export const NoteContents = ({
         }}
       >
         <Tags tags={note.tags} />
-        <ReactMarkdown
-          className={styles.markdown}
-          components={markdownComponents}
-          rehypePlugins={[rehypeRaw]}
-        >
+        <Markdown className={styles.markdown} titles={titles}>
           {note.body}
-        </ReactMarkdown>
+        </Markdown>
         <Grid
           container
           sx={{

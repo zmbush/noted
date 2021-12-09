@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run pretty
+yarn pretty
 (git diff --name-only --cached | grep 'ci/github-actions/ci.yaml') && cargo run --quiet --manifest-path expand-yaml-anchors/Cargo.toml -- generate $PWD && git add .github/workflows
-npm run generate-api-types && git add js/data/types.ts
+yarn generate-api-types && git add js/data/types.ts
