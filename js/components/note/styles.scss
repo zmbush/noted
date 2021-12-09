@@ -18,6 +18,22 @@
 }
 
 .markdown {
+  .notice-block {
+    padding: $spacing $spacing * 2;
+
+    &.info {
+      background-color: #7b1fa2;
+    }
+
+    &.tip {
+      background-color: red;
+    }
+
+    &.warning {
+      background-color: yellow;
+    }
+  }
+
   & p {
     @media print {
       text-indent: $spacing;

@@ -32,7 +32,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
           <button
             aria-label="Save Note"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-mf1cb5-MuiButtonBase-root-MuiIconButton-root"
-            tabindex="0"
+            tabindex="-1"
             type="button"
           >
             <svg
@@ -55,29 +55,197 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
       <div
         class="MuiCardContent-root css-1nplhv6-MuiCardContent-root"
       >
-        <div
-          class="MuiFormControl-root WAMuiChipInput-root-1 MuiFormControl-fullWidth"
-          data-testid="tags-input"
-        >
+        <div>
           <div
-            class="WAMuiChipInput-standard-6 WAMuiChipInput-chipContainer-4 WAMuiChipInput-underline-14"
+            aria-expanded="false"
+            class="MuiAutocomplete-root MuiAutocomplete-hasClearIcon css-16awh2u-MuiAutocomplete-root"
+            role="combobox"
           >
             <div
-              class="MuiInputBase-root MuiInput-root WAMuiChipInput-inputRoot-2 WAMuiChipInput-standard-6 MuiInputBase-formControl MuiInput-formControl"
+              class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-wb57ya-MuiFormControl-root-MuiTextField-root"
             >
-              <input
-                aria-invalid="false"
-                class="MuiInputBase-input MuiInput-input WAMuiChipInput-input-3 WAMuiChipInput-standard-6"
-                placeholder="Tags"
-                type="text"
-                value=""
-              />
+              <label
+                class="MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-root MuiFormLabel-colorPrimary css-1kty9di-MuiFormLabel-root-MuiInputLabel-root"
+                data-shrink="true"
+                for="mui-2"
+                id="mui-2-label"
+              >
+                Tags Input
+              </label>
+              <div
+                class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedStart MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-1gywuxd-MuiInputBase-root-MuiOutlinedInput-root"
+              >
+                <div
+                  class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault MuiAutocomplete-tag MuiAutocomplete-tagSizeMedium css-154ghe3-MuiButtonBase-root-MuiChip-root"
+                  data-tag-index="0"
+                  role="button"
+                  tabindex="-1"
+                >
+                  <span
+                    class="MuiChip-label MuiChip-labelMedium css-6od3lo-MuiChip-label"
+                  >
+                    tag1
+                  </span>
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconMedium MuiChip-deleteIconColorDefault MuiChip-deleteIconOutlinedColorDefault css-i4bv87-MuiSvgIcon-root"
+                    data-testid="CancelIcon"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  aria-autocomplete="list"
+                  aria-invalid="false"
+                  autocapitalize="none"
+                  autocomplete="off"
+                  class="MuiOutlinedInput-input MuiInputBase-input MuiInputBase-inputTypeSearch MuiInputBase-inputAdornedStart MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-1mgg4b8-MuiInputBase-input-MuiOutlinedInput-input"
+                  id="mui-2"
+                  spellcheck="false"
+                  type="search"
+                  value=""
+                />
+                <div
+                  class="MuiAutocomplete-endAdornment css-1q60rmi-MuiAutocomplete-endAdornment"
+                >
+                  <button
+                    aria-label="Clear"
+                    class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-clearIndicator css-1glvl0p-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-clearIndicator"
+                    tabindex="-1"
+                    title="Clear"
+                    type="button"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root"
+                      data-testid="CloseIcon"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                      />
+                    </svg>
+                    <span
+                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                    />
+                  </button>
+                </div>
+                <fieldset
+                  aria-hidden="true"
+                  class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                >
+                  <legend
+                    class="css-1z7n62"
+                  >
+                    <span>
+                      Tags Input
+                    </span>
+                  </legend>
+                </fieldset>
+              </div>
             </div>
           </div>
         </div>
-        <input
-          value="note body"
-        />
+        <div
+          class="MuiBox-root css-1i3gdbw"
+        >
+          <div
+            class="sc-bdvvtL bMzWfw"
+            dir="auto"
+          >
+            <div
+              class="sc-dJjYzT eHJqug"
+              dir="auto"
+            >
+              <div
+                class="ProseMirror"
+                contenteditable="true"
+                role="textbox"
+              >
+                <a
+                  class="heading-name ProseMirror-widget"
+                  id="h-note-title"
+                />
+                <h1>
+                  <span
+                    class="heading-actions "
+                    contenteditable="false"
+                  >
+                    <button
+                      class="heading-anchor"
+                      type="button"
+                    />
+                    <button
+                      class="heading-fold "
+                      type="button"
+                    >
+                      <svg
+                        fill="currentColor"
+                        height="24"
+                        viewBox="6 0 12 24"
+                        width="12"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.23823905,10.6097108 L11.207376,14.4695888 L11.207376,14.4695888 C11.54411,14.907343 12.1719566,14.989236 12.6097108,14.652502 C12.6783439,14.5997073 12.7398293,14.538222 12.792624,14.4695888 L15.761761,10.6097108 L15.761761,10.6097108 C16.0984949,10.1719566 16.0166019,9.54410997 15.5788477,9.20737601 C15.4040391,9.07290785 15.1896811,9 14.969137,9 L9.03086304,9 L9.03086304,9 C8.47857829,9 8.03086304,9.44771525 8.03086304,10 C8.03086304,10.2205442 8.10377089,10.4349022 8.23823905,10.6097108 Z"
+                        />
+                      </svg>
+                    </button>
+                  </span>
+                  <span
+                    class="heading-content"
+                  >
+                    Note Title
+                  </span>
+                </h1>
+                <p>
+                  This is more content!
+                </p>
+                <a
+                  class="heading-name ProseMirror-widget"
+                  id="h-subheading"
+                />
+                <h2>
+                  <span
+                    class="heading-actions "
+                    contenteditable="false"
+                  >
+                    <button
+                      class="heading-anchor"
+                      type="button"
+                    />
+                    <button
+                      class="heading-fold "
+                      type="button"
+                    >
+                      <svg
+                        fill="currentColor"
+                        height="24"
+                        viewBox="6 0 12 24"
+                        width="12"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.23823905,10.6097108 L11.207376,14.4695888 L11.207376,14.4695888 C11.54411,14.907343 12.1719566,14.989236 12.6097108,14.652502 C12.6783439,14.5997073 12.7398293,14.538222 12.792624,14.4695888 L15.761761,10.6097108 L15.761761,10.6097108 C16.0984949,10.1719566 16.0166019,9.54410997 15.5788477,9.20737601 C15.4040391,9.07290785 15.1896811,9 14.969137,9 L9.03086304,9 L9.03086304,9 C8.47857829,9 8.03086304,9.44771525 8.03086304,10 C8.03086304,10.2205442 8.10377089,10.4349022 8.23823905,10.6097108 Z"
+                        />
+                      </svg>
+                    </button>
+                  </span>
+                  <span
+                    class="heading-content"
+                  >
+                    Subheading
+                  </span>
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

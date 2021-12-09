@@ -5,20 +5,15 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/react-editor';
-import 'codemirror/lib/codemirror.css';
-import ChipInput from 'material-ui-chip-input';
-import 'tui-color-picker/dist/tui-color-picker.css';
-
+//
 import * as React from 'react';
 
 import { Save as SaveIcon } from '@mui/icons-material';
-import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
 import BindKeyboard from 'components/core/BindKeyboard';
+import ChipInput from 'components/core/ChipInput';
+import MarkdownEditor from 'components/core/MarkdownEditor';
 import { NoteWithTags, NewNote, UpdateNote } from 'data/types';
 
 type Props = {
@@ -28,7 +23,6 @@ type Props = {
 };
 
 const NoteEditor = ({ note, onSave, onModified }: Props) => {
-  const editor = React.useRef<any>();
   const [title, setTitle] = React.useState(note.title);
   const [body, setBody] = React.useState(note.body);
   let noteTags: string[] = [];
@@ -49,18 +43,6 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
   const save = (e: React.SyntheticEvent | Event) => {
     e.preventDefault();
     onSave({ title, body, tags, parent_note_id: note.parent_note_id });
-  };
-
-  const addTag = (tag: string) => {
-    setTags([...tags, tag]);
-    notifyChanges();
-  };
-
-  const deleteTag = (tag: string, index: number) => {
-    const newTags = [...tags];
-    newTags.splice(index, 1);
-    setTags(newTags);
-    notifyChanges();
   };
 
   return (
@@ -88,7 +70,7 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
             />
           }
           action={
-            <IconButton onClick={save} aria-label='Save Note' size='large'>
+            <IconButton onClick={save} aria-label='Save Note' size='large' tabIndex={-1}>
               <SaveIcon />
             </IconButton>
           }
@@ -103,32 +85,13 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
           }}
         >
           <ChipInput
-            data-testid='tags-input'
-            classes={{}}
-            placeholder='Tags'
-            fullWidth
-            dataSource={['type:Location', 'type:Character']}
             value={tags}
-            onAdd={addTag}
-            onDelete={deleteTag}
+            onChange={setTags}
+            options={['type:Location', 'type:Character']}
           />
-          <Editor
-            initialValue={body}
-            initialEditType='wysiwyg'
-            ref={editor}
-            events={{
-              change: () => {
-                if (editor.current) {
-                  setBody(editor.current.getInstance().getMarkdown());
-                  notifyChanges();
-                }
-              },
-            }}
-            height='calc(100% - 40px)'
-            usageStatistics={false}
-            useCommandShortcut={false}
-            plugins={[colorSyntax]}
-          />
+          <Box sx={{ height: 'calc(100% - 40px)', overflowY: 'scroll' }}>
+            <MarkdownEditor body={body} onChange={(v) => setBody(v())} />
+          </Box>
         </CardContent>
       </Card>
     </BindKeyboard>
