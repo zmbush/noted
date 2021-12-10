@@ -18,7 +18,7 @@ import AutoLink from 'components/note/AutoLink';
 
 const BrOrAutolink =
   (titles: { [title: string]: Set<number> }) =>
-  ({ children, ...props }: any) => {
+  ({ children, node: _node, ...props }: any) => {
     if (
       children === '\\' ||
       (Array.isArray(children) && children.length > 0 && children[0] === '\\')
@@ -33,7 +33,7 @@ const BrOrAutolink =
     );
   };
 
-const MaybeDirective = ({ children, ...props }: any) => {
+const MaybeDirective = ({ children, node: _node, ...props }: any) => {
   if ('data-directive-type' in props && 'data-type' in props) {
     return (
       <Directive
