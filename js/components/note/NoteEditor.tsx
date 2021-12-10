@@ -9,11 +9,11 @@
 import * as React from 'react';
 
 import { Save as SaveIcon } from '@mui/icons-material';
-import { Box, Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
+import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material';
 
 import BindKeyboard from 'components/core/BindKeyboard';
 import ChipInput from 'components/core/ChipInput';
-import MarkdownEditor from 'components/core/MarkdownEditor';
+import MarkdownEditor from 'components/core/markdown/Editor';
 import { NoteWithTags, NewNote, UpdateNote } from 'data/types';
 
 type Props = {
@@ -89,9 +89,7 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
             onChange={setTags}
             options={['type:Location', 'type:Character']}
           />
-          <Box sx={{ height: 'calc(100% - 40px)', overflowY: 'scroll' }}>
-            <MarkdownEditor body={body} onChange={(v) => setBody(v())} />
-          </Box>
+          <MarkdownEditor height='calc(100% - 40px)' body={body} onChange={(v) => setBody(v())} />
         </CardContent>
       </Card>
     </BindKeyboard>

@@ -42,7 +42,7 @@ interface Props {
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const getSeverity = (type: string): 'info' | 'warning' | 'success' | 'error' => {
+export const getSeverity = (type: string) => {
   switch (type) {
     case 'info':
       return 'info';
@@ -63,6 +63,14 @@ const Directive = ({ type, children }: Props) => (
       marginBottom: 1,
       '& p:first-of-type': { marginTop: 0 },
       '& p:last-of-type': { marginBottom: 0 },
+      '@media print': {
+        color: 'black',
+        borderRadius: 0,
+        backgroundColor: 'white',
+        borderLeftWidth: '3px',
+        borderLeftStyle: 'solid',
+        borderLeftColor: '#7b1fa2',
+      },
     }}
   >
     {children}

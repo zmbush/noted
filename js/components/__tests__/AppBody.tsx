@@ -30,7 +30,7 @@ describe('<AppBody />', () => {
     );
     expect(container).toMatchInlineSnapshot(`
       <div>
-        <div
+        <article
           class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1r1w6xa-MuiGrid-root"
         />
       </div>
