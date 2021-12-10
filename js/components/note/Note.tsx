@@ -42,7 +42,8 @@ import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
-import { getIsNoteChanging } from 'data/ui/selectors';
+import { getEditingNote, getIsNoteChanging } from 'data/ui/selectors';
+import { setEditingNote } from 'data/ui/slice';
 
 import Tags from './Tags';
 import * as styles from './styles.scss';
@@ -255,6 +256,12 @@ const Note = ({ note, onNewNoteCancel, children }: Props) => {
   const editorFullscreen = useMediaQuery(theme.breakpoints.down('xs'));
   const dispatch = useDispatch();
   const titles = useSelector(getLinkIds);
+  const editingNote = useSelector(getEditingNote);
+
+  if ('id' in note && editingNote === note.id && !edit) {
+    setEdit(true);
+    setTimeout(() => dispatch(setEditingNote(null)));
+  }
 
   const cancelEdit = () => {
     setEdit(false);

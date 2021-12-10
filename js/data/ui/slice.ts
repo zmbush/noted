@@ -22,12 +22,16 @@ export interface UIState {
   };
   inProgress: { [slice: string]: { [type: string]: string[] } };
   noteChanging: { [note_id: number]: string[] };
+  firstNote: number | null;
+  editingNote: 'new' | number | null;
 }
 
 const initialState: UIState = {
   lastError: { any: null },
   inProgress: {},
   noteChanging: {},
+  firstNote: null,
+  editingNote: null,
 };
 
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
@@ -50,6 +54,12 @@ export const uiSlice = createSlice({
   name: prefix,
   initialState,
   reducers: {
+    setFirstNote(state, { payload }: PayloadAction<number | null>) {
+      state.firstNote = payload;
+    },
+    setEditingNote(state, { payload }: PayloadAction<'new' | number | null>) {
+      state.editingNote = payload;
+    },
     clearLastError(
       state,
       { payload = 'any' }: PayloadAction<keyof UIState['lastError'] | undefined>,
@@ -163,5 +173,5 @@ export const uiSlice = createSlice({
   },
 });
 
-export const { clearLastError } = uiSlice.actions;
+export const { clearLastError, setEditingNote, setFirstNote } = uiSlice.actions;
 export default uiSlice.reducer;

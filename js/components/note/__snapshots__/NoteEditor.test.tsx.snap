@@ -5,6 +5,7 @@ exports[`<NoteEditor /> matches snapshot 1`] = `
   <div>
     <div
       class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-9y0u9w-MuiPaper-root-MuiCard-root"
+      data-testid="NoteEditor"
     >
       <div
         class="MuiCardHeader-root css-185gdzj-MuiCardHeader-root"
