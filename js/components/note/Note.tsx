@@ -37,7 +37,7 @@ import {
 
 import ConfirmationDialog from 'components/core/ConfirmationDialog';
 import Loading from 'components/core/Loading';
-import Markdown from 'components/core/Markdown';
+import MarkdownViewer from 'components/core/markdown/Viewer';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds } from 'data/notes/selectors';
 import { AppState } from 'data/store';
@@ -103,6 +103,8 @@ export const NoteContents = ({
           '@media print': {
             border: 'none',
             boxShadow: 'none',
+            backgroundColor: 'white',
+            color: 'black',
             // pageBreakInside: 'avoid',
           },
         },
@@ -219,9 +221,7 @@ export const NoteContents = ({
         }}
       >
         <Tags tags={note.tags} />
-        <Markdown className={styles.markdown} titles={titles}>
-          {note.body}
-        </Markdown>
+        <MarkdownViewer titles={titles}>{note.body}</MarkdownViewer>
         <Grid
           container
           sx={{
@@ -308,7 +308,6 @@ const Note = ({ note, onNewNoteCancel, children }: Props) => {
         onNegative={() => setConfirmCancelEditOpen(false)}
       />
       <Dialog
-        classes={{ root: styles.markdown }}
         open={edit || creatingSubNote}
         fullWidth
         maxWidth='lg'

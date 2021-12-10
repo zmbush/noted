@@ -6,6 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+import type { Property } from 'csstype';
 import Editor from 'rich-markdown-editor';
 import {
   dark as baseDarkTheme,
@@ -14,7 +15,9 @@ import {
 
 import * as React from 'react';
 
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, Box } from '@mui/material';
+
+import * as styles from './styles.scss';
 
 const darkTheme: typeof baseDarkTheme = {
   ...baseDarkTheme,
@@ -33,17 +36,20 @@ interface Props
     'defaultValue' | 'value' | 'theme' | 'readOnly' | 'extensions'
   > {
   body: string;
+  height?: Property.Height;
 }
 
-const MarkdownEditor = ({ body, ...props }: Props) => {
+const MarkdownEditor = ({ body, height, ...props }: Props) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   return (
-    <Editor
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      defaultValue={body}
-      theme={prefersDarkMode ? darkTheme : lightTheme}
-    />
+    <Box sx={{ height, overflowY: 'scroll' }} className={styles.markdown}>
+      <Editor
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+        defaultValue={body}
+        theme={prefersDarkMode ? darkTheme : lightTheme}
+      />
+    </Box>
   );
 };
 MarkdownEditor.defaultProps = Editor.defaultProps;

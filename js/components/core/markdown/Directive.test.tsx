@@ -108,7 +108,7 @@ describe('<Directive />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardInfo MuiAlert-standard css-88h91o-MuiPaper-root-MuiAlert-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardInfo MuiAlert-standard css-1u9phjk-MuiPaper-root-MuiAlert-root"
           role="alert"
         >
           <div

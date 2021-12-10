@@ -10,11 +10,11 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 
-import Markdown from './Markdown';
+import Viewer from './Viewer';
 
-describe('<Markdown />', () => {
+describe('<Viewer />', () => {
   test('base rendering', () => {
-    const { container } = render(<Markdown>Contents</Markdown>);
+    const { container } = render(<Viewer>Contents</Viewer>);
     expect(container).toMatchInlineSnapshot(`
       <div>
         <p>
@@ -25,16 +25,16 @@ describe('<Markdown />', () => {
   });
 
   test('handles escaped newline', () => {
-    const { container } = render(<Markdown>{'\n\\\n'}</Markdown>);
+    const { container } = render(<Viewer>{'\n\\\n'}</Viewer>);
     expect(container).toMatchInlineSnapshot(`
       <div>
-        <br />
+        <p />
       </div>
     `);
   });
 
   test('handles autolink', () => {
-    const { container } = render(<Markdown titles={{ tent: new Set([1]) }}>Contents</Markdown>);
+    const { container } = render(<Viewer titles={{ tent: new Set([1]) }}>Contents</Viewer>);
     expect(container).toMatchInlineSnapshot(`
       <div>
         <p>
@@ -51,10 +51,10 @@ describe('<Markdown />', () => {
   });
 
   test('handles directives', () => {
-    const { getByRole } = render(<Markdown>{':::tip\nTip Contents\n:::'}</Markdown>);
+    const { getByRole } = render(<Viewer>{':::tip\nTip Contents\n:::'}</Viewer>);
     expect(getByRole('alert')).toMatchInlineSnapshot(`
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-xca4xn-MuiPaper-root-MuiAlert-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-157gcd7-MuiPaper-root-MuiAlert-root"
         role="alert"
       >
         <div
@@ -84,7 +84,7 @@ describe('<Markdown />', () => {
   });
 
   test('passes through html', () => {
-    const { container } = render(<Markdown>{'<div>contents</div>'}</Markdown>);
+    const { container } = render(<Viewer>{'<div>contents</div>'}</Viewer>);
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div>

@@ -43,6 +43,7 @@ type Props = {
 const AppBody = ({ createNewShortcut, newNote, search, onNewNoteCancel }: Props) => (
   <Grid
     container
+    component='article'
     spacing={1}
     sx={{
       '@media print': {

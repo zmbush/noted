@@ -11,7 +11,8 @@
     "pretty": "pretty-quick --staged",
     "lint": "eslint --rulesdir eslint_rules --ext ts --ext tsx --ext js --ext jsx js",
     "lint-fix": "eslint --rulesdir eslint_rules --fix --ext ts --ext tsx --ext js --ext jsx js",
-    "generate-api-types": "cargo run --quiet --bin export-api-types && node tools/generate_api_types.js"
+    "generate-api-types": "cargo run --quiet --bin export-api-types && node tools/generate_api_types.js",
+    "tsm": "tsm js --banner '/* eslint-disable import/prefer-default-export */'"
   },
   "keywords": [],
   "author": "Zach Bush (zach@zmbush.com)",

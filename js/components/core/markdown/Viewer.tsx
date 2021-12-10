@@ -16,6 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import AutoLink from 'components/note/AutoLink';
 
 import Directive, { directivePlugin } from './Directive';
+import * as styles from './styles.scss';
 
 const BrOrAutolink =
   (titles: { [title: string]: Set<number> }) =>
@@ -24,7 +25,8 @@ const BrOrAutolink =
       children === '\\' ||
       (Array.isArray(children) && children.length > 0 && children[0] === '\\')
     ) {
-      return <br />;
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      return <p {...props} />;
     }
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
@@ -51,13 +53,12 @@ const MaybeDirective = ({ children, node: _node, ...props }: any) => {
 
 interface Props {
   children: string;
-  className?: string;
   titles?: { [title: string]: Set<number> };
 }
 
-const Markdown = ({ children, className, titles = {} }: Props) => (
+const Markdown = ({ children, titles = {} }: Props) => (
   <ReactMarkdown
-    className={className}
+    className={styles.markdown}
     components={{
       p: BrOrAutolink(titles),
       div: MaybeDirective,
