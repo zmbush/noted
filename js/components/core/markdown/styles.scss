@@ -1,0 +1,110 @@
+// Copyright 2021 Zachary Bush.
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+//
+
+@import 'common.scss';
+
+.markdown {
+  .notice-block {
+    padding: $spacing $spacing * 2;
+
+    &.info {
+      background-color: #7b1fa2;
+    }
+
+    &.tip {
+      background-color: red;
+    }
+
+    &.warning {
+      background-color: yellow;
+    }
+  }
+
+  & p {
+    @media print {
+      text-indent: $spacing;
+    }
+  }
+
+  & blockquote {
+    border-left-width: 3;
+    border-left-style: solid;
+    border-left-color: #7b1fa2;
+
+    padding-left: $spacing;
+
+    @media print {
+      margin: 0;
+    }
+  }
+
+  & a {
+    @media print {
+      text-decoration: none;
+      color: black;
+    }
+  }
+
+  @media print {
+    & table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+
+      & thead {
+        font-weight: 800;
+        display: table-row-group;
+
+        &th {
+          vertical-align: bottom;
+          padding-bottom: 0.3em;
+          padding-left: 0.1em;
+          padding-right: 0.1em;
+        }
+      }
+
+      & tbody {
+        & tr:nth-child(2n + 1) {
+          background-color: #e0e5c1;
+        }
+      }
+    }
+  }
+
+  @media print {
+    padding-left: $spacing * 2;
+
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5 {
+      color: #58180d;
+    }
+
+    & h1 {
+      font-size: 0.705cm;
+    }
+
+    & h2 {
+      font-size: 0.529cm;
+      border-bottom: 2px solid #c9ad6a;
+    }
+
+    & h3 {
+      font-size: 0.458cm;
+      margin-bottom: 0;
+    }
+
+    & h4 {
+      font-size: 0.423cm;
+      margin-bottom: 0.2em;
+    }
+  }
+}
