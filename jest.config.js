@@ -11,7 +11,13 @@ module.exports = {
   globals: {
     'ts-jest': {
       isolatedModules: true,
+      babelConfig: {
+        plugins: ['@babel/transform-modules-commonjs'],
+      },
     },
+  },
+  transform: {
+    '^.+\\.[t|j]sx?$': 'babel-jest',
   },
   testEnvironment: 'jest-environment-jsdom',
   roots: ['<rootDir>/js'],
@@ -23,4 +29,5 @@ module.exports = {
   collectCoverageFrom: ['js/**/*.{ts,js}{,x}', '!js/index.tsx'],
   reporters: ['default', ['jest-junit', { outputDirectory: 'test-results/jest' }]],
   moduleDirectories: ['node_modules', 'js'],
+  transformIgnorePatterns: ['node_modules/core-js'],
 };

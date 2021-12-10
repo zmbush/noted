@@ -23,6 +23,7 @@ const defaultAppBodyProps = {
 };
 
 describe('<AppBody />', () => {
+  jest.setTimeout(10000);
   test('matches snapshot', async () => {
     const { container, rerender, findByText, findByTestId } = render(
       <AppBody {...defaultAppBodyProps} />,
