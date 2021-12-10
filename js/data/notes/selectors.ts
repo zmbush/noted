@@ -10,10 +10,11 @@ import { EntityState } from '@reduxjs/toolkit';
 import createCachedSelector from 're-reselect';
 import { createSelector } from 'reselect';
 
-import { prefix } from 'data/notes/api';
-import { notesAdapter } from 'data/notes/slice';
 import { AppState } from 'data/store';
 import { NoteWithTags } from 'data/types';
+
+import { prefix } from './api';
+import { notesAdapter } from './slice';
 
 export const getNotes = (state: AppState) => state[prefix];
 const noteSelectors = notesAdapter.getSelectors(getNotes);

@@ -9,8 +9,8 @@
     "build": "cross-env TS_NODE_PROJECT='tsconfig.webpack.json' webpack --color --node-env production",
     "build-dev": "cross-env TS_NODE_PROJECT='tsconfig.webpack.json' webpack --color --node-env development",
     "pretty": "pretty-quick --staged",
-    "lint": "eslint --ext ts --ext tsx --ext js --ext jsx js",
-    "lint-fix": "eslint --fix --ext ts --ext tsx --ext js --ext jsx js",
+    "lint": "eslint --rulesdir eslint_rules --ext ts --ext tsx --ext js --ext jsx js",
+    "lint-fix": "eslint --rulesdir eslint_rules --fix --ext ts --ext tsx --ext js --ext jsx js",
     "generate-api-types": "cargo run --quiet --bin export-api-types && node tools/generate_api_types.js"
   },
   "keywords": [],
@@ -51,6 +51,7 @@
     "core-js": "^3.19.3",
     "css-loader": "^6.5.1",
     "debounce-promise": "^3.1.2",
+    "eslint-module-utils": "^2.7.1",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "fuse.js": "^6.4.6",

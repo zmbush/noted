@@ -11,8 +11,9 @@ import { createSelector } from 'reselect';
 
 import { prefix as notesPrefix } from 'data/notes/api';
 import { AppState } from 'data/store';
-import { prefix as uiPrefix, UIState } from 'data/ui/slice';
 import { prefix as userPrefix } from 'data/user/api';
+
+import { prefix as uiPrefix, UIState } from './slice';
 
 const getUi = (state: AppState): UIState => state[uiPrefix];
 const noteId = (_: AppState, { id }: { id: number }) => id;

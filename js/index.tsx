@@ -12,7 +12,7 @@ import 'regenerator-runtime/runtime';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import Init from 'components/Init';
+import Init from './components/Init';
 
 if (process.env.NODE_ENV !== 'production') {
   import('map.prototype.tojson');

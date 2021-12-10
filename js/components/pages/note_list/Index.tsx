@@ -9,8 +9,9 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-import NoteList from 'components/pages/note_list/NoteList';
 import { getIsNotArchived } from 'data/notes/selectors';
+
+import NoteList from './NoteList';
 
 type Props = {
   search: string;

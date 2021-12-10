@@ -8,9 +8,9 @@
 //
 import { AnyAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 
-import notes from 'data/notes/slice';
-import ui from 'data/ui/slice';
-import user from 'data/user/slice';
+import notes from './notes/slice';
+import ui from './ui/slice';
+import user from './user/slice';
 
 export const appReducer = combineReducers({ user, notes, ui });
 

@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { NoteWithTags } from 'data/types';
+import { NoteWithTags } from './types';
 
 export const emptyTestNote: NoteWithTags = {
   id: -1,

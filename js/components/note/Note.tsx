@@ -38,18 +38,16 @@ import {
 import ConfirmationDialog from 'components/core/ConfirmationDialog';
 import Loading from 'components/core/Loading';
 import Markdown from 'components/core/Markdown';
-import Tags from 'components/note/Tags';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
 import { getIsNoteChanging } from 'data/ui/selectors';
 
+import Tags from './Tags';
 import * as styles from './styles.scss';
 
-const NoteEditor = React.lazy(
-  () => import(/* webpackChunkName: "editor" */ 'components/note/NoteEditor'),
-);
+const NoteEditor = React.lazy(() => import(/* webpackChunkName: "editor" */ './NoteEditor'));
 
 type NoteContentsProps = {
   note: NoteWithTags;

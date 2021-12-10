@@ -7,9 +7,9 @@
 // except according to those terms.
 //
 import { getNotes } from 'data/notes/api';
+import { rootReducer } from 'data/store';
 import { NoteWithTags } from 'data/types';
 
-import { rootReducer } from '../../store';
 import {
   getLinkIds,
   getSubNotes,

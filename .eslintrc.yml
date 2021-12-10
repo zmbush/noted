@@ -50,6 +50,7 @@ rules:
         - '**/__test__/*'
         - '**/__mocks__/*'
         - './webpack.config.ts'
+        - 'eslint_rules/*'
   no-use-before-define: off
   '@typescript-eslint/no-use-before-define':
     - error
@@ -68,3 +69,4 @@ rules:
   'react/static-property-placement':
     - error
     - static public field
+  'ensure-import-consistency': error

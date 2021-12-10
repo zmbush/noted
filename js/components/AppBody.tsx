@@ -10,8 +10,8 @@ import * as React from 'react';
 
 import { Grid } from '@mui/material';
 
-import Note from 'components/note/Note';
-import Pages from 'components/pages/Pages';
+import Note from './note/Note';
+import Pages from './pages/Pages';
 
 type NewNoteProps = {
   newNote: boolean;

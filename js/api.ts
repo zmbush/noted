@@ -16,7 +16,7 @@ import {
   SignIn,
   NewUserRequest,
   ErrorData,
-} from 'data/types';
+} from './data/types';
 
 const api = '/api';
 const noteRoot = `${api}/secure/note`;

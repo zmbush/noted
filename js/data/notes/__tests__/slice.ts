@@ -6,10 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+import { deleteNote, getNotes, updateNote } from 'data/notes/api';
 import { makeTestNote } from 'data/test-utils';
 import { signOutUser } from 'data/user/api';
 
-import { deleteNote, getNotes, updateNote } from '../api';
 import notes from '../slice';
 
 describe('reducers::notes()', () => {
