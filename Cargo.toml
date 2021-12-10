@@ -23,7 +23,7 @@ failure = "0.1.8"
 fern = "0.6.0"
 futures = "0.3.18"
 http = "0.2"
-hyper = "0.14.12"
+hyper = "0.14.16"
 log = "0.4.14"
 noted_db = {path = "./db"}
 r2d2 = "0.8.9"
