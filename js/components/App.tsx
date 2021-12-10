@@ -11,13 +11,14 @@ import { useSelector } from 'react-redux';
 
 import { styled } from '@mui/material';
 
-import AppBody from 'components/AppBody';
-import ErrorManager from 'components/core/ErrorManager';
-import Loading from 'components/core/Loading';
-import LogIn from 'components/pages/login/LogIn';
-import Header from 'components/ui/header/Header';
 import { AppState } from 'data/store';
 import { getUserLoading } from 'data/ui/selectors';
+
+import AppBody from './AppBody';
+import ErrorManager from './core/ErrorManager';
+import Loading from './core/Loading';
+import LogIn from './pages/login/LogIn';
+import Header from './ui/header/Header';
 
 const AppRoot = styled('div')({
   width: '100%',

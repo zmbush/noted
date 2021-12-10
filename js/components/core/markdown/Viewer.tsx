@@ -13,9 +13,9 @@ import remarkGfm from 'remark-gfm';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import Directive, { directivePlugin } from 'components/core/markdown/Directive';
 import AutoLink from 'components/note/AutoLink';
 
+import Directive, { directivePlugin } from './Directive';
 import * as styles from './styles.scss';
 
 const BrOrAutolink =

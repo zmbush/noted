@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
-import NoteList from 'components/pages/note_list/NoteList';
+import NoteList from './NoteList';
 
 type Props = {
   search: string;

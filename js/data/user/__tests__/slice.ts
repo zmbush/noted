@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { getCurrentUser, signInUser, signOutUser } from '../api';
+import { getCurrentUser, signInUser, signOutUser } from 'data/user/api';
+
 import user from '../slice';
 
 describe('reducers::user()', () => {

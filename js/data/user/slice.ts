@@ -13,7 +13,8 @@ import { Draft } from 'immer';
 
 import { getNotes } from 'data/notes/api';
 import { User } from 'data/types';
-import { getCurrentUser, prefix, signInUser, signOutUser, signUpUser } from 'data/user/api';
+
+import { getCurrentUser, prefix, signInUser, signOutUser, signUpUser } from './api';
 
 export interface UserState {
   isSignedIn: boolean;

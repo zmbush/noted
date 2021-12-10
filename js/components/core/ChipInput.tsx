@@ -10,7 +10,7 @@ import * as React from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
-import Tag from 'components/core/Tag';
+import Tag from './Tag';
 
 interface Props {
   options: string[];

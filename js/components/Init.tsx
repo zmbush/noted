@@ -12,10 +12,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { StyledEngineProvider, ThemeProvider, useMediaQuery } from '@mui/material';
 
-import App from 'components/App';
 import { store } from 'data/store';
 import { getCurrentUser } from 'data/user/api';
 import { darkTheme, lightTheme } from 'theme';
+
+import App from './App';
 
 (async () => {
   await store.dispatch(getCurrentUser());

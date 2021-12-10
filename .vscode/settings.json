@@ -97,5 +97,8 @@
     ".trigger": true,
     "coverage": true,
     "schemas": true
+  },
+  "eslint.options": {
+    "rulePaths": ["eslint_rules"]
   }
 }
