@@ -13,6 +13,8 @@ describe('ui::slice()', () => {
 
   test('returns initial state', () => {
     expect(getInitial()).toEqual({
+      editingNote: null,
+      firstNote: null,
       inProgress: {},
       lastError: { any: null },
       noteChanging: {},

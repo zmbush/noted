@@ -72,6 +72,7 @@ const LogIn = ({ open }: LogInProps) => {
             />
           )}
           <TextField
+            inputProps={{ 'data-testid': 'email' }}
             margin='dense'
             id='name'
             label='Email Address'
@@ -81,6 +82,7 @@ const LogIn = ({ open }: LogInProps) => {
             fullWidth
           />
           <TextField
+            inputProps={{ 'data-testid': 'password' }}
             margin='dense'
             id='name'
             label='Password'

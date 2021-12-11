@@ -10,7 +10,7 @@ import Fuse from 'fuse.js';
 import memoize from 'memoize-one';
 
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Add as AddIcon } from '@mui/icons-material';
 import { Button, Grid, styled } from '@mui/material';
@@ -24,6 +24,8 @@ import {
 } from 'data/notes/selectors';
 import { AppState } from 'data/store';
 import { NoteWithTags } from 'data/types';
+import { getFirstNoteId } from 'data/ui/selectors';
+import { setFirstNote } from 'data/ui/slice';
 
 type Props = {
   search: string;
@@ -82,6 +84,14 @@ const NoteList = ({
     getFilteredSearchIndex(state, { noteId: parentNoteId }),
   );
   const sortedIds = useSelector(getSortedNoteIds);
+  const firstNoteId = useSelector(getFirstNoteId);
+  const dispatch = useDispatch();
+
+  const doSetFirstNote = (n: number | null) => {
+    setTimeout(() => {
+      dispatch(setFirstNote(n));
+    });
+  };
 
   let notes = notesIn;
   if (renderOnly) {
@@ -93,6 +103,16 @@ const NoteList = ({
   if (search !== '') {
     const elements = [];
     const results = getFuse(searchIndex).search(search);
+
+    if (depth === 1) {
+      if (results.length === 0) {
+        if (firstNoteId !== null) {
+          doSetFirstNote(null);
+        }
+      } else if (firstNoteId !== results[0].item.id) {
+        doSetFirstNote(results[0].item.id);
+      }
+    }
 
     if (depth === 1 && (results.length === 0 || notes[results[0].item.id].title !== search)) {
       elements.push(
@@ -146,7 +166,10 @@ const NoteList = ({
 
   return (
     <>
-      {sortedIds.map((id) => {
+      {sortedIds.map((id, ix) => {
+        if (ix === 0 && depth === 1 && firstNoteId !== id) {
+          doSetFirstNote(id);
+        }
         if (id in notes) {
           const n = notes[id];
           if (!noteViewFilter || noteViewFilter[id]) {

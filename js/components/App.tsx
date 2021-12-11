@@ -7,12 +7,13 @@
 // except according to those terms.
 //
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { styled } from '@mui/material';
 
 import { AppState } from 'data/store';
-import { getUserLoading } from 'data/ui/selectors';
+import { getFirstNoteId, getUserLoading } from 'data/ui/selectors';
+import { setEditingNote } from 'data/ui/slice';
 
 import AppBody from './AppBody';
 import ErrorManager from './core/ErrorManager';
@@ -34,8 +35,10 @@ const App = () => {
   const [search, setSearch] = React.useState('');
   const isSignedIn = useSelector<AppState>((state) => state.user.isSignedIn);
   const isLoading = useSelector(getUserLoading);
+  const firstNote = useSelector(getFirstNoteId);
+  const dispatch = useDispatch();
   React.useEffect(() => {
-    document.title = `noted`;
+    document.title = `Noted`;
   }, []);
 
   const create = () => {
@@ -49,12 +52,11 @@ const App = () => {
 
   const startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // TODO: Get firstNote feature working again
-    // if (firstNote.current) {
-    //   firstNote.current.startEdit();
-    // } else {
-    createNew(e);
-    // }
+    if (firstNote) {
+      dispatch(setEditingNote(firstNote));
+    } else {
+      createNew(e);
+    }
   };
 
   const createNewShortcut = (e: { preventDefault: () => void }, _combo?: string) => {

@@ -48,6 +48,7 @@ const NoteEditor = ({ note, onSave, onModified }: Props) => {
   return (
     <BindKeyboard keys='ctrl+s' callback={save}>
       <Card
+        data-testid='NoteEditor'
         sx={(theme) => ({
           [theme.breakpoints.up('sm')]: {
             height: '84vh',
