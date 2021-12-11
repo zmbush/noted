@@ -86,11 +86,17 @@ const NoteList = ({
   const sortedIds = useSelector(getSortedNoteIds);
   const firstNoteId = useSelector(getFirstNoteId);
   const dispatch = useDispatch();
+  let firstNoteSet = false;
 
-  const doSetFirstNote = (n: number | null) => {
-    setTimeout(() => {
-      dispatch(setFirstNote(n));
-    });
+  const maybeSetFirstNote = (n: number | null) => {
+    if (depth === 1 && !firstNoteSet) {
+      firstNoteSet = true;
+      if (firstNoteId !== n) {
+        setTimeout(() => {
+          dispatch(setFirstNote(n));
+        });
+      }
+    }
   };
 
   let notes = notesIn;
@@ -103,16 +109,6 @@ const NoteList = ({
   if (search !== '') {
     const elements = [];
     const results = getFuse(searchIndex).search(search);
-
-    if (depth === 1) {
-      if (results.length === 0) {
-        if (firstNoteId !== null) {
-          doSetFirstNote(null);
-        }
-      } else if (firstNoteId !== results[0].item.id) {
-        doSetFirstNote(results[0].item.id);
-      }
-    }
 
     if (depth === 1 && (results.length === 0 || notes[results[0].item.id].title !== search)) {
       elements.push(
@@ -145,7 +141,8 @@ const NoteList = ({
       if (!(id in notes)) {
         // eslint-disable-next-line no-console
         console.log('Note ', id, ' not found');
-      } else {
+      } else if (!noteViewFilter || noteViewFilter[id]) {
+        maybeSetFirstNote(id);
         elements.push(
           <GridItem item key={id} xs={width}>
             <Note note={notes[id]}>
@@ -160,19 +157,19 @@ const NoteList = ({
         );
       }
     });
+    // If a first note hasn't been set yet, it should be null.
+    maybeSetFirstNote(null);
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{elements}</>;
   }
 
   return (
     <>
-      {sortedIds.map((id, ix) => {
-        if (ix === 0 && depth === 1 && firstNoteId !== id) {
-          doSetFirstNote(id);
-        }
+      {sortedIds.map((id) => {
         if (id in notes) {
           const n = notes[id];
           if (!noteViewFilter || noteViewFilter[id]) {
+            maybeSetFirstNote(id);
             return (
               <GridItem item key={n.id} xs={width}>
                 <Note note={n}>

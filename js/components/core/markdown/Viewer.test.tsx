@@ -54,7 +54,7 @@ describe('<Viewer />', () => {
     const { getByRole } = render(<Viewer>{':::tip\nTip Contents\n:::'}</Viewer>);
     expect(getByRole('alert')).toMatchInlineSnapshot(`
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-157gcd7-MuiPaper-root-MuiAlert-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-1i4w7qh-MuiPaper-root-MuiAlert-root"
         role="alert"
       >
         <div
@@ -91,6 +91,75 @@ describe('<Viewer />', () => {
           contents
         </div>
       </div>
+    `);
+  });
+
+  test('handles tables', () => {
+    const md = `
+| Title 1 | Title 2 | Title 3 |
+|---------|---------|---------|
+| contents| cont    | ent     |`;
+    const { getByText } = render(<Viewer>{md}</Viewer>);
+    expect(getByText('Title 1')?.parentNode?.parentNode?.parentNode).toMatchInlineSnapshot(`
+      <table
+        class="MuiTable-root css-rqglhn-MuiTable-root"
+      >
+        <thead
+          class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
+        >
+          <tr
+            class="MuiTableRow-root MuiTableRow-head css-1q1u3t4-MuiTableRow-root"
+          >
+            <th
+              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-fwu7i1-MuiTableCell-root"
+              scope="col"
+              style="text-align: none;"
+            >
+              Title 1
+            </th>
+            <th
+              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-fwu7i1-MuiTableCell-root"
+              scope="col"
+              style="text-align: none;"
+            >
+              Title 2
+            </th>
+            <th
+              class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-fwu7i1-MuiTableCell-root"
+              scope="col"
+              style="text-align: none;"
+            >
+              Title 3
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="MuiTableBody-root css-cu79t-MuiTableBody-root"
+        >
+          <tr
+            class="MuiTableRow-root css-1q1u3t4-MuiTableRow-root"
+          >
+            <td
+              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-4mbnjq-MuiTableCell-root"
+              style="text-align: none;"
+            >
+              contents
+            </td>
+            <td
+              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-4mbnjq-MuiTableCell-root"
+              style="text-align: none;"
+            >
+              cont
+            </td>
+            <td
+              class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-4mbnjq-MuiTableCell-root"
+              style="text-align: none;"
+            >
+              ent
+            </td>
+          </tr>
+        </tbody>
+      </table>
     `);
   });
 });

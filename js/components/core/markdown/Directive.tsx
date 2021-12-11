@@ -12,6 +12,7 @@ import { visit } from 'unist-util-visit';
 
 import * as React from 'react';
 
+import { FormatQuote as FormatQuoteIcon } from '@mui/icons-material';
 import { Alert } from '@mui/material';
 
 export const directivePlugin = () => (tree: Root) => {
@@ -37,12 +38,14 @@ export const directivePlugin = () => (tree: Root) => {
   });
 };
 
+type DirectiveType = 'info' | 'warning' | 'tip' | 'blockquote';
+
 interface Props {
-  type: string;
+  type: DirectiveType;
   children: React.ReactNode | React.ReactNode[];
 }
 
-export const getSeverity = (type: string) => {
+export const getSeverity = (type: DirectiveType) => {
   switch (type) {
     case 'info':
       return 'info';
@@ -50,14 +53,33 @@ export const getSeverity = (type: string) => {
       return 'warning';
     case 'tip':
       return 'success';
+    case 'blockquote':
     default:
       return 'error';
+  }
+};
+
+export const getColor = (type: DirectiveType) => {
+  switch (type) {
+    case 'info':
+      return 'info';
+    case 'warning':
+      return 'warning';
+    case 'tip':
+      return 'success';
+    case 'blockquote':
+    default:
+      return 'info';
   }
 };
 
 const Directive = ({ type, children }: Props) => (
   <Alert
     severity={getSeverity(type)}
+    iconMapping={{
+      error: <FormatQuoteIcon fontSize='inherit' />,
+    }}
+    color={getColor(type)}
     sx={{
       marginTop: 1,
       marginBottom: 1,
@@ -70,6 +92,10 @@ const Directive = ({ type, children }: Props) => (
         borderLeftWidth: '3px',
         borderLeftStyle: 'solid',
         borderLeftColor: '#7b1fa2',
+        '& .MuiAlert-icon': {
+          display: type === 'blockquote' ? 'none' : undefined,
+          color: 'black',
+        },
       },
     }}
   >
