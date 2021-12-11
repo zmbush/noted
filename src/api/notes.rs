@@ -9,7 +9,7 @@
 
 use actix_web::{delete, get, patch, put, web, HttpResponse};
 use noted_db::{
-    models::{NewNote, UpdateNote},
+    models::{NewNotePayload, UpdateNotePayload},
     DbConnection,
 };
 use serde::Deserialize;
@@ -44,7 +44,7 @@ async fn list_notes(
 async fn new_note(
     user: CurrentUser,
     db_pool: web::Data<DbConnection>,
-    new_note: web::Json<NewNote>,
+    new_note: web::Json<NewNotePayload>,
 ) -> Result<HttpResponse, NotedError> {
     Ok(HttpResponse::Ok().json(&user.new_note(&*new_note, &db_pool.db()?)?))
 }
@@ -68,7 +68,7 @@ async fn update_note(
     user: CurrentUser,
     db_pool: web::Data<DbConnection>,
     note_id: web::Path<NoteId>,
-    update_note: web::Json<UpdateNote>,
+    update_note: web::Json<UpdateNotePayload>,
 ) -> Result<HttpResponse, NotedError> {
     Ok(HttpResponse::Ok().json(user.update_note(note_id.id, &*update_note, &db_pool.db()?)?))
 }

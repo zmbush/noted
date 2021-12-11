@@ -14,11 +14,11 @@ import { Card, CardContent, CardHeader, IconButton, Input } from '@mui/material'
 import BindKeyboard from 'components/core/BindKeyboard';
 import ChipInput from 'components/core/ChipInput';
 import MarkdownEditor from 'components/core/markdown/Editor';
-import { NoteWithTags, NewNote, UpdateNote } from 'data/types';
+import { NoteWithTags, NewNotePayload, UpdateNotePayload } from 'data/types';
 
 type Props = {
-  note: NewNote | NoteWithTags;
-  onSave: (note: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => void;
+  note: NewNotePayload | NoteWithTags;
+  onSave: (note: (NewNotePayload | UpdateNotePayload) & Pick<NoteWithTags, 'tags'>) => void;
   onModified: (isModified: boolean) => void;
 };
 

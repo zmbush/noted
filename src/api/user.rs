@@ -12,11 +12,12 @@ use crate::{
     error::NotedError,
 };
 use actix_session::Session;
-use actix_web::{get, post, put, web, HttpResponse};
+use actix_web::{get, post, put, web, FromRequest, HttpRequest, HttpResponse};
 use noted_db::{
-    models::{NewUserRequest, SignIn},
+    models::{NewUserPayload, SignInPayload},
     DbConnection,
 };
+use serde_json::json;
 
 pub trait UserScopeExt {
     fn add_user_routes(self) -> Self;
@@ -33,7 +34,7 @@ impl UserScopeExt for actix_web::Scope {
 
 #[put("/sign_up")]
 async fn sign_up(
-    sign_up: web::Json<NewUserRequest>,
+    sign_up: web::Json<NewUserPayload>,
     db_pool: web::Data<DbConnection>,
     session: Session,
 ) -> Result<HttpResponse, NotedError> {
@@ -47,7 +48,7 @@ async fn sign_up(
 
 #[post("/sign_in")]
 async fn sign_in(
-    sign_in: web::Json<SignIn>,
+    sign_in: web::Json<SignInPayload>,
     db_pool: web::Data<DbConnection>,
     session: Session,
 ) -> Result<HttpResponse, NotedError> {
@@ -65,8 +66,11 @@ async fn sign_in(
 }
 
 #[get("/get_user")]
-async fn get_user(user: CurrentUser) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(&*user))
+async fn get_user(req: HttpRequest) -> HttpResponse {
+    match CurrentUser::extract(&req).await {
+        Ok(user) => HttpResponse::Ok().json(&*user),
+        Err(_) => HttpResponse::Ok().json(&json!({})),
+    }
 }
 
 #[post("/sign_out")]

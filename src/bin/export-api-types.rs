@@ -8,7 +8,9 @@
 //
 
 use noted::error::ErrorData;
-use noted_db::models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User};
+use noted_db::models::{
+    NewNotePayload, NewUserPayload, NoteWithTags, SignInPayload, UpdateNotePayload, User,
+};
 use schemars::schema_for;
 
 macro_rules! write_schema {
@@ -35,10 +37,10 @@ fn main() -> Result<(), anyhow::Error> {
     }
 
     write_schema!(dir, NoteWithTags);
-    write_schema!(dir, NewNote);
-    write_schema!(dir, UpdateNote);
-    write_schema!(dir, NewUserRequest);
-    write_schema!(dir, SignIn);
+    write_schema!(dir, NewNotePayload);
+    write_schema!(dir, UpdateNotePayload);
+    write_schema!(dir, NewUserPayload);
+    write_schema!(dir, SignInPayload);
     write_schema!(dir, User);
     write_schema!(dir, ErrorData);
 
