@@ -6,12 +6,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
+
+/* eslint-disable react/jsx-props-no-spreading */
 import rehypeRaw from 'rehype-raw';
 import remarkDirective from 'remark-directive';
 import remarkGfm from 'remark-gfm';
 
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
+
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 import AutoLink from 'components/note/AutoLink';
 
@@ -25,11 +29,9 @@ const BrOrAutolink =
       children === '\\' ||
       (Array.isArray(children) && children.length > 0 && children[0] === '\\')
     ) {
-      // eslint-disable-next-line react/jsx-props-no-spreading
       return <p {...props} />;
     }
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
       <p {...props}>
         <AutoLink titles={titles}>{children}</AutoLink>
       </p>
@@ -47,9 +49,50 @@ const MaybeDirective = ({ children, node: _node, ...props }: any) => {
       </Directive>
     );
   }
-  // eslint-disable-next-line react/jsx-props-no-spreading
   return <div {...props}>{children}</div>;
 };
+
+const QuoteDirective = ({ children }: any) => <Directive type='blockquote'>{children}</Directive>;
+
+const TableRoot = ({ children, node: _node, ...props }: any) => (
+  <TableContainer>
+    <Table {...props}>{children}</Table>
+  </TableContainer>
+);
+
+const THead = ({ children, node: _node, ...props }: any) => (
+  <TableHead {...props}>{children}</TableHead>
+);
+
+const TBody = ({ children, node: _node, ...props }: any) => (
+  <TableBody
+    sx={{
+      '@media print': {
+        '& tr:nth-of-type(2n + 1)': {
+          backgroundColor: '#e0e5c1',
+        },
+      },
+    }}
+    {...props}
+  >
+    {children}
+  </TableBody>
+);
+
+// Remove isHeader from props to avoid weird react rendering error...
+const TR = ({ children, node: _node, isHeader: _isHeader, ...props }: any) => (
+  <TableRow {...props}>{children}</TableRow>
+);
+
+// Remove isHeader from props to avoid weird react rendering error...
+const TC = ({ children, node: _node, isHeader: _isHeader, ...props }: any) => (
+  <TableCell
+    sx={{ '@media print': { color: 'black', borderBottom: 'none', padding: 1 } }}
+    {...props}
+  >
+    {children}
+  </TableCell>
+);
 
 interface Props {
   children: string;
@@ -62,6 +105,13 @@ const Markdown = ({ children, titles = {} }: Props) => (
     components={{
       p: BrOrAutolink(titles),
       div: MaybeDirective,
+      blockquote: QuoteDirective,
+      table: TableRoot,
+      thead: THead,
+      tbody: TBody,
+      tr: TR,
+      td: TC,
+      th: TC,
     }}
     remarkPlugins={[remarkGfm, remarkDirective, directivePlugin]}
     rehypePlugins={[rehypeRaw]}

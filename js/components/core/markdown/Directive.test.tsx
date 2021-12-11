@@ -12,14 +12,23 @@ import * as React from 'react';
 
 import { render } from 'components/test-utils';
 
-import Directive, { getSeverity, directivePlugin } from './Directive';
+import Directive, { getColor, getSeverity, directivePlugin } from './Directive';
 
 describe('getSeverity', () => {
   test('returns expected values', () => {
-    expect(getSeverity('other')).toEqual('error');
+    expect(getSeverity('blockquote')).toEqual('error');
     expect(getSeverity('warning')).toEqual('warning');
     expect(getSeverity('info')).toEqual('info');
     expect(getSeverity('tip')).toEqual('success');
+  });
+});
+
+describe('getColor', () => {
+  test('returns expected values', () => {
+    expect(getColor('blockquote')).toEqual('info');
+    expect(getColor('warning')).toEqual('warning');
+    expect(getColor('info')).toEqual('info');
+    expect(getColor('tip')).toEqual('success');
   });
 });
 
@@ -108,7 +117,7 @@ describe('<Directive />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardInfo MuiAlert-standard css-1u9phjk-MuiPaper-root-MuiAlert-root"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardInfo MuiAlert-standard css-ovgps7-MuiPaper-root-MuiAlert-root"
           role="alert"
         >
           <div
@@ -123,6 +132,39 @@ describe('<Directive />', () => {
             >
               <path
                 d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20, 12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10, 10 0 0,0 12,2M11,17H13V11H11V17Z"
+              />
+            </svg>
+          </div>
+          <div
+            class="MuiAlert-message css-acap47-MuiAlert-message"
+          >
+            Contents
+          </div>
+        </div>
+      </div>
+    `);
+  });
+
+  test('renders as expected for blockquote', () => {
+    const { container } = render(<Directive type='blockquote'>Contents</Directive>);
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardInfo MuiAlert-standard css-1g2oif3-MuiPaper-root-MuiAlert-root"
+          role="alert"
+        >
+          <div
+            class="MuiAlert-icon css-1ytlwq5-MuiAlert-icon"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1vooibu-MuiSvgIcon-root"
+              data-testid="FormatQuoteIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"
               />
             </svg>
           </div>

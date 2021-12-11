@@ -64,7 +64,7 @@ describe('<NoteList />', () => {
     );
     expect(store.getState().notes.ids).toHaveLength(5);
     const { getByText, queryByText } = render(
-      <NoteList noteViewFilter={{}} parent_note_id={0} depth={1} search='Something Different' />,
+      <NoteList noteViewFilter={null} parent_note_id={0} depth={1} search='Something Different' />,
       { store },
     );
 

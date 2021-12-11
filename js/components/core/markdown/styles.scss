@@ -10,22 +10,6 @@
 @import 'common.scss';
 
 .markdown {
-  .notice-block {
-    padding: $spacing $spacing * 2;
-
-    &.info {
-      background-color: #7b1fa2;
-    }
-
-    &.tip {
-      background-color: red;
-    }
-
-    &.warning {
-      background-color: yellow;
-    }
-  }
-
   & p {
     @media print {
       text-indent: $spacing;
@@ -48,32 +32,6 @@
     @media print {
       text-decoration: none;
       color: black;
-    }
-  }
-
-  @media print {
-    & table {
-      border-collapse: collapse;
-      border-spacing: 0;
-      width: 100%;
-
-      & thead {
-        font-weight: 800;
-        display: table-row-group;
-
-        &th {
-          vertical-align: bottom;
-          padding-bottom: 0.3em;
-          padding-left: 0.1em;
-          padding-right: 0.1em;
-        }
-      }
-
-      & tbody {
-        & tr:nth-child(2n + 1) {
-          background-color: #e0e5c1;
-        }
-      }
     }
   }
 
