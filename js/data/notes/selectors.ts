@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { EntityState } from '@reduxjs/toolkit';
+import Fuse from 'fuse.js';
 import createCachedSelector from 're-reselect';
 import { createSelector } from 'reselect';
 
@@ -21,7 +21,6 @@ const noteSelectors = notesAdapter.getSelectors(getNotes);
 export const getNoteEntities = createSelector(noteSelectors.selectEntities, (notesDict) =>
   Object.fromEntries(Object.entries(notesDict).map(([key, note]) => [key, note!])),
 );
-// const getNoteId = (_: any, props: { noteId: number }) => props.noteId;
 const maybeGetNoteId = (_: any, props: { noteId: number | null }) => props.noteId;
 const maybeNoteIdIndex = (_: any, props: { noteId: number | null }) =>
   props.noteId === null ? -1 : props.noteId;
@@ -57,16 +56,6 @@ export const getLinkIds = createSelector(listAllTitleParts, (titleParts: [string
 );
 
 export type LinkIdMap = ReturnType<typeof getLinkIds>;
-
-// export const getTopLevelNotes = createSelector(listNotes, (notes) => {
-//   const topLevel: { [id: number]: NoteWithTags } = {};
-//   notes.forEach((note) => {
-//     if (!validParent(note)) {
-//       topLevel[note.id] = note;
-//     }
-//   });
-//   return topLevel;
-// });
 
 export const getSubNotes = createCachedSelector(listNotes, maybeGetNoteId, (notes, noteId) => {
   const subNotes: { [id: number]: NoteWithTags } = {};
@@ -111,51 +100,6 @@ export const getHasArchivedChild = createSelector(getNoteEntities, (notes) => {
   });
   return hasArchivedChild;
 });
-
-const calculateMergedNote = (
-  note: NoteWithTags,
-  notes: EntityState<NoteWithTags>,
-): NoteWithTags => {
-  const newNote = { ...note };
-  const subNotes = getSubNotes({ notes }, { noteId: note.id });
-
-  Object.values(subNotes).forEach((subNote) => {
-    const mergedNote = calculateMergedNote(subNote, notes);
-    newNote.title = `${newNote.title} ${mergedNote.title}`;
-    newNote.tags = Array.from(new Set([...newNote.tags, ...mergedNote.tags]));
-    newNote.body = `${newNote.body} ${mergedNote.body}`;
-  });
-
-  return newNote;
-};
-
-export const getSearchIndex = createSelector(getNotes, (allNotes) => {
-  const result: { [id: number]: NoteWithTags } = {};
-  Object.values(allNotes.entities).forEach((note: NoteWithTags) => {
-    result[note.id] = calculateMergedNote(note, allNotes);
-  });
-  return result;
-});
-
-export const getFilteredSearchIndex = createCachedSelector(
-  getSearchIndex,
-  maybeGetNoteId,
-  (notes, noteId) => {
-    const subNotes: { [id: number]: NoteWithTags } = {};
-    if (noteId == null) {
-      // eslint-disable-next-line no-param-reassign
-      noteId = 0;
-    }
-
-    Object.values(notes).forEach((note) => {
-      if (note.parent_note_id === noteId) {
-        subNotes[note.id] = note;
-      }
-    });
-
-    return subNotes;
-  },
-)((state, props: { noteId: number }) => (props.noteId == null ? -1 : props.noteId));
 
 const mostRecent = (a: string, b: string) => (a > b ? a : b);
 
@@ -206,3 +150,58 @@ export const getSortedNoteIds = createSelector(getNoteEntities, (allNotes) => {
     })
     .map(([id, _]) => id);
 });
+
+const getNoteSearcher = createSelector(
+  listNotes,
+  (notes) =>
+    new Fuse(notes, {
+      distance: 100,
+      keys: [
+        {
+          name: 'title',
+          weight: 1.0,
+        },
+        {
+          name: 'tags',
+          weight: 1.0,
+        },
+        {
+          name: 'body',
+          weight: 0.5,
+        },
+      ],
+      location: 0,
+      shouldSort: true,
+      threshold: 0.4,
+    }),
+);
+
+const getSearchQuery = (_: any, { query = '' }: { query?: string }) => query;
+export const getSearchResults = createSelector(getNoteSearcher, getSearchQuery, (searcher, query) =>
+  searcher.search(query),
+);
+
+export const getOrderedSearchIds = createSelector(
+  getNoteEntities,
+  getSearchResults,
+  (notes, searchResults) => {
+    const addedIds = new Set();
+    const ids: number[] = [];
+    searchResults.forEach((result) => {
+      let note = notes[result.item.id];
+      const collected = [note.id];
+      while (validParent(note)) {
+        collected.push(note.parent_note_id);
+        note = notes[note.parent_note_id];
+      }
+      collected.reverse();
+      collected.forEach((id) => {
+        if (!addedIds.has(id)) {
+          ids.push(id);
+          addedIds.add(id);
+        }
+      });
+    });
+    return ids;
+  },
+);
