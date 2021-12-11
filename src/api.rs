@@ -84,13 +84,28 @@ mod test {
     async fn send<O, B, E, S>(
         svc: &mut S,
         cookies: &mut cookie::CookieJar,
-        mut req: test::TestRequest,
+        req: test::TestRequest,
     ) -> Result<O, ErrorData>
     where
         S: Service<Request = Request, Response = ServiceResponse<B>, Error = E>,
         B: MessageBody + Unpin,
         E: std::fmt::Debug,
         O: serde::de::DeserializeOwned,
+    {
+        send_or_other(svc, cookies, req).await
+    }
+
+    async fn send_or_other<O, B, E, S, Error>(
+        svc: &mut S,
+        cookies: &mut cookie::CookieJar,
+        mut req: test::TestRequest,
+    ) -> Result<O, Error>
+    where
+        S: Service<Request = Request, Response = ServiceResponse<B>, Error = E>,
+        B: MessageBody + Unpin,
+        E: std::fmt::Debug,
+        O: serde::de::DeserializeOwned,
+        Error: serde::de::DeserializeOwned,
     {
         for cookie in cookies.iter() {
             println!("Setting header: {}", cookie.stripped());
@@ -108,7 +123,7 @@ mod test {
         }
         let body = String::from_utf8(test::read_body(resp).await.to_vec()).unwrap();
         serde_json::from_str::<O>(&body).map_err(|_| {
-            serde_json::from_str::<ErrorData>(&body).expect("Could not parse data or error")
+            serde_json::from_str::<Error>(&body).expect("Could not parse data or error")
         })
     }
 
@@ -181,14 +196,14 @@ mod test {
         .await
         .unwrap();
         assert_eq!(resp, "ok");
-        let resp = send::<User, _, _, _>(
+        let resp = send_or_other::<User, _, _, _, serde_json::value::Value>(
             &mut svc,
             &mut cookies,
             test::TestRequest::get().uri("/api/get_user"),
         )
         .await
         .unwrap_err();
-        assert_eq!(resp.code, 401);
+        assert_eq!(resp, json!({}));
     }
 
     #[actix_rt::test]

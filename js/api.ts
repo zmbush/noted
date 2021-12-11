@@ -71,7 +71,7 @@ export default {
   },
 
   user: {
-    async get(): Promise<User> {
+    async get(): Promise<User | {}> {
       return (await mapErr(axios.get(`${api}/get_user`))).data;
     },
 

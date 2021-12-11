@@ -14,6 +14,7 @@ use actix_files::Files;
 use actix_redis::RedisSession;
 use actix_web::{
     dev::{ServiceRequest, ServiceResponse},
+    middleware::Logger,
     App, HttpServer,
 };
 use failure::Error;
@@ -69,6 +70,7 @@ async fn main() -> Result<(), Error> {
     println!("Starting actix-web at port {}", port);
     Ok(HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .wrap(
                 RedisSession::new("127.0.0.1:6379", &[0; 32])
                     .cookie_name("noted-session")
@@ -145,11 +147,15 @@ mod test {
             cli
         }
 
-        async fn handle_result<D: serde::de::DeserializeOwned, S: serde::ser::Serialize>(
+        async fn handle_result<
+            D: serde::de::DeserializeOwned,
+            S: serde::ser::Serialize,
+            ED: serde::de::DeserializeOwned,
+        >(
             cookie_jar: &mut CookieJar,
             mut req: ClientRequest,
             body: &S,
-        ) -> Result<D, ErrorData> {
+        ) -> Result<D, ED> {
             let headers = req.headers_mut();
             for cookie in cookie_jar.iter() {
                 println!("Setting header: {}", cookie.stripped());
@@ -164,20 +170,12 @@ mod test {
                     .add_original(Cookie::parse(cookie.to_str().unwrap().to_owned()).unwrap());
             }
             println!("Status: {}", response.status());
-            let status = response.status();
             let body = String::from_utf8(response.body().await.unwrap().to_vec()).unwrap();
             println!("Parsing result: {}", body);
-            serde_json::from_str::<D>(&body).map_err(|_| {
-                serde_json::from_str::<ErrorData>(&body).unwrap_or_else(|_| ErrorData {
-                    code: status.as_u16(),
-                    message: "parse failed".into(),
-                    details: body,
-                    ..ErrorData::default()
-                })
-            })
+            serde_json::from_str::<D>(&body).map_err(|_| serde_json::from_str::<ED>(&body).unwrap())
         }
 
-        async fn get_user(&mut self) -> Result<User, ErrorData> {
+        async fn get_user(&mut self) -> Result<User, serde_json::value::Value> {
             TestClient::handle_result(&mut self.cookie_jar, self.server.get("/api/get_user"), &"")
                 .await
         }
@@ -275,8 +273,7 @@ mod test {
         let mut client = setup(false).await;
 
         let get_user_err = client.get_user().await.err().unwrap();
-        assert_eq!(get_user_err.code, 401);
-        assert_eq!(get_user_err.message, "not authorized");
+        assert_eq!(get_user_err, json!({}));
 
         let new_user = client
             .sign_up("test@test.com", "Testy McTestFace")

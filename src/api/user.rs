@@ -12,11 +12,12 @@ use crate::{
     error::NotedError,
 };
 use actix_session::Session;
-use actix_web::{get, post, put, web, HttpResponse};
+use actix_web::{get, post, put, web, FromRequest, HttpRequest, HttpResponse};
 use noted_db::{
     models::{NewUserRequest, SignIn},
     DbConnection,
 };
+use serde_json::json;
 
 pub trait UserScopeExt {
     fn add_user_routes(self) -> Self;
@@ -65,8 +66,11 @@ async fn sign_in(
 }
 
 #[get("/get_user")]
-async fn get_user(user: CurrentUser) -> Result<HttpResponse, NotedError> {
-    Ok(HttpResponse::Ok().json(&*user))
+async fn get_user(req: HttpRequest) -> HttpResponse {
+    match CurrentUser::extract(&req).await {
+        Ok(user) => HttpResponse::Ok().json(&*user),
+        Err(_) => HttpResponse::Ok().json(&json!({})),
+    }
 }
 
 #[post("/sign_out")]

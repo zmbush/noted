@@ -151,7 +151,7 @@ export default {
       if (currentUser) {
         return makeResponse(currentUser, config);
       }
-      throw NOT_AUTHORIZED;
+      return makeResponse({}, config);
     }
     throw NOT_IMPLEMENTED;
   },

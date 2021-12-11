@@ -41,7 +41,13 @@ export const userSlice = createSlice({
     };
 
     builder
-      .addCase(getCurrentUser.fulfilled, setSignedIn)
+      .addCase(getCurrentUser.fulfilled, (state, { payload }) => {
+        if (payload === null) {
+          setSignedOut(state);
+        } else {
+          setSignedIn(state, { payload });
+        }
+      })
       .addCase(signInUser.fulfilled, setSignedIn)
       .addCase(signUpUser.fulfilled, setSignedIn)
 

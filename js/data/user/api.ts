@@ -20,8 +20,11 @@ export const getCurrentUser = createAsyncThunk(
   async (_: void, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.get();
-      await dispatch(getNotes());
-      return user;
+      if ('id' in user) {
+        await dispatch(getNotes());
+        return user;
+      }
+      return null;
     } catch (e) {
       throw rejectWithValue(e);
     }
