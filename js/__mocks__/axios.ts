@@ -10,7 +10,14 @@
 /* eslint-disable no-throw-literal */
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ErrorData, NewNote, NoteWithTags, SignIn, UpdateNote, User } from 'data/types';
+import {
+  User,
+  NoteWithTags,
+  ErrorData,
+  NewNotePayload,
+  SignInPayload,
+  UpdateNotePayload,
+} from 'data/types';
 
 const testUser: User = {
   id: 1,
@@ -104,16 +111,18 @@ const listNotes = withUser((user: User): NoteWithTags[] => Object.values(getNote
 const filterNulls = <T extends {}>(t: T) =>
   Object.fromEntries(Object.entries(t).filter(([_, v]) => v !== null));
 
-const updateNote = withUser((user: User, noteId: number, update: UpdateNote): NoteWithTags => {
-  const notes = getNoteDb(user);
-  if (noteId in notes) {
-    notes[noteId] = { ...notes[noteId], ...filterNulls(update) };
-    return notes[noteId];
-  }
-  throw NOT_FOUND;
-});
+const updateNote = withUser(
+  (user: User, noteId: number, update: UpdateNotePayload): NoteWithTags => {
+    const notes = getNoteDb(user);
+    if (noteId in notes) {
+      notes[noteId] = { ...notes[noteId], ...filterNulls(update) };
+      return notes[noteId];
+    }
+    throw NOT_FOUND;
+  },
+);
 
-const createNote = withUser((user: User, newNote: NewNote): NoteWithTags => {
+const createNote = withUser((user: User, newNote: NewNotePayload): NoteWithTags => {
   const notes = getNoteDb(user);
   const newId =
     Object.keys(notes)
@@ -158,7 +167,7 @@ export default {
 
   async post(url: string, data: any, config: AxiosRequestConfig): Promise<AxiosResponse> {
     if (url.endsWith('/api/sign_in')) {
-      const signIn = data as SignIn;
+      const signIn = data as SignInPayload;
       if (signIn.email === testUser.email && signIn.password === 'pass') {
         currentUser = testUser;
         return makeResponse(currentUser, config);

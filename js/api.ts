@@ -9,13 +9,13 @@
 import axios from 'axios';
 
 import {
-  UpdateNote,
-  NewNote,
-  NoteWithTags,
   User,
-  SignIn,
-  NewUserRequest,
+  NoteWithTags,
   ErrorData,
+  UpdateNotePayload,
+  NewNotePayload,
+  SignInPayload,
+  NewUserPayload,
 } from './data/types';
 
 const api = '/api';
@@ -49,11 +49,11 @@ const mapErr = async <V>(promise: Promise<V>) => {
 
 export default {
   note: {
-    async create(note: NewNote): Promise<NoteWithTags> {
+    async create(note: NewNotePayload): Promise<NoteWithTags> {
       return (await mapErr(axios.put(noteRoot, note))).data;
     },
 
-    async update(noteId: number, note: UpdateNote): Promise<NoteWithTags> {
+    async update(noteId: number, note: UpdateNotePayload): Promise<NoteWithTags> {
       return (await mapErr(axios.patch(`${noteRoot}s/${noteId}`, note))).data;
     },
 
@@ -79,11 +79,11 @@ export default {
       return mapErr(axios.post(`${api}/sign_out`));
     },
 
-    async signIn(signIn: SignIn): Promise<User> {
+    async signIn(signIn: SignInPayload): Promise<User> {
       return (await mapErr(axios.post(`${api}/sign_in`, signIn))).data;
     },
 
-    async signUp(signUp: NewUserRequest): Promise<User> {
+    async signUp(signUp: NewUserPayload): Promise<User> {
       return (await mapErr(axios.put(`${api}/sign_up`, signUp))).data;
     },
   },

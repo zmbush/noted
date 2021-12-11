@@ -41,7 +41,7 @@ import MarkdownViewer from 'components/core/markdown/Viewer';
 import { createNote, deleteNote, updateNote } from 'data/notes/api';
 import { getLinkIds } from 'data/notes/selectors';
 import { AppState } from 'data/store';
-import { NewNote, UpdateNote, NoteWithTags } from 'data/types';
+import { NewNotePayload, UpdateNotePayload, NoteWithTags } from 'data/types';
 import { getEditingNote, getIsNoteChanging } from 'data/ui/selectors';
 import { setEditingNote } from 'data/ui/slice';
 
@@ -243,7 +243,7 @@ export const NoteContents = ({
 type Props = {
   children?: React.ReactElement | React.ReactElement[];
 } & (
-  | { note: NewNote; onNewNoteCancel: () => void }
+  | { note: NewNotePayload; onNewNoteCancel: () => void }
   | { note: NoteWithTags; onNewNoteCancel?: never }
 );
 
@@ -280,9 +280,11 @@ const Note = ({ note, onNewNoteCancel, children }: Props) => {
     }
   };
 
-  const save = async (noteData: (NewNote | UpdateNote) & Pick<NoteWithTags, 'tags'>) => {
+  const save = async (
+    noteData: (NewNotePayload | UpdateNotePayload) & Pick<NoteWithTags, 'tags'>,
+  ) => {
     if (creatingSubNote || !('id' in note)) {
-      await dispatch(createNote(noteData as NewNote & Pick<NoteWithTags, 'tags'>));
+      await dispatch(createNote(noteData as NewNotePayload & Pick<NoteWithTags, 'tags'>));
     } else {
       await dispatch(
         updateNote({

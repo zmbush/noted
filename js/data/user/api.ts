@@ -10,7 +10,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import api from 'api';
 import { getNotes } from 'data/notes/api';
-import { NewUserRequest, SignIn } from 'data/types';
+import { NewUserPayload, SignInPayload } from 'data/types';
 
 export const prefix = 'user';
 const name = (n: string) => `${prefix}/${n}`;
@@ -33,7 +33,7 @@ export const getCurrentUser = createAsyncThunk(
 
 export const signInUser = createAsyncThunk(
   name('signIn'),
-  async (signIn: SignIn, { rejectWithValue, dispatch }) => {
+  async (signIn: SignInPayload, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signIn(signIn);
       await dispatch(getNotes());
@@ -46,7 +46,7 @@ export const signInUser = createAsyncThunk(
 
 export const signUpUser = createAsyncThunk(
   name('signUp'),
-  async (signUp: NewUserRequest, { rejectWithValue, dispatch }) => {
+  async (signUp: NewUserPayload, { rejectWithValue, dispatch }) => {
     try {
       const user = await api.user.signUp(signUp);
       await dispatch(getNotes());

@@ -16,13 +16,13 @@ export interface DbErrorDetails {
   constraint_name?: string | null;
 }
 
-export interface NewNote {
+export interface NewNotePayload {
   title: string;
   body: string;
   parent_note_id?: number | null;
 }
 
-export interface NewUserRequest {
+export interface NewUserPayload {
   email: string;
   name: string;
   password: string;
@@ -41,12 +41,12 @@ export interface NoteWithTags {
   pinned: boolean;
 }
 
-export interface SignIn {
+export interface SignInPayload {
   email: string;
   password: string;
 }
 
-export interface UpdateNote {
+export interface UpdateNotePayload {
   title?: string | null;
   body?: string | null;
   parent_note_id?: number | null;

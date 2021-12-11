@@ -135,7 +135,7 @@ pub struct NoteTag {
 #[derive(Insertable, Deserialize, Serialize, Default, JsonSchema)]
 #[schemars(deny_unknown_fields)]
 #[table_name = "notes"]
-pub struct NewNote {
+pub struct NewNotePayload {
     pub title: String,
     pub body: String,
     pub parent_note_id: Option<i32>,
@@ -144,7 +144,7 @@ pub struct NewNote {
 #[derive(AsChangeset, Deserialize, Serialize, Default, JsonSchema)]
 #[schemars(deny_unknown_fields)]
 #[table_name = "notes"]
-pub struct UpdateNote {
+pub struct UpdateNotePayload {
     pub title: Option<String>,
     pub body: Option<String>,
     pub parent_note_id: Option<i32>,
@@ -154,14 +154,14 @@ pub struct UpdateNote {
 
 #[derive(Debug, Deserialize, Serialize, JsonSchema)]
 #[schemars(deny_unknown_fields)]
-pub struct NewUserRequest {
+pub struct NewUserPayload {
     pub email: String,
     pub name: String,
     #[serde(skip_serializing)]
     pub password: String,
 }
 
-impl NewUserRequest {
+impl NewUserPayload {
     pub fn new_user(self) -> std::io::Result<NewUser> {
         Ok(NewUser {
             name: self.name,
@@ -181,12 +181,12 @@ pub struct NewUser {
 
 #[derive(Deserialize, Serialize, Debug, JsonSchema)]
 #[schemars(deny_unknown_fields)]
-pub struct SignIn {
+pub struct SignInPayload {
     pub email: String,
     pub password: String,
 }
 
-impl SignIn {
+impl SignInPayload {
     pub fn matches(&self, u: &User) -> bool {
         crypto::pbkdf2::pbkdf2_check(&self.password, &u.hashed_password).unwrap_or(false)
     }
@@ -206,7 +206,7 @@ pub struct User {
 }
 
 impl User {
-    pub fn new_note(&self, new_note: &NewNote, db: &Conn) -> Result<NoteWithTags> {
+    pub fn new_note(&self, new_note: &NewNotePayload, db: &Conn) -> Result<NoteWithTags> {
         use crate::schema::notes::dsl::*;
 
         diesel::insert_into(notes)
@@ -247,7 +247,12 @@ impl User {
             .ok_or(DbError::NotFound)
     }
 
-    pub fn update_note(&self, id: i32, note: &UpdateNote, db: &Conn) -> Result<NoteWithTags> {
+    pub fn update_note(
+        &self,
+        id: i32,
+        note: &UpdateNotePayload,
+        db: &Conn,
+    ) -> Result<NoteWithTags> {
         diesel::update(Note::belonging_to(self).find(id))
             .set(note)
             .execute(db)?;
@@ -315,13 +320,13 @@ impl User {
         self.note(current_note_id, db)
     }
 
-    pub fn sign_up(new_user: NewUserRequest, db: &Conn) -> Result<User> {
+    pub fn sign_up(new_user: NewUserPayload, db: &Conn) -> Result<User> {
         Ok(diesel::insert_into(crate::schema::users::table)
             .values(new_user.new_user()?)
             .get_result(db)?)
     }
 
-    pub fn sign_in(sign_in: &SignIn, db: &Conn) -> Result<User> {
+    pub fn sign_in(sign_in: &SignInPayload, db: &Conn) -> Result<User> {
         use crate::schema::users::dsl::*;
         let user = users
             .filter(email.eq(&sign_in.email))
@@ -388,7 +393,7 @@ mod test {
             let user = test_user(&db);
             let note = user
                 .new_note(
-                    &NewNote {
+                    &NewNotePayload {
                         title: "Title".to_owned(),
                         body: "Body".to_owned(),
                         parent_note_id: None,

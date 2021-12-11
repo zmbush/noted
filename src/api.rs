@@ -41,7 +41,9 @@ mod test {
     use cookie::{Cookie, CookieJar};
     use http::HeaderValue;
     use noted_db::{
-        models::{NewNote, NewUserRequest, NoteWithTags, SignIn, UpdateNote, User},
+        models::{
+            NewNotePayload, NewUserPayload, NoteWithTags, SignInPayload, UpdateNotePayload, User,
+        },
         DbConnection,
     };
     use serde::Deserialize;
@@ -56,7 +58,7 @@ mod test {
         let db = DbConnection::new_for_testing();
         if create_test_user {
             User::sign_up(
-                NewUserRequest {
+                NewUserPayload {
                     email: "test@test.com".into(),
                     password: "pass".into(),
                     name: "".into(),
@@ -154,7 +156,7 @@ mod test {
             &mut cookies,
             test::TestRequest::post()
                 .uri("/api/sign_in")
-                .set_json(&SignIn {
+                .set_json(&SignInPayload {
                     email: "test@test.com".into(),
                     password: "pass".into(),
                 }),
@@ -227,7 +229,7 @@ mod test {
             &mut cookies,
             test::TestRequest::put()
                 .uri("/api/secure/note")
-                .set_json(&NewNote {
+                .set_json(&NewNotePayload {
                     title: "New Note".into(),
                     body: "body".into(),
                     parent_note_id: None,
@@ -261,7 +263,7 @@ mod test {
                 &mut cookies,
                 test::TestRequest::put()
                     .uri("/api/secure/note")
-                    .set_json(&NewNote {
+                    .set_json(&NewNotePayload {
                         title: format!("New Note {}", i),
                         body: "body".into(),
                         parent_note_id: None,
@@ -302,7 +304,7 @@ mod test {
             &mut cookies,
             test::TestRequest::put()
                 .uri("/api/secure/note")
-                .set_json(&NewNote {
+                .set_json(&NewNotePayload {
                     title: format!("New Note {}", 1),
                     body: "body".into(),
                     parent_note_id: None,
@@ -316,9 +318,9 @@ mod test {
             &mut cookies,
             test::TestRequest::patch()
                 .uri(&format!("/api/secure/notes/{}", note.id))
-                .set_json(&UpdateNote {
+                .set_json(&UpdateNotePayload {
                     title: Some("New Title".into()),
-                    ..UpdateNote::default()
+                    ..UpdateNotePayload::default()
                 }),
         )
         .await
@@ -348,7 +350,7 @@ mod test {
             &mut cookies,
             test::TestRequest::put()
                 .uri("/api/secure/note")
-                .set_json(&NewNote {
+                .set_json(&NewNotePayload {
                     title: "Note to Delete".into(),
                     body: "body".into(),
                     parent_note_id: None,
@@ -362,7 +364,7 @@ mod test {
             &mut cookies,
             test::TestRequest::put()
                 .uri("/api/secure/note")
-                .set_json(&NewNote {
+                .set_json(&NewNotePayload {
                     title: "Note to Keep".into(),
                     body: "body".into(),
                     parent_note_id: None,

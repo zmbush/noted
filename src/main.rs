@@ -105,7 +105,7 @@ mod test {
     use cookie::{Cookie, CookieJar};
     use http::HeaderValue;
     use noted::error::ErrorData;
-    use noted_db::models::{NewNote, NoteWithTags, UpdateNote, User};
+    use noted_db::models::{NewNotePayload, NoteWithTags, UpdateNotePayload, User};
     use serde::Deserialize;
     use serde_json::json;
 
@@ -214,7 +214,7 @@ mod test {
                 .await
         }
 
-        async fn new_note(&mut self, note: &NewNote) -> Result<NoteWithTags, ErrorData> {
+        async fn new_note(&mut self, note: &NewNotePayload) -> Result<NoteWithTags, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
                 self.server.put("/api/secure/note"),
@@ -244,7 +244,7 @@ mod test {
         async fn update_note(
             &mut self,
             id: i32,
-            update: &UpdateNote,
+            update: &UpdateNotePayload,
         ) -> Result<NoteWithTags, ErrorData> {
             TestClient::handle_result(
                 &mut self.cookie_jar,
@@ -302,7 +302,7 @@ mod test {
         let mut client = setup(true).await;
 
         let note = client
-            .new_note(&NewNote {
+            .new_note(&NewNotePayload {
                 title: "Note 1".to_owned(),
                 body: "Simple body".to_owned(),
                 parent_note_id: None,
@@ -320,9 +320,9 @@ mod test {
 
         for i in 0..10 {
             client
-                .new_note(&NewNote {
+                .new_note(&NewNotePayload {
                     title: format!("Note {}", i),
-                    ..NewNote::default()
+                    ..NewNotePayload::default()
                 })
                 .await
                 .unwrap();
@@ -337,16 +337,16 @@ mod test {
         let mut client = setup(true).await;
 
         client
-            .new_note(&NewNote {
+            .new_note(&NewNotePayload {
                 title: "The Note To Keep".to_string(),
-                ..NewNote::default()
+                ..NewNotePayload::default()
             })
             .await
             .unwrap();
         let note_id = client
-            .new_note(&NewNote {
+            .new_note(&NewNotePayload {
                 title: "The Note To Delete".to_string(),
-                ..NewNote::default()
+                ..NewNotePayload::default()
             })
             .await
             .unwrap()
@@ -365,9 +365,9 @@ mod test {
         let mut client = setup(true).await;
 
         let note_id = client
-            .new_note(&NewNote {
+            .new_note(&NewNotePayload {
                 title: "The Note".to_string(),
-                ..NewNote::default()
+                ..NewNotePayload::default()
             })
             .await
             .unwrap()
@@ -384,9 +384,9 @@ mod test {
     async fn test_update_note() {
         let mut client = setup(true).await;
         let note = client
-            .new_note(&NewNote {
+            .new_note(&NewNotePayload {
                 title: "title".into(),
-                ..NewNote::default()
+                ..NewNotePayload::default()
             })
             .await
             .unwrap();
@@ -394,9 +394,9 @@ mod test {
         let updated = client
             .update_note(
                 note.id,
-                &UpdateNote {
+                &UpdateNotePayload {
                     title: Some("Title".into()),
-                    ..UpdateNote::default()
+                    ..UpdateNotePayload::default()
                 },
             )
             .await
