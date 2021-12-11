@@ -6,9 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import Fuse from 'fuse.js';
-import memoize from 'memoize-one';
-
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -17,8 +14,8 @@ import { Button, Grid, styled } from '@mui/material';
 
 import Note from 'components/note/Note';
 import {
-  getFilteredSearchIndex,
   getNoteEntities,
+  getOrderedSearchIds,
   getSortedNoteIds,
   getSubNotes,
 } from 'data/notes/selectors';
@@ -44,30 +41,6 @@ const GridItem = styled(Grid)({
   },
 });
 
-const getFuse = memoize(
-  (index: { [id: string]: NoteWithTags }) =>
-    new Fuse(Object.values(index), {
-      distance: 100,
-      keys: [
-        {
-          name: 'title',
-          weight: 1.0,
-        },
-        {
-          name: 'tags',
-          weight: 1.0,
-        },
-        {
-          name: 'body',
-          weight: 0.5,
-        },
-      ],
-      location: 0,
-      shouldSort: true,
-      threshold: 0.4,
-    }),
-);
-
 const NoteList = ({
   search,
   depth,
@@ -80,11 +53,11 @@ const NoteList = ({
   const notesIn = useSelector<AppState, { [id: string]: NoteWithTags }>((state) =>
     renderOnly ? getNoteEntities(state) : getSubNotes(state, { noteId: parentNoteId }),
   );
-  const searchIndex = useSelector((state) =>
-    getFilteredSearchIndex(state, { noteId: parentNoteId }),
-  );
   const sortedIds = useSelector(getSortedNoteIds);
   const firstNoteId = useSelector(getFirstNoteId);
+  const searchResultIds = useSelector<AppState, number[]>((state) =>
+    getOrderedSearchIds(state, { query: search }),
+  );
   const dispatch = useDispatch();
   let firstNoteSet = false;
 
@@ -108,9 +81,13 @@ const NoteList = ({
 
   if (search !== '') {
     const elements = [];
-    const results = getFuse(searchIndex).search(search);
 
-    if (depth === 1 && (results.length === 0 || notes[results[0].item.id].title !== search)) {
+    if (
+      depth === 1 &&
+      (searchResultIds.length === 0 ||
+        !(searchResultIds[0] in notes) ||
+        notes[searchResultIds[0]].title !== search)
+    ) {
       elements.push(
         <GridItem item key='new' xs={width}>
           <Button
@@ -136,13 +113,14 @@ const NoteList = ({
       );
     }
 
-    results.forEach((result) => {
-      const { id } = result.item;
+    searchResultIds.forEach((id) => {
       if (!(id in notes)) {
-        // eslint-disable-next-line no-console
-        console.log('Note ', id, ' not found');
-      } else if (!noteViewFilter || noteViewFilter[id]) {
-        maybeSetFirstNote(id);
+        return;
+      }
+      if (!noteViewFilter || noteViewFilter[id]) {
+        if (notes[id].title === search) {
+          maybeSetFirstNote(id);
+        }
         elements.push(
           <GridItem item key={id} xs={width}>
             <Note note={notes[id]}>

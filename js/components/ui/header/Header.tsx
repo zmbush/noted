@@ -52,7 +52,7 @@ type Props = {
   debounceInterval?: number;
 };
 
-const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 100 }: Props) => {
+const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 50 }: Props) => {
   const searchInput = React.useRef<HTMLInputElement>();
   const [searchInputValue, setSearchInputValue] = React.useState('');
   const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement | null>(null);

@@ -13,8 +13,6 @@ import { NoteWithTags } from 'data/types';
 import {
   getLinkIds,
   getSubNotes,
-  getSearchIndex,
-  getFilteredSearchIndex,
   getSortedNoteIds,
   getIsNotArchived,
   getHasArchivedChild,
@@ -210,113 +208,6 @@ describe('getHasArchivedChild()', () => {
     };
 
     expect(getHasArchivedChild(state)).toEqual(expected);
-  });
-});
-
-describe('getSearchIndex()', () => {
-  test('returns an empty map for empty notes map', () => {
-    expect(getSearchIndex(rootReducer(undefined as any, { type: '' }))).toEqual({});
-  });
-
-  test('works with several notes', () => {
-    const state = rootReducer(
-      undefined as any,
-      getNotes.fulfilled(
-        [
-          { ...baseNote, id: 1, title: 'Test 1' },
-          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-          { ...baseNote, id: 3, title: 'Test 3' },
-          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-        ],
-        '',
-        undefined as any,
-        undefined as any,
-      ),
-    );
-
-    const expected = {
-      1: {
-        ...baseNote,
-        id: 1,
-        title: 'Test 1',
-      },
-      2: {
-        ...baseNote,
-        id: 2,
-        title: 'Test 2',
-        parent_note_id: 3,
-      },
-      3: {
-        ...baseNote,
-        id: 3,
-        title: 'Test 3 Test 2 Test 4',
-        body: 'body body body',
-      },
-      4: {
-        ...baseNote,
-        id: 4,
-        title: 'Test 4',
-        parent_note_id: 3,
-      },
-    };
-
-    expect(getSearchIndex(state)).toEqual(expected);
-  });
-});
-
-describe('getFilteredSearchIndex()', () => {
-  test('returns an empty map for empty notes map', () => {
-    expect(
-      getFilteredSearchIndex(rootReducer(undefined as any, { type: '' }), {
-        noteId: null,
-      }),
-    ).toEqual({});
-  });
-
-  test('works with several notes', () => {
-    const state = rootReducer(
-      undefined as any,
-      getNotes.fulfilled(
-        [
-          { ...baseNote, id: 1, title: 'Test 1', parent_note_id: 2 },
-          { ...baseNote, id: 2, title: 'Test 2', parent_note_id: 3 },
-          { ...baseNote, id: 3, title: 'Test 3' },
-          { ...baseNote, id: 4, title: 'Test 4', parent_note_id: 3 },
-        ],
-        '',
-        undefined as any,
-        undefined as any,
-      ),
-    );
-
-    const expected = {
-      2: {
-        ...baseNote,
-        id: 2,
-        title: 'Test 2 Test 1',
-        body: 'body body',
-        parent_note_id: 3,
-      },
-      4: {
-        ...baseNote,
-        id: 4,
-        title: 'Test 4',
-        parent_note_id: 3,
-      },
-    };
-
-    expect(getFilteredSearchIndex(state, { noteId: 3 })).toEqual(expected);
-
-    const expected2 = {
-      3: {
-        ...baseNote,
-        id: 3,
-        title: 'Test 3 Test 2 Test 1 Test 4',
-        body: 'body body body body',
-      },
-    };
-
-    expect(getFilteredSearchIndex(state, { noteId: null })).toEqual(expected2);
   });
 });
 
