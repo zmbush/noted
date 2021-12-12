@@ -13,6 +13,7 @@ import Tag from 'components/core/Tag';
 
 type TagsProps = {
   tags: string[];
+  inline?: boolean;
 };
 
 const TagsRoot = styled('div')({
@@ -21,16 +22,16 @@ const TagsRoot = styled('div')({
   },
 });
 
-const Tags = (props: TagsProps) => {
+const Tags = ({ inline = false, ...props }: TagsProps) => {
   const { tags } = props;
   if (tags.length === 0) {
     return null;
   }
 
   return (
-    <TagsRoot>
+    <TagsRoot sx={inline ? { display: 'inline-block', paddingLeft: 1 } : undefined}>
       {tags.map((t) => (
-        <Tag key={t} label={t} />
+        <Tag size={inline ? 'small' : undefined} key={t} label={t} />
       ))}
     </TagsRoot>
   );

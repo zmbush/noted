@@ -15,9 +15,13 @@ import Viewer from './Viewer';
 describe('<Viewer />', () => {
   test('base rendering', () => {
     const { container } = render(<Viewer>Contents</Viewer>);
-    expect(container).toMatchInlineSnapshot(`
-      <div>
-        <p>
+    expect(container.firstChild).toMatchInlineSnapshot(`
+      <div
+        class="MuiBox-root css-1vvitan"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        >
           Contents
         </p>
       </div>
@@ -26,18 +30,26 @@ describe('<Viewer />', () => {
 
   test('handles escaped newline', () => {
     const { container } = render(<Viewer>{'\n\\\n'}</Viewer>);
-    expect(container).toMatchInlineSnapshot(`
-      <div>
-        <p />
+    expect(container.firstChild).toMatchInlineSnapshot(`
+      <div
+        class="MuiBox-root css-1vvitan"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        />
       </div>
     `);
   });
 
   test('handles autolink', () => {
     const { container } = render(<Viewer titles={{ tent: new Set([1]) }}>Contents</Viewer>);
-    expect(container).toMatchInlineSnapshot(`
-      <div>
-        <p>
+    expect(container.firstChild).toMatchInlineSnapshot(`
+      <div
+        class="MuiBox-root css-1vvitan"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+        >
           Con
           <a
             href="/note/1"
@@ -75,7 +87,9 @@ describe('<Viewer />', () => {
         <div
           class="MuiAlert-message css-acap47-MuiAlert-message"
         >
-          <p>
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          >
             Tip Contents
           </p>
         </div>
@@ -85,12 +99,121 @@ describe('<Viewer />', () => {
 
   test('passes through html', () => {
     const { container } = render(<Viewer>{'<div>contents</div>'}</Viewer>);
-    expect(container).toMatchInlineSnapshot(`
-      <div>
+    expect(container.firstChild).toMatchInlineSnapshot(`
+      <div
+        class="MuiBox-root css-1vvitan"
+      >
         <div>
           contents
         </div>
       </div>
+    `);
+  });
+
+  test('handles headers', () => {
+    const md = `
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6`;
+    const { getByText } = render(<Viewer>{md}</Viewer>);
+    expect(getByText('Header 1')).toMatchInlineSnapshot(`
+      <h2
+        class="MuiTypography-root MuiTypography-h2 css-1sra7t5-MuiTypography-root"
+      >
+        Header 1
+      </h2>
+    `);
+    expect(getByText('Header 2')).toMatchInlineSnapshot(`
+      <h3
+        class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+      >
+        Header 2
+      </h3>
+    `);
+    expect(getByText('Header 3')).toMatchInlineSnapshot(`
+      <h4
+        class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+      >
+        Header 3
+      </h4>
+    `);
+    expect(getByText('Header 4')).toMatchInlineSnapshot(`
+      <h5
+        class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+      >
+        Header 4
+      </h5>
+    `);
+    expect(getByText('Header 5 Header 6')).toMatchInlineSnapshot(`
+      <div
+        class="MuiBox-root css-1vvitan"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h2 css-1sra7t5-MuiTypography-root"
+        >
+          Header 1
+        </h2>
+        
+
+        <h3
+          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+        >
+          Header 2
+        </h3>
+        
+
+        <h4
+          class="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+        >
+          Header 3
+        </h4>
+        
+
+        <h5
+          class="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+        >
+          Header 4
+        </h5>
+        
+
+        Header 5
+        
+
+        Header 6
+      </div>
+    `);
+  });
+
+  test('handles checkboxes', () => {
+    const md = `
+* [ ] Task 1
+* [x] Task 2`;
+    const { getByText } = render(<Viewer>{md}</Viewer>);
+    expect(getByText('Task 1')).toMatchInlineSnapshot(`
+      <li
+        class="task-list-item"
+      >
+        <input
+          disabled=""
+          type="checkbox"
+        />
+         Task 1
+      </li>
+    `);
+    expect(getByText('Task 2')).toMatchInlineSnapshot(`
+      <li
+        class="checked task-list-item"
+      >
+        <input
+          checked=""
+          disabled=""
+          type="checkbox"
+        />
+         Task 2
+      </li>
     `);
   });
 
@@ -100,7 +223,7 @@ describe('<Viewer />', () => {
 |---------|---------|---------|
 | contents| cont    | ent     |`;
     const { getByText } = render(<Viewer>{md}</Viewer>);
-    expect(getByText('Title 1')?.parentNode?.parentNode?.parentNode).toMatchInlineSnapshot(`
+    expect(getByText('Title 1')!.parentNode!.parentNode!.parentNode).toMatchInlineSnapshot(`
       <table
         class="MuiTable-root css-rqglhn-MuiTable-root"
       >

@@ -13,19 +13,8 @@ import { getHasArchivedChild } from 'data/notes/selectors';
 
 import NoteList from './NoteList';
 
-type Props = {
-  search: string;
-  createFromSearch: (e: { preventDefault: () => void }) => void;
-};
-
-const Archive = ({ createFromSearch, search }: Props) => (
-  <NoteList
-    createFromSearch={createFromSearch}
-    noteViewFilter={useSelector(getHasArchivedChild)}
-    parent_note_id={null}
-    depth={1}
-    search={search}
-  />
+const Archive = () => (
+  <NoteList noteViewFilter={useSelector(getHasArchivedChild)} parent_note_id={null} depth={1} />
 );
 
 export default Archive;

@@ -67,11 +67,16 @@ const customRender = (
     back() {
       act(() => history.back());
     },
+
+    get location() {
+      return history.location;
+    },
   };
 
   return {
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
     store,
+    location: history.location,
     history: historyActions,
   };
 };

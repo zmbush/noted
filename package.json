@@ -95,6 +95,7 @@
     "sass-loader": "^12.4.0",
     "showdown": "^1.9.0",
     "source-map-loader": "^3.0.0",
+    "strip-markdown": "^5.0.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.3",
     "ts-jest": "^27.1.1",

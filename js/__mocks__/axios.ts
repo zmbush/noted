@@ -50,6 +50,7 @@ export const makeTestNote = (
   const defaultFields: Partial<NoteWithTags> = {
     id: thisId,
     title: `Note ${thisId}`,
+    tags: [`tag${thisId}`],
   };
   const parentOverride: Partial<NoteWithTags> = {};
   if (parent) {

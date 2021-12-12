@@ -8,19 +8,30 @@
 //
 
 /* eslint-disable react/jsx-props-no-spreading */
+import type { Root } from 'mdast';
 import rehypeRaw from 'rehype-raw';
 import remarkDirective from 'remark-directive';
 import remarkGfm from 'remark-gfm';
+import { visit } from 'unist-util-visit';
 
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { HeadingProps } from 'react-markdown/lib/ast-to-react';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 
 import AutoLink from 'components/note/AutoLink';
 
 import Directive, { directivePlugin } from './Directive';
-import * as styles from './styles.scss';
 
 const BrOrAutolink =
   (titles: { [title: string]: Set<number> }) =>
@@ -29,12 +40,12 @@ const BrOrAutolink =
       children === '\\' ||
       (Array.isArray(children) && children.length > 0 && children[0] === '\\')
     ) {
-      return <p {...props} />;
+      return <Typography variant='body1' {...props} />;
     }
     return (
-      <p {...props}>
+      <Typography variant='body1' {...props}>
         <AutoLink titles={titles}>{children}</AutoLink>
-      </p>
+      </Typography>
     );
   };
 
@@ -79,12 +90,10 @@ const TBody = ({ children, node: _node, ...props }: any) => (
   </TableBody>
 );
 
-// Remove isHeader from props to avoid weird react rendering error...
 const TR = ({ children, node: _node, isHeader: _isHeader, ...props }: any) => (
   <TableRow {...props}>{children}</TableRow>
 );
 
-// Remove isHeader from props to avoid weird react rendering error...
 const TC = ({ children, node: _node, isHeader: _isHeader, ...props }: any) => (
   <TableCell
     sx={{ '@media print': { color: 'black', borderBottom: 'none', padding: 1 } }}
@@ -94,30 +103,106 @@ const TC = ({ children, node: _node, isHeader: _isHeader, ...props }: any) => (
   </TableCell>
 );
 
+const Heading = ({
+  children,
+  node: _node,
+  level,
+  ref: _ref,
+  ...props
+}: Omit<HeadingProps, 'level'> & { level: 1 | 2 | 3 | 4 }) => {
+  const l = (level + 1) as 2 | 3 | 4 | 5;
+  return (
+    <Typography variant={`h${l}`} {...props}>
+      {children}
+    </Typography>
+  );
+};
+
+export const checkboxPlugin = () => (tree: Root) => {
+  visit(tree, (node) => {
+    if (node.type === 'listItem') {
+      if (node.checked) {
+        // eslint-disable-next-line no-param-reassign
+        const data = node.data || (node.data = {});
+        data.hProperties = {
+          class: 'checked task-list-item',
+        };
+      }
+    }
+  });
+};
 interface Props {
   children: string;
   titles?: { [title: string]: Set<number> };
 }
 
 const Markdown = ({ children, titles = {} }: Props) => (
-  <ReactMarkdown
-    className={styles.markdown}
-    components={{
-      p: BrOrAutolink(titles),
-      div: MaybeDirective,
-      blockquote: QuoteDirective,
-      table: TableRoot,
-      thead: THead,
-      tbody: TBody,
-      tr: TR,
-      td: TC,
-      th: TC,
-    }}
-    remarkPlugins={[remarkGfm, remarkDirective, directivePlugin]}
-    rehypePlugins={[rehypeRaw]}
+  <Box
+    sx={(theme) => ({
+      marginTop: 2,
+      '& .contains-task-list': {
+        paddingLeft: 0,
+        '& li': {
+          listStyle: 'none',
+          '&.checked': {
+            textDecoration: 'line-through',
+          },
+        },
+      },
+      '@media print': {
+        paddingLeft: 2,
+        '& p': {
+          textIndent: theme.spacing(1),
+        },
+        '& a': {
+          textDecoration: 'none',
+          color: 'black',
+        },
+        '& h2, & h3, & h4, &h5': {
+          color: '#58180d',
+        },
+        '& h2': {
+          fontSize: '0.705cm',
+        },
+        '& h3': {
+          fontSize: '0.529cm',
+          borderBottom: '2px solid #c0ad7a',
+        },
+        '& h4': {
+          fontSize: '0.458cm',
+          marginBottom: 0,
+        },
+        '& h5': {
+          fontSize: '0.423cm',
+          marginBottom: '0.2em',
+        },
+      },
+    })}
   >
-    {children}
-  </ReactMarkdown>
+    <ReactMarkdown
+      disallowedElements={['h5', 'h6']}
+      unwrapDisallowed
+      components={{
+        p: BrOrAutolink(titles),
+        div: MaybeDirective,
+        blockquote: QuoteDirective,
+        table: TableRoot,
+        thead: THead,
+        tbody: TBody,
+        tr: TR,
+        td: TC,
+        th: TC,
+        h1: Heading,
+        h2: Heading,
+        h3: Heading,
+        h4: Heading,
+      }}
+      remarkPlugins={[remarkGfm, checkboxPlugin, remarkDirective, directivePlugin]}
+      rehypePlugins={[rehypeRaw]}
+    >
+      {children}
+    </ReactMarkdown>
+  </Box>
 );
 
 export default Markdown;

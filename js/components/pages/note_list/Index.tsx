@@ -13,22 +13,9 @@ import { getIsNotArchived } from 'data/notes/selectors';
 
 import NoteList from './NoteList';
 
-type Props = {
-  search: string;
-  createFromSearch: (e: { preventDefault: () => void }) => void;
-};
-
-const Index = ({ createFromSearch, search }: Props) => {
+const Index = () => {
   const noteViewFilter = useSelector(getIsNotArchived);
-  return (
-    <NoteList
-      createFromSearch={createFromSearch}
-      noteViewFilter={noteViewFilter}
-      parent_note_id={null}
-      depth={1}
-      search={search}
-    />
-  );
+  return <NoteList noteViewFilter={noteViewFilter} parent_note_id={null} depth={1} />;
 };
 
 export default Index;

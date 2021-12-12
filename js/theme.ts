@@ -25,6 +25,13 @@ const makeColoredTheme = (mode: 'dark' | 'light') =>
         main: '#e53935',
       },
     },
+    typography: {
+      h1: { fontSize: '4.5em' },
+      h2: { fontSize: '3em' },
+      h3: { fontSize: '2.25em' },
+      h4: { fontSize: '1.725em' },
+      h5: { fontSize: '1.25em', fontWeight: 'bold', fontStyle: 'italic' },
+    },
   });
 
 export const lightTheme = makeColoredTheme('light');

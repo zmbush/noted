@@ -14,20 +14,12 @@ import Disambiguation from './note_list/Disambiguation';
 import Index from './note_list/Index';
 import SingleNote from './single_note/SingleNote';
 
-type Props = {
-  search: string;
-  createFromSearch: (e: { preventDefault: () => void }) => void;
-};
-
-const Pages = ({ search, createFromSearch }: Props) => (
+const Pages = () => (
   <Routes>
-    <Route path='/' element={<Index search={search} createFromSearch={createFromSearch} />} />
-    <Route
-      path='/archive'
-      element={<Archive search={search} createFromSearch={createFromSearch} />}
-    />
-    <Route path='/note/:id' element={<SingleNote search={search} />} />
-    <Route path='/disambiguation/:ids' element={<Disambiguation search={search} />} />
+    <Route path='/' element={<Index />} />
+    <Route path='/archive' element={<Archive />} />
+    <Route path='/note/:id' element={<SingleNote />} />
+    <Route path='/disambiguation/:ids' element={<Disambiguation />} />
   </Routes>
 );
 
