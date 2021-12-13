@@ -17,7 +17,6 @@ describe('data::reducers()', () => {
         },
         "ui": Object {
           "editingNote": null,
-          "firstNote": null,
           "inProgress": Object {},
           "lastError": Object {
             "any": null,

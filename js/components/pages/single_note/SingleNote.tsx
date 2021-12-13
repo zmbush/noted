@@ -11,23 +11,11 @@ import { useParams } from 'react-router-dom';
 
 import NoteList from 'components/pages/note_list/NoteList';
 
-type Props = {
-  search: string;
-};
-
-const SingleNote = ({ search }: Props) => {
+const SingleNote = () => {
   const { id = '' } = useParams<'id'>();
   const parsedId = new Set([parseInt(id, 10)]);
 
-  return (
-    <NoteList
-      parent_note_id={null}
-      noteViewFilter={null}
-      renderOnly={parsedId}
-      search={search}
-      depth={1}
-    />
-  );
+  return <NoteList parent_note_id={null} noteViewFilter={null} renderOnly={parsedId} depth={1} />;
 };
 
 export default SingleNote;

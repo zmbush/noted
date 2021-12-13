@@ -27,7 +27,9 @@ describe('<Note />', () => {
         "id": 1,
         "parent_note_id": 0,
         "pinned": false,
-        "tags": Array [],
+        "tags": Array [
+          "tag1",
+        ],
         "title": "Note 1",
         "updated_at": "",
         "user_id": -1,

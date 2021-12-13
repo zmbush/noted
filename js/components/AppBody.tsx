@@ -7,6 +7,7 @@
 // except according to those terms.
 //
 import * as React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { Grid } from '@mui/material';
 
@@ -15,11 +16,13 @@ import Pages from './pages/Pages';
 
 type NewNoteProps = {
   newNote: boolean;
-  search: string;
   onNewNoteCancel: () => void;
 };
 
-export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
+export const NewNote = ({ newNote, onNewNoteCancel }: NewNoteProps) => {
+  const [searchParams, _] = useSearchParams();
+  const search = searchParams.get('search') || '';
+
   if (!newNote) {
     return null;
   }
@@ -36,11 +39,9 @@ export const NewNote = ({ newNote, search, onNewNoteCancel }: NewNoteProps) => {
   );
 };
 
-type Props = {
-  createNewShortcut: (e: { preventDefault: () => void }, combo?: string) => void;
-} & NewNoteProps;
+type Props = {} & NewNoteProps;
 
-const AppBody = ({ createNewShortcut, newNote, search, onNewNoteCancel }: Props) => (
+const AppBody = ({ newNote, onNewNoteCancel }: Props) => (
   <Grid
     container
     component='article'
@@ -53,8 +54,8 @@ const AppBody = ({ createNewShortcut, newNote, search, onNewNoteCancel }: Props)
       marginTop: '75px',
     }}
   >
-    <NewNote newNote={newNote} search={search} onNewNoteCancel={onNewNoteCancel} />
-    <Pages search={search} createFromSearch={createNewShortcut} />
+    <NewNote newNote={newNote} onNewNoteCancel={onNewNoteCancel} />
+    <Pages />
   </Grid>
 );
 

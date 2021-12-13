@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material';
 
 import { AppState } from 'data/store';
-import { getFirstNoteId, getUserLoading } from 'data/ui/selectors';
+import { getUserLoading } from 'data/ui/selectors';
 import { setEditingNote } from 'data/ui/slice';
 
 import AppBody from './AppBody';
@@ -20,6 +20,7 @@ import ErrorManager from './core/ErrorManager';
 import Loading from './core/Loading';
 import LogIn from './pages/login/LogIn';
 import Header from './ui/header/Header';
+import SearchResults, { useSearch, useSearchResults } from './ui/search/SearchResults';
 
 const AppRoot = styled('div')({
   width: '100%',
@@ -32,11 +33,11 @@ const AppRoot = styled('div')({
 
 const App = () => {
   const [newNote, setNewNote] = React.useState(false);
-  const [search, setSearch] = React.useState('');
   const isSignedIn = useSelector<AppState>((state) => state.user.isSignedIn);
   const isLoading = useSelector(getUserLoading);
-  const firstNote = useSelector(getFirstNoteId);
   const dispatch = useDispatch();
+  const [params, _setParams] = useSearch();
+  const searchResults = useSearchResults(params.search || '');
   React.useEffect(() => {
     document.title = `Noted`;
   }, []);
@@ -52,12 +53,23 @@ const App = () => {
 
   const startEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (firstNote) {
-      dispatch(setEditingNote(firstNote));
+    if (searchResults.length > 0 && searchResults[0].item.title === params.search) {
+      dispatch(setEditingNote(searchResults[0].item.id));
     } else {
       createNew(e);
     }
   };
+
+  const startEditing = React.useCallback(
+    (note: number | null) => {
+      if (note) {
+        dispatch(setEditingNote(note));
+      } else {
+        create();
+      }
+    },
+    [dispatch, create],
+  );
 
   const createNewShortcut = (e: { preventDefault: () => void }, _combo?: string) => {
     e.preventDefault();
@@ -66,17 +78,13 @@ const App = () => {
 
   return (
     <AppRoot>
-      <Header createNewShortcut={createNewShortcut} setSearch={setSearch} onStartEdit={startEdit} />
+      <Header createNewShortcut={createNewShortcut} onStartEdit={startEdit} />
       {isLoading ? (
         <Loading />
       ) : (
-        <AppBody
-          createNewShortcut={createNewShortcut}
-          newNote={newNote}
-          search={search}
-          onNewNoteCancel={() => setNewNote(false)}
-        />
+        <AppBody newNote={newNote} onNewNoteCancel={() => setNewNote(false)} />
       )}
+      <SearchResults startEditing={startEditing} />
       <LogIn open={!isSignedIn && !isLoading} />
       <ErrorManager />
     </AppRoot>

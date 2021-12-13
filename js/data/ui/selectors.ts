@@ -36,5 +36,4 @@ export const getLastError = createSelector(
   (ui, slice) => ui.lastError[slice],
 );
 
-export const getFirstNoteId = createSelector(getUi, (ui) => ui.firstNote);
 export const getEditingNote = createSelector(getUi, (ui) => ui.editingNote);

@@ -29,6 +29,7 @@ const SearchDiv = styled('div')(({ theme }) => ({
     marginLeft: 1,
     width: 'auto',
   },
+  zIndex: theme.zIndex.tooltip * 10,
 }));
 
 const SearchIconDiv = styled('div')(({ theme }) => ({

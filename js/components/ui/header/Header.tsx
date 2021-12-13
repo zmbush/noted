@@ -6,7 +6,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import debounce from 'debounce-promise';
 import Mousetrap from 'mousetrap';
 
 import * as React from 'react';
@@ -36,9 +35,8 @@ import {
 } from '@mui/material';
 
 import BindKeyboard from 'components/core/BindKeyboard';
+import DebouncedSearch from 'components/ui/search/DebouncedSearch';
 import { signOutUser } from 'data/user/api';
-
-import SearchInput from './SearchInput';
 
 const FillSpace = styled('div')({ flexGrow: 1 });
 
@@ -47,35 +45,16 @@ type Props = {
     e: Mousetrap.ExtendedKeyboardEvent | React.SyntheticEvent,
     combo?: string,
   ) => void;
-  setSearch: (newSearch: string) => void;
   onStartEdit: (e: React.SyntheticEvent) => void;
   debounceInterval?: number;
 };
 
-const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 50 }: Props) => {
-  const searchInput = React.useRef<HTMLInputElement>();
-  const [searchInputValue, setSearchInputValue] = React.useState('');
+const Header = ({ createNewShortcut, onStartEdit, debounceInterval = 50 }: Props) => {
   const [userMenuEl, setUserMenuEl] = React.useState<HTMLElement | null>(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const [mainMenuOpen, setMainMenuOpen] = React.useState(false);
   const navigate = useNavigate();
-  const [debouncedSearch, _] = React.useState<(v: string) => void>(() =>
-    debounce(async (v) => {
-      setSearch(v);
-    }, debounceInterval),
-  );
   const dispatch = useDispatch();
-
-  const doSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInputValue(e.target.value);
-    debouncedSearch(e.target.value);
-  };
-
-  const cancelSearch = (e: Mousetrap.ExtendedKeyboardEvent, _combo?: string) => {
-    e.preventDefault();
-    setSearchInputValue('');
-    setSearch('');
-  };
 
   const closeUserMenu = () => {
     setUserMenuEl(null);
@@ -96,14 +75,8 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
     dispatch(signOutUser());
   };
 
-  const startSearch = (e: Event) => {
-    e.preventDefault();
-    searchInput.current?.focus();
-  };
-
   return (
     <>
-      <BindKeyboard keys='/' callback={startSearch} />
       <AppBar sx={{ displayPrint: 'none' }}>
         <Toolbar>
           <Routes>
@@ -158,13 +131,7 @@ const Header = ({ createNewShortcut, setSearch, onStartEdit, debounceInterval = 
           </Typography>
           <FillSpace />
           <BindKeyboard keys='ctrl+o' callback={createNewShortcut}>
-            <SearchInput
-              onCancelSearch={cancelSearch}
-              value={searchInputValue}
-              onChange={doSearch}
-              onSubmit={onStartEdit}
-              ref={searchInput}
-            />
+            <DebouncedSearch debounceInterval={debounceInterval} onStartEdit={onStartEdit} />
           </BindKeyboard>
           <IconButton aria-haspopup='true' onClick={openUserMenu} color='inherit' size='large'>
             <AccountCircle />

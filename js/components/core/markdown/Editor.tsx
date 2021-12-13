@@ -17,8 +17,6 @@ import * as React from 'react';
 
 import { useMediaQuery, Box } from '@mui/material';
 
-import * as styles from './styles.scss';
-
 const darkTheme: typeof baseDarkTheme = {
   ...baseDarkTheme,
   zIndex: 1500,
@@ -30,11 +28,7 @@ const lightTheme: typeof baseLightTheme = {
   zIndex: 1500,
 };
 
-interface Props
-  extends Omit<
-    React.ComponentProps<typeof Editor>,
-    'defaultValue' | 'value' | 'theme' | 'readOnly' | 'extensions'
-  > {
+interface Props extends Omit<React.ComponentProps<typeof Editor>, 'defaultValue' | 'theme'> {
   body: string;
   height?: Property.Height;
 }
@@ -42,7 +36,7 @@ interface Props
 const MarkdownEditor = ({ body, height, ...props }: Props) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   return (
-    <Box sx={{ height, overflowY: 'scroll' }} className={styles.markdown}>
+    <Box sx={{ height, overflowY: 'scroll', marginTop: 2 }}>
       <Editor
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}

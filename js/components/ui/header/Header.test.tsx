@@ -18,47 +18,28 @@ import Header from './Header';
 describe('<Header />', () => {
   test('matches snapshot', () => {
     expect(
-      render(
-        <Header
-          createNewShortcut={() => {}}
-          setSearch={() => {}}
-          onStartEdit={() => {}}
-          debounceInterval={10}
-        />,
-      ).container,
+      render(<Header createNewShortcut={() => {}} onStartEdit={() => {}} debounceInterval={10} />)
+        .container,
     ).toMatchSnapshot();
   });
 
-  test('::setSearch', async () => {
-    const setSearch = jest.fn();
-    const { findByRole } = render(
-      <Header
-        createNewShortcut={() => {}}
-        setSearch={setSearch}
-        onStartEdit={() => {}}
-        debounceInterval={5}
-      />,
+  test('searching works as expected', async () => {
+    const { findByRole, history } = render(
+      <Header createNewShortcut={() => {}} onStartEdit={() => {}} debounceInterval={5} />,
     );
 
     const input = await findByRole('textbox');
     userEvent.type(input, 'written word');
 
-    await waitFor(() => expect(setSearch).toHaveBeenCalledTimes(1));
-    expect(setSearch).toHaveBeenLastCalledWith('written word');
+    await waitFor(() => expect(history.location.search).toEqual('?search=written+word'));
 
     userEvent.type(input, 's');
-    await waitFor(() => expect(setSearch).toHaveBeenCalledTimes(2));
-    expect(setSearch).toHaveBeenLastCalledWith('written words');
+    await waitFor(() => expect(history.location.search).toEqual('?search=written+words'));
   });
 
   test('handles user menu and sign out', async () => {
     const { findByTestId, findByText, queryByText, store } = render(
-      <Header
-        createNewShortcut={() => {}}
-        setSearch={() => {}}
-        onStartEdit={() => {}}
-        debounceInterval={10}
-      />,
+      <Header createNewShortcut={() => {}} onStartEdit={() => {}} debounceInterval={10} />,
     );
 
     await store.dispatch(signInUser({ email: 'test@test.com', password: 'pass' }));
@@ -79,7 +60,6 @@ describe('<Header />', () => {
         },
         "ui": Object {
           "editingNote": null,
-          "firstNote": null,
           "inProgress": Object {},
           "lastError": Object {
             "any": null,
@@ -97,12 +77,7 @@ describe('<Header />', () => {
   test('::onStartEdit', async () => {
     const onStartEdit = jest.fn();
     const { findByRole } = render(
-      <Header
-        createNewShortcut={() => {}}
-        setSearch={() => {}}
-        onStartEdit={onStartEdit}
-        debounceInterval={5}
-      />,
+      <Header createNewShortcut={() => {}} onStartEdit={onStartEdit} debounceInterval={5} />,
     );
 
     const input = await findByRole('textbox');
@@ -112,12 +87,7 @@ describe('<Header />', () => {
 
   test('opens side menu', async () => {
     const { findByTestId, queryByText, findByText } = render(
-      <Header
-        createNewShortcut={() => {}}
-        setSearch={() => {}}
-        onStartEdit={() => {}}
-        debounceInterval={5}
-      />,
+      <Header createNewShortcut={() => {}} onStartEdit={() => {}} debounceInterval={5} />,
     );
 
     // Side menu shouldn't be visible.

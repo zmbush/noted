@@ -138,6 +138,9 @@ export const NoteContents = ({
         }}
         avatar={note.pinned ? <PinIcon /> : null}
         title={note.title}
+        titleTypographyProps={{
+          variant: 'h1',
+        }}
         action={
           <>
             <IconButton
@@ -283,6 +286,9 @@ const Note = ({ note, onNewNoteCancel, children }: Props) => {
   const save = async (
     noteData: (NewNotePayload | UpdateNotePayload) & Pick<NoteWithTags, 'tags'>,
   ) => {
+    setEdit(false);
+    setCreatingSubNote(false);
+
     if (creatingSubNote || !('id' in note)) {
       await dispatch(createNote(noteData as NewNotePayload & Pick<NoteWithTags, 'tags'>));
     } else {
@@ -293,9 +299,6 @@ const Note = ({ note, onNewNoteCancel, children }: Props) => {
         }),
       );
     }
-
-    setEdit(false);
-    setCreatingSubNote(false);
   };
 
   return (

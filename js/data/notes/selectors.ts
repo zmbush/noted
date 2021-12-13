@@ -163,7 +163,7 @@ const getNoteSearcher = createSelector(
         },
         {
           name: 'tags',
-          weight: 1.0,
+          weight: 0.8,
         },
         {
           name: 'body',
@@ -179,29 +179,4 @@ const getNoteSearcher = createSelector(
 const getSearchQuery = (_: any, { query = '' }: { query?: string }) => query;
 export const getSearchResults = createSelector(getNoteSearcher, getSearchQuery, (searcher, query) =>
   searcher.search(query),
-);
-
-export const getOrderedSearchIds = createSelector(
-  getNoteEntities,
-  getSearchResults,
-  (notes, searchResults) => {
-    const addedIds = new Set();
-    const ids: number[] = [];
-    searchResults.forEach((result) => {
-      let note = notes[result.item.id];
-      const collected = [note.id];
-      while (validParent(note)) {
-        collected.push(note.parent_note_id);
-        note = notes[note.parent_note_id];
-      }
-      collected.reverse();
-      collected.forEach((id) => {
-        if (!addedIds.has(id)) {
-          ids.push(id);
-          addedIds.add(id);
-        }
-      });
-    });
-    return ids;
-  },
 );

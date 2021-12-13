@@ -18,7 +18,7 @@ import Pages from './Pages';
 describe('<Pages />', () => {
   test('interactions work', async () => {
     const { store, container, getByText, queryByText, getAllByTestId, history } = render(
-      <Pages createFromSearch={() => {}} search='' />,
+      <Pages />,
       {
         route: '/note/1',
       },

@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import * as React from 'react';
 
-import { render, waitFor } from 'components/test-utils';
+import { queryAllByTestId, render } from 'components/test-utils';
 
 import App from '../App';
 
@@ -21,7 +21,7 @@ describe('<App />', () => {
       Array [
         <h2
           class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-bdhsul-MuiTypography-root-MuiDialogTitle-root"
-          id="mui-1"
+          id="mui-2"
         >
           Sign In
         </h2>,
@@ -59,16 +59,34 @@ describe('<App />', () => {
     });
 
     test('search works', async () => {
-      const { store, getByPlaceholderText } = rendered;
+      const { findByText, findByTestId, getByPlaceholderText } = rendered;
       userEvent.type(
         getByPlaceholderText('Search...'),
         "A Search That Shouldn't Match Anything...",
       );
-      await waitFor(() => expect(store.getState().ui.firstNote).toEqual(null));
-      userEvent.type(getByPlaceholderText('Search...'), '{selectall}Note 1');
-      await waitFor(() => expect(store.getState().ui.firstNote).toEqual(1));
-      userEvent.type(getByPlaceholderText('Search...'), '{selectall}Note 2');
-      await waitFor(() => expect(store.getState().ui.firstNote).toEqual(2));
+      {
+        const searchBox = (
+          await findByText('Results for "A Search That Shouldn\'t Match Anything..."')
+        ).parentElement!;
+        expect(queryAllByTestId(searchBox, 'EditIcon')).toHaveLength(0);
+      }
+      {
+        userEvent.type(getByPlaceholderText('Search...'), '{selectall}Note 1');
+        const searchBox = (await findByText('Results for "Note 1"')).parentElement!;
+        expect(
+          queryAllByTestId(searchBox, 'EditIcon')[0].parentElement!.parentElement!.dataset,
+        ).toMatchObject(expect.objectContaining({ noteId: '1' }));
+      }
+      {
+        userEvent.type(getByPlaceholderText('Search...'), '{selectall}Note 2');
+        const searchBox = (await findByText('Results for "Note 2"')).parentElement!;
+        expect(
+          queryAllByTestId(searchBox, 'EditIcon')[0].parentElement!.parentElement!.dataset,
+        ).toMatchObject(expect.objectContaining({ noteId: '2' }));
+        userEvent.click(queryAllByTestId(searchBox, 'EditIcon')[0]);
+        await findByTestId('NoteEditor');
+        userEvent.click(await findByTestId('SaveIcon'));
+      }
     });
 
     test('start edit works', async () => {

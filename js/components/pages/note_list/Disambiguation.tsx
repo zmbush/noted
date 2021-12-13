@@ -11,23 +11,11 @@ import { useParams } from 'react-router-dom';
 
 import NoteList from './NoteList';
 
-type Props = {
-  search: string;
-};
-
-const Disambiguation = ({ search }: Props) => {
+const Disambiguation = () => {
   const { ids = '' } = useParams<'ids'>();
   const parsedIds = new Set(ids.split(',').map((i) => parseInt(i, 10)));
 
-  return (
-    <NoteList
-      parent_note_id={null}
-      noteViewFilter={null}
-      renderOnly={parsedIds}
-      search={search}
-      depth={1}
-    />
-  );
+  return <NoteList parent_note_id={null} noteViewFilter={null} renderOnly={parsedIds} depth={1} />;
 };
 
 export default Disambiguation;
