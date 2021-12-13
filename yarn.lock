@@ -6850,10 +6850,10 @@ orderedmap@^1.1.0:
   resolved "https://registry.npmjs.org/orderedmap/-/orderedmap-1.1.1.tgz"
   integrity sha512-3Ux8um0zXbVacKUkcytc0u3HgC0b0bBLT+I60r2J/En72cI0nZffqrA7Xtf2Hqs27j1g82llR5Mhbd0Z1XW4AQ==
 
-outline-icons@^1.26.1:
-  version "1.35.0"
-  resolved "https://registry.npmjs.org/outline-icons/-/outline-icons-1.35.0.tgz"
-  integrity sha512-QWPrft2WKy6eIGBbzeaO/0sYXHuLvbQoBa7NrGQM5j7R9/AoxItnJdolYWKiZJAH8tUxfp2yuBdg+H9/z1Zf+g==
+outline-icons@^1.38.1:
+  version "1.38.1"
+  resolved "https://registry.yarnpkg.com/outline-icons/-/outline-icons-1.38.1.tgz#2f72e360549cb3dda5b3e7c17feaccaab1617da0"
+  integrity sha512-Lkdn8jvh3/hoS298hAdVgNZMxtDlx1zUJRFU4teESL7cyodFpFaG7WUBs6ZM+11j8uMisp/8PyPrZ5IPJwmrcg==
 
 p-limit@^1.1.0:
   version "1.3.0"
@@ -7825,10 +7825,10 @@ reusify@^1.0.4:
   resolved "https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
-rich-markdown-editor@^11.20.2:
-  version "11.20.2"
-  resolved "https://registry.npmjs.org/rich-markdown-editor/-/rich-markdown-editor-11.20.2.tgz"
-  integrity sha512-g2394voR9jfOjj2e8Y5mM/9FZtBV41iqBdqdLw/6nj+G1izFPWgUSjbjRV7y22ZRdaxeWSHKX+KuCQtYQeKqzg==
+rich-markdown-editor@^11.21.0:
+  version "11.21.0"
+  resolved "https://registry.yarnpkg.com/rich-markdown-editor/-/rich-markdown-editor-11.21.0.tgz#bd94e8831940cb11514ab1f891e5c494916406e2"
+  integrity sha512-gH06ZQnSS1Nqj7LZe6yF4DaQXM8rBoRPkomd+9dmO41MQlNRV7sCln7+brarz+hzis4I7yaAXaw3Jr81o1u6kA==
   dependencies:
     copy-to-clipboard "^3.0.8"
     fuzzy-search "^3.2.1"
@@ -7837,7 +7837,7 @@ rich-markdown-editor@^11.20.2:
     markdown-it "^12.2.0"
     markdown-it-container "^3.0.0"
     markdown-it-emoji "^2.0.0"
-    outline-icons "^1.26.1"
+    outline-icons "^1.38.1"
     prosemirror-commands "^1.1.6"
     prosemirror-dropcursor "^1.3.3"
     prosemirror-gapcursor "^1.1.5"
