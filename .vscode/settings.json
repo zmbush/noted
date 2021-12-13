@@ -100,5 +100,6 @@
   },
   "eslint.options": {
     "rulePaths": ["eslint_rules"]
-  }
+  },
+  "jest.jestCommandLine": "yarn jest"
 }

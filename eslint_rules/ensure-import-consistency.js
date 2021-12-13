@@ -10,6 +10,16 @@ const { default: moduleVisitor, makeOptionsSchema } = require('eslint-module-uti
 const { default: resolve } = require('eslint-module-utils/resolve');
 const { basename, dirname, relative, join } = require('path');
 
+const SLICES = [/js\/features\/[^/]*\//, /js\/[^/]*\//];
+
+const getSliceName = (path) => {
+  const sliceMatcher = SLICES.find((slice) => path.match(slice));
+  if (sliceMatcher) {
+    return path.match(sliceMatcher)[0];
+  }
+  return null;
+};
+
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -39,54 +49,23 @@ module.exports = {
         return;
       }
 
-      const shouldBeAbs = {
-        node: sourceNode,
-        message: 'Imports referring to a parent should use absolute import',
-      };
-
-      if (myPath.match(/__tests__/)) {
-        const fileUnderTest = join(dirname(dirname(myPath)), basename(myPath));
-
-        if (
-          depPath.startsWith('../..') ||
-          (depPath.startsWith('..') && absDepPath !== fileUnderTest)
-        ) {
-          context.report(shouldBeAbs);
-        } else if (!depPath.startsWith('..') && absDepPath === fileUnderTest) {
+      const slice = getSliceName(myPath);
+      if (slice === getSliceName(absDepPath)) {
+        if (!depPath.startsWith('.')) {
           context.report({
             node: sourceNode,
-            message: 'Importing the module under test should always be relative',
+            message: `Modules in the same slice (${slice.replace(
+              /^\/+|\/+$/g,
+              '',
+            )}) should be relatively imported`,
           });
         }
-      } else if (depPath.startsWith('..')) {
-        context.report(shouldBeAbs);
-      } else if (!relDepPath.startsWith('..') && !depPath.startsWith('./')) {
+      } else if (depPath.startsWith('../')) {
         context.report({
           node: sourceNode,
-          message: 'Modules in the same directory should be referred to with relative imports',
+          message: `Cross-slice imports should be absolute`,
         });
       }
-      if (
-        relDepPath.startsWith('..') &&
-        ((depPath.startsWith('..') && !myPath.match(/__tests__/)) ||
-          (depPath.startsWith('../..') && myPath.match(/__tests__/)))
-      ) {
-        context.report({
-          node: sourceNode,
-          message: 'Use global path for parent components',
-        });
-      }
-
-      //   if (importType(relDepPath, context) === 'parent') {
-      //     context.report({
-      //       node: sourceNode,
-      //       message:
-      //         'Relative imports from parent directories are not allowed. ' +
-      //         `Please either pass what you're importing through at runtime ` +
-      //         `(dependency injection), move \`${basename(myPath)}\` to same ` +
-      //         `directory as \`${depPath}\` or consider making \`${depPath}\` a package.`,
-      //     });
-      //   }
     }
 
     return moduleVisitor(checkSourceValue, context.options[0]);
