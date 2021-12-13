@@ -30,7 +30,7 @@
     "@mui/icons-material": "^5.2.1",
     "@mui/material": "^5.2.3",
     "@mui/system": "^5.2.3",
-    "@reduxjs/toolkit": "^1.6.2",
+    "@reduxjs/toolkit": "^1.7.0",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
