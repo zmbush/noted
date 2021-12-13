@@ -25,7 +25,7 @@
     "@babel/preset-typescript": "^7.3.3",
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
-    "@emotion/react": "^11.7.0",
+    "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.1",
     "@mui/material": "^5.2.3",
@@ -128,7 +128,7 @@
     "json-schema-to-typescript": "^10.1.5",
     "node-emoji": "^1.11.0",
     "path": "^0.12.7",
-    "sass": "^1.43.5",
+    "sass": "^1.45.0",
     "typed-scss-modules": "^4.1.1"
   }
 }
