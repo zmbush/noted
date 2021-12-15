@@ -7,23 +7,14 @@
 // except according to those terms.
 //
 import { createTheme } from '@mui/material';
+import { purple, deepPurple, lightBlue } from '@mui/material/colors';
 
 const makeColoredTheme = (mode: 'dark' | 'light') =>
   createTheme({
     palette: {
       mode,
-      primary: {
-        main: '#311b92',
-      },
-      secondary: {
-        main: '#00897b',
-      },
-      success: {
-        main: '#43a047',
-      },
-      error: {
-        main: '#e53935',
-      },
+      primary: mode === 'light' ? deepPurple : purple,
+      secondary: mode === 'light' ? purple : lightBlue,
     },
     typography: {
       h1: { fontSize: '4.5em' },

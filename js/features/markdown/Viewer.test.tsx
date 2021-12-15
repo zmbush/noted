@@ -52,6 +52,7 @@ describe('<Viewer />', () => {
         >
           Con
           <a
+            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-y71bs7-MuiTypography-root-MuiLink-root"
             href="/note/1"
           >
             tent
@@ -66,7 +67,7 @@ describe('<Viewer />', () => {
     const { getByRole } = render(<Viewer>{':::tip\nTip Contents\n:::'}</Viewer>);
     expect(getByRole('alert')).toMatchInlineSnapshot(`
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-1sz7pvn-MuiPaper-root-MuiAlert-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-standardSuccess MuiAlert-standard css-1i4w7qh-MuiPaper-root-MuiAlert-root"
         role="alert"
       >
         <div
@@ -231,7 +232,7 @@ describe('<Viewer />', () => {
           class="MuiTableHead-root css-15wwp11-MuiTableHead-root"
         >
           <tr
-            class="MuiTableRow-root MuiTableRow-head css-90vexg-MuiTableRow-root"
+            class="MuiTableRow-root MuiTableRow-head css-dwjysi-MuiTableRow-root"
           >
             <th
               class="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeMedium css-fwu7i1-MuiTableCell-root"
@@ -260,7 +261,7 @@ describe('<Viewer />', () => {
           class="MuiTableBody-root css-cu79t-MuiTableBody-root"
         >
           <tr
-            class="MuiTableRow-root css-90vexg-MuiTableRow-root"
+            class="MuiTableRow-root css-dwjysi-MuiTableRow-root"
           >
             <td
               class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-4mbnjq-MuiTableCell-root"

@@ -3,7 +3,7 @@
 exports[`<Header /> matches snapshot 1`] = `
 <div>
   <header
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-y51zh4-MuiPaper-root-MuiAppBar-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-1idi0fv-MuiPaper-root-MuiAppBar-root"
   >
     <div
       class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-1t29gy6-MuiToolbar-root"
