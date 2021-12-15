@@ -17,6 +17,7 @@ import {
   NewNotePayload,
   SignInPayload,
   UpdateNotePayload,
+  NewUserPayload,
 } from 'data/types';
 
 const testUser: User = {
@@ -25,6 +26,9 @@ const testUser: User = {
   email: 'test@test.com',
   created_at: '',
   updated_at: '',
+};
+const users: { [id: number]: User } = {
+  [testUser.id]: testUser,
 };
 
 export const emptyTestNote: NoteWithTags = {
@@ -41,6 +45,7 @@ export const emptyTestNote: NoteWithTags = {
 };
 
 let id = 0;
+let userId = 2;
 export const makeTestNote = (
   overrides: Partial<NoteWithTags> = {},
   parent: { id: number } | null = null,
@@ -61,10 +66,10 @@ export const makeTestNote = (
 
 const noteDb: { [user_id: number]: { [note_id: number]: NoteWithTags } } = {
   [testUser.id]: {
-    1: makeTestNote({ id: 1 }),
-    2: makeTestNote({ id: 2 }),
-    3: makeTestNote({ id: 3 }),
-    4: makeTestNote({ id: 4 }),
+    1: makeTestNote({ id: 1, user_id: testUser.id }),
+    2: makeTestNote({ id: 2, user_id: testUser.id }),
+    3: makeTestNote({ id: 3, user_id: testUser.id }),
+    4: makeTestNote({ id: 4, user_id: testUser.id }),
   },
 };
 
@@ -152,6 +157,15 @@ const setTags = withUser((user: User, noteId: number, tags: string[]): NoteWithT
   throw NOT_FOUND;
 });
 
+const createUser = (newUser: NewUserPayload): User => {
+  const user: User = { id: userId, ...newUser, created_at: '', updated_at: '' };
+  userId += 1;
+  users[user.id] = user;
+  noteDb[user.id] = {};
+  currentUser = user;
+  return user;
+};
+
 export default {
   async get(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     if (url.endsWith('/api/secure/notes')) {
@@ -196,7 +210,7 @@ export default {
       return makeResponse(createNote(data), config);
     }
     if (url.endsWith('/api/sign_up')) {
-      throw NOT_IMPLEMENTED;
+      return makeResponse(createUser(data), config);
     }
     const urlMatch = url.match(tagsEndpoint);
     if (urlMatch && urlMatch.groups) {

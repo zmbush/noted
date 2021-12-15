@@ -1,4 +1,4 @@
-// Copyright 2019 Zachary Bush.
+// Copyright 2021 Zachary Bush.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
@@ -6,16 +6,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { useSelector } from 'react-redux';
 
-import Init from './app/Init';
+import NoteList from './NoteList';
+import { getHasArchivedChild } from './selectors';
 
-if (process.env.NODE_ENV !== 'production') {
-  import('map.prototype.tojson');
-}
+const Archive = () => (
+  <NoteList noteViewFilter={useSelector(getHasArchivedChild)} parent_note_id={null} depth={1} />
+);
 
-ReactDOM.render(<Init />, document.getElementById('root'));
+export default Archive;

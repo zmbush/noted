@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NoteEditor /> while editing note matches snapshot 2`] = `
+<div
+  aria-hidden="true"
+/>
+`;

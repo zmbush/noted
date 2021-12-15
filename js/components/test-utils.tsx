@@ -13,7 +13,11 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { createStore, store as defaultStore } from 'data/store';
+import { ThemeProvider } from '@mui/material';
+
+import { lightTheme } from 'app/theme';
+
+import { createStore, store as defaultStore } from 'features/redux/store';
 
 type ComponentToRender = Parameters<typeof render>[0];
 type Config = {
@@ -39,11 +43,13 @@ const customRender = (
     React.useLayoutEffect(() => history.listen(setState), [history]);
 
     return (
-      <Provider store={store}>
-        <Router location={state.location} navigationType={state.action} navigator={history}>
-          {children}
-        </Router>
-      </Provider>
+      <ThemeProvider theme={lightTheme}>
+        <Provider store={store}>
+          <Router location={state.location} navigationType={state.action} navigator={history}>
+            {children}
+          </Router>
+        </Provider>
+      </ThemeProvider>
     );
   };
 

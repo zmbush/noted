@@ -11,7 +11,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 
-import { darkTheme, lightTheme } from './js/theme';
+import { darkTheme, lightTheme } from './js/app/theme';
 
 const { default: cfgBase } = require('./webpack.config.base');
 
