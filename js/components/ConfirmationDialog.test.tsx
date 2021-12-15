@@ -27,7 +27,7 @@ describe('<ConfirmationDialog />', () => {
     `);
     expect(getByText('Yes')).toMatchInlineSnapshot(`
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-r1fscf-MuiButtonBase-root-MuiButton-root"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-vdk2wd-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
@@ -39,7 +39,7 @@ describe('<ConfirmationDialog />', () => {
     `);
     expect(getByText('No')).toMatchInlineSnapshot(`
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-r1fscf-MuiButtonBase-root-MuiButton-root"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root  css-vdk2wd-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >

@@ -17,7 +17,7 @@ describe('<Tag />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-j1c7lh-MuiChip-root"
+          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorDefault MuiChip-filledDefault css-181s9vs-MuiChip-root"
         >
           <span
             class="MuiChip-label MuiChip-labelMedium css-6od3lo-MuiChip-label"
@@ -34,7 +34,7 @@ describe('<Tag />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorSecondary MuiChip-filledSecondary css-11iw9cp-MuiChip-root"
+          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorSecondary MuiChip-filledSecondary css-1k1miu1-MuiChip-root"
         >
           <svg
             aria-hidden="true"
@@ -62,7 +62,7 @@ describe('<Tag />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-filledPrimary css-1gccvbr-MuiChip-root"
+          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-filledPrimary css-1gnypjv-MuiChip-root"
         >
           <svg
             aria-hidden="true"
@@ -90,7 +90,7 @@ describe('<Tag />', () => {
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-filledPrimary css-1gccvbr-MuiChip-root"
+          class="MuiChip-root MuiChip-filled MuiChip-sizeMedium MuiChip-colorPrimary MuiChip-filledPrimary css-1gnypjv-MuiChip-root"
         >
           <span
             class="MuiChip-label MuiChip-labelMedium css-6od3lo-MuiChip-label"

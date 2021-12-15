@@ -22,9 +22,25 @@ describe('<AutoLink />', () => {
     const { container } = render(
       <AutoLink titles={titles}>This goat is here. It also has boats galore.</AutoLink>,
     );
-    expect(container.innerHTML).toEqual(
-      `This <a href="/note/1">Goat</a> is here. It also has <a href="/disambiguation/1,2">Boat</a>s galore.`,
-    );
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        This 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-y71bs7-MuiTypography-root-MuiLink-root"
+          href="/note/1"
+        >
+          Goat
+        </a>
+         is here. It also has 
+        <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-y71bs7-MuiTypography-root-MuiLink-root"
+          href="/disambiguation/1,2"
+        >
+          Boat
+        </a>
+        s galore.
+      </div>
+    `);
   });
 
   test('works with no titles', () => {
@@ -63,6 +79,7 @@ describe('<LinkedText />', () => {
     expect(render(<LinkedText ids={new Set([1])} text='Link' />).container).toMatchInlineSnapshot(`
       <div>
         <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-y71bs7-MuiTypography-root-MuiLink-root"
           href="/note/1"
         >
           Link
@@ -73,6 +90,7 @@ describe('<LinkedText />', () => {
       .toMatchInlineSnapshot(`
       <div>
         <a
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-y71bs7-MuiTypography-root-MuiLink-root"
           href="/disambiguation/1,2"
         >
           Link

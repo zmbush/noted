@@ -6,7 +6,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+
+import { Link } from '@mui/material';
 
 type LinkProps = {
   text: string;
@@ -16,11 +18,24 @@ type LinkProps = {
 export const LinkedText = ({ ids, text }: LinkProps) => {
   if (ids.size === 1) {
     const id = ids.values().next().value;
-    return <Link to={`/note/${id}`}>{text}</Link>;
+    return (
+      <Link underline='hover' color='secondary' component={RouterLink} to={`/note/${id}`}>
+        {text}
+      </Link>
+    );
   }
   if (ids.size > 1) {
     const theseIds = Array.from(ids.values()).join(',');
-    return <Link to={`/disambiguation/${theseIds}`}>{text}</Link>;
+    return (
+      <Link
+        underline='hover'
+        color='secondary'
+        component={RouterLink}
+        to={`/disambiguation/${theseIds}`}
+      >
+        {text}
+      </Link>
+    );
   }
   return text as any as React.ReactElement;
 };
