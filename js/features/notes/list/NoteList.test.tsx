@@ -27,28 +27,28 @@ describe('<NoteList />', () => {
     const notes = store.getState().notes.entities;
     expect(getByText(notes[1]!.title)).toMatchInlineSnapshot(`
       <span
-        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-1krpg4r-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-15ei63e-MuiTypography-root"
       >
         Note 1
       </span>
     `);
     expect(getByText(notes[2]!.title)).toMatchInlineSnapshot(`
       <span
-        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-1krpg4r-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-15ei63e-MuiTypography-root"
       >
         Note 2
       </span>
     `);
     expect(getByText(notes[3]!.title)).toMatchInlineSnapshot(`
       <span
-        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-1krpg4r-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-15ei63e-MuiTypography-root"
       >
         Note 3
       </span>
     `);
     expect(getByText(notes[4]!.title)).toMatchInlineSnapshot(`
       <span
-        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-1krpg4r-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h1 MuiCardHeader-title css-15ei63e-MuiTypography-root"
       >
         Note 4
       </span>

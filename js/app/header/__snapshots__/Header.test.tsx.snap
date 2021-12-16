@@ -29,7 +29,7 @@ exports[`<Header /> matches snapshot 1`] = `
         />
       </button>
       <h6
-        class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-6ip4yz-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-i7ekr9-MuiTypography-root"
       >
         Noted
       </h6>

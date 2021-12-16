@@ -122,28 +122,28 @@ describe('<Viewer />', () => {
     const { getByText } = render(<Viewer>{md}</Viewer>);
     expect(getByText('Header 1')).toMatchInlineSnapshot(`
       <h2
-        class="MuiTypography-root MuiTypography-h2 css-1teg9c3-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h2 css-3sz91q-MuiTypography-root"
       >
         Header 1
       </h2>
     `);
     expect(getByText('Header 2')).toMatchInlineSnapshot(`
       <h3
-        class="MuiTypography-root MuiTypography-h3 css-1efi1j1-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h3 css-13o5ix6-MuiTypography-root"
       >
         Header 2
       </h3>
     `);
     expect(getByText('Header 3')).toMatchInlineSnapshot(`
       <h4
-        class="MuiTypography-root MuiTypography-h4 css-1i2ejxq-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h4 css-qilaz-MuiTypography-root"
       >
         Header 3
       </h4>
     `);
     expect(getByText('Header 4')).toMatchInlineSnapshot(`
       <h5
-        class="MuiTypography-root MuiTypography-h5 css-ejfiay-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h5 css-1n1igfz-MuiTypography-root"
       >
         Header 4
       </h5>
@@ -153,28 +153,28 @@ describe('<Viewer />', () => {
         class="MuiBox-root css-1vvitan"
       >
         <h2
-          class="MuiTypography-root MuiTypography-h2 css-1teg9c3-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h2 css-3sz91q-MuiTypography-root"
         >
           Header 1
         </h2>
         
 
         <h3
-          class="MuiTypography-root MuiTypography-h3 css-1efi1j1-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-13o5ix6-MuiTypography-root"
         >
           Header 2
         </h3>
         
 
         <h4
-          class="MuiTypography-root MuiTypography-h4 css-1i2ejxq-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h4 css-qilaz-MuiTypography-root"
         >
           Header 3
         </h4>
         
 
         <h5
-          class="MuiTypography-root MuiTypography-h5 css-ejfiay-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 css-1n1igfz-MuiTypography-root"
         >
           Header 4
         </h5>
