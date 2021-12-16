@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 //
-import { createTheme } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material';
 import { purple, deepPurple, lightBlue } from '@mui/material/colors';
 
 const makeColoredTheme = (mode: 'dark' | 'light') =>
@@ -25,5 +25,5 @@ const makeColoredTheme = (mode: 'dark' | 'light') =>
     },
   });
 
-export const lightTheme = makeColoredTheme('light');
-export const darkTheme = makeColoredTheme('dark');
+export const lightTheme = responsiveFontSizes(makeColoredTheme('light'));
+export const darkTheme = responsiveFontSizes(makeColoredTheme('dark'));

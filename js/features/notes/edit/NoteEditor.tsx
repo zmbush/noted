@@ -68,7 +68,7 @@ const NoteEditorInner = ({ id, note }: NewNoteOrEdit) => {
   }
   const [tags, setTags] = React.useState(noteTags);
   const [confirmCancelEditOpen, setConfirmCancelEditOpen] = React.useState(false);
-  const editorFullscreen = useMediaQuery<Theme>((theme) => theme.breakpoints.down('xs'));
+  const editorFullscreen = useMediaQuery<Theme>((theme) => theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
 
   const current = new Map(Object.entries({ title, body, tags }));
@@ -154,9 +154,9 @@ const NoteEditorInner = ({ id, note }: NewNoteOrEdit) => {
                 onChange={setTags}
                 options={['type:Location', 'type:Character']}
               />
-              <React.Suspense fallback={<Loading sx={{ height: 'calc(100% - 40px)' }} />}>
+              <React.Suspense fallback={<Loading />}>
                 <MarkdownEditor
-                  height='calc(100% - 40px)'
+                  height='calc(100% - 50px)'
                   body={body}
                   onChange={(v) => setBody(v())}
                 />

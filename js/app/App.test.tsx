@@ -23,7 +23,7 @@ describe('<App />', () => {
     expect(getAllByText('Sign In')).toMatchInlineSnapshot(`
       Array [
         <h2
-          class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-bdhsul-MuiTypography-root-MuiDialogTitle-root"
+          class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1xs83er-MuiTypography-root-MuiDialogTitle-root"
           id="mui-1"
         >
           Sign In

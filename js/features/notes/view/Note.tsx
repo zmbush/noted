@@ -23,6 +23,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Divider,
   Grid,
   IconButton,
   ListItemIcon,
@@ -112,6 +113,9 @@ const Note = ({ note, children }: Props) => {
     >
       <CardHeader
         sx={{
+          '.MuiCardHeader-content': {
+            overflow: 'hidden',
+          },
           '@media print': {
             paddingBottom: 0,
             paddingTop: 0,
@@ -130,7 +134,12 @@ const Note = ({ note, children }: Props) => {
           <>
             <IconButton
               onClick={startSubNoteCreate}
-              sx={{ displayPrint: 'none' }}
+              sx={(theme) => ({
+                displayPrint: 'none',
+                [theme.breakpoints.down('sm')]: {
+                  display: 'none',
+                },
+              })}
               aria-label='Add SubNote'
               size='large'
             >
@@ -138,7 +147,12 @@ const Note = ({ note, children }: Props) => {
             </IconButton>
             <IconButton
               onClick={startEdit}
-              sx={{ displayPrint: 'none' }}
+              sx={(theme) => ({
+                displayPrint: 'none',
+                [theme.breakpoints.down('sm')]: {
+                  display: 'none',
+                },
+              })}
               aria-label='Edit Note'
               size='large'
             >
@@ -164,6 +178,39 @@ const Note = ({ note, children }: Props) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
+        <MenuItem
+          onClick={startSubNoteCreate}
+          sx={(theme) => ({
+            [theme.breakpoints.up('sm')]: {
+              display: 'none',
+            },
+          })}
+        >
+          <ListItemIcon>
+            <LibraryAddIcon />
+          </ListItemIcon>
+          Create SubNote
+        </MenuItem>
+        <MenuItem
+          onClick={startEdit}
+          sx={(theme) => ({
+            [theme.breakpoints.up('sm')]: {
+              display: 'none',
+            },
+          })}
+        >
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
+          Edit Note
+        </MenuItem>
+        <Divider
+          sx={(theme) => ({
+            [theme.breakpoints.up('sm')]: {
+              display: 'none',
+            },
+          })}
+        />
         <MenuItem onClick={() => setConfirmDeleteOpen(true)}>
           <ListItemIcon>
             <DeleteIcon />
