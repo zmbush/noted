@@ -17,9 +17,12 @@ use actix_web::{
     middleware::Logger,
     App, HttpServer,
 };
-use failure::Error;
+use failure::{Error, ResultExt};
+use log::error;
 use noted_db::DbConnection;
+use std::{fs::File, io::Read, path::PathBuf};
 use structopt::StructOpt;
+use time::Duration;
 
 #[derive(StructOpt, Debug, Clone)]
 #[structopt(name = "noted", author, about)]
@@ -37,8 +40,16 @@ struct Opts {
     verbose: bool,
 
     /// Database URL
-    #[structopt(long, env = "DATABASE_URL")]
-    db: String,
+    #[structopt(long, env, hide_env_values = true)]
+    database_url: String,
+
+    /// The number of hours before expiring sessions.
+    #[structopt(long, default_value = "24")]
+    session_ttl_hours: u32,
+
+    /// Session Encryption Key
+    #[structopt(long, env, hide_env_values = true)]
+    session_key_path: PathBuf,
 }
 
 #[actix_web::main]
@@ -64,7 +75,19 @@ async fn main() -> Result<(), Error> {
         .chain(std::io::stdout())
         .apply()?;
 
-    let db = DbConnection::new(&opt.db);
+    let mut redis_key = [0; 32];
+    let bytes_read = File::open(&opt.session_key_path)
+        .with_context(|_| format!("trying to open `{}`", opt.session_key_path.display()))?
+        .read(&mut redis_key)
+        .with_context(|_| format!("Trying to read `{}`", opt.session_key_path.display()))?;
+
+    if bytes_read != 32 {
+        error!(
+            "Did not read exactly 32 bytes from REDIS_KEY_PATH={}",
+            opt.session_key_path.display()
+        );
+    }
+    let db = DbConnection::new(&opt.database_url);
     let port = opt.port;
 
     println!("Starting actix-web at port {}", port);
@@ -72,9 +95,12 @@ async fn main() -> Result<(), Error> {
         App::new()
             .wrap(Logger::default())
             .wrap(
-                RedisSession::new("127.0.0.1:6379", &[0; 32])
+                RedisSession::new("127.0.0.1:6379", &redis_key)
                     .cookie_name("noted-session")
                     .cookie_secure(opt.secure)
+                    .cache_keygen(Box::new(|s| format!("noted-session:{}", s)))
+                    .ttl(60 * 60 * opt.session_ttl_hours)
+                    .cookie_max_age(Duration::hours(opt.session_ttl_hours.into()))
                     .cookie_same_site(actix_redis::SameSite::Strict),
             )
             .service(noted::api::scope(db.clone()))
