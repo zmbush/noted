@@ -20,7 +20,7 @@ describe('<Viewer />', () => {
         class="MuiBox-root css-1vvitan"
       >
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body css-37jdci-MuiTypography-root"
         >
           Contents
         </p>
@@ -35,7 +35,7 @@ describe('<Viewer />', () => {
         class="MuiBox-root css-1vvitan"
       >
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body css-37jdci-MuiTypography-root"
         />
       </div>
     `);
@@ -48,7 +48,7 @@ describe('<Viewer />', () => {
         class="MuiBox-root css-1vvitan"
       >
         <p
-          class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body css-37jdci-MuiTypography-root"
         >
           Con
           <a
@@ -89,7 +89,7 @@ describe('<Viewer />', () => {
           class="MuiAlert-message css-acap47-MuiAlert-message"
         >
           <p
-            class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-body css-37jdci-MuiTypography-root"
           >
             Tip Contents
           </p>

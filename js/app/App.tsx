@@ -71,7 +71,7 @@ const App = () => {
 
   return (
     <AppRoot>
-      <Header createNewShortcut={createNewShortcut} onStartEdit={startEdit} />
+      {isSignedIn ? <Header createNewShortcut={createNewShortcut} onStartEdit={startEdit} /> : null}
       {isLoading ? (
         <Loading />
       ) : (
