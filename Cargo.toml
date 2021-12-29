@@ -37,4 +37,4 @@ thiserror = "1.0.30"
 time = "0.2"
 
 [dev-dependencies]
-cookie = {version = "0.15.1", features = ["percent-encode"]}
+cookie = {version = "0.16.0", features = ["percent-encode"]}
