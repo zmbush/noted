@@ -1540,7 +1540,7 @@ dependencies = [
  "serde_json",
  "structopt",
  "thiserror",
- "time 0.2.27",
+ "time 0.3.5",
 ]
 
 [[package]]
