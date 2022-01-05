@@ -30,7 +30,7 @@ import { getSearchResults } from 'features/notes/list/selectors';
 import Tags from 'features/notes/view/Tags';
 import { AppState } from 'features/redux/store';
 
-const BrOrText = ({ children }: any) => {
+const BrOrText = ({ children = null }: any) => {
   if (
     children === '\\' ||
     (Array.isArray(children) && children.length > 0 && children[0] === '\\')
