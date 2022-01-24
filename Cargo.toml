@@ -10,7 +10,7 @@ members = ["db", "expand-yaml-anchors"]
 
 [dependencies]
 actix-files = "0.5.0"
-actix-http = "2.2.1"
+actix-http = "2.2.2"
 actix-redis = "0.9.2"
 actix-rt = "1.1.1"
 actix-session = "0.4.1"
