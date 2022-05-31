@@ -29,7 +29,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.4",
     "@mui/material": "^5.2.4",
-    "@mui/system": "^5.2.4",
+    "@mui/system": "^5.8.2",
     "@reduxjs/toolkit": "^1.7.1",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.16.1",
