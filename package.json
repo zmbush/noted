@@ -127,7 +127,7 @@
     "json-schema-to-typescript": "^10.1.5",
     "node-emoji": "^1.11.0",
     "path": "^0.12.7",
-    "sass": "^1.45.0",
+    "sass": "^1.54.4",
     "typed-scss-modules": "^4.1.1"
   }
 }
