@@ -868,12 +868,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
-name = "dtoa"
-version = "0.4.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea57b42383d091c85abcc2706240b94ab2a8fa1fc81c10ff23c4de06e2a90b5e"
-
-[[package]]
 name = "dyn-clone"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1927,16 +1921,15 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.21.4"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f23ceed4c0e76b322657c2c3352ea116f9ec60a1a1aefeb3c84ed062c50865b"
+checksum = "513b3649f1a111c17954296e4a3b9eecb108b766c803e2b99f179ebe27005985"
 dependencies = [
- "async-trait",
  "combine",
- "dtoa",
- "itoa 0.4.8",
+ "itoa 1.0.1",
  "percent-encoding",
- "sha1",
+ "ryu",
+ "sha1_smol",
  "url",
 ]
 
@@ -2189,6 +2182,12 @@ name = "sha1"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2579985fda508104f7587689507983eadd6a6e84dd35d6d115361f530916fa0d"
+
+[[package]]
+name = "sha1_smol"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae1a47186c03a32177042e55dbc5fd5aee900b8e0069a8d70fba96a9375cd012"
 
 [[package]]
 name = "sha2"
