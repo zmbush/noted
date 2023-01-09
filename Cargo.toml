@@ -27,7 +27,7 @@ hyper = "0.14.16"
 log = "0.4.14"
 noted_db = {path = "./db"}
 r2d2 = "0.8.9"
-redis = "0.21.4"
+redis = "0.22.2"
 schemars = {version = "0.8.8", features = ["preserve_order"]}
 serde = "1.0.132"
 serde_derive = "1.0.130"
